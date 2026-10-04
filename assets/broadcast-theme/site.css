@@ -429,9 +429,21 @@ body.broadcast-lite .catalog-cover img {
   display: block;
 }
 body.broadcast-lite .catalog-cover .soon {
-  font-size: 1rem;
-  letter-spacing: .16em;
-  padding: .55rem 3.2rem;
+  top: .85rem;
+  left: .85rem;
+  right: auto;
+  bottom: auto;
+  transform: none;
+  z-index: 2;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: .12em;
+  line-height: 1.2;
+  padding: .6rem .9rem;
+  border-radius: 2px;
+  background: #c2471b;
+  color: #fff3e6;
 }
 body.broadcast-lite .catalog-card h2 {
   font-family: var(--ui);
