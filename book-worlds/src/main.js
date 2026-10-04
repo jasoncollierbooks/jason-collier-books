@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createAudio } from "./audio.js?v=3";
+import { createAudio } from "./audio.js?v=4";
 import { createInput } from "./input.js?v=4";
 import { createSim } from "./sim.js?v=10";
 import { damp, clamp, springAngle, angDelta } from "./util.js";
@@ -62,17 +62,22 @@ function defaultCam() {
   const small = Math.min(window.innerWidth, window.innerHeight) < 700;
   return coarse || small ? "slow" : "normal";
 }
-const settings = { cam: defaultCam(), subs: false };
+const settings = { cam: defaultCam(), subs: false, sound: true };
 try {
   const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "null");
   if (saved && CAM_PRESET[saved.cam]) settings.cam = saved.cam;
   if (saved && typeof saved.subs === "boolean") settings.subs = saved.subs;
+  if (saved && typeof saved.sound === "boolean") settings.sound = saved.sound;
 } catch { /* private mode */ }
 function saveSettings() {
-  try { localStorage.setItem(SETTINGS_KEY, JSON.stringify({ cam: settings.cam, subs: settings.subs })); } catch { /* ignore */ }
+  try { localStorage.setItem(SETTINGS_KEY, JSON.stringify({ cam: settings.cam, subs: settings.subs, sound: settings.sound })); } catch { /* ignore */ }
 }
 document.body.classList.toggle("subs", settings.subs);
-window.addEventListener("pointerdown", () => audio.unlock(), true);
+audio.sound(settings.sound);
+const unlockAudio = () => audio.unlock();
+window.addEventListener("pointerdown", unlockAudio, true);
+window.addEventListener("touchstart", unlockAudio, { capture: true, passive: true });
+window.addEventListener("touchend", unlockAudio, { capture: true, passive: true });
 
 const GRADE = {
   uniforms: { tDiffuse: { value: null } },
@@ -1597,10 +1602,12 @@ function wireSettings() {
   const panel = document.getElementById("settings");
   const speeds = document.getElementById("cam-speed");
   const subToggle = document.getElementById("sub-toggle");
+  const soundToggle = document.getElementById("sound-toggle");
   if (!btn || !panel) return;
   const paint = () => {
     document.body.classList.toggle("subs", settings.subs);
     if (subToggle) subToggle.checked = settings.subs;
+    if (soundToggle) soundToggle.checked = settings.sound;
     if (speeds) {
       for (const node of speeds.querySelectorAll("[data-speed]")) {
         node.classList.toggle("is-on", node.getAttribute("data-speed") === settings.cam);
@@ -1630,6 +1637,18 @@ function wireSettings() {
     subToggle.checked = !subToggle.checked;
     subToggle.dispatchEvent(new Event("change"));
   });
+  // The settings panel swallows touchstart, so iOS never delivers the click.
+  // pointerdown flips the box; the later click must not flip it back.
+  soundToggle?.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    soundToggle.checked = !soundToggle.checked;
+    soundToggle.dispatchEvent(new Event("change"));
+  });
+  soundToggle?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  });
   document.getElementById("help-dismiss")?.addEventListener("pointerup", (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -1640,6 +1659,13 @@ function wireSettings() {
     e.stopPropagation();
     const panel = document.getElementById("help");
     if (panel) panel.hidden = false;
+  });
+  soundToggle?.addEventListener("change", () => {
+    settings.sound = !!soundToggle.checked;
+    saveSettings();
+    audio.sound(settings.sound);
+    audio.unlock();
+    paint();
   });
   subToggle?.addEventListener("change", () => {
     settings.subs = !!subToggle.checked;
