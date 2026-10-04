@@ -196,7 +196,8 @@ export function buildWalker(lowEnd = false) {
     map: mossMap(), color: 0xc8d8b0, roughness: 1, alphaTest: 0.35, side: THREE.DoubleSide,
   });
   const wood = new THREE.MeshStandardMaterial({ color: 0x3a2a1c, roughness: 0.88 });
-  const eyeMat = new THREE.MeshBasicMaterial({ color: 0xc6ff7a, transparent: true, opacity: 0, fog: false, depthWrite: false });
+  const eyeMat = new THREE.MeshBasicMaterial({ color: 0xd6ff6a, transparent: true, opacity: 0, fog: false, depthWrite: false });
+  eyeMat.toneMapped = false;
 
   const shellLevels = lowEnd
     ? [
@@ -325,40 +326,44 @@ export function buildWalker(lowEnd = false) {
   const head = new THREE.Group();
   head.position.set(0, 0.16, -0.18);
   neck.add(head);
-  const skull = put(head, lathe([[0.08, -0.2], [0.18, -0.08], [0.22, 0.04], [0.18, 0.14], [0.09, 0.24]], 24), fur, 0, 0.02, 0.02, 0.12, 0, 0, 1.12, 0.96, 1.18);
-  grow(skull);
-  const jaw = put(head, lathe([[0.06, -0.08], [0.14, 0], [0.12, 0.08]], 16), furDark, 0, -0.12, -0.06, 0.2, 0, 0, 1.15, 0.8, 1);
-  const brow = put(head, new THREE.CapsuleGeometry(0.055, 0.24, 6, 12), furDark, 0, 0.05, -0.16, 0, 0, Math.PI / 2, 1, 1.35, 1.15);
-  const face = put(head, lathe([[0.03, -0.1], [0.1, -0.02], [0.11, 0.05], [0.05, 0.1]], 18), leather, 0, -0.02, -0.15, 0, 0, 0, 1.25, 1.05, 0.42);
+  // skull stays back; fur shells would swallow the face, so the shag here is cards
+  const skull = put(head, lathe([[0.08, -0.2], [0.18, -0.08], [0.22, 0.04], [0.18, 0.14], [0.09, 0.24]], 24), fur, 0, 0.02, 0.06, 0.12, 0, 0, 1.15, 0.96, 0.82);
+  const jaw = put(head, lathe([[0.06, -0.08], [0.14, 0], [0.12, 0.08]], 16), furDark, 0, -0.13, -0.1, 0.15, 0, 0, 1.2, 0.75, 0.9);
+  const brow = put(head, new THREE.CapsuleGeometry(0.055, 0.28, 6, 14), furDark, 0, 0.08, -0.3, 0, 0, Math.PI / 2, 1, 1.15, 1.7);
+  const face = put(head, lathe([[0.03, -0.11], [0.1, -0.02], [0.11, 0.06], [0.04, 0.11]], 18), leather, 0, -0.03, -0.24, 0, 0, 0, 1.3, 1.05, 0.5);
   face.castShadow = true;
-  const nose = put(head, new THREE.CapsuleGeometry(0.028, 0.02, 4, 10), leather, 0, -0.03, -0.2, Math.PI / 2, 0, 0, 1.5, 0.7, 0.55);
+  const nose = put(head, new THREE.CapsuleGeometry(0.026, 0.012, 4, 10), leather, 0, -0.05, -0.34, Math.PI / 2, 0, 0, 1.8, 0.45, 0.4);
   for (const s of [-1, 1]) {
-    put(head, new THREE.CapsuleGeometry(0.035, 0.02, 4, 8), furDark, s * 0.2, 0.02, 0, 0, 0, s * 0.4, 0.7, 1.1, 0.6);
+    put(head, new THREE.CapsuleGeometry(0.035, 0.02, 4, 8), furDark, s * 0.2, 0.02, 0.02, 0, 0, s * 0.4, 0.7, 1.1, 0.55);
   }
-  const headSnag = put(head, lathe([[0.008, 0], [0.016, 0.06], [0.006, 0.2]], 5), wood, 0.1, 0.16, 0.06, -0.8, 0.2, 0.4);
+  const headSnag = put(head, lathe([[0.008, 0], [0.016, 0.06], [0.006, 0.2]], 5), wood, 0.1, 0.18, 0.1, -0.8, 0.2, 0.4);
   headSnag.userData.rx = -0.8;
   headSnag.userData.rz = 0.4;
   headSnag.userData.ph = 1.2;
   snags.push(headSnag);
-  for (let i = 0; i < 5; i++) {
-    const a = Math.PI * 0.2 + i * 0.55;
-    clump(head, Math.sin(a) * 0.16, 0.12, Math.cos(a) * 0.1, 0.07, 0.16 + (i % 2) * 0.05, 0.5, 0, 0.06);
+  for (let i = 0; i < 7; i++) {
+    const a = -1.15 + i * 0.38;
+    clump(head, Math.sin(a) * 0.18, 0.1 + (i % 2) * 0.05, Math.cos(a) * 0.1, 0.08, 0.2, 0.35, 0, 0.07);
   }
-  const browFur = clump(head, 0, 0.07, -0.18, 0.16, 0.14, 0.9, 0, 0.04);
+  const browFur = clump(head, 0, 0.1, -0.2, 0.18, 0.1, 0.55, 0, 0.03);
 
   const eyes = [];
   for (const s of [-1, 1]) {
-    const e = new THREE.Mesh(new THREE.SphereGeometry(0.032, 12, 10), eyeMat);
-    e.position.set(s * 0.075, 0.0, -0.175);
-    e.renderOrder = 3;
+    const e = new THREE.Mesh(new THREE.SphereGeometry(0.042, 14, 12), eyeMat);
+    e.position.set(s * 0.082, -0.012, -0.34);
+    e.material.polygonOffset = true;
+    e.material.polygonOffsetFactor = -2;
+    e.renderOrder = 5;
     head.add(e);
     eyes.push(e);
-    const glow = new THREE.Sprite(new THREE.SpriteMaterial({
-      color: 0xc6ff7a, transparent: true, opacity: 0, depthWrite: false, fog: false, blending: THREE.AdditiveBlending,
-    }));
-    glow.scale.set(0.2, 0.14, 1);
-    glow.position.set(s * 0.075, 0.0, -0.19);
-    glow.renderOrder = 4;
+    const glowMat = new THREE.SpriteMaterial({
+      color: 0xd6ff6a, transparent: true, opacity: 0, depthWrite: false, fog: false, blending: THREE.AdditiveBlending,
+    });
+    glowMat.toneMapped = false;
+    const glow = new THREE.Sprite(glowMat);
+    glow.scale.set(0.16, 0.11, 1);
+    glow.position.set(s * 0.082, -0.012, -0.38);
+    glow.renderOrder = 6;
     head.add(glow);
     e.userData.glow = glow;
   }

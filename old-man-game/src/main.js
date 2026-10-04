@@ -2092,10 +2092,10 @@ function setupShot(kind) {
     const close = kind === "beastclose";
     const mid = kind === "beast2";
     window.__oldman.tp("meadow", close || mid ? 18 : 12);
-    window.__oldman.placeWalker(close ? 4.2 : mid ? 13 : 6.2, close ? 0.15 : mid ? 0.05 : 0.35);
+    window.__oldman.placeWalker(close ? 5.1 : mid ? 11 : 6.2, close ? 0.1 : mid ? 0.02 : 0.35);
     window.__oldman.face(W.x, W.z);
     fp.k = 1; fp.target = 1; fp.latched = true;
-    fp.pitch = close ? 0.11 : mid ? -0.04 : 0.04;
+    fp.pitch = close ? 0.02 : mid ? -0.03 : 0.04;
     window.__oldman.hideHands = true;
     window.__oldman.beastPose = "stand";
     window.__oldman.beastEyes = 1;
