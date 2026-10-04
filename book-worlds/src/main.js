@@ -1,16 +1,16 @@
 import * as THREE from "three";
 import { createAudio } from "./audio.js?v=2";
 import { createInput } from "./input.js?v=3";
-import { createSim } from "./sim.js?v=7";
+import { createSim } from "./sim.js?v=8";
 import { damp, clamp, springAngle, angDelta } from "./util.js";
 import { createNarration } from "./narration.js";
 import { createDialogue } from "./dialogue.js?v=3";
 import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass, GTAOPass, ShaderPass, FXAAPass } from "three/addons";
-import { buildWorld } from "./world.js?v=6";
-import { buildRustyWorld } from "../worlds/rusty/world.js?v=9";
-import { createRustySim } from "../worlds/rusty/sim.js?v=13";
-import { whenCastReady } from "./actors.js?v=6";
-import { theBlank } from "../bosses/index.js?v=7";
+import { buildWorld } from "./world.js?v=7";
+import { buildRustyWorld } from "../worlds/rusty/world.js?v=10";
+import { createRustySim } from "../worlds/rusty/sim.js?v=14";
+import { whenCastReady } from "./actors.js?v=7";
+import { theBlank } from "../bosses/index.js?v=8";
 
 const canvas = document.getElementById("view");
 const app = document.getElementById("app");

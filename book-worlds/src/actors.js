@@ -3,8 +3,8 @@
 // jumps, swings, and rolls layer on that skeleton.
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons";
-import { createHuman as createCapsule, trailKey, handbillMesh, softDot } from "./rigs.js?v=4";
-import { createTrail, swingWeapon } from "./swing.js?v=2";
+import { createHuman as createCapsule, trailKey, handbillMesh, softDot } from "./rigs.js?v=5";
+import { createTrail, swingWeapon } from "./swing.js?v=3";
 import {
   dusterGeometry, collarGeometry, coatTailGeometry, sleeveGeometry,
   coverallGeometry, lapelGeometry, wrenchGroup, spyglassGroup, goggleRig,
@@ -766,7 +766,7 @@ function dress(api, assets) {
   const grip = new THREE.Vector3();
   if (spec.key) {
     const key = trailKey();
-    key.scale.setScalar(1);
+    key.scale.setScalar(1.5);
     holdBlade(B("hand_r"), key, new THREE.Vector3(0, -0.95, 0.1), true);
     api.keyMesh = key;
     key.visible = api._keyOn !== false;

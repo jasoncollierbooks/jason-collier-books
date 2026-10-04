@@ -1,10 +1,10 @@
 // Rusty Stack play. Same Keeper, Trail Key, and command combat as the wagon road.
 import * as THREE from "three";
 import { clamp, damp, dampAngle, hypot2 } from "../../src/util.js";
-import { heightAt } from "./world.js?v=9";
-import { createFog } from "../../src/rigs.js?v=4";
-import { createHuman } from "../../src/actors.js?v=6";
-import { boss as worldBoss } from "../../bosses/rusty-stack.js?v=7";
+import { heightAt } from "./world.js?v=10";
+import { createFog } from "../../src/rigs.js?v=5";
+import { createHuman } from "../../src/actors.js?v=7";
+import { boss as worldBoss } from "../../bosses/rusty-stack.js?v=8";
 
 const SAVE_KEY = "book-worlds-rusty-stack";
 const CLEAR_KEY = "book-worlds-world2-clear";

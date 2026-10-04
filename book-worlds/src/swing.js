@@ -143,7 +143,7 @@ function clearBlade(hand, dir, scale) {
     _push.set(0, 0, 0);
     let close = false;
     for (let i = 0; i <= 8; i++) {
-      _sample.copy(hand).addScaledVector(_blade, (0.04 + (i / 8) * 1.05) * scale);
+      _sample.copy(hand).addScaledVector(_blade, (0.04 + (i / 8) * 1.55) * scale);
       const y = Math.max(_shoulder.y - 0.55 * scale, Math.min(_shoulder.y + 0.22 * scale, _sample.y));
       _spine.copy(_shoulder);
       _spine.addScaledVector(_right, -0.18 * scale);
@@ -209,7 +209,7 @@ function writeTrail(trail, root) {
   let count = 0;
   for (let i = 0; i < n; i++) {
     const f = n === 1 ? 1 : i / (n - 1);
-    const w = 0.05 + f * 0.2;
+    const w = 0.11 + f * 0.42;
     _a.copy(pts[Math.max(0, i - 1)]);
     _b.copy(pts[Math.min(n - 1, i + 1)]);
     _width.subVectors(_b, _a);
@@ -218,12 +218,12 @@ function writeTrail(trail, root) {
     _side.crossVectors(_width, _up);
     if (_side.lengthSq() < 1e-5) _side.set(1, 0, 0);
     _side.normalize().multiplyScalar(w);
-    const fade = f * f;
-    for (const sign of [-1, 1]) {
-      _local.copy(pts[i]).addScaledVector(_side, sign);
-      root.worldToLocal(_local);
-      pos.setXYZ(count, _local.x, _local.y, _local.z);
-      col.setXYZ(count, 1 * fade, 0.84 * fade, 0.45 * fade);
+      const fade = 0.45 + 0.55 * f;
+      for (const sign of [-1, 1]) {
+        _local.copy(pts[i]).addScaledVector(_side, sign);
+        root.worldToLocal(_local);
+        pos.setXYZ(count, _local.x, _local.y, _local.z);
+        col.setXYZ(count, 1 * fade, 0.68 * fade, 0.16 * fade);
       count++;
     }
   }

@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Josefin+Sans:wght@400;600&family=Pinyon+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./styles.css?v=5">
+<link rel="stylesheet" href="./styles.css?v=6">
 <script type="importmap">{ "imports": { "three": "../old-man-game/vendor/three.min.js", "three/addons": "../old-man-game/vendor/three-addons.min.js" } }</script>
 </head>
 <body>
@@ -138,201 +138,25 @@
           <div class="bw-bezel">
             <div class="bw-glass">
               <div class="bw-screen" id="screen" data-station="trail">
-                <div class="bw-pic" data-pic="trail">
-                  <svg viewBox="0 0 480 820" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-                    <defs>
-                      <linearGradient id="trail-sky" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0" stop-color="#3a2438"/>
-                        <stop offset=".38" stop-color="#a85a48"/>
-                        <stop offset=".72" stop-color="#e39a62"/>
-                        <stop offset="1" stop-color="#f6d7a8"/>
-                      </linearGradient>
-                      <linearGradient id="trail-canvas" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0" stop-color="#fff6e6"/>
-                        <stop offset=".55" stop-color="#f0e2c8"/>
-                        <stop offset="1" stop-color="#d9c4a4"/>
-                      </linearGradient>
-                      <linearGradient id="trail-ground" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0" stop-color="#c4844e"/>
-                        <stop offset="1" stop-color="#8a5434"/>
-                      </linearGradient>
-                      <symbol id="spoke-wheel" viewBox="-40 -40 80 80">
-                        <circle r="31" fill="#2a1a12" stroke="#1a100c" stroke-width="2"/>
-                        <circle r="27" fill="#4a3424"/>
-                        <g stroke="#e6d2a8" stroke-width="1.6" stroke-linecap="round">
-                          <path d="M0 -22 V22 M-22 0 H22 M-15 -15 L15 15 M-15 15 L15 -15"/>
-                          <path d="M-8 -20 L8 20 M8 -20 L-8 20 M-20 -8 L20 8 M-20 8 L20 -8"/>
-                        </g>
-                        <circle r="24" fill="none" stroke="#c6a15a" stroke-width="2.2"/>
-                        <circle r="5.5" fill="#c6a15a" stroke="#6a4a28" stroke-width="1"/>
-                      </symbol>
-                    </defs>
-                    <rect width="480" height="820" fill="url(#trail-sky)"/>
-                    <circle cx="350" cy="92" r="46" fill="#fff1cc" opacity=".28"/>
-                    <circle cx="350" cy="92" r="20" fill="#fff6dc"/>
-                    <path d="M0 248 L70 150 L130 198 L210 118 L280 188 L360 108 L430 176 L480 130 L480 268 L0 268 Z" fill="#4a3040" opacity=".7"/>
-                    <path d="M0 268 L90 210 L170 250 L260 188 L340 244 L420 176 L480 220 L480 310 L0 310 Z" fill="#6a4034" opacity=".8"/>
-                    <rect y="360" width="480" height="460" fill="#8a5434"/>
-                    <g transform="translate(16 188) scale(0.7)">
-                    <path d="M0 168 L80 128 L150 156 L230 108 L310 150 L400 96 L490 146 L570 112 L640 150 L640 188 L0 188 Z" fill="#5c3a48" opacity=".85"/>
-                    <path d="M0 188 L70 156 L160 184 L250 140 L340 176 L430 132 L520 170 L600 142 L640 168 L640 214 L0 214 Z" fill="#7a4636"/>
-                    <path d="M220 140 L268 168 L248 176 Z" fill="#4a3028" opacity=".55"/>
-                    <path d="M430 132 L470 162 L448 170 Z" fill="#3a2824" opacity=".4"/>
-                    <path d="M0 206 C120 188 200 214 320 198 C460 180 540 208 640 192 L640 360 L0 360 Z" fill="url(#trail-ground)"/>
-                    <path d="M40 248 C160 236 220 260 340 246 C470 230 540 258 620 244" fill="none" stroke="#6a402c" stroke-width="3" opacity=".45"/>
-                    <path d="M70 268 C180 258 250 278 380 264 C500 250 560 274 630 262" fill="none" stroke="#f0d2a4" stroke-width="2" opacity=".28"/>
-                    <g opacity=".35" fill="#e7c49a">
-                      <ellipse cx="150" cy="232" rx="46" ry="8"/>
-                      <ellipse cx="250" cy="228" rx="28" ry="6"/>
-                    </g>
-                    <g transform="translate(156 214) scale(.62)">
-                      <use href="#spoke-wheel"/>
-                    </g>
-                    <g transform="translate(286 218) scale(.5)">
-                      <use href="#spoke-wheel"/>
-                    </g>
-                    <g fill="#6a4030" stroke="#3a2418" stroke-width="1.2">
-                      <path d="M96 196 L108 168 L292 174 L300 202 Z"/>
-                      <path d="M108 168 L292 174 L286 160 L118 154 Z" fill="#8a5840"/>
-                      <rect x="124" y="148" width="150" height="8" rx="1" fill="#5a3828"/>
-                    </g>
-                    <g transform="translate(172 216) scale(.92)">
-                      <use href="#spoke-wheel"/>
-                    </g>
-                    <g transform="translate(300 220) scale(.74)">
-                      <use href="#spoke-wheel"/>
-                    </g>
-                    <path d="M118 176 C118 118 168 96 214 94 C268 92 312 112 324 150 L312 168 C300 132 262 114 214 116 C168 118 140 140 136 176 Z" fill="url(#trail-canvas)" stroke="#6a5438" stroke-width="1.5"/>
-                    <g fill="none" stroke="#b89a74" stroke-width="1.3" opacity=".8">
-                      <path d="M150 168 Q154 124 176 112"/>
-                      <path d="M186 166 Q190 116 214 108"/>
-                      <path d="M226 166 Q232 116 252 112"/>
-                      <path d="M262 168 Q274 124 292 128"/>
-                    </g>
-                    <path d="M124 170 Q128 128 150 116 Q136 128 132 172" fill="#2a1c14" stroke="#f3ead8" stroke-width="2.4"/>
-                    <path d="M300 188 L392 196" stroke="#5a3828" stroke-width="4" stroke-linecap="round"/>
-                    <path d="M318 178 L360 168" stroke="#6a4030" stroke-width="3" stroke-linecap="round"/>
-                    <g fill="#4a3428" stroke="#2a1c14" stroke-width="1">
-                      <ellipse cx="430" cy="176" rx="34" ry="16"/>
-                      <ellipse cx="458" cy="168" rx="16" ry="12"/>
-                      <path d="M470 162 Q486 154 492 164 Q480 160 472 168 Z"/>
-                      <path d="M448 156 Q444 140 458 138" fill="none" stroke="#3a2418" stroke-width="2.2"/>
-                      <path d="M456 154 Q468 136 478 146" fill="none" stroke="#3a2418" stroke-width="2.2"/>
-                      <path d="M412 186 L404 214 M424 188 L420 216 M438 186 L446 214 M452 180 L460 210" stroke="#3a2418" stroke-width="3" stroke-linecap="round"/>
-                      <ellipse cx="398" cy="174" rx="10" ry="7"/>
-                    </g>
-                    <g fill="#5a4030" stroke="#2a1c14" stroke-width="1">
-                      <ellipse cx="508" cy="172" rx="36" ry="17"/>
-                      <ellipse cx="538" cy="164" rx="17" ry="12"/>
-                      <path d="M550 158 Q568 148 574 160 Q560 156 552 166 Z"/>
-                      <path d="M526 150 Q520 132 536 130" fill="none" stroke="#3a2418" stroke-width="2.2"/>
-                      <path d="M536 148 Q550 128 560 140" fill="none" stroke="#3a2418" stroke-width="2.2"/>
-                      <path d="M488 184 L478 214 M502 186 L498 216 M518 184 L526 214 M534 176 L544 208" stroke="#3a2418" stroke-width="3" stroke-linecap="round"/>
-                    </g>
-                    <path d="M448 162 H528" stroke="#c6a15a" stroke-width="3" stroke-linecap="round"/>
-                    <path d="M392 188 H430" stroke="#6a4030" stroke-width="3"/>
-                    <path d="M470 186 H500" stroke="#5a3828" stroke-width="3"/>
-                    <ellipse cx="200" cy="228" rx="54" ry="7" fill="#e8c89a" opacity=".28"/>
-                    </g>
-                  </svg>
+                <div class="bw-pic is-painted" data-pic="trail">
+                  <picture class="bw-wash">
+                    <source srcset="./assets/stations/trail.webp" type="image/webp">
+                    <img src="./assets/stations/trail.jpg" alt="" aria-hidden="true">
+                  </picture>
+                  <picture class="bw-frame">
+                    <source srcset="./assets/stations/trail.webp" type="image/webp">
+                    <img src="./assets/stations/trail.jpg" alt="">
+                  </picture>
                 </div>
-                <div class="bw-pic" data-pic="stack" hidden>
-                  <svg viewBox="0 0 480 820" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-                    <defs>
-                      <linearGradient id="stack-sky" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0" stop-color="#2a2438"/>
-                        <stop offset=".48" stop-color="#b24a38"/>
-                        <stop offset="1" stop-color="#e7a56c"/>
-                      </linearGradient>
-                      <linearGradient id="stack-hull" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0" stop-color="#8a5a40"/>
-                        <stop offset=".45" stop-color="#6a4034"/>
-                        <stop offset="1" stop-color="#3a2822"/>
-                      </linearGradient>
-                      <clipPath id="stack-bag">
-                        <ellipse cx="318" cy="92" rx="228" ry="46"/>
-                      </clipPath>
-                      <symbol id="prop" viewBox="-28 -28 56 56">
-                        <g fill="#e6d2b0" stroke="#5a4030" stroke-width="1">
-                          <path d="M0 -4 L4 -24 L-4 -24 Z"/>
-                          <path d="M0 4 L4 24 L-4 24 Z"/>
-                          <path d="M-4 0 L-24 4 L-24 -4 Z"/>
-                          <path d="M4 0 L24 4 L24 -4 Z"/>
-                        </g>
-                        <circle r="5" fill="#c6a15a" stroke="#6a4a28"/>
-                      </symbol>
-                    </defs>
-                    <rect width="480" height="820" fill="url(#stack-sky)"/>
-                    <circle cx="96" cy="78" r="34" fill="#fff1cc" opacity=".22"/>
-                    <circle cx="96" cy="78" r="14" fill="#ffe7b0"/>
-                    <ellipse cx="140" cy="520" rx="150" ry="36" fill="#f3c9a4" opacity=".45"/>
-                    <ellipse cx="320" cy="560" rx="200" ry="42" fill="#f6d7b4" opacity=".62"/>
-                    <ellipse cx="240" cy="620" rx="170" ry="30" fill="#e7b48a" opacity=".5"/>
-                    <g transform="translate(16 168) scale(0.7)">
-                    <ellipse cx="180" cy="250" rx="150" ry="28" fill="#f3c9a4" opacity=".55"/>
-                    <ellipse cx="430" cy="268" rx="180" ry="34" fill="#f6d7b4" opacity=".7"/>
-                    <ellipse cx="120" cy="286" rx="110" ry="18" fill="#e7b48a" opacity=".55"/>
-                    <g clip-path="url(#stack-bag)">
-                      <ellipse cx="318" cy="92" rx="228" ry="46" fill="#e7d3b0"/>
-                      <rect x="150" y="62" width="54" height="28" fill="#c4a15a"/>
-                      <rect x="214" y="78" width="46" height="22" fill="#8a3030"/>
-                      <rect x="270" y="58" width="62" height="26" fill="#3d5a58"/>
-                      <rect x="344" y="74" width="40" height="20" fill="#6a5430"/>
-                      <rect x="392" y="60" width="48" height="24" fill="#c45a48"/>
-                      <rect x="448" y="80" width="36" height="16" fill="#5a4068"/>
-                      <path d="M120 92 H520" stroke="#6a5438" stroke-width="1.2" opacity=".45"/>
-                      <path d="M160 70 H500 M140 110 H510" stroke="#8a7050" stroke-width="1" opacity=".35"/>
-                    </g>
-                    <ellipse cx="318" cy="92" rx="228" ry="46" fill="none" stroke="#5a4030" stroke-width="3"/>
-                    <ellipse cx="318" cy="92" rx="168" ry="40" fill="none" stroke="#c6a15a" stroke-width="2" opacity=".7"/>
-                    <ellipse cx="318" cy="92" rx="96" ry="32" fill="none" stroke="#c6a15a" stroke-width="1.6" opacity=".55"/>
-                    <g stroke="#c6a15a" stroke-width="1.4" fill="none" opacity=".9">
-                      <path d="M140 118 L168 168"/>
-                      <path d="M200 128 L214 166"/>
-                      <path d="M250 132 L248 164"/>
-                      <path d="M318 136 L318 160"/>
-                      <path d="M390 132 L400 166"/>
-                      <path d="M450 124 L430 164"/>
-                      <path d="M500 112 L470 158"/>
-                      <path d="M160 78 L176 168"/>
-                      <path d="M470 78 L448 162"/>
-                    </g>
-                    <path d="M148 162 C168 198 230 228 330 230 C450 228 510 196 552 156 L528 148 C470 162 250 158 168 150 Z" fill="url(#stack-hull)" stroke="#2a1c14" stroke-width="2"/>
-                    <path d="M176 166 C220 158 420 156 520 152" fill="none" stroke="#c6a15a" stroke-width="2"/>
-                    <path d="M210 188 C280 204 420 200 500 172" fill="none" stroke="#3a241c" stroke-width="3" opacity=".45"/>
-                    <path d="M292 224 L318 252 L344 224" fill="#2a1c14"/>
-                    <g fill="#9ec4d0" stroke="#c6a15a" stroke-width="2">
-                      <circle cx="240" cy="186" r="5"/>
-                      <circle cx="278" cy="192" r="5"/>
-                      <circle cx="318" cy="194" r="5"/>
-                      <circle cx="360" cy="190" r="5"/>
-                      <circle cx="402" cy="182" r="5"/>
-                    </g>
-                    <g fill="#5a4638" stroke="#2a1c14" stroke-width="1">
-                      <rect x="248" y="148" width="18" height="22" rx="1"/>
-                      <rect x="400" y="142" width="16" height="26" rx="1"/>
-                    </g>
-                    <g fill="#4a403c" opacity=".55">
-                      <ellipse cx="252" cy="132" rx="10" ry="6"/>
-                      <ellipse cx="236" cy="118" rx="14" ry="8"/>
-                      <ellipse cx="220" cy="104" rx="16" ry="8"/>
-                      <ellipse cx="404" cy="124" rx="9" ry="5"/>
-                      <ellipse cx="390" cy="110" rx="13" ry="7"/>
-                    </g>
-                    <path d="M528 158 L560 150 L548 166 Z" fill="#c6a15a"/>
-                    <path d="M150 170 L118 186 L156 184 Z" fill="#3a2822"/>
-                    <g transform="translate(108 186) scale(.7)">
-                      <use href="#prop"/>
-                    </g>
-                    <path d="M430 176 L430 196" stroke="#3a2822" stroke-width="3"/>
-                    <g transform="translate(430 210) scale(.85)">
-                      <use href="#prop"/>
-                    </g>
-                    <rect x="214" y="158" width="10" height="12" fill="#8a3030"/>
-                    <path d="M250 164 h28 v6 h-28z" fill="#6a5038" opacity=".7"/>
-                    <ellipse cx="520" cy="230" rx="70" ry="12" fill="#f6dcc0" opacity=".35"/>
-                    </g>
-                  </svg>
+                <div class="bw-pic is-painted" data-pic="stack" hidden>
+                  <picture class="bw-wash">
+                    <source srcset="./assets/stations/stack.webp" type="image/webp">
+                    <img src="./assets/stations/stack.jpg" alt="" aria-hidden="true">
+                  </picture>
+                  <picture class="bw-frame">
+                    <source srcset="./assets/stations/stack.webp" type="image/webp">
+                    <img src="./assets/stations/stack.jpg" alt="">
+                  </picture>
                 </div>
                 <div class="bw-pic" data-pic="oldman" hidden>
                   <svg viewBox="0 0 640 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
@@ -434,6 +258,6 @@
   </div>
   <div id="boot">Warming the tubes…</div>
 </div>
-<script type="module" src="./src/main.js?v=18"></script>
+<script type="module" src="./src/main.js?v=19"></script>
 </body>
 </html>
