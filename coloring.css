@@ -1,6 +1,7 @@
 /* Coloring Pages (builds on the I-Spy page styles in lab.css) */
 .cp-card-img{background:#fff}
 .cp-card-img img{object-fit:contain;padding:.3rem}
+.cp-editor{scroll-margin-top:6.5rem}
 .cp-editor[hidden]{display:none}
 .cp-hud{margin-top:1.4rem}
 .cp-title{font:400 1.35rem/1.1 "Special Elite",monospace;color:#f1e6cf;margin:0 .4rem}

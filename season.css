@@ -1,6 +1,31 @@
 /* Seasonal accents. season.js sets the month class on <html>.
    Overlays never take clicks and do not change layout. */
 
+.nav-share {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; margin-left: auto; padding: 0; cursor: pointer;
+  color: inherit; background: transparent; border: 1px solid rgba(228, 208, 164, .45); border-radius: 50%;
+}
+.nav-share svg { display: block; }
+.nav .pwa-home { margin-right: .35rem; }
+@media (max-width: 860px) {
+  .nav:has(.pwa-home) .pwa-home { margin-left: auto; }
+  .nav:has(.pwa-home) .nav-share { margin-left: 0; }
+}
+@media (min-width: 861px) {
+  .nav nav { margin-left: auto; }
+  .nav-share { margin-left: .4rem; order: 5; }
+}
+#link-toast {
+  position: fixed; left: 50%; top: 42%; z-index: 400; transform: translate(-50%, -50%);
+  min-width: min(18rem, 88vw); margin: 0; padding: 1.35rem 1.5rem; text-align: center;
+  background: #140c08; color: #fff6ea; border: 2px solid #ffc15e; border-radius: 14px;
+  font: 700 2rem/1.15 "Inter", system-ui, sans-serif; letter-spacing: .02em;
+  box-shadow: 0 24px 50px rgba(0, 0, 0, .45);
+  opacity: 0; pointer-events: none;
+}
+#link-toast.on { opacity: 1; }
+
 html.season-halloween .hero,
 html.season-thanksgiving .hero,
 html.season-christmas .hero {

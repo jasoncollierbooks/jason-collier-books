@@ -558,6 +558,8 @@ export function createHuman(spec) {
       api._keyOn = !!on;
       if (api.keyMesh) api.keyMesh.visible = api._keyOn;
     },
+    _sidearm: "rifle",
+    setSidearm(which) { api._sidearm = which === "revolver" ? "revolver" : "rifle"; },
   };
   if (assetsReady) dress(api, assetsReady);
   else {
@@ -565,6 +567,36 @@ export function createHuman(spec) {
     ensure();
   }
   return api;
+}
+
+function winchester() {
+  const g = new THREE.Group();
+  const wood = clothMat(0x6a4328, 0.62, "leather");
+  const steel = metalMat(0x9aa0a6, 0.28);
+  const stock = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.32, 0.055), wood);
+  stock.position.y = -0.22;
+  const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.014, 0.62, 6), steel);
+  barrel.position.y = 0.22;
+  const lever = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.08, 0.03), steel);
+  lever.position.set(0, -0.02, 0.03);
+  g.add(stock, barrel, lever);
+  return g;
+}
+
+function colt() {
+  const g = new THREE.Group();
+  const wood = clothMat(0x5a3824, 0.55, "leather");
+  const steel = metalMat(0x8e949c, 0.32);
+  const grip = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.1, 0.04), wood);
+  grip.position.y = -0.04;
+  const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.16, 6), steel);
+  barrel.rotation.x = Math.PI / 2;
+  barrel.position.set(0, 0.04, 0.08);
+  const cyl = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.04, 8), steel);
+  cyl.rotation.z = Math.PI / 2;
+  cyl.position.y = 0.03;
+  g.add(grip, barrel, cyl);
+  return g;
 }
 
 function dress(api, assets) {
@@ -594,6 +626,10 @@ function dress(api, assets) {
     if (/eyes/i.test(mesh.name)) {
       mesh.material.roughness = 0.25;
       mesh.material.metalness = 0.04;
+      if (spec.eyes) {
+        mesh.material.color.setHex(spec.eyes);
+        if (mesh.material.emissive) mesh.material.emissive.setHex(spec.eyes);
+      }
     }
   }
   const headBox = new THREE.Box3();
@@ -654,6 +690,18 @@ function dress(api, assets) {
   if (spec.mustache) {
     const m = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.018, 0.028), clothMat(spec.hair || 0x1c1612, 1));
     put(model, B("Head"), m, 0, crown - 0.16, faceZ + 0.02);
+  }
+  if (spec.beard) {
+    const beardM = clothMat(spec.beard, 0.95);
+    const jaw = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.055, 0.045), beardM);
+    put(model, B("Head"), jaw, 0, crown - 0.2, faceZ - 0.005);
+    const chin = new THREE.Mesh(new THREE.BoxGeometry(0.055, 0.05, 0.04), beardM);
+    put(model, B("Head"), chin, 0, crown - 0.245, faceZ + 0.008);
+  }
+  if (spec.scar) {
+    const scarM = new THREE.MeshStandardMaterial({ color: 0xf3f0ea, roughness: 0.42 });
+    const scar = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.11, 0.012), scarM);
+    put(model, B("Head"), scar, -0.046, crown - 0.17, faceZ + 0.018, 0.2, 0, 0.62);
   }
   if (spec.bandana) {
     const ban = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.05, 0.04), clothMat(0x6a2420, 0.8));
@@ -761,6 +809,19 @@ function dress(api, assets) {
     glow.position.y = 0.01;
     lamp.add(cage, glow);
     put(model, B("spine_01"), lamp, -0.18, 1.05, 0.16);
+  }
+  if (spec.rifle && B("spine_03")) {
+    const rifle = winchester();
+    put(model, B("spine_03"), rifle, -0.14, 0.22, -0.16, 1.05, 0.2, 0.62);
+    const revolver = colt();
+    put(model, B("pelvis") || B("spine_01"), revolver, 0.2, 0.92, 0.1, 0.5, 0.3, 1.15);
+    const apply = (which) => {
+      api._sidearm = which === "revolver" ? "revolver" : "rifle";
+      rifle.visible = api._sidearm !== "revolver";
+      revolver.visible = api._sidearm === "revolver";
+    };
+    api.setSidearm = apply;
+    apply(api._sidearm || "rifle");
   }
   model.updateMatrixWorld(true);
   const grip = new THREE.Vector3();

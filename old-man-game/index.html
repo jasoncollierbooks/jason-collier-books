@@ -42,6 +42,7 @@
   <div id="labels"></div>
   <div id="waypoint" class="waypoint"><i></i><span></span></div>
 
+  <a id="home-pin" class="home-pin" href="../index.html" aria-label="Home"><svg viewBox="0 0 24 24" aria-hidden="true" width="22" height="22"><path fill="currentColor" d="M12 3.2 3 11h2v9h5v-6h4v6h5v-9h2L12 3.2z"/></svg></a>
   <header id="hud" class="hud">
     <div class="row top">
       <div class="day" id="hudDay">DAY 1</div>
@@ -84,6 +85,15 @@
   </div>
 
   <div id="overlay" class="overlay hidden"><div class="overlay-card ui" id="overlayCard"></div></div>
+  <div id="leave" class="leave hidden" role="dialog" aria-modal="true" aria-labelledby="leave-q">
+    <div class="leave-card">
+      <p id="leave-q">Leave the game?</p>
+      <div class="leave-actions">
+        <button type="button" class="btn hot" id="leave-yes">Yes</button>
+        <button type="button" class="btn" id="leave-no">No</button>
+      </div>
+    </div>
+  </div>
   <div id="sheet" class="sheet hidden ui"></div>
   <div id="loading" class="loading"><p>Old Man on the Mountain</p><small id="loadMsg">Loading the mountain…</small><div class="loadtrack"><i id="loadBar"></i></div></div>
 </div>

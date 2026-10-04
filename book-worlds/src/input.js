@@ -4,7 +4,7 @@ export function createInput(root) {
   const pressed = {
     attack: false, dodge: false, jump: false, flash: false, magic: false, lock: false, use: false, potion: false,
     guard: false, devil: false, mend: false, special: false, cycle: false, recenter: false,
-    lasso: false, steam: false, pulse: false,
+    lasso: false, steam: false, pulse: false, firelight: false,
   };
   let guardPointer = false;
   const st = {
@@ -39,6 +39,8 @@ export function createInput(root) {
   swallow(document.getElementById("tutor"));
   swallow(document.getElementById("rotate-hint"));
   swallow(document.getElementById("abilities"));
+  swallow(document.getElementById("home-pin"));
+  swallow(document.getElementById("leave"));
   root.addEventListener("selectstart", (e) => e.preventDefault());
   root.addEventListener("gesturestart", (e) => { if (e.cancelable) e.preventDefault(); }, { passive: false });
   root.addEventListener("gesturechange", (e) => { if (e.cancelable) e.preventDefault(); }, { passive: false });
@@ -121,6 +123,7 @@ export function createInput(root) {
     if (k === "v") return "lasso";
     if (k === "x") return "steam";
     if (k === "z") return "pulse";
+    if (k === "h") return "firelight";
     return null;
   };
   window.addEventListener("keydown", (e) => {
