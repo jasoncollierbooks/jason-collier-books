@@ -427,3 +427,22 @@ document.querySelectorAll('.excerpt').forEach((ex, i) => {
   });
   addEventListener('resize', () => { if (desktop()) setMenu(false); });
 })();
+
+/* Station breaks live in commercials.js so the holiday script stays untouched. */
+(function () {
+  if (window.__jcCommercials) return;
+  window.__jcCommercials = 1;
+  var root = "";
+  var scripts = document.getElementsByTagName("script");
+  for (var i = 0; i < scripts.length; i++) {
+    var src = scripts[i].getAttribute("src") || "";
+    if (/(^|\/)main\.js(\?|$)/.test(src) && src.indexOf("old-man-game") === -1 && src.indexOf("book-worlds") === -1) {
+      root = src.replace(/main\.js(\?.*)?$/, "");
+      break;
+    }
+  }
+  var script = document.createElement("script");
+  script.src = root + "commercials.js";
+  script.defer = true;
+  document.head.appendChild(script);
+})();

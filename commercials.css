@@ -1,0 +1,316 @@
+/* Station-break overlay. The picture cuts away, then comes back.
+   Mobile first (a 390-wide screen). The same layout stretches on a desk. */
+
+html.jc-break-open,
+html.jc-break-open body {
+  overflow: hidden;
+}
+
+.jc-break {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  display: flex;
+  flex-direction: column;
+  background: #070604;
+  color: #f7f0e4;
+  font-family: "Josefin Sans", "Gill Sans", "Trebuchet MS", sans-serif;
+  overflow: hidden;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.jc-break-skip {
+  position: relative;
+  z-index: 5;
+  flex: none;
+  width: 100%;
+  min-height: 4.5rem;
+  padding: calc(.85rem + env(safe-area-inset-top, 0px)) 1rem .85rem;
+  border: 0;
+  border-bottom: 4px solid #1a1008;
+  background: #f3e6c8;
+  color: #24180f;
+  font: 700 1.45rem/1 "Josefin Sans", "Gill Sans", "Trebuchet MS", sans-serif;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.jc-break-skip:hover,
+.jc-break-skip:focus-visible {
+  background: #fff6e2;
+}
+
+.jc-break-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.jc-break-snow,
+.jc-break-photo,
+.jc-break-dial {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.jc-break-snow {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: auto;
+  filter: contrast(1.35);
+}
+
+.jc-break-photo {
+  object-fit: cover;
+  object-position: center 30%;
+  transform-origin: center center;
+}
+
+.jc-break.is-color .jc-break-photo {
+  filter: saturate(1.45) contrast(1.08) sepia(.16);
+  animation: jc-zoom 16s linear forwards;
+}
+
+.jc-break.is-pan .jc-break-photo {
+  filter: saturate(1.35) contrast(1.06) sepia(.08);
+  animation: jc-pan 16s linear forwards;
+}
+
+.jc-break.is-cool .jc-break-photo {
+  filter: saturate(1.25) contrast(1.12) hue-rotate(12deg);
+  animation: jc-zoom 16s linear forwards;
+}
+
+.jc-break.is-bw .jc-break-photo {
+  filter: grayscale(1) contrast(1.28) sepia(.28);
+  animation: jc-zoom 18s linear forwards;
+}
+
+.jc-break.is-brass .jc-break-photo {
+  filter: sepia(.45) saturate(1.3) contrast(1.08);
+  animation: jc-pan 16s linear forwards;
+}
+
+.jc-break-kids {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.jc-break-kids img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.3) contrast(1.05) sepia(.1);
+}
+
+.jc-break-scan,
+.jc-break-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.jc-break-scan {
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, .28) 0 1px,
+    transparent 1px 4px
+  );
+  opacity: .45;
+  mix-blend-mode: multiply;
+}
+
+.jc-break-vignette {
+  background:
+    radial-gradient(ellipse at center, transparent 42%, rgba(0, 0, 0, .45) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, .2), transparent 18%, transparent 58%, rgba(0, 0, 0, .78));
+}
+
+.jc-break-flicker {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: rgba(255, 244, 220, .05);
+  animation: jc-flicker 5.5s infinite;
+}
+
+.jc-break-card {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .35rem;
+  padding: 1.25rem 1rem 2rem;
+  text-align: center;
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba(90, 62, 36, .35), transparent 55%),
+    #100e0c;
+}
+
+.jc-break-card-kicker {
+  margin: 0;
+  font-family: "Pinyon Script", "Segoe Script", cursive;
+  font-size: clamp(2.1rem, 8vw, 3.4rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: #f7f0e4;
+}
+
+.jc-break-card-title {
+  margin: .2rem 0 0;
+  max-width: 16ch;
+  font-size: clamp(2.8rem, 12vw, 6rem);
+  font-weight: 600;
+  line-height: .88;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: #f3e6c8;
+  text-shadow: 0 .08em 0 #1a0c04;
+}
+
+.jc-break-copy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+  padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom, 0px));
+}
+
+.jc-break-title {
+  margin: 0;
+  font-size: clamp(2.7rem, 11vw, 6.2rem);
+  font-weight: 600;
+  line-height: .88;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  color: #fff8ec;
+  text-shadow:
+    0 .07em 0 #2a1408,
+    0 .16em .35em rgba(0, 0, 0, .65);
+}
+
+.jc-break-actions {
+  display: flex;
+  flex-direction: column;
+  gap: .65rem;
+}
+
+.jc-break-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 4.6rem;
+  padding: .9rem 1.1rem;
+  border-radius: 2px;
+  background: linear-gradient(135deg, #ff8a2a, #ff5a1f);
+  color: #140803;
+  font: 700 1.35rem/1.1 "Josefin Sans", "Gill Sans", "Trebuchet MS", sans-serif;
+  letter-spacing: .12em;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  box-shadow: 0 10px 28px -12px rgba(255, 110, 30, .85);
+}
+
+.jc-break-cta:hover,
+.jc-break-cta:focus-visible {
+  color: #140803;
+  filter: brightness(1.06);
+}
+
+.jc-break-dial {
+  background:
+    radial-gradient(ellipse at 50% 88%, rgba(255, 186, 90, .55), transparent 42%),
+    radial-gradient(ellipse at 50% 0%, rgba(90, 50, 20, .4), transparent 50%),
+    linear-gradient(180deg, #2a160c, #120c08 70%);
+}
+
+.jc-break-dial-face {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: min(78vw, 28rem);
+  height: min(42vw, 15rem);
+  transform: translate(-50%, -50%);
+  border-radius: 16rem 16rem 0 0;
+  background:
+    radial-gradient(ellipse at 50% 100%, #ffe7bc, #f0a04a 46%, #6a3412 100%);
+  box-shadow: inset 0 0 0 3px #e8c98a, 0 18px 40px rgba(0, 0, 0, .45);
+}
+
+.jc-break-dial-face::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 3px;
+  height: 78%;
+  background: #2a1408;
+  transform: translateX(-50%) rotate(-18deg);
+  transform-origin: bottom center;
+}
+
+@media (min-width: 800px) {
+  .jc-break-copy {
+    width: min(100%, 42rem);
+    margin: 0 auto;
+    padding-bottom: 2rem;
+  }
+
+  .jc-break-actions {
+    flex-direction: row;
+  }
+
+  .jc-break-cta {
+    flex: 1;
+  }
+
+  .jc-break-title {
+    font-size: clamp(3.4rem, 6vw, 6.4rem);
+  }
+}
+
+@keyframes jc-zoom {
+  from { transform: scale(1.02); }
+  to { transform: scale(1.14) translate3d(-1.5%, -2%, 0); }
+}
+
+@keyframes jc-pan {
+  from { transform: scale(1.1) translate3d(3.5%, 0, 0); }
+  to { transform: scale(1.1) translate3d(-3.5%, 0, 0); }
+}
+
+@keyframes jc-flicker {
+  0%, 92%, 100% { opacity: .18; }
+  94% { opacity: .55; }
+  96% { opacity: .12; }
+}
+
+.reduce-motion .jc-break-photo,
+.reduce-motion .jc-break-flicker,
+.jc-break.is-still .jc-break-photo,
+.jc-break.is-still .jc-break-flicker {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jc-break-photo,
+  .jc-break-flicker {
+    animation: none;
+  }
+}
