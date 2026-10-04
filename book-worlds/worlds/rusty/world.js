@@ -274,13 +274,13 @@ function buildHullMesh(low) {
   for (let i = 0; i < nz; i++) {
     pushTri(idx, keelAt(i), keelAt(i + 1), port(i + 1, 0));
     pushTri(idx, keelAt(i), port(i + 1, 0), port(i, 0));
-    pushTri(idx, keelAt(i), keelAt(i + 1), star(i + 1, 0));
-    pushTri(idx, keelAt(i), star(i + 1, 0), star(i, 0));
+    pushTri(idx, keelAt(i), star(i + 1, 0), keelAt(i + 1));
+    pushTri(idx, keelAt(i), star(i, 0), star(i + 1, 0));
     for (let s = 0; s < nv - 1; s++) {
       pushTri(idx, port(i, s), port(i + 1, s), port(i + 1, s + 1));
       pushTri(idx, port(i, s), port(i + 1, s + 1), port(i, s + 1));
-      pushTri(idx, star(i, s), star(i + 1, s), star(i + 1, s + 1));
-      pushTri(idx, star(i, s), star(i + 1, s + 1), star(i, s + 1));
+      pushTri(idx, star(i, s), star(i + 1, s + 1), star(i + 1, s));
+      pushTri(idx, star(i, s), star(i, s + 1), star(i + 1, s + 1));
     }
   }
   const hull = new THREE.BufferGeometry();
@@ -485,6 +485,10 @@ export function buildRustyWorld(scene, low) {
   const charRim = new THREE.DirectionalLight(0x9eb6dc, low ? 0.28 : 0.48);
   charRim.position.set(-6, 4, -5);
   scene.add(charRim, charRim.target);
+  const hullFill = new THREE.DirectionalLight(0xffc49a, low ? 0.45 : 0.7);
+  hullFill.position.set(-24, -1, 10);
+  hullFill.target.position.set(0, -2, 6);
+  scene.add(hullFill, hullFill.target);
 
   const skyMat = skyMaterial();
   const sky = new THREE.Mesh(new THREE.SphereGeometry(420, low ? 20 : 28, low ? 14 : 18), skyMat);
@@ -522,10 +526,12 @@ export function buildRustyWorld(scene, low) {
   scene.add(shipPivot);
 
   const hullBuilt = buildHullMesh(low);
-  const hullMap = planks.clone();
-  hullMap.repeat.set(2, 10);
+  const hullMap = plankTexture(low);
+  hullMap.repeat.set(3, 8);
+  hullMap.needsUpdate = true;
   const hullWood = new THREE.MeshStandardMaterial({
-    color: 0x6a4630, map: hullMap, roughness: 0.86, metalness: 0.06,
+    color: 0xffffff, map: hullMap, roughness: 0.84, metalness: 0.02,
+    emissive: 0x3a2218, emissiveIntensity: 0.22, side: THREE.DoubleSide,
   });
   const hull = new THREE.Mesh(hullBuilt.hull, hullWood);
   hull.castShadow = true;
@@ -648,7 +654,7 @@ export function buildRustyWorld(scene, low) {
     props.userData.blades.push(blades);
   };
   for (const s of [-1, 1]) {
-    const flank = hullSample(6.4, 0.58, s);
+    const flank = hullSample(6.4, 0.7, s);
     const tipX = flank.x + s * 2.85;
     const tipY = flank.y - 0.12;
     const arm = new THREE.Mesh(new THREE.BoxGeometry(2.85, 0.16, 0.2), dark);

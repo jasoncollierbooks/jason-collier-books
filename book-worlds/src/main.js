@@ -7,8 +7,8 @@ import { createNarration } from "./narration.js";
 import { createDialogue } from "./dialogue.js?v=3";
 import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass, GTAOPass, ShaderPass, FXAAPass } from "three/addons";
 import { buildWorld } from "./world.js?v=6";
-import { buildRustyWorld } from "../worlds/rusty/world.js?v=8";
-import { createRustySim } from "../worlds/rusty/sim.js?v=12";
+import { buildRustyWorld } from "../worlds/rusty/world.js?v=9";
+import { createRustySim } from "../worlds/rusty/sim.js?v=13";
 import { whenCastReady } from "./actors.js?v=6";
 import { theBlank } from "../bosses/index.js?v=7";
 
@@ -865,8 +865,8 @@ function frame(now) {
   document.body.classList.toggle("flyby", cinematic);
   if (world.setCinematic) world.setCinematic(cinematic);
   if (shot === "flyby") {
-    camPos.set(-14.2, -1.55, 3.2);
-    lookAt.set(0.35, -1.7, 6.2);
+    camPos.set(-17.5, -2.6, -8);
+    lookAt.set(1.6, -1.15, 12);
   } else if (flyby) {
     const pose = flyPose(flyby.t / flyby.dur);
     camPos.set(pose.x, pose.y, pose.z);
