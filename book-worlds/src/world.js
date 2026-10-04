@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { clamp, hash, lerp } from "./util.js";
-import { createCritter, softDot, trailKey } from "./rigs.js?v=2";
+import { createCritter, softDot, trailKey } from "./rigs.js?v=5";
 
 const windU = { uTime: { value: 0 } };
 
@@ -46,12 +46,18 @@ export function buildWorld(scene, low) {
   sun.shadow.camera.right = sun.shadow.camera.top = 22;
   sun.shadow.bias = -0.0004;
   sun.shadow.normalBias = 0.045;
-  sun.shadow.radius = low ? 1.4 : 3.2;
+  sun.shadow.radius = low ? 1.15 : 1.45;
   if ("blurSamples" in sun.shadow) sun.shadow.blurSamples = low ? 4 : 8;
   scene.add(sun, sun.target);
   const fill = new THREE.DirectionalLight(0xffe0b8, 0.22);
   fill.position.set(12, 8, 18);
   scene.add(fill);
+  const charKey = new THREE.DirectionalLight(0xfff0d4, low ? 0.55 : 0.85);
+  charKey.position.set(4, 7, 5);
+  scene.add(charKey, charKey.target);
+  const charRim = new THREE.DirectionalLight(0x9eb6dc, low ? 0.28 : 0.48);
+  charRim.position.set(-6, 4, -5);
+  scene.add(charRim, charRim.target);
 
   const skyMat = skyMaterial();
   const sky = new THREE.Mesh(new THREE.SphereGeometry(280, 32, 20), skyMat);
@@ -166,6 +172,12 @@ export function buildWorld(scene, low) {
       sun.position.set(focus.x - 16, 24, focus.z - 10);
       sun.target.position.set(focus.x, 0, focus.z);
       sun.target.updateMatrixWorld();
+      charKey.position.set(focus.x + 3.2, focus.y + 5.6, focus.z + 2.2);
+      charKey.target.position.set(focus.x, focus.y + 1.15, focus.z);
+      charKey.target.updateMatrixWorld();
+      charRim.position.set(focus.x - 3.4, focus.y + 3.4, focus.z - 2.6);
+      charRim.target.position.copy(charKey.target.position);
+      charRim.target.updateMatrixWorld();
       const fl = fire.userData;
       const flick = 0.85 + Math.sin(t * 11) * 0.12 + Math.sin(t * 23) * 0.06;
       fl.light.intensity = 9.2 * flick;
@@ -211,7 +223,7 @@ export function buildWorld(scene, low) {
     },
     setQuality(level) {
       const small = level === "low";
-      sun.shadow.mapSize.set(small ? 512 : 1024, small ? 512 : 1024);
+      sun.shadow.mapSize.set(small ? 512 : 2048, small ? 512 : 2048);
       if (sun.shadow.map) {
         sun.shadow.map.dispose();
         sun.shadow.map = null;
@@ -1211,7 +1223,7 @@ function loadRepeat(url, colorSpace) {
   const tex = new THREE.TextureLoader().load(url);
   tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
   tex.colorSpace = colorSpace ? THREE.SRGBColorSpace : THREE.NoColorSpace;
-  tex.anisotropy = 4;
+  tex.anisotropy = 8;
   return tex;
 }
 
@@ -1233,7 +1245,7 @@ function sandFromImage(img) {
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-  tex.anisotropy = 4;
+  tex.anisotropy = 8;
   tex.needsUpdate = true;
   return tex;
 }

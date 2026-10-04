@@ -1,16 +1,16 @@
 import * as THREE from "three";
 import { createAudio } from "./audio.js?v=2";
 import { createInput } from "./input.js?v=3";
-import { createSim } from "./sim.js?v=5";
+import { createSim } from "./sim.js?v=8";
 import { damp, clamp, springAngle, angDelta } from "./util.js";
 import { createNarration } from "./narration.js";
 import { createDialogue } from "./dialogue.js?v=3";
 import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass, GTAOPass, ShaderPass, FXAAPass } from "three/addons";
-import { buildWorld } from "./world.js?v=4";
-import { buildRustyWorld } from "../worlds/rusty/world.js?v=6";
-import { createRustySim } from "../worlds/rusty/sim.js?v=10";
-import { whenCastReady } from "./actors.js?v=4";
-import { theBlank } from "../bosses/index.js?v=5";
+import { buildWorld } from "./world.js?v=7";
+import { buildRustyWorld } from "../worlds/rusty/world.js?v=10";
+import { createRustySim } from "../worlds/rusty/sim.js?v=14";
+import { whenCastReady } from "./actors.js?v=7";
+import { theBlank } from "../bosses/index.js?v=8";
 
 const canvas = document.getElementById("view");
 const app = document.getElementById("app");
@@ -341,6 +341,48 @@ function showPage(id, n) {
   narrate.say("page-" + id);
 }
 
+let flyby = null;
+
+function helpOpen() {
+  const panel = document.getElementById("help");
+  return !!(panel && !panel.hidden);
+}
+
+function beginFlyby() {
+  if (worldKey !== "stack") return;
+  if (params.get("shot")) return;
+  flyby = { t: 0, dur: 7.4, arm: 0 };
+  input.enabled = false;
+}
+
+function endFlyby() {
+  if (!flyby) return;
+  flyby = null;
+  if (mode === "play") input.enabled = true;
+}
+
+function flyPose(k) {
+  const smooth = (x) => x * x * (3 - 2 * x);
+  const u = smooth(Math.max(0, Math.min(1, k)));
+  const pts = [
+    { x: -16, y: -0.7, z: 20, lx: 0.4, ly: -1.6, lz: 6 },
+    { x: -13.5, y: -1.7, z: 3, lx: 0.2, ly: -1.5, lz: 5 },
+    { x: -11, y: -0.9, z: -14, lx: 0, ly: -1.15, lz: 1 },
+    { x: -2.2, y: 2.35, z: -12.2, lx: 0.1, ly: 1.35, lz: -6 },
+  ];
+  const span = pts.length - 1;
+  const x = u * span;
+  const i = Math.min(span - 1, Math.floor(x));
+  const f = smooth(x - i);
+  const a = pts[i];
+  const b = pts[i + 1];
+  const mix = (p, q) => p + (q - p) * f;
+  return {
+    x: mix(a.x, b.x), y: mix(a.y, b.y), z: mix(a.z, b.z),
+    lx: mix(a.lx, b.lx), ly: mix(a.ly, b.ly), lz: mix(a.lz, b.lz),
+  };
+}
+
 function hideCard() {
   el.card.hidden = true;
   el.hub.hidden = true;
@@ -590,7 +632,15 @@ document.getElementById("dial-prev").addEventListener("click", () => setStation(
 document.getElementById("dial-next").addEventListener("click", () => setStation(station + 1, true));
 el.knob.addEventListener("click", () => setStation(station + 1, true));
 el.tune.addEventListener("click", () => tryTune());
+window.addEventListener("pointerdown", () => {
+  if (flyby && flyby.arm > 0.35 && !params.get("shot")) endFlyby();
+}, true);
+
 window.addEventListener("keydown", (e) => {
+  if (flyby && flyby.arm > 0.35 && !params.get("shot")) {
+    endFlyby();
+    return;
+  }
   if (e.key === "Escape" && mode === "play" && sim.teaching()) {
     e.preventDefault();
     sim.skipLesson();
@@ -616,6 +666,7 @@ el.btn.addEventListener("click", () => {
     camPitch = 0.42;
     sim.begin({ restore: !start });
     hideCard();
+    beginFlyby();
     if (sim.teaching()) {
       camYaw = 0;
       camPitch = 0.36;
@@ -651,6 +702,10 @@ if (wantStack && stackStarts.includes(start)) {
   else if (start === "brawl") sim.place(0, 18, 0);
   else if (start === "fort") sim.place(0, 48, 0);
   if (params.get("shot") === "crew" && sim.poseCrew) sim.poseCrew();
+  if ((params.get("shot") === "deck" || params.get("shot") === "flyby" || params.get("shot") === "swing") && sim.tuckExtras) {
+    sim.tuckExtras();
+  }
+  if (params.get("shot") === "swing" && sim.holdSwing) sim.holdSwing(1);
   hideCard();
   audio.unlock();
 } else if (wantStack) {
@@ -801,7 +856,29 @@ function frame(now) {
   const rightZ = Math.sin(camYaw);
   const shot = params.get("shot");
   shake = Math.max(0, shake - raw);
-  if (shot === "crew") {
+  if (flyby && !helpOpen()) {
+    flyby.arm += raw;
+    flyby.t += raw;
+    if (flyby.t >= flyby.dur) endFlyby();
+  }
+  const cinematic = shot === "flyby" || !!flyby;
+  document.body.classList.toggle("flyby", cinematic);
+  if (world.setCinematic) world.setCinematic(cinematic);
+  if (shot === "flyby") {
+    camPos.set(-17.5, -2.6, -8);
+    lookAt.set(1.6, -1.15, 12);
+  } else if (flyby) {
+    const pose = flyPose(flyby.t / flyby.dur);
+    camPos.set(pose.x, pose.y, pose.z);
+    lookAt.set(pose.lx, pose.ly, pose.lz);
+  } else if (shot === "deck") {
+    camPos.set(-2.8, 2.05, -4.6);
+    lookAt.set(-6.4, -3.6, 14);
+  } else if (shot === "swing" && snap) {
+    const y = snap.player.y;
+    camPos.set(snap.player.x - 2.55, y + 1.28, snap.player.z + 0.15);
+    lookAt.set(snap.player.x + 0.05, y + 1.12, snap.player.z + 0.55);
+  } else if (shot === "crew") {
     const y = snap.player.y;
     camPos.set(snap.player.x - 4.65, y + 1.7, snap.player.z);
     lookAt.set(snap.player.x, y + 0.82, snap.player.z);
@@ -820,9 +897,6 @@ function frame(now) {
       shotLight.target.position.set(0, 1.8, snap.boss.z);
       scene.add(shotLight, shotLight.target);
     }
-  } else if (shot === "deck") {
-    camPos.set(0.6, snap.player.y + 8.4, snap.player.z - 6.8);
-    lookAt.set(0, 2.1, snap.player.z + 18);
   } else {
     let dist = 5.05 + camPitch * 1.25;
     let lift = 1.62 + camPitch * 1.55;
@@ -895,6 +969,11 @@ function frame(now) {
     if (hurtFlash <= 0) el.hurt.classList.remove("on");
   }
   paintHud(snap);
+  if (flyby && flyby.arm > 0.35 && !helpOpen()) {
+    el.prompt.hidden = false;
+    el.prompt.classList.remove("is-react");
+    el.prompt.textContent = "Tap to skip";
+  }
   paintTutor(snap);
   const drain = snap.drain || 0;
   renderer.domElement.style.filter = drain > 0.02 ? `saturate(${(1 - drain * 0.94).toFixed(3)})` : "";
