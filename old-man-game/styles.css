@@ -107,6 +107,8 @@ body:not(.touch) .stick, body:not(.touch) .touchhint { display: none !important;
 .overlay-card h2 { font: 600 14px var(--ui); letter-spacing: 0.4em; color: var(--accent); margin: 0 0 12px; }
 .overlay-card p { font: 500 20px/1.35 var(--display); margin: 0 0 14px; }
 .overlay-card .small { font: 400 15px/1.5 var(--ui); letter-spacing: 0.08em; color: var(--muted); }
+.overlay-card .tip-line { margin: 12px 0 0; }
+.overlay-card .tip-line a { color: var(--accent); }
 .overlay-card .btn { margin: 6px; min-width: 150px; }
 .overlay-card img, .overlay-card canvas.card { width: 100%; max-height: 52vh; object-fit: cover; border: 1px solid rgba(255,255,255,0.15); display: block; margin: 0 auto 12px; }
 .ring { width: 120px; height: 120px; margin: 10px auto; }

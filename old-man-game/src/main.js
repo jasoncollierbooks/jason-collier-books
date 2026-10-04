@@ -1234,7 +1234,8 @@ function finish() {
       `<div class="title-bg" style="background-image:url(./assets/${S.elk.packed ? "truck" : S.ending === "broken" || S.ending === "kept" ? "walker" : "truck"}.jpg)"></div>
        <div style="position:relative"><h2>DAY ${Math.min(7, S.day)} · HARLAN WADE</h2><h1>${e.title}</h1><p>${e.text}</p>
        <p class="small">${carried.join(" · ")}<br>Nights on the mountain: ${S.stats.nights} · Times you saw it: ${S.stats.seen} · Held still: ${S.stats.stills}</p>
-       <button class="btn hot" id="eAgain">HUNT AGAIN</button></div>`,
+       <button class="btn hot" id="eAgain">HUNT AGAIN</button>
+       <p class="small tip-line">If the trail was worth it — <a href="https://venmo.com/u/Jason-Collier-40" target="_blank" rel="noopener noreferrer">tip the trail boss</a>.</p></div>`,
     );
     c.querySelector("#eAgain").onclick = () => { freshGame(); intro(); };
   }, 1200);

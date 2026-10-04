@@ -673,3 +673,10 @@ body.milestone-open{overflow:hidden}
 .milestone video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#000;border:1px solid rgba(255,193,94,.4);border-radius:4px;box-shadow:0 30px 80px -28px #000}
 .milestone-unmute{position:absolute;left:.8rem;bottom:.8rem}
 .milestone-skip{position:absolute;top:1rem;right:1rem;z-index:2}
+
+/* Venmo tip line under book and game endings */
+.tip-line{margin-top:1rem;font-size:.9rem;color:var(--muted)}
+.tip-line a{color:var(--fire2);text-underline-offset:.2em}
+.tip-line a:hover{color:var(--ink)}
+.book .buy + .tip-line{margin-top:.9rem}
+.book .tip-line + p,.book .tip-line + .review{margin-top:1.3rem}
