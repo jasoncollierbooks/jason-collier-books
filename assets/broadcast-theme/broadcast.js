@@ -453,7 +453,8 @@
         var src = ctx.createBufferSource();
         src.buffer = buffer;
         src.playbackRate.value = rate;
-        voices[slot].gain.setValueAtTime(vol, now);
+        try { voices[slot].gain.setValueAtTime(vol, now); }
+        catch (e2) { voices[slot].gain.value = vol; }
         src.connect(voices[slot]);
         src.start(now);
         voiceUntil[slot] = now + buffer.duration / rate;
@@ -469,7 +470,8 @@
         var src = ctx.createBufferSource();
         src.buffer = buffer;
         src.playbackRate.value = rate;
-        gainNode.gain.setValueAtTime(vol, t);
+        try { gainNode.gain.setValueAtTime(vol, t); }
+        catch (e2) { gainNode.gain.value = vol; }
         src.connect(gainNode);
         src.start(t);
         src.onended = function () { try { src.disconnect(); } catch (e) {} };
