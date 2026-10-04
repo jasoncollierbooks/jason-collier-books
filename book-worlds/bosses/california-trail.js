@@ -2,7 +2,7 @@
 // the bear from the hunt that turned on the hunters, waiting at the ford.
 import * as THREE from "three";
 import { damp } from "../src/util.js";
-import { makeDust, spinDust } from "../src/rigs.js";
+import { makeDust, spinDust } from "../src/rigs.js?v=2";
 
 export const boss = {
   id: "blank-bear",

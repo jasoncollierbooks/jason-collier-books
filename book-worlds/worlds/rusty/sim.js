@@ -1,10 +1,10 @@
 // Rusty Stack play. Same Keeper, Trail Key, and command combat as the wagon road.
 import * as THREE from "three";
 import { clamp, damp, dampAngle, hypot2 } from "../../src/util.js";
-import { heightAt } from "./world.js?v=4";
-import { createFog } from "../../src/rigs.js";
-import { createHuman } from "../../src/actors.js?v=3";
-import { boss as worldBoss } from "../../bosses/rusty-stack.js?v=3";
+import { heightAt } from "./world.js?v=5";
+import { createFog } from "../../src/rigs.js?v=2";
+import { createHuman } from "../../src/actors.js?v=4";
+import { boss as worldBoss } from "../../bosses/rusty-stack.js?v=5";
 
 const SAVE_KEY = "book-worlds-rusty-stack";
 const CLEAR_KEY = "book-worlds-world2-clear";
@@ -20,7 +20,7 @@ export function createRustySim(scene, world, audio) {
   const spacey = createHuman({
     cloth: 0x6d6a3e, cloth2: 0x4a3828, pants: 0x2c3034, boots: 0x5a3a24,
     hair: 0x3a2416, skin: 0xc49474, coat: 0x6b452c,
-    goggles: true, cigar: true, gloves: true, crossBelts: true, stubble: true, messy: true, ownHair: true,
+    goggles: true, cigar: true, gloves: true, crossBelts: true, stubble: true, messy: true, ownHair: true, spyglass: true,
     height: 1.08, bulk: 0.9, chest: 0.98, shoulder: 0.2,
   });
   const mira = createHuman({
@@ -72,6 +72,7 @@ export function createRustySim(scene, world, audio) {
   let stormAt = 12;
   let lastPrompt = null;
   let lastObjective = "Pages 0/5";
+  let posed = null;
   const scenes = {
     brawl: { on: false, wave: 0, done: false },
     city: { on: false, done: false },
@@ -570,6 +571,17 @@ export function createRustySim(scene, world, audio) {
   }
 
   function updateAllies(dt) {
+    if (posed) {
+      for (const a of allies) {
+        a.yaw = posed.yaw;
+        a.rig.root.position.set(a.x, heightAt(a.x, a.z), a.z);
+        a.rig.root.rotation.y = a.yaw;
+        a.rig.update(dt, {
+          speed: 0, air: false, action: "idle", actionT: 0, combo: 0, look: 0, hurt: 0, dodgeSide: 0,
+        });
+      }
+      return;
+    }
     for (const a of allies) {
       const fx = Math.sin(player.yaw);
       const fz = Math.cos(player.yaw);
@@ -1346,6 +1358,11 @@ export function createRustySim(scene, world, audio) {
     }
     player.x += player.vx * dt;
     player.z += player.vz * dt;
+    if (posed) {
+      player.x = posed.x;
+      player.z = posed.z;
+      player.vx = player.vz = 0;
+    }
     const resolved = world.resolve(player.x, player.z, 0.38, boss.alive && boss.active ? [{ x: boss.x, z: boss.z, r: 1.2 }] : null);
     player.x = resolved.x;
     player.z = resolved.z;
@@ -1369,6 +1386,7 @@ export function createRustySim(scene, world, audio) {
     } else if (moving && player.action !== "guard") {
       player.yaw = dampAngle(player.yaw, Math.atan2(player.vx, player.vz), 5, dt);
     }
+    if (posed) player.yaw = posed.yaw;
 
     if (player.action !== "idle" && player.action !== "guard") {
       player.actionT += dt / player.actionDur;
@@ -1617,6 +1635,23 @@ export function createRustySim(scene, world, audio) {
       allies[0].z = z - 1.4;
       allies[1].x = x + 1.2;
       allies[1].z = z - 1.2;
+    },
+    poseCrew() {
+      const z = -9.6;
+      posed = { x: 0, z, yaw: -Math.PI / 2 };
+      player.x = 0;
+      player.z = z;
+      player.y = heightAt(0, z);
+      player.yaw = posed.yaw;
+      player.vx = player.vz = player.vy = 0;
+      allies.forEach((a, i) => {
+        a.x = 0;
+        a.z = z + (i === 0 ? -0.7 : 0.7);
+        a.yaw = posed.yaw;
+      });
+    },
+    poseBoss() {
+      boss.yaw = Math.PI * 0.78;
     },
     wakeBoss() {
       scenes.fort.on = true;

@@ -12,7 +12,7 @@ Rigged humanoids are the Quaternius **Male Peasant** body and **Universal Base**
 - Head and parted hair: Universal Base Characters, https://quaternius.itch.io/universal-base-characters
 - Clips (idle, walk, jog, sprint, crouch, hit, death, and the gestures layered in code): Universal Animation Library, https://quaternius.itch.io/universal-animation-library
 
-Keeper’s duster, Jang’s waistcoat and bowler, Tom’s suspenders and wide hat, the brass key-saber, and the jump / attack / dodge poses are original to this project and sit on that CC0 skeleton. Nonimaginaires and the Blank Bear are original fog shaders and meshes.
+Keeper’s duster, Jang’s waistcoat and bowler, Tom’s suspenders and wide hat, the brass key-saber, and the jump / attack / dodge poses are original to this project and sit on that CC0 skeleton. The airship coats are shaped meshes (open front, collar, sleeves, split tails) skinned to those bones, with Poly Haven leather normals. Spacey’s goggles, belts, and spyglass, and Mira’s cap, coveralls, and hand wrench, are original. Nonimaginaires and the Blank Bear are original fog shaders and meshes.
 
 ## Narration
 
@@ -31,4 +31,4 @@ Total vendored texture set is well under 10 MB.
 
 ## The Rusty Stack
 
-World II reuses the same Quaternius rigs and Poly Haven textures. The airship, balloon patches, brass, cloud sea, garden city, fortress, fog crew, and the Blank Baron are original procedural geometry. There is no music on this station: the deck bed is synthesized steam, wind, hull creak, and ship noise. Companion lines live in `dialogue.json` (`world`: `rusty-stack`). Spacey and Mira speak them from `audio/voices/spacey/<id>.mp3` and `audio/voices/mira/<id>.mp3`. Announcer lines live in `worlds/rusty/announcer_script.json` and play from `audio/announcer/rusty/<id>.mp3`.
+World II reuses the same Quaternius rigs and Poly Haven textures. The airship, patched balloon and rope net, riveted stacks, wheelhouse, deck straps, cloud-sea planes, garden city, fortress, fog crew, and the Blank Baron are original procedural geometry. Deck, stack, balloon, and cloud images are generated canvases (512 on desktop, 256 on a phone) so the page does not ship extra texture files. Repeated rivets, straps, and rigging ropes are instanced. There is no music on this station: the deck bed is synthesized steam, wind, hull creak, and ship noise. Companion lines live in `dialogue.json` (`world`: `rusty-stack`). Spacey and Mira speak them from `audio/voices/spacey/<id>.mp3` and `audio/voices/mira/<id>.mp3`. Announcer lines live in `worlds/rusty/announcer_script.json` and play from `audio/announcer/rusty/<id>.mp3`.

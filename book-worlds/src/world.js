@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { clamp, hash, lerp } from "./util.js";
-import { createCritter, softDot, trailKey } from "./rigs.js";
+import { createCritter, softDot, trailKey } from "./rigs.js?v=2";
 
 const windU = { uTime: { value: 0 } };
 

@@ -1,6 +1,8 @@
 // Smooth capsule rigs. Environment stays faceted; people do not.
+// Standby figures wear the same coat, sleeve, and prop meshes as the skinned cast.
 import * as THREE from "three";
 import { damp } from "./util.js";
+import { dusterGeometry, collarGeometry, coatTailGeometry, sleeveGeometry, coverallGeometry, wrenchGroup, spyglassGroup, goggleRig } from "./costume.js?v=1";
 
 const mats = new Map();
 function M(hex, opts = {}) {
@@ -79,13 +81,24 @@ export function createHuman(spec) {
   body.add(vest);
 
   if (spec.coat) {
-    const coat = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.18, 0.34, 0.58, 16, 1, true, 0.45, Math.PI * 1.75),
-      M(spec.coat, { side: THREE.DoubleSide }),
-    );
-    coat.position.y = 0.86;
+    const coatM = M(spec.coat, { side: THREE.DoubleSide, unique: true });
+    const coat = new THREE.Mesh(dusterGeometry(), coatM);
     coat.castShadow = true;
     body.add(coat);
+    const collar = new THREE.Mesh(collarGeometry(), coatM);
+    collar.castShadow = true;
+    body.add(collar);
+    for (const s of [-1, 1]) {
+      const tail = new THREE.Mesh(coatTailGeometry(s), coatM);
+      tail.castShadow = true;
+      tail.userData.side = s;
+      body.add(tail);
+    }
+  }
+  if (spec.coverall) {
+    const shell = new THREE.Mesh(coverallGeometry(), M(spec.cloth, { side: THREE.DoubleSide, unique: true }));
+    shell.castShadow = true;
+    body.add(shell);
   }
 
   const belt = new THREE.Mesh(new THREE.CylinderGeometry(0.155, 0.155, 0.045, 10), M(0x2a2118));
@@ -119,6 +132,15 @@ export function createHuman(spec) {
     el.position.y = -0.28;
     sh.add(el);
     el.add(down(0.26, 0.042, spec.sleeves ? M(spec.sleeves) : cloth));
+    if (spec.coat || spec.coverall) {
+      const sleeveM = M(spec.coat || spec.sleeves || spec.cloth, { side: THREE.DoubleSide, unique: true });
+      const upperSleeve = new THREE.Mesh(sleeveGeometry(0.28), sleeveM);
+      upperSleeve.position.y = -0.16;
+      sh.add(upperSleeve);
+      const fore = new THREE.Mesh(sleeveGeometry(0.24), sleeveM);
+      fore.position.y = -0.14;
+      el.add(fore);
+    }
     const hand = new THREE.Group();
     hand.position.y = -0.26;
     el.add(hand);
@@ -181,6 +203,26 @@ export function createHuman(spec) {
   }
 
   let key = null;
+  if (spec.goggles) {
+    const brass = brassMat();
+    const glass = new THREE.MeshStandardMaterial({ color: 0x9ec8d4, roughness: 0.08, metalness: 0.2, transparent: true, opacity: 0.72 });
+    const g = goggleRig(brass, glass, M(0x3a2a22));
+    g.position.set(0, 0.2, 0.02);
+    g.rotation.x = -0.7;
+    neck.add(g);
+  }
+  if (spec.wrench) {
+    const wrench = wrenchGroup(brassMat());
+    wrench.position.set(0, -0.08, 0.03);
+    wrench.rotation.set(0.5, 0.2, 1.15);
+    RA.hand.add(wrench);
+  }
+  if (spec.spyglass) {
+    const glass = spyglassGroup(brassMat(), M(0x4a3428));
+    glass.position.set(0.16, 1.02, 0.1);
+    glass.rotation.set(0.2, 0, 1.2);
+    body.add(glass);
+  }
   if (spec.key) {
     key = trailKey();
     key.position.set(0.02, -0.02, 0.04);
@@ -396,11 +438,10 @@ export function trailKey() {
   const tooth2 = tooth.clone();
   tooth2.position.y = -0.13;
   tooth2.scale.x = 0.7;
-  const blade = new THREE.Mesh(new THREE.BoxGeometry(0.018, 0.78, 0.055), metal);
-  blade.position.y = -0.52;
-  blade.scale.z = 1;
-  const edge = new THREE.Mesh(new THREE.BoxGeometry(0.008, 0.7, 0.012), new THREE.MeshStandardMaterial({ color: 0xfff1c4, metalness: 0.4, roughness: 0.2, emissive: 0x6a4a20, emissiveIntensity: 0.4 }));
-  edge.position.set(0, -0.5, 0.03);
+  const blade = new THREE.Mesh(new THREE.BoxGeometry(0.022, 0.42, 0.07), metal);
+  blade.position.y = -0.3;
+  const edge = new THREE.Mesh(new THREE.BoxGeometry(0.008, 0.36, 0.016), new THREE.MeshStandardMaterial({ color: 0xfff1c4, metalness: 0.4, roughness: 0.2, emissive: 0x6a4a20, emissiveIntensity: 0.4 }));
+  edge.position.set(0, -0.28, 0.04);
   g.add(bow, shaft, tooth, tooth2, blade, edge);
   g.traverse((o) => { if (o.isMesh) o.castShadow = true; });
   return g;
