@@ -545,6 +545,7 @@ function showCard(spot) {
         E.walker.root.position.set(p.x, heightAt(p.x, p.z), p.z);
         E.walker.root.rotation.y = p.yaw;
         E.walker.root.visible = true;
+        E.walker.setLod?.(spec[0]);
         E.walker.animate("stand", 0, 3.3, f.kind === "face" ? 1 : 0.2);
         vis.push(E.walker.root);
       }
@@ -949,6 +950,7 @@ function updateSpot(dt) {
   E.walker.root.visible = true;
   E.walker.root.position.set(W.x, heightAt(W.x, W.z), W.z);
   E.walker.root.rotation.y = W.yaw + Math.PI;
+  E.walker.setLod?.(Math.hypot(W.x - P.x, W.z - P.z));
   E.walker.animate(looking ? "sniff" : "crouch", dt, t, G.isDark(S.minutes) || S.minutes > 17 * 60 ? 1 : 0.35);
   W.walkerNear = true;
   hud.fear(0.48 + Math.sin(t * 6.5) * 0.08);
@@ -969,6 +971,7 @@ function updateScare(dt) {
   E.walker.root.visible = true;
   E.walker.root.position.set(W.x, heightAt(W.x, W.z), W.z);
   E.walker.root.rotation.y = W.yaw + Math.PI;
+  E.walker.setLod?.(Math.hypot(W.x - P.x, W.z - P.z));
   E.walker.animate(k < 1 ? "run" : "reach", dt, T.now / 1000, 1);
   if (sc.t > 0.42 && !sc.stung) {
     sc.stung = true;
@@ -1128,6 +1131,7 @@ function updateWalker(dt) {
   if (visible) {
     E.walker.root.position.set(W.x, heightAt(W.x, W.z), W.z);
     E.walker.root.rotation.y = W.yaw + Math.PI;
+    E.walker.setLod?.(Math.hypot(W.x - P.x, W.z - P.z));
     E.walker.animate(anim, dt, t, eyes);
   }
 }
@@ -1159,6 +1163,7 @@ function updateChase(dt) {
   E.walker.root.visible = true;
   E.walker.root.position.set(W.x, heightAt(W.x, W.z), W.z);
   E.walker.root.rotation.y = W.yaw + Math.PI;
+  E.walker.setLod?.(d);
   E.walker.animate("run", dt, t, G.isDark(S.minutes) ? 1 : 0.6);
   C.step -= dt;
   if (C.step <= 0) { C.step = 0.42; X.heavyStep(panOf(W.x, W.z)); }
@@ -1212,6 +1217,7 @@ function updateHoldStill(dt) {
   E.walker.root.visible = true;
   E.walker.root.position.set(W.x, heightAt(W.x, W.z), W.z);
   E.walker.root.rotation.y = W.yaw + Math.PI;
+  E.walker.setLod?.(Math.hypot(W.x - P.x, W.z - P.z));
   E.walker.animate(W.stillT < 1.2 ? "sniff" : "crouch", dt, t, 0.9);
   if (Math.floor(W.stillT * 1.1) !== Math.floor((W.stillT - dt) * 1.1)) X.heavyStep(panOf(W.x, W.z));
   const ax = input.axes();
@@ -1269,6 +1275,7 @@ function updateAssault(dt) {
   E.walker.root.visible = true;
   E.walker.root.position.set(W.x, heightAt(W.x, W.z), W.z);
   E.walker.root.rotation.y = W.yaw + Math.PI;
+  E.walker.setLod?.(Math.hypot(W.x - P.x, W.z - P.z));
   E.walker.animate(A_.pinned > 0 ? "crouch" : "walk", dt, t, 1);
   W.walkerNear = true;
   hud.setWarn(A_.pinned > 0 ? "IT'S PINNED — SHOOT" : "IT'S COMING THROUGH — RIFLE", true);
@@ -1635,6 +1642,7 @@ function tick(now, dt, last) {
     E.walker.root.visible = true;
     E.walker.root.position.set(bx, heightAt(bx, bz), bz);
     E.walker.root.rotation.y = Math.atan2(P.x - bx, P.z - bz) + Math.PI;
+    E.walker.setLod?.(Math.hypot(bx - P.x, bz - P.z));
     E.walker.animate(window.__oldman.beastPose, dt, t, window.__oldman.beastEyes ?? 1);
   }
   updateViewLatch(dt, live);
@@ -2076,20 +2084,22 @@ function setupShot(kind) {
   window.__oldman.lockFp = true;
   const elkLine = "Cows on the meadow, heads up, all looking at the timber.";
   const signLine = "Long, narrow prints, no claw marks. The stride too even, almost measured. Not crossing your trail. Following it.";
-  if (kind === "harlan") {
+  if (kind === "harlan" || kind === "harlan2") {
     window.__oldman.tp("meadow", 8);
     fp.k = 1; fp.target = 1; fp.latched = true; fp.pitch = -0.12;
     window.__oldman.hideHands = false;
-  } else if (kind === "beast") {
-    window.__oldman.tp("meadow", 12);
-    window.__oldman.placeWalker(6.2, 0.35);
+  } else if (kind === "beast" || kind === "beast2" || kind === "beastclose") {
+    const close = kind === "beastclose";
+    const mid = kind === "beast2";
+    window.__oldman.tp("meadow", close || mid ? 18 : 12);
+    window.__oldman.placeWalker(close ? 4.2 : mid ? 13 : 6.2, close ? 0.15 : mid ? 0.05 : 0.35);
     window.__oldman.face(W.x, W.z);
     fp.k = 1; fp.target = 1; fp.latched = true;
-    fp.pitch = 0.04;
+    fp.pitch = close ? 0.11 : mid ? -0.04 : 0.04;
     window.__oldman.hideHands = true;
     window.__oldman.beastPose = "stand";
     window.__oldman.beastEyes = 1;
-    window.__oldman.clearFog = 0.002;
+    window.__oldman.clearFog = close ? 0.0035 : mid ? 0.012 : 0.002;
   } else if (kind === "elk") {
     window.__oldman.tp("meadow", 18);
     fp.k = 1; fp.target = 1; fp.latched = true; fp.pitch = -0.02;

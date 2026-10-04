@@ -1,55 +1,98 @@
 // The thing in the timber: a huge shaggy ape, more Bigfoot than tree.
-// Bark plates on the shoulders and forearms, a few moss strands, snags on the back and head.
+// Sculpted masses, fur shells, and hanging hair cards. Bark, moss, and a few snags stay minor.
 // Green eyes, fog around the legs. Creepy, not gory.
 import * as THREE from "three";
 
-function canvasTex(draw, w = 256, h = 256) {
+function canvasTex(draw, w = 256, h = 256, repeat = [1, 1]) {
   const c = document.createElement("canvas");
   c.width = w; c.height = h;
   draw(c.getContext("2d"), w, h);
   const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace;
   t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.repeat.set(repeat[0], repeat[1]);
   t.anisotropy = 4;
   return t;
 }
 
-function furMap() {
+function mulberry32(a) {
+  return function rnd() {
+    a |= 0; a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function furAlbedo() {
   return canvasTex((g, w, h) => {
-    g.fillStyle = "#24170f";
+    g.fillStyle = "#5a3c28";
     g.fillRect(0, 0, w, h);
-    for (let i = 0; i < 2400; i++) {
+    for (let i = 0; i < 5000; i++) {
       const x = Math.random() * w, y = Math.random() * h;
-      const dark = Math.random() > 0.42;
-      g.strokeStyle = dark ? (Math.random() > 0.5 ? "#0c0908" : "#1a100c") : "#4a301c";
+      const light = Math.random();
+      g.strokeStyle = light > 0.82 ? "#8d6844" : light > 0.4 ? "#3a2618" : "#140e0a";
       g.globalAlpha = 0.35 + Math.random() * 0.55;
-      g.lineWidth = dark ? 1.1 : 0.7;
+      g.lineWidth = 0.6 + Math.random() * 1.3;
       g.beginPath();
       g.moveTo(x, y);
-      g.lineTo(x + (Math.random() - 0.5) * 2.4, y + 6 + Math.random() * 16);
+      g.lineTo(x + (Math.random() - 0.5) * 2.2, y + 5 + Math.random() * 18);
       g.stroke();
     }
     g.globalAlpha = 1;
-  });
+  }, 512, 512, [2.2, 2.4]);
+}
+
+function strandMap() {
+  return canvasTex((g, w, h) => {
+    g.clearRect(0, 0, w, h);
+    for (let i = 0; i < 2400; i++) {
+      const x = Math.random() * w;
+      const y = Math.random() * h;
+      const len = 10 + Math.random() * 36;
+      const a = 0.35 + Math.random() * 0.65;
+      g.strokeStyle = `rgba(255,244,230,${a})`;
+      g.lineWidth = Math.random() > 0.75 ? 1.8 : 0.8;
+      g.beginPath();
+      g.moveTo(x, y);
+      g.quadraticCurveTo(x + (Math.random() - 0.5) * 6, y + len * 0.5, x + (Math.random() - 0.5) * 4, y + len);
+      g.stroke();
+    }
+  }, 512, 512, [3.5, 2.2]);
 }
 
 function barkMap() {
   return canvasTex((g, w, h) => {
     g.fillStyle = "#5c4030";
     g.fillRect(0, 0, w, h);
-    for (let i = 0; i < 28; i++) {
+    for (let i = 0; i < 32; i++) {
       g.strokeStyle = i % 3 ? "#3a2818" : "#7a5a40";
       g.lineWidth = 1 + Math.random() * 2.4;
       g.beginPath();
-      let x = (i / 28) * w + Math.random() * 6;
+      let x = (i / 32) * w;
       g.moveTo(x, 0);
-      for (let y = 0; y <= h; y += 12) {
-        x += (Math.random() - 0.5) * 6;
+      for (let y = 0; y <= h; y += 10) {
+        x += (Math.random() - 0.5) * 7;
         g.lineTo(x, y);
       }
       g.stroke();
     }
-  });
+  }, 256, 256);
+}
+
+function mossMap() {
+  return canvasTex((g, w, h) => {
+    g.clearRect(0, 0, w, h);
+    for (let i = 0; i < 80; i++) {
+      const x = w * 0.5 + (Math.random() - 0.5) * w * 0.7;
+      g.strokeStyle = Math.random() > 0.5 ? "rgba(90,120,60,0.85)" : "rgba(40,70,36,0.9)";
+      g.lineWidth = 1 + Math.random() * 2;
+      g.beginPath();
+      g.moveTo(x, 4);
+      g.quadraticCurveTo(x + (Math.random() - 0.5) * 16, h * 0.5, x + (Math.random() - 0.5) * 10, h - 2);
+      g.stroke();
+    }
+  }, 128, 256);
 }
 
 function fogMap() {
@@ -63,219 +106,316 @@ function fogMap() {
   }, 128, 128);
 }
 
-function bone(len, r0, r1, mat, sides = 12) {
-  const g = new THREE.CylinderGeometry(r1, r0, len, sides, 3, false);
-  g.translate(0, -len / 2, 0);
-  const m = new THREE.Mesh(g, mat);
-  m.castShadow = true;
+function lathe(pairs, segs = 22) {
+  const g = new THREE.LatheGeometry(pairs.map(([r, y]) => new THREE.Vector2(Math.max(0.004, r), y)), segs);
+  g.computeVertexNormals();
+  return g;
+}
+
+function solidMat(tex, color, rough = 0.94) {
+  const m = new THREE.MeshStandardMaterial({ map: tex || null, color, roughness: rough, metalness: 0 });
+  m.onBeforeCompile = (sh) => {
+    sh.fragmentShader = sh.fragmentShader.replace(
+      "#include <opaque_fragment>",
+      `#include <opaque_fragment>
+      float rim = pow(1.0 - clamp(dot(normalize(normal), normalize(vViewPosition)), 0.0, 1.0), 2.1);
+      gl_FragColor.rgb += rim * vec3(0.20, 0.14, 0.08);`,
+    );
+  };
+  m.customProgramCacheKey = () => "beast-solid-rim";
   return m;
 }
 
-function tufts(parent, n, len, mat, radius) {
-  for (let i = 0; i < n; i++) {
-    const a = Math.random() * Math.PI * 2;
-    const b = Math.acos(2 * Math.random() - 1);
-    const cone = new THREE.Mesh(new THREE.ConeGeometry(0.012 + Math.random() * 0.012, len * (0.6 + Math.random() * 0.7), 4), mat);
-    cone.castShadow = false;
-    const x = Math.sin(b) * Math.cos(a) * radius;
-    const y = Math.cos(b) * radius * 0.85;
-    const z = Math.sin(b) * Math.sin(a) * radius;
-    cone.position.set(x, y, z);
-    cone.lookAt(cone.position.clone().multiplyScalar(2));
-    cone.rotateX(Math.PI / 2);
-    parent.add(cone);
-  }
+function shellMat(map, color, offset, test) {
+  const droop = offset * 0.55;
+  const m = new THREE.MeshStandardMaterial({
+    map, color, roughness: 0.98, metalness: 0,
+    alphaTest: test, side: THREE.DoubleSide,
+  });
+  m.customProgramCacheKey = () => `beast-shell-${offset}-${test}`;
+  m.onBeforeCompile = (sh) => {
+    sh.vertexShader = sh.vertexShader.replace(
+      "#include <begin_vertex>",
+      `#include <begin_vertex>
+      transformed += normalize(objectNormal) * ${offset.toFixed(4)};
+      transformed.y -= ${droop.toFixed(4)};`,
+    );
+    sh.fragmentShader = sh.fragmentShader.replace(
+      "#include <opaque_fragment>",
+      `#include <opaque_fragment>
+      float rim = pow(1.0 - clamp(dot(normalize(normal), normalize(vViewPosition)), 0.0, 1.0), 1.8);
+      gl_FragColor.rgb += rim * vec3(0.32, 0.22, 0.12);`,
+    );
+  };
+  return m;
 }
 
-export function buildWalker() {
+function put(parent, geo, mat, x, y, z, rx = 0, ry = 0, rz = 0, sx = 1, sy = 1, sz = 1) {
+  const m = new THREE.Mesh(geo, mat);
+  m.position.set(x, y, z);
+  m.rotation.set(rx, ry, rz);
+  m.scale.set(sx, sy, sz);
+  m.castShadow = true;
+  m.receiveShadow = true;
+  parent.add(m);
+  return m;
+}
+
+function hairCard(w, len, mat) {
+  const g = new THREE.PlaneGeometry(w, len, 1, 3);
+  g.translate(0, -len / 2, 0);
+  const col = [];
+  const pos = g.attributes.position;
+  for (let i = 0; i < pos.count; i++) {
+    const k = THREE.MathUtils.clamp(-pos.getY(i) / len, 0, 1);
+    col.push(0.28 + k * 0.85, 0.18 + k * 0.55, 0.1 + k * 0.28);
+  }
+  g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+  const a = new THREE.Mesh(g, mat);
+  const b = new THREE.Mesh(g, mat);
+  b.rotation.y = Math.PI / 2;
+  const grp = new THREE.Group();
+  grp.add(a, b);
+  return grp;
+}
+
+export function buildWalker(lowEnd = false) {
+  const rnd = mulberry32(0x0b1f700d);
   const root = new THREE.Group();
   const body = new THREE.Group();
   root.add(body);
 
-  const furTex = furMap();
-  furTex.repeat.set(2.2, 3.2);
-  const fur = new THREE.MeshStandardMaterial({ map: furTex, color: 0x4a3220, roughness: 0.92, metalness: 0 });
-  fur.onBeforeCompile = (sh) => {
-    sh.fragmentShader = sh.fragmentShader.replace(
-      "#include <opaque_fragment>",
-      `#include <opaque_fragment>
-      float rim = pow(1.0 - clamp(dot(normalize(normal), normalize(vViewPosition)), 0.0, 1.0), 2.4);
-      gl_FragColor.rgb += rim * vec3(0.10, 0.07, 0.04);`,
-    );
-  };
-  const furDark = fur.clone();
-  furDark.color.setHex(0x1c140e);
-  const barkTex = barkMap();
-  const bark = new THREE.MeshStandardMaterial({ map: barkTex, color: 0x6a4a32, roughness: 1, metalness: 0 });
-  const moss = new THREE.MeshStandardMaterial({ color: 0x3e5c34, roughness: 1 });
-  const wood = new THREE.MeshStandardMaterial({ color: 0x3a2a1c, roughness: 0.9 });
+  const albedo = furAlbedo();
+  const strands = strandMap();
+  const fur = solidMat(albedo, 0xffffff, 0.96);
+  const furDark = solidMat(albedo, 0x9a8878, 0.98);
+  const leather = solidMat(null, 0x2a1c16, 0.62);
+  leather.metalness = 0.04;
+  const bark = new THREE.MeshStandardMaterial({ map: barkMap(), color: 0x6a4a32, roughness: 1, metalness: 0 });
+  const mossMat = new THREE.MeshStandardMaterial({
+    map: mossMap(), color: 0xc8d8b0, roughness: 1, alphaTest: 0.35, side: THREE.DoubleSide,
+  });
+  const wood = new THREE.MeshStandardMaterial({ color: 0x3a2a1c, roughness: 0.88 });
   const eyeMat = new THREE.MeshBasicMaterial({ color: 0xc6ff7a, transparent: true, opacity: 0, fog: false, depthWrite: false });
 
-  const H = 3.45;
+  const shellLevels = lowEnd
+    ? [
+      shellMat(strands, 0x3a2818, 0.045, 0.28),
+      shellMat(strands, 0x7a5a38, 0.095, 0.52),
+    ]
+    : [
+      shellMat(strands, 0x2e2016, 0.04, 0.22),
+      shellMat(strands, 0x5a4030, 0.09, 0.42),
+      shellMat(strands, 0x8d6844, 0.145, 0.6),
+    ];
+  const shellLists = shellLevels.map(() => []);
 
-  // thick legs, slightly bent, big feet. Face is -Z.
+  function grow(mesh) {
+    shellLevels.forEach((mat, i) => {
+      const s = new THREE.Mesh(mesh.geometry, mat);
+      s.castShadow = false;
+      s.receiveShadow = false;
+      mesh.add(s);
+      shellLists[i].push(s);
+    });
+  }
+
+  const H = 3.45;
+  const cards = [];
+  const snags = [];
+
+  function clump(parent, x, y, z, w, len, rx, rz, rankAmp) {
+    const c = hairCard(w, len, shellLevels[Math.min(1, shellLevels.length - 1)]);
+    c.position.set(x, y, z);
+    c.userData.rx = rx;
+    c.userData.rz = rz;
+    c.userData.amp = rankAmp;
+    c.userData.keep = len;
+    c.userData.ph = rnd() * Math.PI * 2;
+    c.rotation.set(rx, rnd() * 0.4, rz);
+    parent.add(c);
+    cards.push(c);
+    return c;
+  }
+
+  // ---- legs: thick, slightly bent, big flat feet. Local -Z is the face. ----
   const legs = [];
+  const thighGeo = lathe([[0.22, 0], [0.34, -0.16], [0.36, -0.4], [0.3, -0.68], [0.2, -0.9]], 20);
+  const shinGeo = lathe([[0.16, 0], [0.2, -0.16], [0.18, -0.4], [0.15, -0.62], [0.14, -0.78]], 18);
   for (const s of [-1, 1]) {
     const hip = new THREE.Group();
-    hip.position.set(s * 0.22, 1.72, 0.02);
-    hip.add(new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 10), fur));
-    const thigh = bone(0.78, 0.15, 0.12, fur, 14);
-    hip.add(thigh);
-    tufts(thigh, 8, 0.16, furDark, 0.14);
+    hip.position.set(s * 0.28, 1.74, 0.02);
+    const thigh = put(hip, thighGeo, fur, 0, 0, 0);
+    grow(thigh);
     const kn = new THREE.Group();
-    kn.position.y = -0.78;
+    kn.position.set(0, -0.9, 0);
     hip.add(kn);
-    kn.add(new THREE.Mesh(new THREE.SphereGeometry(0.1, 10, 8), furDark));
-    const shin = bone(0.74, 0.1, 0.08, furDark, 12);
-    kn.add(shin);
-    const foot = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 8), furDark);
-    foot.scale.set(0.85, 0.42, 2.15);
-    foot.position.set(s * 0.02, -0.78, -0.08);
-    kn.add(foot);
+    const cap = put(kn, new THREE.SphereGeometry(0.16, 16, 12), furDark, 0, 0, 0.02, 0, 0, 0, 1.15, 0.85, 1.05);
+    grow(cap);
+    const shin = put(kn, shinGeo, furDark, 0, 0, 0);
+    grow(shin);
+    const ankle = new THREE.Group();
+    ankle.position.set(0, -0.78, 0);
+    kn.add(ankle);
+    const foot = put(ankle, new THREE.CapsuleGeometry(0.11, 0.34, 6, 14), furDark, 0, -0.02, -0.02, Math.PI / 2, 0, 0, 1.55, 1.05, 0.42);
+    grow(foot);
+    for (let i = 0; i < 3; i++) {
+      clump(thigh, Math.sin(i * 2.1) * 0.22, -0.25 - i * 0.18, Math.cos(i * 1.7) * 0.2, 0.1, 0.28 + (i % 2) * 0.08, 0.2, s * 0.05, 0.07);
+    }
     body.add(hip);
-    legs.push({ hip, kn, side: s });
+    legs.push({ hip, kn, ankle, side: s });
   }
 
-  const pelvis = new THREE.Mesh(new THREE.SphereGeometry(0.28, 16, 12), fur);
-  pelvis.scale.set(1.35, 0.72, 0.95);
-  pelvis.position.set(0, 1.72, 0.02);
-  pelvis.castShadow = true;
-  body.add(pelvis);
+  // ---- barrel torso, gut forward, hump and traps high, head low ----
+  const pelvis = put(body, lathe([[0.2, -0.22], [0.46, -0.06], [0.5, 0.1], [0.36, 0.26]], 26), fur, 0, 1.78, 0.02, 0, 0, 0, 1.28, 1, 1.02);
+  grow(pelvis);
+  const gut = put(body, lathe([[0.22, -0.28], [0.48, -0.06], [0.56, 0.16], [0.4, 0.38], [0.24, 0.5]], 28), fur, 0, 2.12, -0.16, -0.42, 0, 0, 1.18, 1.05, 1.12);
+  grow(gut);
+  const chest = put(body, lathe([[0.26, -0.2], [0.48, 0.02], [0.54, 0.24], [0.4, 0.46], [0.24, 0.58]], 28), fur, 0, 2.42, -0.1, -0.5, 0, 0, 1.32, 1, 1.08);
+  grow(chest);
+  const hump = put(body, lathe([[0.16, -0.1], [0.38, 0.08], [0.34, 0.28], [0.16, 0.42]], 22), furDark, 0, 2.72, 0.16, 0.55, 0, 0, 1.25, 0.9, 0.95);
+  grow(hump);
 
-  const torso = bone(0.95, 0.34, 0.28, fur, 16);
-  torso.position.set(0, 2.48, 0.06);
-  torso.rotation.x = 0.28;
-  body.add(torso);
-  tufts(torso, 14, 0.22, furDark, 0.32);
-
-  const chest = new THREE.Mesh(new THREE.SphereGeometry(0.34, 16, 12), fur);
-  chest.scale.set(1.45, 0.85, 0.78);
-  chest.position.set(0, 2.22, -0.06);
-  chest.castShadow = true;
-  body.add(chest);
-
-  // bark plates on the shoulders
-  const shoulders = [];
+  const trapGeo = new THREE.CapsuleGeometry(0.26, 0.34, 8, 16);
   for (const s of [-1, 1]) {
-    const plate = new THREE.Mesh(new THREE.SphereGeometry(0.2, 10, 8), bark);
-    plate.scale.set(1.15, 0.55, 0.85);
-    plate.position.set(s * 0.38, 2.48, 0.02);
-    plate.rotation.z = s * 0.4;
+    const trap = put(body, trapGeo, fur, s * 0.4, 2.78, -0.02, -0.55, 0, s * 0.7, 1.15, 0.82, 1.05);
+    grow(trap);
+    const plate = put(body, new THREE.SphereGeometry(0.34, 16, 12, s > 0 ? 0.2 : -1.2, 1.3, 0.45, 1.1), bark, s * 0.52, 2.7, 0.02, 0.2, s * 0.4, s * 0.5, 0.7, 0.42, 0.55);
     plate.castShadow = true;
-    body.add(plate);
-    shoulders.push(plate);
-    const mossBit = new THREE.Mesh(new THREE.PlaneGeometry(0.16, 0.28), moss);
-    mossBit.position.set(s * 0.42, 2.62, -0.08);
-    mossBit.rotation.y = s * 0.8;
-    body.add(mossBit);
+    const moss = new THREE.Mesh(new THREE.PlaneGeometry(0.08, 0.42), mossMat);
+    moss.geometry.translate(0, -0.2, 0);
+    moss.position.set(s * 0.48, 2.62, -0.12);
+    moss.rotation.y = s * 0.8;
+    moss.userData.rx = moss.rotation.x;
+    moss.userData.rz = 0;
+    moss.userData.amp = 0.12;
+    moss.userData.keep = 0.5;
+    moss.userData.ph = rnd() * 6;
+    body.add(moss);
+    cards.push(moss);
   }
 
-  // snags off the upper back
-  const snags = [];
-  const snagRoot = new THREE.Group();
-  snagRoot.position.set(0, 2.35, 0.28);
-  body.add(snagRoot);
-  const sticks = [[0.05, 0.15, 0.02, 0.42, 0.4, -0.2], [-0.16, 0.05, 0.04, 0.28, -0.5, 0.6], [0.18, 0.02, 0.06, 0.22, 0.9, 0.3]];
-  for (const [x, y, z, len, rx, rz] of sticks) {
-    const st = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.028, len, 5), wood);
-    st.position.set(x, y, z);
-    st.rotation.set(rx, 0, rz);
-    snagRoot.add(st);
+  // snags on the back — absolute sway, they do not accumulate
+  const snagGeo = lathe([[0.012, 0], [0.028, 0.08], [0.016, 0.22], [0.006, 0.36]], 7);
+  const snagSpec = [[0.08, 2.85, 0.32, -0.5, 0.2], [-0.2, 2.55, 0.3, -0.2, -0.5], [0.22, 2.48, 0.26, 0.3, 0.7]];
+  for (const [x, y, z, rx, rz] of snagSpec) {
+    const st = put(body, snagGeo, wood, x, y, z, rx, 0, rz);
+    st.castShadow = false;
+    st.userData.rx = rx;
+    st.userData.rz = rz;
+    st.userData.ph = rnd() * 5;
     snags.push(st);
-    if (len > 0.3) {
-      const tw = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.014, 0.14, 4), wood);
-      tw.position.set(0, len * 0.2, 0);
-      tw.rotation.z = 0.9;
-      st.add(tw);
+    if (z > 0.28) {
+      const tw = put(st, lathe([[0.006, 0], [0.012, 0.04], [0.004, 0.14]], 5), wood, 0.02, 0.16, 0, 0.4, 0, 1.1);
+      tw.castShadow = false;
     }
   }
+  for (let i = 0; i < 7; i++) {
+    const a = -0.8 + i * 0.28;
+    clump(body, Math.sin(a) * 0.28, 2.55 + (i % 3) * 0.12, 0.22 + (i % 2) * 0.08, 0.14, 0.42 + (i % 3) * 0.08, 0.35, (i - 3) * 0.04, 0.1);
+  }
 
+  // ---- head, almost no neck, sitting low and forward ----
   const neck = new THREE.Group();
-  neck.position.set(0, 2.55, -0.08);
+  neck.position.set(0, 2.52, -0.2);
   body.add(neck);
-  const nk = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.14, 0.22, 12), fur);
-  nk.position.y = 0.12;
-  neck.add(nk);
+  const nk = put(neck, lathe([[0.16, 0], [0.2, 0.06], [0.15, 0.12]], 16), fur, 0, 0, -0.02);
+  grow(nk);
 
   const head = new THREE.Group();
-  head.position.set(0, 0.32, -0.02);
+  head.position.set(0, 0.16, -0.18);
   neck.add(head);
-  const skull = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 14), fur);
-  skull.scale.set(0.92, 1.05, 1.05);
-  skull.castShadow = true;
-  head.add(skull);
-  tufts(skull, 10, 0.14, furDark, 0.2);
-  const brow = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 8), furDark);
-  brow.scale.set(1.15, 0.38, 0.55);
-  brow.position.set(0, 0.06, -0.12);
-  head.add(brow);
-  const jaw = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 8), fur);
-  jaw.scale.set(0.9, 0.7, 0.85);
-  jaw.position.set(0, -0.12, -0.06);
-  head.add(jaw);
-  const muzzle = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 8), furDark);
-  muzzle.scale.set(1.1, 0.7, 1.2);
-  muzzle.position.set(0, -0.06, -0.18);
-  head.add(muzzle);
-  // head snag
-  const headSnag = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.02, 0.26, 5), wood);
-  headSnag.position.set(0.08, 0.16, 0.06);
-  headSnag.rotation.set(-0.4, 0, 0.5);
-  head.add(headSnag);
+  const skull = put(head, lathe([[0.08, -0.2], [0.18, -0.08], [0.22, 0.04], [0.18, 0.14], [0.09, 0.24]], 24), fur, 0, 0.02, 0.02, 0.12, 0, 0, 1.12, 0.96, 1.18);
+  grow(skull);
+  const jaw = put(head, lathe([[0.06, -0.08], [0.14, 0], [0.12, 0.08]], 16), furDark, 0, -0.12, -0.06, 0.2, 0, 0, 1.15, 0.8, 1);
+  const brow = put(head, new THREE.CapsuleGeometry(0.055, 0.24, 6, 12), furDark, 0, 0.05, -0.16, 0, 0, Math.PI / 2, 1, 1.35, 1.15);
+  const face = put(head, lathe([[0.03, -0.1], [0.1, -0.02], [0.11, 0.05], [0.05, 0.1]], 18), leather, 0, -0.02, -0.15, 0, 0, 0, 1.25, 1.05, 0.42);
+  face.castShadow = true;
+  const nose = put(head, new THREE.CapsuleGeometry(0.028, 0.02, 4, 10), leather, 0, -0.03, -0.2, Math.PI / 2, 0, 0, 1.5, 0.7, 0.55);
+  for (const s of [-1, 1]) {
+    put(head, new THREE.CapsuleGeometry(0.035, 0.02, 4, 8), furDark, s * 0.2, 0.02, 0, 0, 0, s * 0.4, 0.7, 1.1, 0.6);
+  }
+  const headSnag = put(head, lathe([[0.008, 0], [0.016, 0.06], [0.006, 0.2]], 5), wood, 0.1, 0.16, 0.06, -0.8, 0.2, 0.4);
+  headSnag.userData.rx = -0.8;
+  headSnag.userData.rz = 0.4;
+  headSnag.userData.ph = 1.2;
   snags.push(headSnag);
-  const headMoss = new THREE.Mesh(new THREE.PlaneGeometry(0.1, 0.16), moss);
-  headMoss.position.set(-0.1, 0.12, -0.08);
-  headMoss.rotation.y = -0.6;
-  head.add(headMoss);
+  for (let i = 0; i < 5; i++) {
+    const a = Math.PI * 0.2 + i * 0.55;
+    clump(head, Math.sin(a) * 0.16, 0.12, Math.cos(a) * 0.1, 0.07, 0.16 + (i % 2) * 0.05, 0.5, 0, 0.06);
+  }
+  const browFur = clump(head, 0, 0.07, -0.18, 0.16, 0.14, 0.9, 0, 0.04);
 
   const eyes = [];
   for (const s of [-1, 1]) {
-    const e = new THREE.Mesh(new THREE.SphereGeometry(0.028, 10, 8), eyeMat);
-    e.position.set(s * 0.07, 0.02, -0.175);
+    const e = new THREE.Mesh(new THREE.SphereGeometry(0.032, 12, 10), eyeMat);
+    e.position.set(s * 0.075, 0.0, -0.175);
+    e.renderOrder = 3;
     head.add(e);
     eyes.push(e);
-    const glow = new THREE.Sprite(new THREE.SpriteMaterial({ color: 0xc6ff7a, transparent: true, opacity: 0, depthWrite: false, fog: false, blending: THREE.AdditiveBlending }));
-    glow.scale.set(0.16, 0.16, 1);
-    glow.position.copy(e.position);
+    const glow = new THREE.Sprite(new THREE.SpriteMaterial({
+      color: 0xc6ff7a, transparent: true, opacity: 0, depthWrite: false, fog: false, blending: THREE.AdditiveBlending,
+    }));
+    glow.scale.set(0.2, 0.14, 1);
+    glow.position.set(s * 0.075, 0.0, -0.19);
+    glow.renderOrder = 4;
     head.add(glow);
     e.userData.glow = glow;
   }
+  // keep the brow fur in front of the skull shells but behind nothing important
+  browFur.renderOrder = 2;
 
+  // ---- long thick arms, hands to the knees, thick fingers ----
   const arms = [];
+  const upperGeo = lathe([[0.2, 0], [0.24, -0.16], [0.22, -0.42], [0.16, -0.8]], 18);
+  const foreGeo = lathe([[0.15, 0], [0.17, -0.18], [0.15, -0.4], [0.13, -0.72]], 16);
   for (const s of [-1, 1]) {
     const sh = new THREE.Group();
-    sh.position.set(s * 0.46, 2.42, 0.02);
-    sh.add(new THREE.Mesh(new THREE.SphereGeometry(0.13, 12, 10), fur));
-    const upper = bone(0.72, 0.12, 0.1, fur, 12);
-    sh.add(upper);
-    tufts(upper, 6, 0.16, furDark, 0.12);
+    sh.position.set(s * 0.62, 2.52, -0.02);
+    const shoulder = put(sh, new THREE.SphereGeometry(0.2, 16, 12), fur, 0, 0.02, 0, 0, 0, 0, 1.2, 0.9, 1);
+    grow(shoulder);
+    const upper = put(sh, upperGeo, fur, 0, 0, 0);
+    grow(upper);
+    for (let i = 0; i < 4; i++) {
+      clump(upper, Math.sin(i * 1.7 + s) * 0.16, -0.18 - i * 0.16, Math.cos(i * 1.4) * 0.14, 0.09, 0.34, 0.15, s * 0.08, 0.1);
+    }
     const el = new THREE.Group();
-    el.position.y = -0.72;
+    el.position.set(0, -0.8, 0);
     sh.add(el);
-    el.add(new THREE.Mesh(new THREE.SphereGeometry(0.08, 10, 8), furDark));
-    const fore = bone(0.78, 0.09, 0.07, fur, 12);
-    el.add(fore);
-    // bark on the forearm
-    const plate = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.28, 0.06), bark);
-    plate.position.set(s * 0.04, -0.28, -0.04);
-    plate.rotation.z = s * 0.15;
-    el.add(plate);
+    put(el, new THREE.SphereGeometry(0.13, 14, 10), furDark, 0, 0, 0, 0, 0, 0, 1.1, 0.9, 1);
+    const fore = put(el, foreGeo, fur, 0, 0, 0);
+    grow(fore);
+    const plate = put(el, new THREE.SphereGeometry(0.2, 12, 10, 0.4, 1.4, 0.5, 1.0), bark, s * 0.02, -0.28, -0.06, 0.3, 0, s * 0.2, 0.55, 0.7, 0.32);
+    plate.castShadow = true;
+    for (let i = 0; i < 3; i++) {
+      clump(fore, Math.sin(i * 2.2) * 0.12, -0.2 - i * 0.16, -0.06, 0.07, 0.26, 0.25, 0, 0.09);
+    }
     const hand = new THREE.Group();
-    hand.position.y = -0.78;
+    hand.position.set(0, -0.74, -0.02);
     el.add(hand);
-    const palm = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 8), furDark);
-    palm.scale.set(1.1, 0.7, 0.55);
-    hand.add(palm);
+    const palm = put(hand, new THREE.CapsuleGeometry(0.07, 0.08, 6, 12), furDark, 0, -0.02, 0, 0, 0, 0, 1.35, 0.85, 0.9);
+    grow(palm);
     for (let f = 0; f < 4; f++) {
-      const fg = bone(0.16 + (f === 1 || f === 2 ? 0.04 : 0), 0.018, 0.01, furDark, 6);
-      fg.position.set((f - 1.5) * 0.03, -0.08, -0.02);
-      fg.rotation.x = 0.25;
-      fg.rotation.z = (f - 1.5) * 0.08;
+      const fg = new THREE.Group();
+      const spread = (f - 1.5) * 0.042;
+      fg.position.set(spread, -0.08, s * -0.01);
+      const len = 0.12 + (f === 1 || f === 2 ? 0.035 : 0);
+      const prox = new THREE.Mesh(new THREE.CapsuleGeometry(0.024, len * 0.55, 4, 8), furDark);
+      prox.position.y = -len * 0.32;
+      fg.add(prox);
+      const mid = new THREE.Group();
+      mid.position.y = -len * 0.62;
+      mid.rotation.x = 0.35;
+      const tip = new THREE.Mesh(new THREE.CapsuleGeometry(0.02, len * 0.4, 4, 8), furDark);
+      tip.position.y = -len * 0.26;
+      mid.add(tip);
+      fg.add(mid);
+      fg.rotation.z = spread * 1.4;
       hand.add(fg);
     }
-    const thumb = bone(0.1, 0.02, 0.012, furDark, 5);
-    thumb.position.set(s * 0.06, -0.02, -0.02);
-    thumb.rotation.z = s * 1.1;
+    const thumb = new THREE.Mesh(new THREE.CapsuleGeometry(0.026, 0.09, 4, 8), furDark);
+    thumb.position.set(s * 0.09, -0.02, -0.02);
+    thumb.rotation.set(0.5, 0, s * 0.95);
     hand.add(thumb);
     body.add(sh);
     arms.push({ sh, el, side: s });
@@ -283,19 +423,38 @@ export function buildWalker() {
 
   const fogTex = fogMap();
   const fogs = [];
-  for (let i = 0; i < 7; i++) {
-    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: fogTex, transparent: true, depthWrite: false, opacity: 0.28, color: 0xd5d8dc }));
+  for (let i = 0; i < 6; i++) {
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: fogTex, transparent: true, depthWrite: false, opacity: 0.22, color: 0xd5d8dc }));
     sp.userData.noAO = true;
-    const ang = (i / 7) * Math.PI * 2;
-    sp.position.set(Math.cos(ang) * 0.55, 0.7 + (i % 3) * 0.45, Math.sin(ang) * 0.4);
-    sp.scale.set(1.15 + (i % 3) * 0.25, 0.7, 1);
+    const ang = (i / 6) * Math.PI * 2;
+    sp.position.set(Math.cos(ang) * 0.7, 0.55 + (i % 3) * 0.4, Math.sin(ang) * 0.45);
+    sp.scale.set(1.3 + (i % 3) * 0.3, 0.75, 1);
     root.add(sp);
     fogs.push(sp);
   }
 
-  let phase = Math.random() * 6;
+  cards.sort((a, b) => (b.userData.keep || 0) - (a.userData.keep || 0));
+
+  let phase = rnd() * 6;
+  let lodKey = -1;
+  function setLod(dist) {
+    const near = dist < 16;
+    const mid = dist < 42;
+    const shellsOn = near ? shellLevels.length : mid ? 1 : 0;
+    const cardCut = near ? (lowEnd ? 0.45 : 1) : mid ? (lowEnd ? 0 : 0.28) : 0;
+    const key = shellsOn * 16 + Math.round(cardCut * 20);
+    if (key === lodKey) return;
+    lodKey = key;
+    shellLists.forEach((list, i) => {
+      const vis = i < shellsOn;
+      for (const m of list) m.visible = vis;
+    });
+    cards.forEach((c, i) => { c.visible = cards.length ? (i + 0.5) / cards.length <= cardCut : false; });
+  }
+  setLod(lowEnd ? 20 : 8);
+
   return {
-    root, eyes, eyeMat, height: H,
+    root, eyes, eyeMat, height: H, setLod,
     /** mode: stand | walk | sniff | crouch | run | reach ; eyesOn 0..1 */
     animate(mode, dt, t, eyesOn = 0) {
       const sniff = mode === "sniff";
@@ -304,52 +463,64 @@ export function buildWalker() {
       const reach = mode === "reach";
       const walk = mode === "walk";
       const moving = walk || run || crouch;
-      const rate = run ? 2.55 : crouch ? 0.72 : walk ? 1.05 : 0;
+      const rate = run ? 2.35 : crouch ? 0.7 : walk ? 1.02 : 0;
       phase += dt * rate * Math.PI * 2;
-      // heavy, slightly asymmetric stride: the left foot reaches farther and lands late
       legs.forEach((l, i) => {
         const o = i === 0 ? 0 : Math.PI * 0.84;
-        const amp = (run ? 0.78 : crouch ? 0.32 : walk ? 0.46 : 0) * (i === 0 ? 1.12 : 0.88);
+        const amp = (run ? 0.62 : crouch ? 0.22 : walk ? 0.4 : 0) * (i === 0 ? 1.12 : 0.88);
         const s = Math.sin(phase + o);
-        l.hip.rotation.x = s * amp + (crouch ? 0.55 : 0.08);
-        l.hip.rotation.z = l.side * (0.08 + Math.abs(s) * 0.05);
-        l.kn.rotation.x = Math.max(0.05, -Math.cos(phase + o)) * amp * 1.2 + (crouch ? 0.85 : 0.12);
+        const hipX = 0.2 + s * amp + (crouch ? 0.45 : 0);
+        const knee = 0.4 + Math.max(0, -s) * amp * 1.15 + (crouch ? 0.7 : 0);
+        l.hip.rotation.x = hipX;
+        l.hip.rotation.z = l.side * (0.07 + Math.abs(s) * 0.04);
+        l.kn.rotation.x = -knee;
+        l.ankle.rotation.x = knee * 0.62 - hipX * 0.35;
       });
       arms.forEach((a, i) => {
-        const o = i === 0 ? Math.PI * 0.92 : 0.18;
+        const o = i === 0 ? Math.PI * 0.92 : 0.15;
         const s = Math.sin(phase + o);
-        const swing = run ? 0.72 : crouch ? 0.16 : walk ? 0.5 : sniff ? 0.08 : 0.04;
-        a.sh.rotation.x = 0.22 + s * swing + (reach ? -1.15 : crouch ? 0.55 : 0);
-        a.sh.rotation.z = a.side * (0.16 + (i === 0 ? 0.06 : 0)) + s * 0.05;
-        a.el.rotation.x = -0.55 - Math.max(0, s) * (run ? 0.45 : 0.28) + (reach ? -0.15 : 0);
+        const swing = run ? 0.62 : crouch ? 0.14 : walk ? 0.4 : sniff ? 0.07 : 0.035;
+        a.sh.rotation.x = 0.15 + s * swing * (i === 0 ? 1.1 : 0.86) + (reach ? 1.05 : crouch ? 0.42 : 0);
+        a.sh.rotation.z = a.side * (0.16 + (crouch ? 0.06 : 0));
+        a.el.rotation.x = 0.32 + Math.max(0, -s) * (run ? 0.35 : 0.18) + (reach ? 0.15 : 0);
       });
-      const roll = Math.sin(phase) * (run ? 0.1 : walk ? 0.07 : crouch ? 0.03 : 0);
-      body.rotation.z = roll + 0.045;
-      body.rotation.y = Math.sin(phase * 0.5) * (walk ? 0.04 : 0);
-      const breath = Math.sin(t * (run ? 3.4 : sniff ? 1.6 : 1.05));
-      body.rotation.x = (crouch ? 0.78 : run ? 0.42 : sniff ? 0.5 : reach ? 0.48 : 0.24) + breath * 0.02;
-      body.position.y = (crouch ? -0.48 : 0) + (moving ? Math.pow(Math.abs(Math.sin(phase)), 1.4) * (run ? 0.12 : 0.045) : breath * 0.012);
-      body.position.x = roll * 0.15;
-      // pauses, head turns, a sniff
+      const roll = Math.sin(phase) * (run ? 0.08 : walk ? 0.055 : crouch ? 0.025 : 0);
+      body.rotation.z = roll + 0.04;
+      body.rotation.y = Math.sin(phase * 0.5) * (walk ? 0.035 : 0);
+      const breath = Math.sin(t * (run ? 3.2 : sniff ? 1.5 : 1.02));
+      // negative x hunches the shoulders toward the face (-Z)
+      body.rotation.x = (crouch ? -0.58 : run ? -0.26 : sniff ? -0.2 : reach ? -0.16 : -0.06) + breath * 0.015;
+      body.position.y = (crouch ? -0.42 : 0) + (moving ? Math.pow(Math.abs(Math.sin(phase)), 1.35) * (run ? 0.1 : 0.04) : breath * 0.012);
+      body.position.x = roll * 0.12;
       const idle = !moving;
-      const sniffDip = sniff || (idle && Math.sin(t * 0.37) > 0.45);
-      neck.rotation.x = sniffDip ? 0.62 + Math.sin(t * 2.2) * 0.06 : crouch ? 0.28 : run ? -0.08 : 0.06;
-      neck.rotation.y = idle || sniff ? Math.sin(t * 0.31) * 0.55 : Math.sin(t * 0.45 + phase * 0.15) * 0.1;
-      neck.rotation.z = Math.sin(t * 0.19) * 0.07 - roll * 0.3;
-      chest.scale.y = 0.85 + breath * 0.04;
-      snags.forEach((st, i) => {
-        st.rotation.z += Math.sin(t * 1.3 + i) * 0.002;
-      });
-      const eye = eyesOn > 0.05 ? 0.25 + eyesOn * 0.75 : 0;
+      const sniffDip = sniff || (idle && Math.sin(t * 0.37) > 0.48);
+      neck.rotation.x = sniffDip ? -0.5 + Math.sin(t * 2.1) * 0.05 : crouch ? -0.22 : run ? 0.06 : -0.04;
+      neck.rotation.y = idle || sniff ? Math.sin(t * 0.31) * 0.5 : Math.sin(t * 0.4 + phase * 0.12) * 0.08;
+      neck.rotation.z = Math.sin(t * 0.19) * 0.06 - roll * 0.25;
+      chest.scale.y = 1 + breath * 0.03;
+      const swayK = run ? 2.1 : moving ? 1.25 : 0.65;
+      for (const c of cards) {
+        if (!c.visible) continue;
+        const u = c.userData;
+        const w = Math.sin(t * 1.55 * (run ? 1.7 : 1) + u.ph) * u.amp * swayK;
+        c.rotation.x = u.rx + w;
+        c.rotation.z = (u.rz || 0) + Math.cos(t * 1.15 + u.ph) * u.amp * 0.6;
+      }
+      for (const st of snags) {
+        const u = st.userData;
+        st.rotation.x = u.rx + Math.sin(t * 1.25 + u.ph) * 0.05;
+        st.rotation.z = u.rz + Math.cos(t * 1.05 + u.ph) * 0.06;
+      }
+      const eye = eyesOn > 0.05 ? 0.35 + eyesOn * 0.65 : 0;
       eyeMat.opacity = eye;
-      for (const e of eyes) if (e.userData.glow) e.userData.glow.material.opacity = eye * 0.85;
+      for (const e of eyes) if (e.userData.glow) e.userData.glow.material.opacity = eye * 0.9;
       fogs.forEach((sp, i) => {
         const a = t * 0.15 + i;
-        const rad = 0.45 + (i % 3) * 0.18;
+        const rad = 0.55 + (i % 3) * 0.2;
         sp.position.x = Math.cos(a + i) * rad;
-        sp.position.z = Math.sin(a * 0.8 + i) * rad * 0.75;
-        sp.position.y = 0.45 + (i % 4) * 0.38 + Math.sin(t * 0.6 + i) * 0.08;
-        sp.material.opacity = 0.1 + (i % 3) * 0.04 + Math.sin(t * 0.8 + i) * 0.03;
+        sp.position.z = Math.sin(a * 0.8 + i) * rad * 0.7;
+        sp.position.y = 0.4 + (i % 4) * 0.45 + Math.sin(t * 0.6 + i) * 0.08;
+        sp.material.opacity = 0.08 + (i % 3) * 0.035 + Math.sin(t * 0.8 + i) * 0.02;
       });
     },
   };

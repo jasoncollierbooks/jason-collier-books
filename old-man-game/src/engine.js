@@ -423,7 +423,7 @@ export function createEngine(canvas) {
     scene.add(c.root);
     return c;
   });
-  const walker = buildWalker();
+  const walker = buildWalker(lowEnd);
   walker.root.visible = false;
   scene.add(walker.root);
 
