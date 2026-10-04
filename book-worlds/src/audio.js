@@ -335,11 +335,102 @@ export function createAudio() {
     tone(310, 0.22, 0.05, "sawtooth");
   }
 
+  let pulseGain = null;
+  let pulseTimer = null;
+
+  function ensurePulseBed() {
+    const audio = context();
+    if (!audio || !started) return;
+    muteMusic();
+    if (windGain) windGain.gain.value = 0;
+    if (stackGain) stackGain.gain.value = 0;
+    if (!pulseGain) {
+      pulseGain = audio.createGain();
+      pulseGain.connect(bedGain || master);
+      const hum = audio.createOscillator();
+      hum.type = "sine";
+      hum.frequency.value = 62;
+      const humG = audio.createGain();
+      humG.gain.value = 0.045;
+      const humLfo = audio.createOscillator();
+      humLfo.frequency.value = 0.07;
+      const humLfoG = audio.createGain();
+      humLfoG.gain.value = 8;
+      humLfo.connect(humLfoG);
+      humLfoG.connect(hum.frequency);
+      hum.connect(humG);
+      humG.connect(pulseGain);
+      hum.start();
+      humLfo.start();
+
+      const ship = audio.createBufferSource();
+      ship.buffer = noise(3);
+      ship.loop = true;
+      const shipFilter = audio.createBiquadFilter();
+      shipFilter.type = "lowpass";
+      shipFilter.frequency.value = 420;
+      const shipG = audio.createGain();
+      shipG.gain.value = 0.04;
+      ship.connect(shipFilter);
+      shipFilter.connect(shipG);
+      shipG.connect(pulseGain);
+      ship.start();
+
+      const air = audio.createBufferSource();
+      air.buffer = noise(2);
+      air.loop = true;
+      const airFilter = audio.createBiquadFilter();
+      airFilter.type = "highpass";
+      airFilter.frequency.value = 2400;
+      const airG = audio.createGain();
+      airG.gain.value = 0.012;
+      air.connect(airFilter);
+      airFilter.connect(airG);
+      airG.connect(pulseGain);
+      air.start();
+    }
+    pulseGain.gain.value = 1;
+    if (pulseTimer) return;
+    const tick = () => {
+      if (!ctx || !pulseGain) {
+        pulseTimer = null;
+        return;
+      }
+      if (bedName === "pulse") {
+        const t = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(48, t);
+        osc.frequency.linearRampToValueAtTime(54, t + 1.6);
+        osc.frequency.linearRampToValueAtTime(47, t + 3.2);
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.03, t);
+        g.gain.linearRampToValueAtTime(0.001, t + 3.2);
+        osc.connect(g);
+        g.connect(pulseGain);
+        osc.start(t);
+        osc.stop(t + 3.3);
+        if (Math.random() < 0.45) {
+          burst({ dur: 0.18, freq: 3200, type: "highpass", gain: 0.05, q: 0.4 });
+        }
+        if (Math.random() < 0.25) tone(880, 0.05, 0.03, "square");
+      }
+      pulseTimer = window.setTimeout(tick, 3200);
+    };
+    tick();
+  }
+
   function applyBed() {
     if (!started) return;
-    if (bedName === "stack") ensureStackBed();
-    else {
+    if (bedName === "stack") {
+      if (pulseGain) pulseGain.gain.value = 0;
+      ensureStackBed();
+    } else if (bedName === "pulse") {
       if (stackGain) stackGain.gain.value = 0;
+      ensurePulseBed();
+    } else {
+      if (stackGain) stackGain.gain.value = 0;
+      if (pulseGain) pulseGain.gain.value = 0;
       if (windGain) windGain.gain.value = 0.045;
       ensureWind();
       ensureMusic();
@@ -640,7 +731,7 @@ export function createAudio() {
     },
     setTension(v) { tension = v; },
     setBed(name) {
-      bedName = name === "stack" ? "stack" : "trail";
+      bedName = name === "stack" ? "stack" : name === "pulse" ? "pulse" : "trail";
       applyBed();
     },
     bed() { return bedName; },
@@ -649,6 +740,9 @@ export function createAudio() {
     squawk() { playSquawk(); },
     clank() { playClank(); },
     swing() { burst({ dur: 0.09, freq: 900, type: "highpass", gain: 0.12, q: 0.6 }); },
+    whip() { burst({ dur: 0.16, freq: 1400, type: "bandpass", gain: 0.14, q: 1.4, from: 420, to: 180 }); },
+    hiss() { burst({ dur: 0.28, freq: 2200, type: "highpass", gain: 0.1, q: 0.5 }); },
+    pulse() { burst({ dur: 0.42, freq: 90, type: "lowpass", gain: 0.28, from: 140, to: 40 }); },
     hit() { burst({ dur: 0.1, freq: 180, type: "lowpass", gain: 0.28, from: 220, to: 70 }); },
     hurt() { burst({ dur: 0.16, freq: 140, type: "lowpass", gain: 0.22, from: 180, to: 60 }); },
     flash() { burst({ dur: 0.28, freq: 1400, type: "bandpass", gain: 0.16, q: 4, from: 660, to: 1320 }); },

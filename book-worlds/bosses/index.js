@@ -5,11 +5,13 @@
 //   create() -> { root, update(dt, {moving, state, hit}) }
 import { boss as californiaTrail } from "./california-trail.js?v=5";
 import { boss as rustyStack } from "./rusty-stack.js?v=8";
+import { boss as firstPulse } from "./first-pulse.js?v=1";
 export { theBlank } from "./the-blank.js";
 
 const bosses = {
   "california-trail": californiaTrail,
   "rusty-stack": rustyStack,
+  "first-pulse": firstPulse,
 };
 
 // theBlank is the final boss of the whole game, not a world boss. Do not add it here.

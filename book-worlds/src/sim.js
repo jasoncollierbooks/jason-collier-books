@@ -4,6 +4,9 @@ import { halfWidth, heightAt } from "./world.js?v=7";
 import { createFog, handbillMesh } from "./rigs.js?v=5";
 import { createHuman } from "./actors.js?v=7";
 import { bossFor } from "../bosses/index.js?v=8";
+import { createAbilities } from "./abilities.js?v=1";
+
+const abilities = createAbilities();
 
 const worldBoss = bossFor("california-trail");
 
@@ -276,6 +279,8 @@ export function createSim(scene, world, audio) {
       if (e.kind === "boss") {
         audio.roar();
         flags.won = true;
+        abilities.unlock("lasso");
+        events.push({ type: "ability", id: "lasso" });
         armExit();
         events.push({ type: "bossDead" });
         speak("jang-win");
@@ -1023,6 +1028,13 @@ export function createSim(scene, world, audio) {
     if (edge.devil) startDevil();
     if (edge.mend) startMend();
     if (edge.special) startTeam();
+    if (edge.lasso || edge.steam || edge.pulse) {
+      const id = edge.pulse ? "pulse" : edge.steam ? "steam" : "lasso";
+      abilities.cast(id, {
+        player, living, damageEnemy, events, audio,
+        resolve: (x, z, r) => world.resolve(x, z, r),
+      });
+    }
     const held = input.held ? input.held() : { guard: false };
     if (held.guard && player.grounded && player.action !== "attack" && player.action !== "dodge" && player.action !== "team" && player.action !== "flash") {
       if (player.action !== "guard") {

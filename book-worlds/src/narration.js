@@ -1,5 +1,6 @@
 // Announcer bulletins. Trail lines live in narration.json.
 // The Rusty Stack pack lives in worlds/rusty/announcer_script.json.
+// The First Pulse announcer lines live in worlds/pulse/voices.json.
 // A matching mp3 plays when present. One line at a time.
 // Captions run even if sound is still locked. The pack is snapshotted
 // when say() is called so a station change cannot rewrite a line in flight.
@@ -23,13 +24,24 @@ export function createNarration(audio) {
     return "Special bulletin";
   }
 
-  function loadPack(url) {
+  function kickerPulse(id) {
+    if (id.startsWith("page-")) return "Story page";
+    if (id === "restored") return "Station 3";
+    if (id === "blank-next") return "Dead air";
+    return "Special bulletin";
+  }
+
+  function loadPack(url, speaker) {
     const lines = new Map();
     const ready = fetch(new URL(url, import.meta.url))
       .then((res) => (res.ok ? res.json() : []))
       .then((rows) => {
         const list = Array.isArray(rows) ? rows : [];
-        for (const row of list) if (row && row.id && row.text) lines.set(row.id, row.text);
+        for (const row of list) {
+          if (!row || !row.id || !row.text) continue;
+          if (speaker && row.speaker !== speaker) continue;
+          lines.set(row.id, row.text);
+        }
       })
       .catch(() => {});
     return { lines, ready };
@@ -45,6 +57,11 @@ export function createNarration(audio) {
       ...loadPack("../worlds/rusty/announcer_script.json"),
       clip(id) { return `../audio/announcer/rusty/${id}.mp3`; },
       kicker: kickerStack,
+    },
+    pulse: {
+      ...loadPack("../worlds/pulse/voices.json", "announcer"),
+      clip(id) { return `../audio/announcer/pulse/${id}.mp3`; },
+      kicker: kickerPulse,
     },
   };
 

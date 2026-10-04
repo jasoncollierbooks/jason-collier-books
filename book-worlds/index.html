@@ -5,19 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#100e0c">
 <title>Book Worlds | Jason Collier</title>
-<meta name="description" content="Book Worlds. Nonimaginaires are leaking through the broadcast. Tune the parlor cabinet to the California Trail or the Rusty Stack.">
+<meta name="description" content="Book Worlds. Nonimaginaires are leaking through the broadcast. Tune the parlor cabinet to the California Trail, the Rusty Stack, or The First Pulse.">
 <link rel="canonical" href="https://jasoncollierbooks.github.io/jason-collier-books/book-worlds/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Jason Collier Books">
 <meta property="og:title" content="Book Worlds | Jason Collier">
-<meta property="og:description" content="Tune the cabinet. Brain fogs are eating the stories. The California Trail and the Rusty Stack are on the air.">
+<meta property="og:description" content="Tune the cabinet. Brain fogs are eating the stories. The California Trail, the Rusty Stack, and The First Pulse are on the air.">
 <meta property="og:url" content="https://jasoncollierbooks.github.io/jason-collier-books/book-worlds/">
 <meta property="og:image" content="https://jasoncollierbooks.github.io/jason-collier-books/assets/broadcast-theme/og-broadcast.jpg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23100e0c'/%3E%3Ccircle cx='8' cy='8' r='3.2' fill='none' stroke='%23e4d0a4' stroke-width='1.2'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Josefin+Sans:wght@400;600&family=Pinyon+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./styles.css?v=6">
+<link rel="stylesheet" href="./styles.css?v=7">
 <script type="importmap">{ "imports": { "three": "../old-man-game/vendor/three.min.js", "three/addons": "../old-man-game/vendor/three-addons.min.js" } }</script>
 </head>
 <body>
@@ -58,6 +58,7 @@
 
   <nav id="cmd" class="ui" aria-label="Command menu"></nav>
 
+  <div id="abilities" hidden></div>
   <div id="gauges" aria-hidden="true">
     <svg viewBox="0 0 150 150">
       <circle cx="62" cy="88" r="40" class="ring track"></circle>
@@ -102,8 +103,9 @@
     <p>Drag the right side to look.</p>
     <p>ATTACK, MAGIC, JUMP, DODGE, GUARD.</p>
     <p>COMMANDS menu.</p>
+    <p>LASSO, STEAM, and PULSE when you have them.</p>
     </div>
-    <p id="help-keys">Move with WASD or the left stick. Attack swings the Trail Key. Space jumps. Shift dodges. G guards. Q casts magic. F is the lantern, or the reaction when it flashes. E or Enter uses what is in front of you. 1 is a tonic. 2 dust devil. 3 trail mend. 4 wagon toss. L locks on.</p>
+    <p id="help-keys">Move with WASD or the left stick. Attack swings the Trail Key. Space jumps. Shift dodges. G guards. Q casts magic. F is the lantern, or the reaction when it flashes. E or Enter uses what is in front of you. 1 is a tonic. 2 dust devil. 3 trail mend. 4 wagon toss. L locks on. V is lasso. X is steam. Z is pulse.</p>
     <button type="button" id="help-dismiss">Got it</button>
   </div>
   <div id="floats"></div>
@@ -125,7 +127,7 @@
     <button type="button" data-act="potion">Potion</button>
     <button type="button" data-act="use">Use</button>
   </div>
-  <p id="keys" hidden>WASD move · J attack · Space jump · Shift dodge · G guard · C camera behind · Q magic · F lantern or reaction · E or Enter use · 1 tonic · 2 dust devil · 3 trail mend · 4 wagon toss · L lock · [ ] menu · M confirm</p>
+  <p id="keys" hidden>WASD move · J attack · Space jump · Shift dodge · G guard · C camera behind · Q magic · F lantern or reaction · E or Enter use · 1 tonic · 2 dust devil · 3 trail mend · 4 wagon toss · L lock · V lasso · X steam · Z pulse · [ ] menu · M confirm</p>
 
   <div id="hub">
     <div class="bw-parlor" aria-hidden="true"></div>
@@ -169,18 +171,15 @@
                     <path d="M470 300 L510 220 L548 300 Z" fill="#1a2820"/>
                   </svg>
                 </div>
-                <div class="bw-pic" data-pic="pulse" hidden>
-                  <svg viewBox="0 0 640 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-                    <rect width="640" height="360" fill="#100e16"/>
-                    <g fill="#f4ecdf">
-                      <circle cx="80" cy="60" r="1.4"/><circle cx="160" cy="40" r="1.1"/><circle cx="240" cy="90" r="1.6"/>
-                      <circle cx="420" cy="50" r="1.2"/><circle cx="520" cy="80" r="1.5"/><circle cx="300" cy="36" r="1"/>
-                      <circle cx="100" cy="160" r="1.2"/><circle cx="560" cy="150" r="1.3"/><circle cx="380" cy="200" r="1"/>
-                      <circle cx="48" cy="240" r="1.4"/><circle cx="600" cy="250" r="1.1"/><circle cx="200" cy="280" r="1.2"/>
-                    </g>
-                    <ellipse cx="320" cy="180" rx="90" ry="28" fill="none" stroke="#e4d0a4" stroke-width="3" opacity=".8"/>
-                    <circle cx="320" cy="180" r="6" fill="#f7f0e4"/>
-                  </svg>
+                <div class="bw-pic is-painted" data-pic="pulse" hidden>
+                  <picture class="bw-wash">
+                    <source srcset="./assets/stations/pulse.webp" type="image/webp">
+                    <img src="./assets/stations/pulse.jpg" alt="" aria-hidden="true">
+                  </picture>
+                  <picture class="bw-frame">
+                    <source srcset="./assets/stations/pulse.webp" type="image/webp">
+                    <img src="./assets/stations/pulse.jpg" alt="A research ship and a radio dish against a gold pulse in deep space">
+                  </picture>
                 </div>
                 <div class="bw-snow" aria-hidden="true"></div>
                 <div class="bw-bars" aria-hidden="true"></div>
@@ -258,6 +257,6 @@
   </div>
   <div id="boot">Warming the tubes…</div>
 </div>
-<script type="module" src="./src/main.js?v=19"></script>
+<script type="module" src="./src/main.js?v=20"></script>
 </body>
 </html>

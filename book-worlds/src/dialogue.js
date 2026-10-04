@@ -2,21 +2,30 @@
 // A matching mp3 at audio/voices/<speaker>/<id>.mp3 plays when present.
 // Subtitles stay off unless the player asks, except when the clip is missing.
 // A new bark replaces the one already playing. It waits if the announcer is mid-line.
-const NAMES = { jang: "Jang", tom: "Tom", spacey: "Spacey", mira: "Mira" };
+const NAMES = { jang: "Jang", tom: "Tom", spacey: "Spacey", mira: "Mira", listener: "Listener", pilot: "Pilot" };
 const VOICE_REV = "3";
 
 export function createDialogue(audio) {
   const rows = new Map();
   let scope = "california-trail";
   let epoch = 0;
-  const ready = fetch(new URL("../dialogue.json", import.meta.url))
-    .then((res) => (res.ok ? res.json() : []))
-    .then((list) => {
-      const rowsIn = Array.isArray(list) ? list : [];
-      for (const row of rowsIn) if (row && row.id && row.text) rows.set(row.id, row);
-      if (audio && audio.warm) audio.warm([...rows.values()].map((row) => clipUrl(row)));
-    })
-    .catch(() => {});
+  function take(list) {
+    const rowsIn = Array.isArray(list) ? list : [];
+    for (const row of rowsIn) {
+      if (!row || !row.id || !row.text || !row.speaker) continue;
+      if (row.speaker === "announcer") continue;
+      if (!row.world && (row.speaker === "listener" || row.speaker === "pilot")) row.world = "first-pulse";
+      rows.set(row.id, row);
+    }
+  }
+  const ready = Promise.all([
+    fetch(new URL("../dialogue.json", import.meta.url)).then((res) => (res.ok ? res.json() : [])).catch(() => []),
+    fetch(new URL("../worlds/pulse/voices.json", import.meta.url)).then((res) => (res.ok ? res.json() : [])).catch(() => []),
+  ]).then(([base, pulse]) => {
+    take(base);
+    take(pulse);
+    if (audio && audio.warm) audio.warm([...rows.values()].map((row) => clipUrl(row)));
+  });
 
   let token = 0;
   let active = null;

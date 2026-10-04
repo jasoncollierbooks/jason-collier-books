@@ -351,7 +351,12 @@ body.broadcast-lite .bw-script {
   text-transform: none;
   letter-spacing: 0;
 }
-body.broadcast-lite .bw-card img { background: #100e0c; object-position: center 40%; }
+body.broadcast-lite .bw-card img {
+  background: #100e0c;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  object-position: center center;
+}
 
 /* Footer */
 body.broadcast-lite footer {

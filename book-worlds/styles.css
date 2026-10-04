@@ -231,7 +231,38 @@ body.flyby #settings-btn,
 body.flyby #bossbar,
 body.flyby #reticle,
 body.flyby #interact,
+body.flyby #abilities,
 body.flyby #floats { display: none !important; }
+#abilities {
+  display: none;
+  position: absolute;
+  left: calc(12px + env(safe-area-inset-left));
+  top: var(--hud-clear, 210px);
+  z-index: 7;
+  gap: 8px;
+  flex-wrap: wrap;
+  max-width: min(28rem, calc(100% - 24px));
+  pointer-events: auto;
+}
+body.playing #abilities:not([hidden]) { display: flex; }
+#abilities button {
+  min-height: 52px;
+  padding: 0 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(228, 208, 164, .72);
+  background: rgba(16, 12, 8, .66);
+  color: #f6edd8;
+  font-family: var(--ui);
+  font-size: 16px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+body.touch #abilities button {
+  min-height: 64px;
+  font-size: 18px;
+  padding: 0 18px;
+}
+#abilities button.is-dry { opacity: .42; }
 #letterbox { display: none; pointer-events: none; }
 body.flyby #letterbox { display: block; }
 #letterbox span {
