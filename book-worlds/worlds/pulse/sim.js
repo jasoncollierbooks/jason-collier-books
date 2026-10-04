@@ -4,7 +4,7 @@ import { clamp, damp, dampAngle, hypot2 } from "../../src/util.js";
 import { heightAt } from "./world.js?v=1";
 import { createFog } from "../../src/rigs.js?v=2";
 import { createHuman } from "../../src/actors.js?v=4";
-import { boss as worldBoss } from "../../bosses/first-pulse.js?v=1";
+import { boss as worldBoss } from "../../bosses/first-pulse.js?v=2";
 import { createAbilities } from "../../src/abilities.js?v=1";
 
 const SAVE_KEY = "book-worlds-first-pulse";

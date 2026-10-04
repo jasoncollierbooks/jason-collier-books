@@ -10,10 +10,10 @@ import { buildWorld } from "./world.js?v=7";
 import { buildRustyWorld } from "../worlds/rusty/world.js?v=10";
 import { createRustySim } from "../worlds/rusty/sim.js?v=15";
 import { buildPulseWorld } from "../worlds/pulse/world.js?v=1";
-import { createPulseSim } from "../worlds/pulse/sim.js?v=1";
+import { createPulseSim } from "../worlds/pulse/sim.js?v=2";
 import { createAbilities } from "./abilities.js?v=1";
 import { whenCastReady } from "./actors.js?v=7";
-import { theBlank } from "../bosses/index.js?v=9";
+import { theBlank } from "../bosses/index.js?v=10";
 
 const canvas = document.getElementById("view");
 const app = document.getElementById("app");
@@ -793,13 +793,9 @@ if (wantPulse) station = 2;
 if (wantPulse && pulseStarts.includes(start)) {
   enterWorld("pulse");
   if (start === "boss" || start === "wave") {
-    if (params.get("shot") === "boss") {
-      sim.place(0, 78, 0);
-      if (sim.poseBoss) sim.poseBoss();
-    } else {
-      sim.place(0, 74, 0);
-      sim.wakeBoss();
-    }
+    sim.place(0, params.get("shot") === "boss" ? 76 : 74, 0);
+    sim.wakeBoss();
+    if (sim.poseBoss) sim.poseBoss();
   } else if (start === "dish") sim.place(0, 26, 0);
   else if (start === "bridge") sim.place(0, 50, 0);
   else if (start === "light") sim.place(0, 8, 0);

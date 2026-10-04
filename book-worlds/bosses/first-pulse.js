@@ -68,7 +68,10 @@ function create() {
   const rig = new THREE.Group();
   root.add(rig);
 
-  const hide = new THREE.MeshStandardMaterial({ color: 0x1a1c22, roughness: 0.72, metalness: 0.18 });
+  const hide = new THREE.MeshStandardMaterial({
+    color: 0x8d939c, roughness: 0.62, metalness: 0.22,
+    emissive: 0x2a3038, emissiveIntensity: 0.45,
+  });
   const brass = new THREE.MeshStandardMaterial({
     color: 0xc6a15a, roughness: 0.35, metalness: 0.62, emissive: 0x3a2a10, emissiveIntensity: 0.35,
   });
@@ -117,7 +120,7 @@ function create() {
   head.position.y = 2.2;
   rig.add(wrap, head);
 
-  const dust = makeDust(48, 1.6);
+  const dust = makeDust(48, 0xd7e4f2, 1.6);
   dust.position.y = 1.3;
   rig.add(dust);
 
