@@ -653,25 +653,21 @@ export function buildRustyWorld(scene, low) {
     props.userData.blades = props.userData.blades || [];
     props.userData.blades.push(blades);
   };
-  for (const s of [-1, 1]) {
-    const flank = hullSample(6.4, 0.7, s);
-    const tipX = flank.x + s * 2.85;
-    const tipY = flank.y - 0.12;
-    const arm = new THREE.Mesh(new THREE.BoxGeometry(2.85, 0.16, 0.2), dark);
-    arm.position.set((flank.x + tipX) * 0.5, (flank.y + tipY) * 0.5, flank.z);
-    arm.castShadow = true;
-    const root = hullSample(6.4, 0.22, s);
-    const tip = new THREE.Vector3(tipX, tipY, flank.z);
-    const span = tip.clone().sub(root);
-    const brace = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, Math.max(0.2, span.length()), 5), dark);
-    brace.position.copy(root).add(tip).multiplyScalar(0.5);
-    brace.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), span.normalize());
-    brace.castShadow = true;
-    ship.add(arm, brace);
-    addProp(tipX, tipY, flank.z, s, 1.55, "x");
-  }
   const sternKeel = hullProfile(-16.1, 0.05);
-  addProp(0, sternKeel.y - 0.05, -17.15, 1, 1.2, "z");
+  // Twin pushers just aft of the stern. Shafts leave the stern face and run
+  // aft, so the discs sit behind the hull instead of out the sides.
+  const aftY = sternKeel.y + 1.2;
+  for (const s of [-1, 1]) {
+    const root = new THREE.Vector3(s * 0.16, aftY, -16.15);
+    const hub = new THREE.Vector3(s * 1.2, aftY, -18.15);
+    const span = hub.clone().sub(root);
+    const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, Math.max(0.2, span.length()), 6), dark);
+    shaft.position.copy(root).add(hub).multiplyScalar(0.5);
+    shaft.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), span.clone().normalize());
+    shaft.castShadow = true;
+    ship.add(shaft);
+    addProp(hub.x, hub.y, hub.z, s, 1.05, "z");
+  }
   for (const s of [-0.55, 0.55]) {
     const fin = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.45, 0.72), dark);
     fin.position.set(s, sternKeel.y + 0.35, -16.15);

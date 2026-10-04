@@ -7,12 +7,13 @@ import { createNarration } from "./narration.js?v=1";
 import { createDialogue } from "./dialogue.js?v=5";
 import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass, GTAOPass, ShaderPass, FXAAPass } from "three/addons";
 import { buildWorld } from "./world.js?v=7";
-import { buildRustyWorld } from "../worlds/rusty/world.js?v=10";
+import { buildRustyWorld } from "../worlds/rusty/world.js?v=11";
 import { createRustySim } from "../worlds/rusty/sim.js?v=15";
 import { buildPulseWorld } from "../worlds/pulse/world.js?v=5";
-import { createPulseSim } from "../worlds/pulse/sim.js?v=7";
+import { createPulseSim } from "../worlds/pulse/sim.js?v=8";
 import { createAbilities } from "./abilities.js?v=1";
-import { whenCastReady } from "./actors.js?v=7";
+import { whenCastReady } from "./actors.js?v=8";
+import { tickTrails } from "./swing.js?v=4";
 import { theBlank } from "../bosses/index.js?v=10";
 
 const canvas = document.getElementById("view");
@@ -902,6 +903,9 @@ function frame(now) {
   const raw = Math.min(0.3, Math.max(0.001, (now - last) / 1000));
   last = now;
   abilities.tick(raw);
+  // Drop expired swing ribbons before the sim, so a hidden tab or a skipped
+  // update cannot leave last frame's streak frozen on the blade.
+  tickTrails(now);
   if (mode === "title") {
     camYaw = 0.62 + Math.sin(now / 1000 * 0.18) * 0.08;
     camPitch = 0.4;
@@ -935,6 +939,7 @@ function frame(now) {
     left -= dt;
     guard++;
   }
+  tickTrails(now);
 
   if (mode === "play" && playing && snap && !params.get("shot")) {
     const preset = CAM_PRESET[settings.cam] || CAM_PRESET.slow;
