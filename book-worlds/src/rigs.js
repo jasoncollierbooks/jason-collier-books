@@ -82,15 +82,14 @@ export function createHuman(spec) {
 
   if (spec.coat) {
     const coatM = M(spec.coat, { side: THREE.DoubleSide, unique: true });
-    const fit = spec.key ? "close" : undefined;
-    const coat = new THREE.Mesh(dusterGeometry(fit), coatM);
+    const coat = new THREE.Mesh(dusterGeometry(), coatM);
     coat.castShadow = true;
     body.add(coat);
-    const collar = new THREE.Mesh(collarGeometry(fit), coatM);
+    const collar = new THREE.Mesh(collarGeometry(), coatM);
     collar.castShadow = true;
     body.add(collar);
     for (const s of [-1, 1]) {
-      const tail = new THREE.Mesh(coatTailGeometry(s, fit), coatM);
+      const tail = new THREE.Mesh(coatTailGeometry(s), coatM);
       tail.castShadow = true;
       tail.userData.side = s;
       body.add(tail);
@@ -135,19 +134,11 @@ export function createHuman(spec) {
     el.add(down(0.26, 0.042, spec.sleeves ? M(spec.sleeves) : cloth));
     if (spec.coat || spec.coverall) {
       const sleeveM = M(spec.coat || spec.sleeves || spec.cloth, { side: THREE.DoubleSide, unique: true });
-      const sleeveFit = spec.key ? "close" : undefined;
-      const closeSleeve = sleeveFit === "close";
-      const upperSleeve = new THREE.Mesh(
-        sleeveGeometry(closeSleeve ? 0.34 : 0.28, sleeveFit, closeSleeve ? { top: 0.086, bottom: 0.074 } : undefined),
-        sleeveM,
-      );
-      upperSleeve.position.y = closeSleeve ? -0.15 : -0.16;
+      const upperSleeve = new THREE.Mesh(sleeveGeometry(0.28), sleeveM);
+      upperSleeve.position.y = -0.16;
       sh.add(upperSleeve);
-      const fore = new THREE.Mesh(
-        sleeveGeometry(closeSleeve ? 0.3 : 0.24, sleeveFit, closeSleeve ? { top: 0.074, bottom: 0.058 } : undefined),
-        sleeveM,
-      );
-      fore.position.y = closeSleeve ? -0.13 : -0.14;
+      const fore = new THREE.Mesh(sleeveGeometry(0.24), sleeveM);
+      fore.position.y = -0.14;
       el.add(fore);
     }
     const hand = new THREE.Group();

@@ -714,37 +714,32 @@ function dress(api, assets) {
     const coatMat = clothMat(spec.coat, 0.62, "leather");
     coatMat.side = THREE.DoubleSide;
     bindLeather(coatMat);
-    // The Trail Key marks the Keeper. His duster is cut close; other coats stay as they are.
-    const fit = spec.key ? "close" : undefined;
-    // Spine keeps the close duster on the shoulder line. Other coats stay on the hips.
-    const coatBone = fit ? (B("spine_02") || B("pelvis")) : B("pelvis");
-    const coat = new THREE.Mesh(dusterGeometry(fit), coatMat);
+    // Same coat Harlan wears. The Keeper only adds his belt hardware on that shell.
+    const coat = new THREE.Mesh(dusterGeometry(), coatMat);
     coat.castShadow = true;
-    put(model, coatBone, coat, 0, 0, 0.02);
-    const collar = new THREE.Mesh(collarGeometry(fit), coatMat);
+    put(model, B("pelvis"), coat, 0, 0, 0.02);
+    const collar = new THREE.Mesh(collarGeometry(), coatMat);
     collar.castShadow = true;
     put(model, B("spine_03"), collar, 0, 0, 0);
     for (const s of [-1, 1]) {
-      const lapel = new THREE.Mesh(lapelGeometry(s, fit), coatMat);
-      put(model, coatBone, lapel, 0, 0, 0);
-      const tail = new THREE.Mesh(coatTailGeometry(s, fit), coatMat);
+      const lapel = new THREE.Mesh(lapelGeometry(s), coatMat);
+      put(model, B("pelvis"), lapel, 0, 0, 0);
+      const tail = new THREE.Mesh(coatTailGeometry(s), coatMat);
       tail.userData.side = s;
-      put(model, coatBone, tail, 0, 0, 0);
+      put(model, B("pelvis"), tail, 0, 0, 0);
     }
     api._tails = [];
     model.traverse((o) => { if (o.userData && o.userData.side) api._tails.push(o); });
     const beltMat = clothMat(0x3a2418, 0.48, "leather");
     bindLeather(beltMat);
-    const beltR = fit ? 0.19 : 0.23;
-    const belt = new THREE.Mesh(new THREE.CylinderGeometry(beltR, beltR, fit ? 0.04 : 0.045, 16), beltMat);
-    if (fit) belt.scale.z = 0.78;
-    put(model, B("spine_01"), belt, 0, 1.0, fit ? 0.012 : 0);
+    const belt = new THREE.Mesh(new THREE.CylinderGeometry(0.23, 0.23, 0.045, 16), beltMat);
+    put(model, B("spine_01"), belt, 0, 1.0, 0);
     const buckle = new THREE.Mesh(new THREE.BoxGeometry(0.055, 0.04, 0.018), metalMat(0xd7c08a, 0.32));
-    put(model, B("spine_01"), buckle, 0, 1.0, fit ? 0.155 : 0.2);
+    put(model, B("spine_01"), buckle, 0, 1.0, 0.2);
     const button = metalMat(0xd7c08a, 0.3);
     for (let i = 0; i < 4; i++) {
       const b = new THREE.Mesh(new THREE.SphereGeometry(0.012, 8, 6), button);
-      put(model, B("spine_02"), b, fit ? 0.055 : 0.09, 1.32 - i * 0.1, fit ? 0.118 : 0.16);
+      put(model, B("spine_02"), b, 0.09, 1.32 - i * 0.1, 0.16);
     }
     model.updateMatrixWorld(true);
     for (const side of ["r", "l"]) {
@@ -760,19 +755,11 @@ function dress(api, assets) {
       if (hand) hand.getWorldPosition(c);
       const len = Math.max(0.16, a.distanceTo(b));
       const foreLen = hand ? Math.max(0.14, b.distanceTo(c)) : len * 0.85;
-      // Close sleeves overlap at the elbow with matched radii so they read as one taper.
-      const closeSleeve = fit === "close";
-      const upperSleeve = new THREE.Mesh(
-        sleeveGeometry(closeSleeve ? len * 1.12 : len * 0.92, fit, closeSleeve ? { top: 0.074, bottom: 0.086 } : undefined),
-        coatMat,
-      );
-      upperSleeve.position.y = closeSleeve ? len * 0.52 : len * 0.46;
+      const upperSleeve = new THREE.Mesh(sleeveGeometry(len * 0.92), coatMat);
+      upperSleeve.position.y = len * 0.46;
       upper.add(upperSleeve);
-      const fore = new THREE.Mesh(
-        sleeveGeometry(closeSleeve ? foreLen * 1.08 : foreLen * 0.88, fit, closeSleeve ? { top: 0.058, bottom: 0.074 } : undefined),
-        coatMat,
-      );
-      fore.position.y = closeSleeve ? foreLen * 0.5 : foreLen * 0.4;
+      const fore = new THREE.Mesh(sleeveGeometry(foreLen * 0.88), coatMat);
+      fore.position.y = foreLen * 0.4;
       lower.add(fore);
       for (const mesh of [upperSleeve, fore]) {
         mesh.castShadow = true;
