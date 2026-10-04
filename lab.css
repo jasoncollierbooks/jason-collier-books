@@ -278,6 +278,7 @@
 .ispy-card-t{display:flex;flex-direction:column;gap:.3rem;padding:1rem 1.1rem 1.2rem}
 .ispy-card-t strong{font:400 1.4rem/1.15 "Special Elite",monospace;color:#f1e6cf}
 .ispy-card-t em{font-style:normal;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:#8f8578}
+.ispy-game{scroll-margin-top:6.5rem}
 .ispy-game[hidden]{display:none}
 .ispy-game .ispy-hud{margin-top:1.4rem}
 .zoom-ctl{display:inline-flex;gap:.3rem;margin-left:auto}
