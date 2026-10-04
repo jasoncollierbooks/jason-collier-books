@@ -3,12 +3,12 @@
 // jumps, swings, and rolls layer on that skeleton.
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons";
-import { createHuman as createCapsule, trailKey, handbillMesh, softDot } from "./rigs.js?v=6";
+import { createHuman as createCapsule, trailKey, handbillMesh, softDot } from "./rigs.js?v=7";
 import { createTrail, swingWeapon } from "./swing.js?v=5";
 import {
   dusterGeometry, collarGeometry, coatTailGeometry, sleeveGeometry,
   coverallGeometry, lapelGeometry, wrenchGroup, spyglassGroup, goggleRig,
-} from "./costume.js?v=2";
+} from "./costume.js?v=3";
 
 const NATIVE = { Walk_Loop: 1.15, Jog_Fwd_Loop: 2.55, Sprint_Loop: 4.35, Crouch_Fwd_Loop: 0.82 };
 const LOCO = ["Walk_Loop", "Jog_Fwd_Loop", "Sprint_Loop"];
@@ -675,7 +675,9 @@ function dress(api, assets) {
       band.scale.z = 1.12;
       hat.add(crownMesh, band);
     }
-    put(model, B("Head"), hat, 0, crown + 0.01, 0.01, spec.hatPitch || 0.06, 0, spec.hatTilt || 0);
+    // The Keeper's hat sits on the skull: brim just above the brows, crown over the hair.
+    const hatY = spec.key ? crown - 0.055 : crown + 0.01;
+    put(model, B("Head"), hat, 0, hatY, 0.01, spec.hatPitch || 0.06, 0, spec.hatTilt || 0);
   }
 
   if (!spec.bandana) {
@@ -742,7 +744,7 @@ function dress(api, assets) {
     const button = metalMat(0xd7c08a, 0.3);
     for (let i = 0; i < 4; i++) {
       const b = new THREE.Mesh(new THREE.SphereGeometry(0.012, 8, 6), button);
-      put(model, B("spine_02"), b, fit ? 0.07 : 0.09, 1.32 - i * 0.1, fit ? 0.14 : 0.16);
+      put(model, B("spine_02"), b, fit ? 0.055 : 0.09, 1.32 - i * 0.1, fit ? 0.118 : 0.16);
     }
     model.updateMatrixWorld(true);
     for (const side of ["r", "l"]) {
@@ -758,11 +760,19 @@ function dress(api, assets) {
       if (hand) hand.getWorldPosition(c);
       const len = Math.max(0.16, a.distanceTo(b));
       const foreLen = hand ? Math.max(0.14, b.distanceTo(c)) : len * 0.85;
-      const upperSleeve = new THREE.Mesh(sleeveGeometry(len * 0.92, fit), coatMat);
-      upperSleeve.position.y = len * 0.46;
+      // Close sleeves overlap at the elbow with matched radii so they read as one taper.
+      const closeSleeve = fit === "close";
+      const upperSleeve = new THREE.Mesh(
+        sleeveGeometry(closeSleeve ? len * 1.12 : len * 0.92, fit, closeSleeve ? { top: 0.074, bottom: 0.086 } : undefined),
+        coatMat,
+      );
+      upperSleeve.position.y = closeSleeve ? len * 0.52 : len * 0.46;
       upper.add(upperSleeve);
-      const fore = new THREE.Mesh(sleeveGeometry(foreLen * 0.88, fit), coatMat);
-      fore.position.y = foreLen * 0.4;
+      const fore = new THREE.Mesh(
+        sleeveGeometry(closeSleeve ? foreLen * 1.08 : foreLen * 0.88, fit, closeSleeve ? { top: 0.058, bottom: 0.074 } : undefined),
+        coatMat,
+      );
+      fore.position.y = closeSleeve ? foreLen * 0.5 : foreLen * 0.4;
       lower.add(fore);
       for (const mesh of [upperSleeve, fore]) {
         mesh.castShadow = true;

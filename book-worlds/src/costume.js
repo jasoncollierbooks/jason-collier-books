@@ -3,8 +3,11 @@
 // so collars, sleeves, and split tails follow the rig.
 import * as THREE from "three";
 
-function openShell(rows, gap) {
+function openShell(rows, gap, opts = {}) {
   const segA = 20;
+  const thick = opts.thick || 0;
+  const curl = opts.curl || 0;
+  const lay = opts.lay || 0;
   const a0 = gap;
   const a1 = Math.PI * 2 - gap;
   const positions = [];
@@ -17,9 +20,21 @@ function openShell(rows, gap) {
       const fold = Math.sin(a * 3.0 + iy * 0.85) * 0.012 * row.rx;
       const hem = iy / Math.max(1, rows.length - 1);
       const flare = 1 + Math.sin(a * 2.0) * 0.03 * hem;
-      const x = Math.sin(a) * row.rx * flare + Math.sin(a) * fold;
-      const z = Math.cos(a) * row.rz * flare + Math.cos(a) * fold + (row.z || 0);
-      positions.push(x, row.y, z);
+      let x = Math.sin(a) * row.rx * flare + Math.sin(a) * fold;
+      let z = Math.cos(a) * row.rz * flare + Math.cos(a) * fold + (row.z || 0);
+      let y = row.y;
+      if (curl || lay) {
+        const lip = Math.max(0, 1 - Math.min(t, 1 - t) * (lay ? 5 : 4.2));
+        if (curl) {
+          x *= 1 - lip * curl * 0.55;
+          z += lip * curl * 0.04;
+        }
+        if (lay) {
+          y -= lip * lay;
+          x *= 1 - lip * 0.42;
+        }
+      }
+      positions.push(x, y, z);
       uvs.push(t, iy / Math.max(1, rows.length - 1));
     }
   });
@@ -28,6 +43,35 @@ function openShell(rows, gap) {
     for (let ia = 0; ia < segA; ia++) {
       const i = iy * stride + ia;
       indices.push(i, i + stride, i + 1, i + 1, i + stride, i + stride + 1);
+    }
+  }
+  if (thick > 0) {
+    const base = rows.length * stride;
+    for (let i = 0; i < base; i++) {
+      const x = positions[i * 3];
+      const y = positions[i * 3 + 1];
+      const z = positions[i * 3 + 2];
+      const len = Math.hypot(x, z) || 1;
+      positions.push(x - (x / len) * thick, y, z - (z / len) * thick);
+      uvs.push(uvs[i * 2], uvs[i * 2 + 1]);
+    }
+    for (let iy = 0; iy < rows.length - 1; iy++) {
+      for (let ia = 0; ia < segA; ia++) {
+        const i = base + iy * stride + ia;
+        indices.push(i, i + 1, i + stride, i + 1, i + stride + 1, i + stride);
+      }
+    }
+    const stitch = (a, b, c, d) => indices.push(a, c, b, b, c, d);
+    for (let iy = 0; iy < rows.length - 1; iy++) {
+      const left = iy * stride;
+      stitch(left, left + stride, base + left, base + left + stride);
+      const right = iy * stride + segA;
+      stitch(right + stride, right, base + right + stride, base + right);
+    }
+    for (let ia = 0; ia < segA; ia++) {
+      stitch(ia + 1, ia, base + ia + 1, base + ia);
+      const top = (rows.length - 1) * stride + ia;
+      stitch(top, top + 1, base + top, base + top + 1);
     }
   }
   const geo = new THREE.BufferGeometry();
@@ -52,7 +96,7 @@ export function dusterGeometry(fit) {
       { y: 0.88, rx: 0.188, rz: 0.142, z: 0.004 },
       { y: 0.66, rx: 0.218, rz: 0.152, z: 0.0 },
       { y: 0.42, rx: 0.252, rz: 0.168, z: 0.0 },
-    ], 0.56);
+    ], 0.4, { thick: 0.013, curl: 0.55 });
   }
   return openShell([
     { y: 1.56, rx: 0.22, rz: 0.16 },
@@ -67,11 +111,13 @@ export function dusterGeometry(fit) {
 
 export function collarGeometry(fit) {
   if (fit === "close") {
+    // Low band around the neck. The front tips lay down on the chest
+    // and stay inside the shoulder line instead of standing up as wings.
     return openShell([
-      { y: 1.50, rx: 0.14, rz: 0.11, z: 0.01 },
-      { y: 1.57, rx: 0.18, rz: 0.135, z: 0.0 },
-      { y: 1.64, rx: 0.155, rz: 0.12, z: 0.0 },
-    ], 1.05);
+      { y: 1.46, rx: 0.112, rz: 0.086, z: 0.018 },
+      { y: 1.50, rx: 0.122, rz: 0.092, z: 0.012 },
+      { y: 1.535, rx: 0.116, rz: 0.086, z: 0.008 },
+    ], 0.9, { lay: 0.07, thick: 0.008 });
   }
   return openShell([
     { y: 1.50, rx: 0.15, rz: 0.12 },
@@ -95,17 +141,20 @@ export function coatTailGeometry(side, fit) {
   return geo;
 }
 
-export function sleeveGeometry(len, fit) {
+// radii.top is the +Y end, radii.bottom the -Y end. The close coat passes
+// matching elbow radii so the upper and forearm pieces read as one taper.
+export function sleeveGeometry(len, fit, radii) {
   const close = fit === "close";
   const height = Math.max(0.12, len);
-  // Close sleeves clear the arm (upper radius ~0.07) without the old shoulder puff.
-  const geo = new THREE.CylinderGeometry(close ? 0.068 : 0.055, close ? 0.08 : 0.072, height, 12, 4, true);
+  const rTop = radii ? radii.top : (close ? 0.064 : 0.055);
+  const rBot = radii ? radii.bottom : (close ? 0.078 : 0.072);
+  const geo = new THREE.CylinderGeometry(rTop, rBot, height, close ? 14 : 12, close ? 8 : 4, true);
   const pos = geo.attributes.position;
   for (let i = 0; i < pos.count; i++) {
     const y = pos.getY(i);
     const t = y / Math.max(0.05, height) + 0.5;
-    const cuff = close ? (t > 0.84 ? 1.05 : 1) : (t < 0.18 ? 1.18 : 1);
-    const wrinkle = 1 + Math.sin(t * 14) * (close ? 0.012 : 0.045);
+    const cuff = close ? 1 : (t < 0.18 ? 1.18 : 1);
+    const wrinkle = 1 + Math.sin(t * (close ? 8 : 14)) * (close ? 0.006 : 0.045);
     pos.setX(i, pos.getX(i) * wrinkle * cuff);
     pos.setZ(i, pos.getZ(i) * wrinkle * cuff);
   }
@@ -122,16 +171,70 @@ export function coverallGeometry() {
   ], 0.42);
 }
 
+function chestLapel(side) {
+  const cols = 4;
+  const rows = 5;
+  const geo = new THREE.PlaneGeometry(0.046, 0.14, cols, rows);
+  geo.translate(side * 0.046, 1.26, 0.112);
+  const pos = geo.attributes.position;
+  const src = pos.array;
+  const n = pos.count;
+  const shaped = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) {
+    const x = src[i * 3];
+    const y = src[i * 3 + 1];
+    const z = src[i * 3 + 2];
+    const u = (y - 1.19) / 0.14;
+    const across = (x / side - 0.046) / 0.046;
+    shaped[i * 3] = x - side * Math.max(0, u - 0.25) * 0.016;
+    shaped[i * 3 + 1] = y - Math.pow(Math.max(0, u - 0.35), 2) * 0.08;
+    shaped[i * 3 + 2] = z + Math.sin(Math.min(1, Math.max(0, u)) * Math.PI) * 0.015 + (1 - Math.min(1, Math.abs(across))) * 0.005;
+  }
+  const thick = 0.008;
+  const out = new Float32Array(n * 6);
+  const uv = new Float32Array(n * 4);
+  for (let i = 0; i < n; i++) {
+    out[i * 3] = shaped[i * 3];
+    out[i * 3 + 1] = shaped[i * 3 + 1];
+    out[i * 3 + 2] = shaped[i * 3 + 2];
+    const j = n + i;
+    out[j * 3] = shaped[i * 3] + side * 0.001;
+    out[j * 3 + 1] = shaped[i * 3 + 1];
+    out[j * 3 + 2] = shaped[i * 3 + 2] - thick;
+    const s = (i % (cols + 1)) / cols;
+    const t = Math.floor(i / (cols + 1)) / rows;
+    uv[i * 2] = s;
+    uv[i * 2 + 1] = t;
+    uv[j * 2] = s;
+    uv[j * 2 + 1] = t;
+  }
+  const idx = [];
+  const sx = cols + 1;
+  for (let iy = 0; iy < rows; iy++) {
+    for (let ix = 0; ix < cols; ix++) {
+      const a = iy * sx + ix;
+      idx.push(a, a + sx, a + 1, a + 1, a + sx, a + sx + 1);
+      const b = n + a;
+      idx.push(b, b + 1, b + sx, b + 1, b + sx + 1, b + sx);
+    }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.Float32BufferAttribute(out, 3));
+  g.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  return g;
+}
+
 export function lapelGeometry(side, fit) {
-  const close = fit === "close";
-  const geo = new THREE.PlaneGeometry(close ? 0.072 : 0.09, close ? 0.26 : 0.28, 1, 3);
-  geo.translate(side * (close ? 0.082 : 0.1), close ? 1.34 : 1.36, close ? 0.145 : 0.16);
+  if (fit === "close") return chestLapel(side);
+  const geo = new THREE.PlaneGeometry(0.09, 0.28, 1, 3);
+  geo.translate(side * 0.1, 1.36, 0.16);
   const pos = geo.attributes.position;
   for (let i = 0; i < pos.count; i++) {
     const y = pos.getY(i);
-    const yoke = close ? 1.2 : 1.22;
-    pos.setX(i, pos.getX(i) + side * (y - yoke) * (close ? 0.12 : 0.15));
-    pos.setZ(i, pos.getZ(i) + (y - yoke) * (close ? 0.06 : 0.08));
+    pos.setX(i, pos.getX(i) + side * (y - 1.22) * 0.15);
+    pos.setZ(i, pos.getZ(i) + (y - 1.22) * 0.08);
   }
   geo.computeVertexNormals();
   return geo;

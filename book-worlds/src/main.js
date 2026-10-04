@@ -14,7 +14,7 @@ import { createPulseSim } from "../worlds/pulse/sim.js?v=12";
 import { buildOldmanWorld } from "../worlds/oldman/world.js?v=2";
 import { createOldmanSim } from "../worlds/oldman/sim.js?v=4";
 import { createAbilities } from "./abilities.js?v=3";
-import { whenCastReady } from "./actors.js?v=11";
+import { whenCastReady } from "./actors.js?v=12";
 import { tick as tickVfx, bind, spawn as spawnVfx, active as vfxActive } from "./vfx.js?v=1";
 import { theBlank } from "../bosses/index.js?v=12";
 

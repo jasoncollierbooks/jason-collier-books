@@ -2,7 +2,7 @@
 // Standby figures wear the same coat, sleeve, and prop meshes as the skinned cast.
 import * as THREE from "three";
 import { damp } from "./util.js";
-import { dusterGeometry, collarGeometry, coatTailGeometry, sleeveGeometry, coverallGeometry, wrenchGroup, spyglassGroup, goggleRig } from "./costume.js?v=2";
+import { dusterGeometry, collarGeometry, coatTailGeometry, sleeveGeometry, coverallGeometry, wrenchGroup, spyglassGroup, goggleRig } from "./costume.js?v=3";
 
 const mats = new Map();
 function M(hex, opts = {}) {
@@ -136,11 +136,18 @@ export function createHuman(spec) {
     if (spec.coat || spec.coverall) {
       const sleeveM = M(spec.coat || spec.sleeves || spec.cloth, { side: THREE.DoubleSide, unique: true });
       const sleeveFit = spec.key ? "close" : undefined;
-      const upperSleeve = new THREE.Mesh(sleeveGeometry(0.28, sleeveFit), sleeveM);
-      upperSleeve.position.y = -0.16;
+      const closeSleeve = sleeveFit === "close";
+      const upperSleeve = new THREE.Mesh(
+        sleeveGeometry(closeSleeve ? 0.34 : 0.28, sleeveFit, closeSleeve ? { top: 0.086, bottom: 0.074 } : undefined),
+        sleeveM,
+      );
+      upperSleeve.position.y = closeSleeve ? -0.15 : -0.16;
       sh.add(upperSleeve);
-      const fore = new THREE.Mesh(sleeveGeometry(0.24, sleeveFit), sleeveM);
-      fore.position.y = -0.14;
+      const fore = new THREE.Mesh(
+        sleeveGeometry(closeSleeve ? 0.3 : 0.24, sleeveFit, closeSleeve ? { top: 0.074, bottom: 0.058 } : undefined),
+        sleeveM,
+      );
+      fore.position.y = closeSleeve ? -0.13 : -0.14;
       el.add(fore);
     }
     const hand = new THREE.Group();
@@ -198,7 +205,7 @@ export function createHuman(spec) {
     const band = new THREE.Mesh(new THREE.CylinderGeometry(0.122, 0.122, 0.025, 12), M(spec.hatBand || 0x3a2418));
     band.position.y = 0.21;
     hat.add(brim, crown, band);
-    hat.position.y = 0.02;
+    hat.position.y = spec.key ? -0.025 : 0.02;
     hat.rotation.z = spec.hatTilt || 0;
     hat.rotation.x = spec.hatPitch || 0.06;
     neck.add(hat);

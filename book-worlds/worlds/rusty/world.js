@@ -2,10 +2,10 @@
 // with gangplanks to a sinking garden city, a goat farm, and a storm fortress.
 import * as THREE from "three";
 import { clamp } from "../../src/util.js";
-import { createCritter, softDot } from "../../src/rigs.js?v=6";
+import { createCritter, softDot } from "../../src/rigs.js?v=7";
 import {
   stackMetalTexture, makeStack, rigBalloon, cloudSea, distantTraffic, deckDetail, wheelhouse, cloudTexture,
-} from "./dress.js?v=5";
+} from "./dress.js?v=6";
 
 const ZONES = [
   { minX: -8.4, maxX: 8.4, minZ: -16.5, maxZ: 26.5 },

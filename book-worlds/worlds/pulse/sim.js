@@ -3,7 +3,7 @@
 import * as THREE from "three";
 import { clamp, damp, dampAngle, hypot2 } from "../../src/util.js";
 import { heightAt } from "./world.js?v=6";
-import { createHuman } from "../../src/actors.js?v=11";
+import { createHuman } from "../../src/actors.js?v=12";
 import { armRing, note } from "../../src/vfx.js?v=1";
 import { createEntity, createNative } from "./beings.js?v=2";
 import { boss as worldBoss } from "../../bosses/first-pulse.js?v=7";

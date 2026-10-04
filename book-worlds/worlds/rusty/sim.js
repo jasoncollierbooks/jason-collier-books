@@ -2,8 +2,8 @@
 import * as THREE from "three";
 import { clamp, damp, dampAngle, hypot2 } from "../../src/util.js";
 import { heightAt } from "./world.js?v=13";
-import { createFog } from "../../src/rigs.js?v=6";
-import { createHuman } from "../../src/actors.js?v=11";
+import { createFog } from "../../src/rigs.js?v=7";
+import { createHuman } from "../../src/actors.js?v=12";
 import { armRing, note, spawn } from "../../src/vfx.js?v=1";
 import { boss as worldBoss } from "../../bosses/rusty-stack.js?v=10";
 import { createAbilities } from "../../src/abilities.js?v=3";
