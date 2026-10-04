@@ -435,19 +435,27 @@ function brassMat() {
 export function trailKey() {
   const g = new THREE.Group();
   const metal = brassMat();
-  const bow = new THREE.Mesh(new THREE.TorusGeometry(0.055, 0.012, 8, 14), metal);
-  bow.position.y = 0.06;
-  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.014, 0.16, 8), metal);
-  shaft.position.y = -0.05;
-  const tooth = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.018, 0.02), metal);
-  tooth.position.set(0.028, -0.1, 0);
+  const bladeMat = new THREE.MeshStandardMaterial({
+    color: 0xf2d48a, metalness: 0.55, roughness: 0.28,
+    emissive: 0xb87420, emissiveIntensity: 0.7,
+  });
+  const edgeMat = new THREE.MeshStandardMaterial({
+    color: 0xfff6d2, metalness: 0.28, roughness: 0.16,
+    emissive: 0xffe090, emissiveIntensity: 1.15,
+  });
+  const bow = new THREE.Mesh(new THREE.TorusGeometry(0.075, 0.018, 8, 16), metal);
+  bow.position.y = 0.09;
+  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.024, 0.2, 8), metal);
+  shaft.position.y = -0.02;
+  const tooth = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.026, 0.03), metal);
+  tooth.position.set(0.046, -0.11, 0);
   const tooth2 = tooth.clone();
-  tooth2.position.y = -0.13;
+  tooth2.position.y = -0.15;
   tooth2.scale.x = 0.7;
-  const blade = new THREE.Mesh(new THREE.BoxGeometry(0.022, 0.42, 0.07), metal);
-  blade.position.y = -0.3;
-  const edge = new THREE.Mesh(new THREE.BoxGeometry(0.008, 0.36, 0.016), new THREE.MeshStandardMaterial({ color: 0xfff1c4, metalness: 0.4, roughness: 0.2, emissive: 0x6a4a20, emissiveIntensity: 0.4 }));
-  edge.position.set(0, -0.28, 0.04);
+  const blade = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.82, 0.2), bladeMat);
+  blade.position.y = -0.52;
+  const edge = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.74, 0.035), edgeMat);
+  edge.position.set(0, -0.5, 0.1);
   g.add(bow, shaft, tooth, tooth2, blade, edge);
   g.traverse((o) => { if (o.isMesh) o.castShadow = true; });
   return g;

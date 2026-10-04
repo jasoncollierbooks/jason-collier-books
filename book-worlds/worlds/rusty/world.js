@@ -2,10 +2,10 @@
 // with gangplanks to a sinking garden city, a goat farm, and a storm fortress.
 import * as THREE from "three";
 import { clamp } from "../../src/util.js";
-import { createCritter, softDot } from "../../src/rigs.js?v=3";
+import { createCritter, softDot } from "../../src/rigs.js?v=4";
 import {
   stackMetalTexture, makeStack, rigBalloon, cloudSea, distantTraffic, deckDetail, wheelhouse, cloudTexture,
-} from "./dress.js?v=2";
+} from "./dress.js?v=3";
 
 const ZONES = [
   { minX: -8.4, maxX: 8.4, minZ: -16.5, maxZ: 26.5 },
@@ -24,17 +24,17 @@ export function setDeckAttitude(roll, pitch) {
   deckPitch = pitch;
 }
 
-// Plan of the hull. Wide amidships, narrower stern, pointed bow.
+// Boat plan: about a third as wide as it is long, round at the stern, sharp at the bow.
+const HULL_STERN = -16.6;
+const HULL_BOW = 26.6;
 export function deckBeam(z) {
-  if (z < -16.7 || z > 27.4) return 0;
-  let beam = 7.7;
-  if (z < -12) beam = 6.15 + (7.7 - 6.15) * ((z + 16.7) / 4.7);
-  if (z > 16) {
-    const t = clamp((z - 16) / 11.2, 0, 1);
-    const bow = 7.7 * Math.cos(t * Math.PI * 0.5);
-    beam = Math.min(beam, Math.max(0.42, bow));
-  }
-  return beam;
+  if (z <= HULL_STERN || z >= HULL_BOW) return 0;
+  const t = (z - HULL_STERN) / (HULL_BOW - HULL_STERN);
+  const stern = Math.sin(Math.min(1, t / 0.18) * Math.PI * 0.5);
+  const bow = Math.pow(Math.cos(clamp((t - 0.5) / 0.5, 0, 1) * Math.PI * 0.5), 1.05);
+  const belly = 0.86 + 0.14 * Math.sin(clamp((t - 0.05) / 0.62, 0, 1) * Math.PI);
+  const shape = (t < 0.5 ? stern * belly : bow);
+  return Math.max(0.16, 6.05 * shape);
 }
 
 export function deckRise(z) {
@@ -45,8 +45,8 @@ export function deckRise(z) {
 }
 
 function onDeck(x, z) {
-  if (z < -16.5 || z > 26.6) return false;
-  return Math.abs(x) <= Math.max(0.35, deckBeam(z) - 0.38);
+  if (z <= HULL_STERN + 0.2 || z >= HULL_BOW - 0.15) return false;
+  return Math.abs(x) <= Math.max(0.28, deckBeam(z) - 0.32);
 }
 
 export function heightAt(x, z) {
@@ -66,7 +66,7 @@ function inside(x, z) {
 function closestPoint(x, z) {
   let best = { x, z };
   let bestD = 1e9;
-  const cz = clamp(z, -16.5, 26.6);
+  const cz = clamp(z, HULL_STERN + 0.25, HULL_BOW - 0.2);
   const lim = Math.max(0.35, deckBeam(cz) - 0.38);
   const cx = clamp(x, -lim, lim);
   const deckD = (cx - x) ** 2 + (cz - z) ** 2;
@@ -220,24 +220,15 @@ function pageTexture() {
 
 // Cross-section of the iron hull. v = 0 is the keel, v = 1 is the gunwale.
 function hullProfile(z, v) {
-  const beam = Math.max(0.28, deckBeam(z));
+  const beam = Math.max(0.2, deckBeam(z));
   const rise = deckRise(z);
   const vv = clamp(v, 0, 1);
-  const flare = Math.sin(Math.pow(vv, 0.78) * Math.PI * 0.5);
-  let half = beam * (0.035 + 0.99 * flare);
-  const mid = 1 - 0.28 * clamp((Math.abs(z - 2) - 12) / 12, 0, 1);
-  const keelDrop = 2.35 * mid;
-  let y = rise + 0.02 - keelDrop * Math.pow(1 - vv, 0.92);
-  if (z > 18) {
-    const stem = clamp((z - 18) / 8.4, 0, 1);
-    y += stem * Math.pow(1 - vv, 0.8) * 1.35;
-    half *= 1 - stem * 0.08 * (1 - vv);
-  }
-  if (z < -13) {
-    const tuck = clamp((-13 - z) / 3.6, 0, 1);
-    y += tuck * (1 - vv) * 0.45;
-    half *= 1 - tuck * 0.12;
-  }
+  const flare = Math.sin(Math.pow(vv, 0.66) * Math.PI * 0.5);
+  const half = beam * (0.012 + 1.02 * flare);
+  const fullness = clamp(beam / 6.05, 0, 1);
+  const draft = 2.05 + 2.85 * fullness;
+  let y = rise + 0.02 - draft * Math.pow(1 - vv, 1.05);
+  if (z > 16) y += clamp((z - 16) / 9, 0, 1) * Math.pow(1 - vv, 0.85) * 1.1;
   return { half, y };
 }
 
@@ -531,12 +522,12 @@ export function buildRustyWorld(scene, low) {
   scene.add(shipPivot);
 
   const hullBuilt = buildHullMesh(low);
-  const hullMap = ironMap.clone();
-  hullMap.repeat.set(2, 9);
-  const hullIron = new THREE.MeshStandardMaterial({
-    color: 0xffffff, map: hullMap, roughness: 0.58, metalness: 0.48,
+  const hullMap = planks.clone();
+  hullMap.repeat.set(2, 10);
+  const hullWood = new THREE.MeshStandardMaterial({
+    color: 0x6a4630, map: hullMap, roughness: 0.86, metalness: 0.06,
   });
-  const hull = new THREE.Mesh(hullBuilt.hull, hullIron);
+  const hull = new THREE.Mesh(hullBuilt.hull, hullWood);
   hull.castShadow = true;
   hull.receiveShadow = true;
   const deckMap = planks.clone();
@@ -578,7 +569,7 @@ export function buildRustyWorld(scene, low) {
   });
   for (const z of [-10, -4, 2, 8, 14]) {
     for (const side of [-1, 1]) {
-      const p = hullSample(z, 0.58, side);
+      const p = hullSample(z, 0.72, side);
       const port = new THREE.Mesh(new THREE.CircleGeometry(0.22, 10), portMat);
       port.position.copy(p);
       port.lookAt(0, p.y, p.z);
@@ -598,7 +589,9 @@ export function buildRustyWorld(scene, low) {
   figureBeak.rotation.x = Math.PI / 2;
   figureBeak.position.set(0, 0.36, 0.5);
   figure.add(neck, skull, figureBeak);
-  figure.position.set(0, deckRise(26.2) + 0.35, 26.6);
+  const stem = hullProfile(25.6, 0.78);
+  figure.position.set(0, stem.y + 0.28, 26.15);
+  figure.rotation.x = -0.85;
   figure.traverse((o) => { if (o.isMesh) o.castShadow = true; });
   ship.add(figure);
   const stackMap = stackMetalTexture(low ? 256 : 512);
@@ -618,8 +611,8 @@ export function buildRustyWorld(scene, low) {
   const dummy = new THREE.Object3D();
   const pipeMat = brass;
   const pipeRuns = low
-    ? [[-5.2, 0.48, -2, 12], [5.2, 0.52, 1, 10]]
-    : [[-5.2, 0.48, -2, 14], [5.2, 0.52, 1, 12], [-3.4, 0.95, 8, 5], [3.1, 1.12, 3, 4]];
+    ? [[-3.5, 0.48, -2, 12], [3.5, 0.52, 1, 10]]
+    : [[-3.5, 0.48, -2, 14], [3.5, 0.52, 1, 12], [-2.6, 0.95, 8, 5], [2.4, 1.12, 3, 4]];
   for (const [x, y, z, len] of pipeRuns) {
     const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, len, 8), pipeMat);
     pipe.rotation.x = Math.PI / 2;
@@ -655,23 +648,63 @@ export function buildRustyWorld(scene, low) {
     props.userData.blades.push(blades);
   };
   for (const s of [-1, 1]) {
-    const strut = new THREE.Mesh(new THREE.BoxGeometry(3.3, 0.12, 0.18), dark);
-    strut.position.set(s * 8.15, -0.2, 6.2);
-    const brace = new THREE.Mesh(new THREE.BoxGeometry(0.1, 1.05, 0.1), dark);
-    brace.position.set(s * 6.9, 0.25, 6.2);
-    brace.rotation.z = s * 0.55;
-    ship.add(strut, brace);
-    addProp(s * 9.7, -0.2, 6.2, s, 1.7, "x");
+    const flank = hullSample(6.4, 0.58, s);
+    const tipX = flank.x + s * 2.85;
+    const tipY = flank.y - 0.12;
+    const arm = new THREE.Mesh(new THREE.BoxGeometry(2.85, 0.16, 0.2), dark);
+    arm.position.set((flank.x + tipX) * 0.5, (flank.y + tipY) * 0.5, flank.z);
+    arm.castShadow = true;
+    const root = hullSample(6.4, 0.22, s);
+    const tip = new THREE.Vector3(tipX, tipY, flank.z);
+    const span = tip.clone().sub(root);
+    const brace = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, Math.max(0.2, span.length()), 5), dark);
+    brace.position.copy(root).add(tip).multiplyScalar(0.5);
+    brace.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), span.normalize());
+    brace.castShadow = true;
+    ship.add(arm, brace);
+    addProp(tipX, tipY, flank.z, s, 1.55, "x");
   }
-  addProp(0, deckRise(-16.2) - 1.05, -17.35, 1, 1.35, "z");
-  for (const s of [-0.7, 0.7]) {
-    const fin = new THREE.Mesh(new THREE.BoxGeometry(0.07, 1.15, 0.85), dark);
-    fin.position.set(s, deckRise(-15.8) - 1.35, -15.7);
+  const sternKeel = hullProfile(-16.1, 0.05);
+  addProp(0, sternKeel.y - 0.05, -17.15, 1, 1.2, "z");
+  for (const s of [-0.55, 0.55]) {
+    const fin = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.45, 0.72), dark);
+    fin.position.set(s, sternKeel.y + 0.35, -16.15);
     fin.castShadow = true;
     ship.add(fin);
     rudders.push(fin);
   }
   ship.add(props);
+  const bandMat = new THREE.MeshStandardMaterial({ color: 0x2e3338, roughness: 0.38, metalness: 0.82 });
+  const bandZs = low ? [-8, 0, 8, 16] : [-12, -6, 0, 6, 12, 17];
+  for (const z of bandZs) {
+    if (deckBeam(z) < 1.4) continue;
+    const steps = low ? 6 : 11;
+    const pts = [];
+    for (let i = 0; i <= steps; i++) pts.push(hullSample(z, 1 - i / steps, -1));
+    for (let i = 1; i <= steps; i++) pts.push(hullSample(z, i / steps, 1));
+    const curve = new THREE.CatmullRomCurve3(pts);
+    const band = new THREE.Mesh(new THREE.TubeGeometry(curve, low ? 14 : 26, 0.055, 5, false), bandMat);
+    band.castShadow = !low;
+    ship.add(band);
+  }
+  for (const v of [0.42, 0.74]) {
+    for (const side of [-1, 1]) {
+      const n = low ? 8 : 16;
+      const pts = [];
+      for (let i = 0; i <= n; i++) {
+        const z = -13.5 + (i / n) * 36;
+        if (deckBeam(z) < 1.1) continue;
+        pts.push(hullSample(z, v, side));
+      }
+      if (pts.length < 4) continue;
+      const strap = new THREE.Mesh(
+        new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), pts.length * 2, 0.038, 4, false),
+        bandMat,
+      );
+      strap.castShadow = !low;
+      ship.add(strap);
+    }
+  }
 
   const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.16, 4.4, 8), dark);
   mast.position.set(-3.4, 2.2, -1.2);
@@ -752,7 +785,7 @@ export function buildRustyWorld(scene, low) {
   ship.add(parrot);
 
   const lanterns = [];
-  for (const [x, z] of [[-6.4, -10], [6.4, -2], [-6.2, 12], [5.8, 18]]) {
+  for (const [x, z] of [[-4.0, -10], [4.1, -2], [-3.2, 12], [2.4, 15]]) {
     const lamp = new THREE.Group();
     const cage = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.18, 6), dark);
     const glow = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffc56a }));
@@ -769,7 +802,7 @@ export function buildRustyWorld(scene, low) {
   }
 
   const barrelGeo = new THREE.CylinderGeometry(0.28, 0.32, 0.62, 8);
-  for (const [x, z] of [[-5.2, -4], [-5.5, -3.2], [5.4, 6.5], [4.6, 7.1], [-4.8, 16]]) {
+  for (const [x, z] of [[-4.0, -4], [-4.2, -3.2], [4.0, 6.5], [3.4, 7.1], [-2.1, 14]]) {
     const barrel = new THREE.Mesh(barrelGeo, wood);
     barrel.position.set(x, 0.32 + deckRise(z), z);
     barrel.castShadow = true;
@@ -808,18 +841,19 @@ export function buildRustyWorld(scene, low) {
   ship.add(wheelhouse({ wood, brass, dark, iron }, block));
 
   const plankMat = wood;
-  const eastPlank = new THREE.Mesh(new THREE.BoxGeometry(16, 0.16, 4.2), plankMat);
-  eastPlank.position.set(16, -0.02, 3.1);
+  const eastPlank = new THREE.Mesh(new THREE.BoxGeometry(12, 0.16, 2.4), plankMat);
+  eastPlank.position.set(20, -0.02, 3.1);
   eastPlank.receiveShadow = true;
   scene.add(eastPlank);
-  const westPlank = new THREE.Mesh(new THREE.BoxGeometry(16, 0.16, 3.4), plankMat);
-  westPlank.position.set(-16.2, -0.02, 1);
+  const westPlank = new THREE.Mesh(new THREE.BoxGeometry(12, 0.16, 2.2), plankMat);
+  westPlank.position.set(-22, -0.02, 1);
   westPlank.receiveShadow = true;
   scene.add(westPlank);
-  const northPlank = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.16, 16), plankMat);
-  northPlank.position.set(0, -0.02, 34);
+  const northPlank = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.14, 10), plankMat);
+  northPlank.position.set(0, -0.02, 37.2);
   northPlank.receiveShadow = true;
   scene.add(northPlank);
+  const bridges = [eastPlank, westPlank, northPlank];
 
   const city = new THREE.Group();
   const cityRock = new THREE.Mesh(new THREE.CylinderGeometry(10.2, 12.5, 3.2, low ? 7 : 10), rockMat);
@@ -1104,6 +1138,10 @@ export function buildRustyWorld(scene, low) {
     goats,
     pen,
     floats: [],
+    setCinematic(on) {
+      const hide = !!on;
+      for (const plank of bridges) plank.visible = !hide;
+    },
     setHeel(v) { heel = v; },
     setCityCalm(v) { cityCalm = clamp(v, 0, 1); },
     flashStorm() { stormFlash = 1; },

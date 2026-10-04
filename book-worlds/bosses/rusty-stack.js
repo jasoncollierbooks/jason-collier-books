@@ -2,7 +2,7 @@
 // Baron von Smash, the seven-foot axe at the fortress hangar.
 import * as THREE from "three";
 import { damp } from "../src/util.js";
-import { makeDust, spinDust, softDot } from "../src/rigs.js?v=3";
+import { makeDust, spinDust, softDot } from "../src/rigs.js?v=4";
 import { dusterGeometry, collarGeometry } from "../src/costume.js?v=1";
 
 export const boss = {

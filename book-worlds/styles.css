@@ -220,6 +220,26 @@ body.shot #bulletin,
 body.shot #subtitle,
 body.shot #rotate-hint,
 body.shot #tutor { display: none !important; }
+body.flyby #hud,
+body.flyby #cmd,
+body.flyby #party,
+body.flyby #gauges,
+body.flyby #actions,
+body.flyby #stick,
+body.flyby #settings,
+body.flyby #settings-btn,
+body.flyby #bossbar,
+body.flyby #reticle,
+body.flyby #interact,
+body.flyby #floats { display: none !important; }
+#letterbox { display: none; pointer-events: none; }
+body.flyby #letterbox { display: block; }
+#letterbox span {
+  position: fixed; left: 0; right: 0; height: 12vh; background: #000; z-index: 20; pointer-events: none;
+}
+#letterbox span:first-child { top: 0; }
+#letterbox span:last-child { bottom: 0; }
+body.flyby #prompt { bottom: calc(12vh + 18px); z-index: 31; }
 #help button, #settings #help-reopen {
   display: block; width: 100%; margin-top: 14px; min-height: 48px; cursor: pointer; border-radius: 10px;
   border: 1px solid rgba(228, 208, 164, .55); background: rgba(243, 230, 200, .82); color: #24180f;

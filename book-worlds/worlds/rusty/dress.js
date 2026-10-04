@@ -1,7 +1,7 @@
 // Deck dressing, riveted stacks, rope rigging, cloud sea, and distant traffic.
 // Static repeats are instanced. Textures are small canvases (512, or 256 on phones).
 import * as THREE from "three";
-import { softDot } from "../../src/rigs.js?v=3";
+import { softDot } from "../../src/rigs.js?v=4";
 
 const dummy = new THREE.Object3D();
 const up = new THREE.Vector3(0, 1, 0);
@@ -116,13 +116,15 @@ function bagPinch(t) {
 }
 
 function gunwaleX(z) {
-  let beam = 6.5;
-  if (z < -12) beam = 5.2;
-  if (z > 16) {
-    const t = Math.max(0, Math.min(1, (z - 16) / 11.2));
-    beam = Math.max(0.9, 6.5 * Math.cos(t * Math.PI * 0.5));
-  }
-  return beam;
+  if (z <= -16.6 || z >= 26.6) return 0.45;
+  const t = (z + 16.6) / 43.2;
+  const stern = Math.sin(Math.min(1, t / 0.18) * Math.PI * 0.5);
+  const bowT = Math.max(0, Math.min(1, (t - 0.5) / 0.5));
+  const bow = Math.pow(Math.cos(bowT * Math.PI * 0.5), 1.05);
+  const bellyT = Math.max(0, Math.min(1, (t - 0.05) / 0.62));
+  const belly = 0.86 + 0.14 * Math.sin(bellyT * Math.PI);
+  const shape = t < 0.5 ? stern * belly : bow;
+  return Math.max(0.4, 5.55 * shape);
 }
 
 export function rigBalloon(ship, bag, low, ropeMat, brass) {
@@ -329,10 +331,10 @@ export function deckDetail(ship, mats, low, block) {
     const carriage = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.22, 0.42), wood);
     carriage.position.y = -0.2;
     cannon.add(barrel, band, carriage);
-    cannon.position.set(side * 5.6, 0.42, side > 0 ? 4.2 : 9.5);
+    cannon.position.set(side * 3.9, 0.42, side > 0 ? 4.2 : 8.4);
     cannon.rotation.y = side > 0 ? -0.4 : 0.5;
     ship.add(cannon);
-    block(side * 5.6, side > 0 ? 4.2 : 9.5, 0.55);
+    block(side * 3.9, side > 0 ? 4.2 : 8.4, 0.55);
   }
 }
 

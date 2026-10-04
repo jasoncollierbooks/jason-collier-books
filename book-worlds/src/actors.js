@@ -3,8 +3,8 @@
 // jumps, swings, and rolls layer on that skeleton.
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons";
-import { createHuman as createCapsule, trailKey, handbillMesh, softDot } from "./rigs.js?v=3";
-import { createTrail, swingWeapon } from "./swing.js?v=1";
+import { createHuman as createCapsule, trailKey, handbillMesh, softDot } from "./rigs.js?v=4";
+import { createTrail, swingWeapon } from "./swing.js?v=2";
 import {
   dusterGeometry, collarGeometry, coatTailGeometry, sleeveGeometry,
   coverallGeometry, lapelGeometry, wrenchGroup, spyglassGroup, goggleRig,
@@ -127,7 +127,7 @@ const _bladeZ = new THREE.Vector3(1, 0, 0);
 // Grip the weapon so its striking axis leaves the fist along the fingers.
 // flip: the Trail Key's edge is authored along local -Y.
 function holdBlade(bone, obj, tip, flip) {
-  obj.position.set(0, 0.045, 0.028);
+  obj.position.set(0, 0.1, 0.04);
   if (flip) obj.quaternion.setFromRotationMatrix(_bladeBasis.makeBasis(_bladeX, _bladeY, _bladeZ));
   else obj.quaternion.identity();
   obj.userData.bladeTip = tip;
@@ -766,8 +766,8 @@ function dress(api, assets) {
   const grip = new THREE.Vector3();
   if (spec.key) {
     const key = trailKey();
-    key.scale.setScalar(1.05);
-    holdBlade(B("hand_r"), key, new THREE.Vector3(0, -0.52, 0.02), true);
+    key.scale.setScalar(1);
+    holdBlade(B("hand_r"), key, new THREE.Vector3(0, -0.95, 0.1), true);
     api.keyMesh = key;
     key.visible = api._keyOn !== false;
     api.hand = B("hand_r");

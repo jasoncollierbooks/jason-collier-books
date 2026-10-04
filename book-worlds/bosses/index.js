@@ -3,8 +3,8 @@
 //   id, world, name, hp, radius, home {x,z,yaw}, drain {inner,outer},
 //   lines {jang, tom, lasso, win}, objective {waiting, fighting, thinning(left)},
 //   create() -> { root, update(dt, {moving, state, hit}) }
-import { boss as californiaTrail } from "./california-trail.js?v=3";
-import { boss as rustyStack } from "./rusty-stack.js?v=6";
+import { boss as californiaTrail } from "./california-trail.js?v=4";
+import { boss as rustyStack } from "./rusty-stack.js?v=7";
 export { theBlank } from "./the-blank.js";
 
 const bosses = {

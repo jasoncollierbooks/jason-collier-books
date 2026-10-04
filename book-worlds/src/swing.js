@@ -143,7 +143,7 @@ function clearBlade(hand, dir, scale) {
     _push.set(0, 0, 0);
     let close = false;
     for (let i = 0; i <= 8; i++) {
-      _sample.copy(hand).addScaledVector(_blade, (0.02 + (i / 8) * 0.56) * scale);
+      _sample.copy(hand).addScaledVector(_blade, (0.04 + (i / 8) * 1.05) * scale);
       const y = Math.max(_shoulder.y - 0.55 * scale, Math.min(_shoulder.y + 0.22 * scale, _sample.y));
       _spine.copy(_shoulder);
       _spine.addScaledVector(_right, -0.18 * scale);
@@ -209,7 +209,7 @@ function writeTrail(trail, root) {
   let count = 0;
   for (let i = 0; i < n; i++) {
     const f = n === 1 ? 1 : i / (n - 1);
-    const w = 0.025 + f * 0.11;
+    const w = 0.05 + f * 0.2;
     _a.copy(pts[Math.max(0, i - 1)]);
     _b.copy(pts[Math.min(n - 1, i + 1)]);
     _width.subVectors(_b, _a);

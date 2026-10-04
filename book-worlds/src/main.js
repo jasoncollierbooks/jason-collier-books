@@ -1,16 +1,16 @@
 import * as THREE from "three";
 import { createAudio } from "./audio.js?v=2";
 import { createInput } from "./input.js?v=3";
-import { createSim } from "./sim.js?v=6";
+import { createSim } from "./sim.js?v=7";
 import { damp, clamp, springAngle, angDelta } from "./util.js";
 import { createNarration } from "./narration.js";
 import { createDialogue } from "./dialogue.js?v=3";
 import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass, GTAOPass, ShaderPass, FXAAPass } from "three/addons";
-import { buildWorld } from "./world.js?v=5";
-import { buildRustyWorld } from "../worlds/rusty/world.js?v=7";
-import { createRustySim } from "../worlds/rusty/sim.js?v=11";
-import { whenCastReady } from "./actors.js?v=5";
-import { theBlank } from "../bosses/index.js?v=6";
+import { buildWorld } from "./world.js?v=6";
+import { buildRustyWorld } from "../worlds/rusty/world.js?v=8";
+import { createRustySim } from "../worlds/rusty/sim.js?v=12";
+import { whenCastReady } from "./actors.js?v=6";
+import { theBlank } from "../bosses/index.js?v=7";
 
 const canvas = document.getElementById("view");
 const app = document.getElementById("app");
@@ -365,10 +365,10 @@ function flyPose(k) {
   const smooth = (x) => x * x * (3 - 2 * x);
   const u = smooth(Math.max(0, Math.min(1, k)));
   const pts = [
-    { x: -16, y: 8.4, z: 30, lx: 0, ly: 4.2, lz: 6 },
-    { x: -24, y: 6.1, z: 4, lx: 0, ly: 3.5, lz: 4 },
-    { x: -10, y: 5.2, z: -18, lx: 0, ly: 3.2, lz: 1 },
-    { x: -1.6, y: 3.1, z: -14.6, lx: 0.2, ly: 1.7, lz: -5 },
+    { x: -16, y: -0.7, z: 20, lx: 0.4, ly: -1.6, lz: 6 },
+    { x: -13.5, y: -1.7, z: 3, lx: 0.2, ly: -1.5, lz: 5 },
+    { x: -11, y: -0.9, z: -14, lx: 0, ly: -1.15, lz: 1 },
+    { x: -2.2, y: 2.35, z: -12.2, lx: 0.1, ly: 1.35, lz: -6 },
   ];
   const span = pts.length - 1;
   const x = u * span;
@@ -861,17 +861,23 @@ function frame(now) {
     flyby.t += raw;
     if (flyby.t >= flyby.dur) endFlyby();
   }
-  if (shot === "flyby" || flyby) {
-    const pose = flyPose(shot === "flyby" ? 0.34 : flyby.t / flyby.dur);
+  const cinematic = shot === "flyby" || !!flyby;
+  document.body.classList.toggle("flyby", cinematic);
+  if (world.setCinematic) world.setCinematic(cinematic);
+  if (shot === "flyby") {
+    camPos.set(-14.2, -1.55, 3.2);
+    lookAt.set(0.35, -1.7, 6.2);
+  } else if (flyby) {
+    const pose = flyPose(flyby.t / flyby.dur);
     camPos.set(pose.x, pose.y, pose.z);
     lookAt.set(pose.lx, pose.ly, pose.lz);
   } else if (shot === "deck") {
-    camPos.set(-5.2, 1.95, -1.2);
-    lookAt.set(-11.5, -2.6, 18);
+    camPos.set(-2.8, 2.05, -4.6);
+    lookAt.set(-6.4, -3.6, 14);
   } else if (shot === "swing" && snap) {
     const y = snap.player.y;
-    camPos.set(snap.player.x - 3.2, y + 1.32, snap.player.z + 1.05);
-    lookAt.set(snap.player.x + 0.15, y + 1.2, snap.player.z + 0.35);
+    camPos.set(snap.player.x - 2.55, y + 1.28, snap.player.z + 0.15);
+    lookAt.set(snap.player.x + 0.05, y + 1.12, snap.player.z + 0.55);
   } else if (shot === "crew") {
     const y = snap.player.y;
     camPos.set(snap.player.x - 4.65, y + 1.7, snap.player.z);
