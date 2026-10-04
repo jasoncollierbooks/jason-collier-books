@@ -1,16 +1,16 @@
 import * as THREE from "three";
 import { createAudio } from "./audio.js?v=2";
 import { createInput } from "./input.js?v=3";
-import { createSim } from "./sim.js?v=4";
+import { createSim } from "./sim.js?v=5";
 import { damp, clamp, springAngle, angDelta } from "./util.js";
 import { createNarration } from "./narration.js";
 import { createDialogue } from "./dialogue.js?v=3";
-import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass, GTAOPass, ShaderPass } from "three/addons";
-import { buildWorld } from "./world.js?v=3";
-import { buildRustyWorld } from "../worlds/rusty/world.js?v=4";
-import { createRustySim } from "../worlds/rusty/sim.js?v=4";
-import { whenCastReady } from "./actors.js?v=3";
-import { theBlank } from "../bosses/index.js?v=3";
+import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass, GTAOPass, ShaderPass, FXAAPass } from "three/addons";
+import { buildWorld } from "./world.js?v=4";
+import { buildRustyWorld } from "../worlds/rusty/world.js?v=5";
+import { createRustySim } from "../worlds/rusty/sim.js?v=5";
+import { whenCastReady } from "./actors.js?v=4";
+import { theBlank } from "../bosses/index.js?v=4";
 
 const canvas = document.getElementById("view");
 const app = document.getElementById("app");
@@ -84,7 +84,7 @@ const GRADE = {
 };
 
 installEnvironment(renderer, scene, low);
-let composer = low ? null : makeComposer(renderer, scene, camera);
+let composer = makeComposer(renderer, scene, camera, low);
 let castReady = false;
 whenCastReady().then(() => { castReady = true; });
 
@@ -448,15 +448,11 @@ function ensureStack() {
 }
 
 function retargetComposer(nextScene, nextCam) {
-  if (low) {
-    composer = null;
-    return;
-  }
   if (composer) {
     try { composer.dispose(); } catch { /* an old pass can already be gone */ }
     composer = null;
   }
-  composer = makeComposer(renderer, nextScene, nextCam);
+  composer = makeComposer(renderer, nextScene, nextCam, low);
 }
 
 function enterWorld(key) {
@@ -793,8 +789,12 @@ function frame(now) {
   const lookDirZ = Math.cos(camYaw);
   const rightX = -Math.cos(camYaw);
   const rightZ = Math.sin(camYaw);
+  const shot = params.get("shot");
   let dist = 5.05 + camPitch * 1.25;
   let lift = 1.62 + camPitch * 1.55;
+  if (shot === "crew") { dist = -3.15; lift = 1.35; }
+  else if (shot === "deck") { dist = 8.4; lift = 3.6; }
+  else if (shot === "boss") { dist = 6.4; lift = 2.15; }
   const shoulder = 0.46;
   let lookX = snap.player.x + lookDirX * 1.55 + rightX * 0.12;
   let lookY = snap.player.y + 1.38;
@@ -1356,20 +1356,27 @@ function installEnvironment(gl, rootScene, lowQ, kind) {
   pm.dispose();
 }
 
-function makeComposer(gl, rootScene, cam) {
+function makeComposer(gl, rootScene, cam, lowQ) {
   const post = new EffectComposer(gl);
   post.addPass(new RenderPass(rootScene, cam));
-  try {
-    const ao = new GTAOPass(rootScene, cam, window.innerWidth, window.innerHeight);
-    ao.blendIntensity = 0.42;
-    if (ao.updateGtaoMaterial) ao.updateGtaoMaterial({ samples: 8, radius: 0.28, thickness: 0.6, scale: 0.85 });
-    post.addPass(ao);
-    post.ao = ao;
-  } catch (err) {
-    console.warn("Ambient occlusion skipped.", err);
+  if (!lowQ) {
+    try {
+      const ao = new GTAOPass(rootScene, cam, window.innerWidth, window.innerHeight);
+      ao.blendIntensity = 0.42;
+      if (ao.updateGtaoMaterial) ao.updateGtaoMaterial({ samples: 8, radius: 0.28, thickness: 0.6, scale: 0.85 });
+      post.addPass(ao);
+      post.ao = ao;
+    } catch (err) {
+      console.warn("Ambient occlusion skipped.", err);
+    }
   }
-  post.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.14, 0.4, 0.96));
+  const bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), lowQ ? 0.1 : 0.18, 0.42, 0.88);
+  post.addPass(bloom);
+  post.bloom = bloom;
   post.addPass(new ShaderPass(GRADE));
+  const fxaa = new FXAAPass();
+  post.addPass(fxaa);
+  post.fxaa = fxaa;
   post.addPass(new OutputPass());
   return post;
 }
@@ -1383,6 +1390,7 @@ function adaptQuality(dt) {
   const ratio = renderer.getPixelRatio();
   if (ratio > 1) renderer.setPixelRatio(1);
   if (composer && composer.ao) composer.ao.enabled = false;
+  if (composer && composer.bloom) composer.bloom.strength = 0.06;
   if (world.setQuality) world.setQuality("low");
 }
 

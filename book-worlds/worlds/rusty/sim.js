@@ -1,10 +1,10 @@
 // Rusty Stack play. Same Keeper, Trail Key, and command combat as the wagon road.
 import * as THREE from "three";
 import { clamp, damp, dampAngle, hypot2 } from "../../src/util.js";
-import { heightAt } from "./world.js?v=4";
-import { createFog } from "../../src/rigs.js";
-import { createHuman } from "../../src/actors.js?v=3";
-import { boss as worldBoss } from "../../bosses/rusty-stack.js?v=3";
+import { heightAt } from "./world.js?v=5";
+import { createFog } from "../../src/rigs.js?v=2";
+import { createHuman } from "../../src/actors.js?v=4";
+import { boss as worldBoss } from "../../bosses/rusty-stack.js?v=4";
 
 const SAVE_KEY = "book-worlds-rusty-stack";
 const CLEAR_KEY = "book-worlds-world2-clear";
@@ -20,7 +20,7 @@ export function createRustySim(scene, world, audio) {
   const spacey = createHuman({
     cloth: 0x6d6a3e, cloth2: 0x4a3828, pants: 0x2c3034, boots: 0x5a3a24,
     hair: 0x3a2416, skin: 0xc49474, coat: 0x6b452c,
-    goggles: true, cigar: true, gloves: true, crossBelts: true, stubble: true, messy: true, ownHair: true,
+    goggles: true, cigar: true, gloves: true, crossBelts: true, stubble: true, messy: true, ownHair: true, spyglass: true,
     height: 1.08, bulk: 0.9, chest: 0.98, shoulder: 0.2,
   });
   const mira = createHuman({

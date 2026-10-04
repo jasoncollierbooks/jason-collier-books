@@ -2,7 +2,10 @@
 // with gangplanks to a sinking garden city, a goat farm, and a storm fortress.
 import * as THREE from "three";
 import { clamp } from "../../src/util.js";
-import { createCritter } from "../../src/rigs.js";
+import { createCritter, softDot } from "../../src/rigs.js?v=2";
+import {
+  stackMetalTexture, makeStack, rigBalloon, cloudSea, distantTraffic, deckDetail, wheelhouse,
+} from "./dress.js?v=1";
 
 const ZONES = [
   { minX: -8.4, maxX: 8.4, minZ: -16.5, maxZ: 26.5 },
@@ -14,17 +17,15 @@ const ZONES = [
   { minX: -16.6, maxX: 16.6, minZ: 40.4, maxZ: 72.2 },
 ];
 
+let deckRoll = 0;
+let deckPitch = 0;
+export function setDeckAttitude(roll, pitch) {
+  deckRoll = roll;
+  deckPitch = pitch;
+}
 export function heightAt(x, z) {
-  const hx0 = -2.15;
-  const hx1 = 2.15;
-  const hz0 = -0.4;
-  const hz1 = 4.6;
-  if (x > hx0 && x < hx1 && z > hz0 && z < hz1) {
-    const rampStart = hz1 - 1.35;
-    if (z > rampStart) return clamp((z - rampStart) / 1.35, 0, 1) * 1.45 - 1.45;
-    return -1.45;
-  }
-  return 0;
+  if (x < -8.1 || x > 8.1 || z < -16.2 || z > 26.2) return 0;
+  return x * Math.sin(deckRoll) - (z - 5) * Math.sin(deckPitch);
 }
 
 function inside(x, z) {
@@ -98,14 +99,18 @@ function ironTexture() {
 
 function plankTexture() {
   return canvasTex(512, 512, (g, w, h) => {
-    g.fillStyle = "#6a5a46";
+    g.fillStyle = "#4a3c2e";
     g.fillRect(0, 0, w, h);
     const boards = 8;
     const bh = h / boards;
     for (let i = 0; i < boards; i++) {
-      const shade = 118 + ((i * 19) % 36);
-      g.fillStyle = `rgb(${shade + 28}, ${shade + 8}, ${shade - 22})`;
-      g.fillRect(2, i * bh + 3, w - 4, bh - 6);
+      const shade = 96 + ((i * 37) % 54);
+      const warm = (i % 3) * 8;
+      g.fillStyle = `rgb(${shade + 36 + warm}, ${shade + 10}, ${shade - 18})`;
+      const seam = (i % 2) * 18;
+      g.fillRect(seam, i * bh + 2, w - 28, bh - 5);
+      g.fillStyle = `rgba(40, 28, 18, ${0.15 + (i % 4) * 0.05})`;
+      g.fillRect(seam + 8, i * bh + 6, 40 + (i % 5) * 30, bh - 14);
       g.strokeStyle = "rgba(70, 48, 30, 0.45)";
       g.lineWidth = 1;
       for (let k = 0; k < 5; k++) {
@@ -216,10 +221,10 @@ function skyMaterial() {
       }
       void main() {
         vec3 n = normalize(vDir);
-        vec3 zenith = vec3(0.34, 0.56, 0.86);
-        vec3 mid = vec3(0.62, 0.74, 0.90);
-        vec3 hor = vec3(0.98, 0.64, 0.40);
-        vec3 below = vec3(0.74, 0.82, 0.90);
+        vec3 zenith = vec3(0.28, 0.32, 0.58);
+        vec3 mid = vec3(0.72, 0.42, 0.48);
+        vec3 hor = vec3(0.98, 0.52, 0.28);
+        vec3 below = vec3(0.86, 0.58, 0.46);
         float h = n.y;
         vec3 col = mix(below, hor, smoothstep(-0.35, 0.02, h));
         col = mix(col, mid, smoothstep(0.0, 0.28, h));
@@ -246,8 +251,8 @@ export function buildRustyWorld(scene, low) {
   const camHit = [];
   const camSphere = (x, y, z, r) => camHit.push({ x, y, z, r });
 
-  scene.fog = new THREE.FogExp2(0x9aa8b8, low ? 0.011 : 0.0062);
-  scene.background = new THREE.Color(0x8eb0d4);
+  scene.fog = new THREE.FogExp2(0xc48a68, low ? 0.012 : 0.007);
+  scene.background = new THREE.Color(0xc47a58);
 
   const hemi = new THREE.HemisphereLight(0x9eb6d8, 0x8a6848, low ? 0.72 : 0.92);
   scene.add(hemi);
@@ -263,9 +268,12 @@ export function buildRustyWorld(scene, low) {
   sun.shadow.normalBias = 0.05;
   sun.shadow.radius = low ? 1.2 : 2.4;
   scene.add(sun, sun.target);
-  const fill = new THREE.DirectionalLight(0xb7c8e0, 0.55);
+  const fill = new THREE.DirectionalLight(0xb7c8e0, 0.45);
   fill.position.set(16, 10, 12);
   scene.add(fill);
+  const rimLight = new THREE.DirectionalLight(0xffb070, low ? 0.35 : 0.55);
+  rimLight.position.set(18, 6, -24);
+  scene.add(rimLight);
 
   const skyMat = skyMaterial();
   const sky = new THREE.Mesh(new THREE.SphereGeometry(420, low ? 20 : 28, low ? 14 : 18), skyMat);
@@ -303,7 +311,7 @@ export function buildRustyWorld(scene, low) {
   scene.add(shipPivot);
 
   const deck = new THREE.Mesh(new THREE.BoxGeometry(16.2, 0.28, 42.4), wood);
-  deck.position.set(0, -0.12, 5);
+  deck.position.set(0, -0.14, 5);
   deck.receiveShadow = true;
   deck.castShadow = true;
   ship.add(deck);
@@ -322,25 +330,19 @@ export function buildRustyWorld(scene, low) {
     plate.position.set(x, -0.7, z);
     ship.add(plate);
   }
-  const stack = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.7, 3.4, 10), dark);
-  stack.position.set(2.4, 1.7, -6.2);
-  stack.castShadow = true;
+  const stackMap = stackMetalTexture(low ? 256 : 512);
+  stackMap.wrapS = stackMap.wrapT = THREE.RepeatWrapping;
+  const stackMat = new THREE.MeshStandardMaterial({ map: stackMap, color: 0xffffff, roughness: 0.55, metalness: 0.62 });
+  const capMat = new THREE.MeshStandardMaterial({ color: 0x3a3836, roughness: 0.48, metalness: 0.55 });
+  const stack = makeStack(0.55, 0.72, 3.6, stackMat, brass, capMat);
+  stack.position.set(2.4, 1.8, -6.2);
   ship.add(stack);
-  const stack2 = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.55, 2.6, 10), dark);
-  stack2.position.set(-2.2, 1.35, 10);
-  stack2.castShadow = true;
+  const stack2 = makeStack(0.4, 0.54, 2.7, stackMat, brass, capMat);
+  stack2.position.set(-2.2, 1.4, 10);
   ship.add(stack2);
-  const stackBand = new THREE.Mesh(new THREE.TorusGeometry(0.58, 0.05, 6, 12), brass);
-  stackBand.rotation.x = Math.PI / 2;
-  stackBand.position.set(-2.2, 2.4, 10);
-  ship.add(stackBand);
   block(2.4, -6.2, 0.85);
   block(-2.2, 10, 0.7);
   camSphere(2.4, 2.2, -6.2, 0.9);
-  const band = new THREE.Mesh(new THREE.TorusGeometry(0.72, 0.06, 6, 12), brass);
-  band.rotation.x = Math.PI / 2;
-  band.position.set(2.4, 2.8, -6.2);
-  ship.add(band);
 
   const railCount = low ? 36 : 64;
   const postGeo = new THREE.CylinderGeometry(0.045, 0.055, 0.95, 6);
@@ -414,30 +416,16 @@ export function buildRustyWorld(scene, low) {
   nestRail.position.set(-3.4, 4.35, -1.2);
   ship.add(nestRail);
 
-  const balloon = new THREE.Mesh(new THREE.SphereGeometry(6.4, low ? 16 : 24, low ? 12 : 18), new THREE.MeshStandardMaterial({
-    color: 0xffffff, map: balloonTexture(), roughness: 0.82, metalness: 0.02,
+  const balloon = new THREE.Mesh(new THREE.SphereGeometry(6.2, low ? 24 : 32, low ? 16 : 22), new THREE.MeshStandardMaterial({
+    color: 0xfff6ea, map: balloonTexture(), roughness: 0.86, metalness: 0.02,
   }));
-  balloon.scale.set(1.15, 0.48, 1.85);
-  balloon.position.set(0, 8.2, 4);
+  balloon.scale.set(0.92, 0.7, 2.05);
+  balloon.position.set(0, 9.4, 4);
   balloon.castShadow = !low;
   ship.add(balloon);
-  camSphere(0, 8.2, 4, 4.2);
-  const balloonNet = new THREE.Mesh(
-    new THREE.SphereGeometry(6.55, 12, 8),
-    new THREE.MeshBasicMaterial({ color: 0x3a2a22, wireframe: true, transparent: true, opacity: 0.18 }),
-  );
-  balloonNet.scale.copy(balloon.scale);
-  balloonNet.position.copy(balloon.position);
-  ship.add(balloonNet);
-  const ropePairs = [];
-  for (let i = 0; i < (low ? 8 : 14); i++) {
-    const x = -6.2 + i * (12.4 / (low ? 7 : 13));
-    ropePairs.push(new THREE.Vector3(x, 1.0, -8), new THREE.Vector3(x * 0.35, 6.4, 1));
-    ropePairs.push(new THREE.Vector3(x, 1.0, 16), new THREE.Vector3(x * 0.35, 6.4, 8));
-  }
-  const ropeGeo = new THREE.BufferGeometry().setFromPoints(ropePairs);
-  const ropes = new THREE.LineSegments(ropeGeo, new THREE.LineBasicMaterial({ color: 0x5a4034 }));
-  ship.add(ropes);
+  camSphere(0, 9.4, 4, 4.2);
+  const ropeMat = new THREE.MeshStandardMaterial({ color: 0x6a4a34, roughness: 0.92 });
+  rigBalloon(ship, balloon, low, ropeMat, brass);
 
   const chair = new THREE.Group();
   const seat = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.12, 0.55), redCloth);
@@ -536,14 +524,17 @@ export function buildRustyWorld(scene, low) {
   holdFloor.receiveShadow = true;
   ship.add(holdFloor);
   const humCrate = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.6, 0.8), wood);
-  humCrate.position.set(-0.4, -1.15, 1.6);
+  humCrate.position.set(2.6, 0.32, 3.4);
   const humGlow = new THREE.Mesh(
     new THREE.BoxGeometry(0.82, 0.08, 0.82),
     new THREE.MeshBasicMaterial({ color: 0xb9a0e0, transparent: true, opacity: 0.65 }),
   );
-  humGlow.position.set(-0.4, -0.82, 1.6);
+  humGlow.position.set(2.6, 0.66, 3.4);
   ship.add(humCrate, humGlow);
-  block(-0.4, 1.6, 0.45);
+  block(2.6, 3.4, 0.45);
+  const rope = new THREE.MeshStandardMaterial({ color: 0x6a5038, roughness: 0.94 });
+  deckDetail(ship, { wood, brass, dark, iron, rope }, low, block);
+  ship.add(wheelhouse({ wood, brass, dark, iron }, block));
 
   const plankMat = wood;
   const eastPlank = new THREE.Mesh(new THREE.BoxGeometry(16, 0.16, 4.2), plankMat);
@@ -739,25 +730,15 @@ export function buildRustyWorld(scene, low) {
   block(3.2, 47.2, 0.7);
   for (const [x, z] of [[-8, 52], [8, 52], [-8, 60], [8, 60]]) block(x, z, 0.7);
 
-  const cloudMat = new THREE.MeshStandardMaterial({ color: 0xf4f7fb, roughness: 1, transparent: true, opacity: 0.94 });
-  const puffGeo = new THREE.SphereGeometry(1, 7, 5);
-  const puffs = new THREE.InstancedMesh(puffGeo, cloudMat, low ? 16 : 28);
-  for (let i = 0; i < puffs.count; i++) {
-    const ang = i * 2.4;
-    const rad = 18 + (i % 5) * 7;
-    dummy.position.set(Math.cos(ang) * rad, -16 - (i % 4), Math.sin(ang) * rad);
-    dummy.scale.setScalar(3 + (i % 4));
-    dummy.updateMatrix();
-    puffs.setMatrixAt(i, dummy.matrix);
-  }
-  scene.add(puffs);
+  const banks = cloudSea(scene, low);
   const sea = new THREE.Mesh(
-    new THREE.CircleGeometry(180, low ? 16 : 28),
-    new THREE.MeshBasicMaterial({ color: 0xd5e2ee, transparent: true, opacity: 0.72, depthWrite: false }),
+    new THREE.CircleGeometry(220, low ? 20 : 32),
+    new THREE.MeshBasicMaterial({ color: 0xe7c4a4, transparent: true, opacity: 0.55, depthWrite: false }),
   );
   sea.rotation.x = -Math.PI / 2;
-  sea.position.y = -22;
+  sea.position.y = -28;
   scene.add(sea);
+  distantTraffic(scene, rust, cream, rockMat, low);
 
   const farCity = new THREE.Group();
   for (let i = 0; i < 6; i++) {
@@ -787,7 +768,8 @@ export function buildRustyWorld(scene, low) {
   }
   steamGeo.setAttribute("position", new THREE.BufferAttribute(steamPos, 3));
   const steam = new THREE.Points(steamGeo, new THREE.PointsMaterial({
-    color: 0xf7f7f7, size: low ? 0.38 : 0.62, transparent: true, opacity: 0.78, depthWrite: false,
+    color: 0xfff4e8, size: low ? 0.7 : 0.95, map: softDot(), transparent: true, opacity: 0.55,
+    depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true,
   }));
   ship.add(steam);
 
@@ -796,7 +778,8 @@ export function buildRustyWorld(scene, low) {
   const smokePos = new Float32Array(smokeCount * 3);
   smokeGeo.setAttribute("position", new THREE.BufferAttribute(smokePos, 3));
   const smoke = new THREE.Points(smokeGeo, new THREE.PointsMaterial({
-    color: 0x2a2a2a, size: 0.45, transparent: true, opacity: 0.35, depthWrite: false,
+    color: 0x4a403c, size: low ? 0.8 : 1.15, map: softDot(), transparent: true, opacity: 0.28,
+    depthWrite: false, sizeAttenuation: true,
   }));
   ship.add(smoke);
 
@@ -831,8 +814,12 @@ export function buildRustyWorld(scene, low) {
       sun.target.position.set(focus.x, 0, focus.z);
       sun.target.updateMatrixWorld();
       skyMat.uniforms.uTime.value = t;
-      shipPivot.rotation.z = Math.sin(t * 0.55) * heel;
-      shipPivot.rotation.x = Math.sin(t * 0.31) * heel * 0.65;
+      const roll = Math.sin(t * 0.55) * heel;
+      const pitch = Math.sin(t * 0.31) * heel * 0.65;
+      shipPivot.rotation.z = roll;
+      shipPivot.rotation.x = pitch;
+      setDeckAttitude(roll, pitch);
+      for (const bank of banks) bank.position.x = Math.sin(t * 0.05 + bank.position.y) * 4;
       const blades = props.userData.blades || [];
       for (const group of blades) group.rotation.x += dt * 8 * (group.userData.spin || 1);
       vane.rotation.z += dt * 1.6;
@@ -880,7 +867,7 @@ export function buildRustyWorld(scene, low) {
       if (gate.sheet) gate.sheet.material.opacity = gate.open ? 0.62 : pulse;
       if (gate.lamp) gate.lamp.intensity = gateOn ? 2.1 + Math.sin(t * 3) * 0.5 : 0;
       if (radio.glow) radio.glow.material.opacity = 0.35 + Math.sin(t * 3.1) * 0.3;
-      scene.fog.color.setHex(focus.z > 42 ? 0x6a6e78 : 0x9aa8b8);
+      scene.fog.color.setHex(focus.z > 42 ? 0x6a6248 : 0xc48a68);
     },
     setQuality(level) {
       const small = level === "low";

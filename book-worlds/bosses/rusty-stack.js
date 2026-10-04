@@ -2,7 +2,8 @@
 // Baron von Smash, the seven-foot axe at the fortress hangar.
 import * as THREE from "three";
 import { damp } from "../src/util.js";
-import { makeDust, spinDust } from "../src/rigs.js";
+import { makeDust, spinDust, softDot } from "../src/rigs.js?v=2";
+import { dusterGeometry, collarGeometry } from "../src/costume.js?v=1";
 
 export const boss = {
   id: "blank-baron",
@@ -155,7 +156,14 @@ function create() {
   const cape = new THREE.Mesh(new THREE.PlaneGeometry(1.15, 1.55, 4, 6), capeMat);
   cape.position.set(0, 1.45, -0.28);
   cape.geometry.translate(0, -0.4, 0);
-  rig.add(cape);
+  const coat = new THREE.Mesh(dusterGeometry(), capeMat);
+  coat.scale.set(1.45, 1.2, 1.35);
+  coat.position.y = 0.08;
+  coat.castShadow = true;
+  const collar = new THREE.Mesh(collarGeometry(), cloth);
+  collar.scale.setScalar(1.35);
+  collar.position.y = 0.15;
+  rig.add(cape, coat, collar);
 
   const arm = (side) => {
     const sh = new THREE.Group();
@@ -199,7 +207,7 @@ function create() {
   const legs = [];
   for (const s of [-1, 1]) {
     const hip = new THREE.Group();
-    hip.position.set(s * 0.24, 1.05, 0);
+    hip.position.set(s * 0.24, 0.96, 0);
     const thigh = new THREE.Mesh(new THREE.CapsuleGeometry(0.13, 0.28, 3, 8), iron);
     thigh.position.y = -0.24;
     thigh.castShadow = true;
@@ -232,7 +240,7 @@ function create() {
 
   const shadow = new THREE.Mesh(
     new THREE.CircleGeometry(0.95, 16),
-    new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.32, depthWrite: false }),
+    new THREE.MeshBasicMaterial({ map: softDot(), color: 0x140e0a, transparent: true, opacity: 0.42, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 }),
   );
   shadow.rotation.x = -Math.PI / 2;
   shadow.position.y = 0.03;

@@ -3,7 +3,11 @@
 // jumps, swings, and rolls layer on that skeleton.
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons";
-import { createHuman as createCapsule, trailKey, handbillMesh, softDot } from "./rigs.js";
+import { createHuman as createCapsule, trailKey, handbillMesh, softDot } from "./rigs.js?v=2";
+import {
+  dusterGeometry, collarGeometry, coatTailGeometry, sleeveGeometry,
+  coverallGeometry, lapelGeometry, wrenchGroup, spyglassGroup, goggleRig,
+} from "./costume.js?v=1";
 
 const NATIVE = { Walk_Loop: 1.15, Jog_Fwd_Loop: 2.55, Sprint_Loop: 4.35, Crouch_Fwd_Loop: 0.82 };
 const LOCO = ["Walk_Loop", "Jog_Fwd_Loop", "Sprint_Loop"];
@@ -296,17 +300,13 @@ function leatherTextures() {
   return leatherPromise;
 }
 
-function bindLeather(mat, mode) {
+function bindLeather(mat) {
   leatherTextures().then((pack) => {
     if (!mat || !pack) return;
     if (pack.nrm) mat.normalMap = pack.nrm;
     if (pack.rgh) mat.roughnessMap = pack.rgh;
-    const scale = mode === "photo" ? 1.35 : 0.95;
-    mat.normalScale = new THREE.Vector2(scale, scale);
-    if (mode === "photo" && pack.col) {
-      mat.map = pack.col;
-      mat.color.setHex(0xffffff);
-    } else if (pack.grain) mat.map = pack.grain;
+    mat.normalScale = new THREE.Vector2(1.15, 1.15);
+    if (pack.grain) mat.map = pack.grain;
     mat.needsUpdate = true;
   }).catch(() => {});
 }
@@ -343,56 +343,6 @@ function creasedCrown(radius, height) {
   return geo;
 }
 
-function dusterShell() {
-  const height = 0.5;
-  const geo = new THREE.CylinderGeometry(0.3, 0.22, height, 22, 6, true, 0.85, Math.PI * 1.4);
-  const pos = geo.attributes.position;
-  for (let i = 0; i < pos.count; i++) {
-    let x = pos.getX(i);
-    let y = pos.getY(i);
-    let z = pos.getZ(i);
-    const t = (y + height * 0.5) / height;
-    const shoulder = 1 + Math.max(0, t - 0.62) * 1.35;
-    x *= shoulder;
-    z *= 1 + Math.max(0, t - 0.7) * 0.35;
-    const ang = Math.atan2(x, z);
-    const fold = Math.sin(ang * 4 + t * 2) * 0.012;
-    const rad = Math.hypot(x, z) || 1;
-    x += (x / rad) * fold;
-    z += (z / rad) * fold;
-    pos.setXYZ(i, x, y, z);
-  }
-  geo.computeVertexNormals();
-  return geo;
-}
-
-function coatTail(side) {
-  const geo = new THREE.PlaneGeometry(0.3, 0.78, 3, 8);
-  geo.translate(side * 0.13, -0.32, -0.02);
-  const pos = geo.attributes.position;
-  for (let i = 0; i < pos.count; i++) {
-    const y = pos.getY(i);
-    const flare = Math.max(0, -0.05 - y) / 0.7;
-    pos.setX(i, pos.getX(i) * (1 + flare * 0.7) + side * flare * 0.05);
-    pos.setZ(i, -0.05 - flare * 0.08);
-  }
-  geo.computeVertexNormals();
-  return geo;
-}
-
-function sleeveGeo(len) {
-  const geo = new THREE.CylinderGeometry(0.085, 0.1, len, 12, 4, true);
-  const pos = geo.attributes.position;
-  for (let i = 0; i < pos.count; i++) {
-    const y = pos.getY(i);
-    const wrinkle = 1 + Math.sin((y / Math.max(0.05, len)) * 10) * 0.07;
-    pos.setX(i, pos.getX(i) * wrinkle);
-    pos.setZ(i, pos.getZ(i) * wrinkle);
-  }
-  geo.computeVertexNormals();
-  return geo;
-}
-
 function metalMat(hex, rough = 0.34) {
   const mat = clothMat(hex, rough, "leather");
   mat.metalness = 0.72;
@@ -420,24 +370,12 @@ function dressAirship(model, B, spec, crown, faceZ) {
   }
 
   if (spec.goggles) {
-    const g = new THREE.Group();
     const brass = metalMat(0xc6a15a, 0.3);
     const glass = new THREE.MeshStandardMaterial({
       color: 0x9ec8d4, roughness: 0.08, metalness: 0.2, transparent: true, opacity: 0.72,
     });
-    for (const s of [-1, 1]) {
-      const rim = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.01, 8, 16), brass);
-      rim.position.set(s * 0.055, 0, 0);
-      const lens = new THREE.Mesh(new THREE.CircleGeometry(0.042, 12), glass);
-      lens.position.set(s * 0.055, 0, 0.006);
-      g.add(rim, lens);
-    }
-    const bridge = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.012, 0.012), brass);
-    const strap = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.012, 6, 16), clothMat(0x3a2a22, 0.7, "leather"));
-    strap.rotation.x = Math.PI / 2;
-    strap.position.y = -0.02;
-    g.add(bridge, strap);
-    put(model, B("Head"), g, 0, crown + 0.01, faceZ * 0.35, -0.55, 0, 0);
+    const g = goggleRig(brass, glass, clothMat(0x3a2a22, 0.7, "leather"));
+    put(model, B("Head"), g, 0, crown + 0.02, faceZ * 0.15, -0.62, 0, 0);
   }
 
   if (spec.stubble) {
@@ -488,12 +426,16 @@ function dressAirship(model, B, spec, crown, faceZ) {
 
   if (spec.coverall) {
     const bibM = clothMat(spec.cloth || 0x4e6438, 0.82, "cloth");
-    const bib = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.38, 0.06), bibM);
-    put(model, B("spine_02"), bib, 0, 1.18, 0.14);
+    bibM.side = THREE.DoubleSide;
+    const shell = new THREE.Mesh(coverallGeometry(), bibM);
+    put(model, B("pelvis"), shell, 0, 0, 0);
+    const bib = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.28, 0.04), bibM);
+    put(model, B("spine_02"), bib, 0, 1.22, 0.15);
     const strapM = clothMat(0x2a2418, 0.55, "leather");
+    bindLeather(strapM);
     for (const s of [-1, 1]) {
-      const strap = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.32, 0.02), strapM);
-      put(model, B("spine_02"), strap, s * 0.09, 1.36, 0.1, 0.15, 0, s * 0.2);
+      const strap = new THREE.Mesh(new THREE.BoxGeometry(0.028, 0.32, 0.016), strapM);
+      put(model, B("spine_02"), strap, s * 0.08, 1.34, 0.12, 0.12, 0, s * 0.18);
     }
   }
 
@@ -543,19 +485,13 @@ function dressAirship(model, B, spec, crown, faceZ) {
     const bone = B("hand_r");
     if (bone) {
       bone.getWorldPosition(grip);
-      const wrench = new THREE.Group();
-      const brass = metalMat(0xd4b46a, 0.28);
-      const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.024, 0.78, 8), brass);
-      const head = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.07, 0.04), brass);
-      head.position.y = 0.38;
-      const jaw = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.045, 0.036), brass);
-      jaw.position.set(0.09, 0.38, 0);
-      const jaw2 = jaw.clone();
-      jaw2.position.x = -0.09;
-      wrench.add(handle, head, jaw, jaw2);
-      wrench.scale.setScalar(1.15);
-      put(model, bone, wrench, grip.x, grip.y + 0.16, grip.z, 0.35, 0.15, 0.15);
+      const wrench = wrenchGroup(metalMat(0xd4b46a, 0.28));
+      put(model, bone, wrench, grip.x, grip.y - 0.02, grip.z + 0.02, 0.4, 0.2, 1.2);
     }
+  }
+  if (spec.spyglass) {
+    const glass = spyglassGroup(metalMat(0xc6a15a, 0.32), clothMat(0x4a3428, 0.6, "leather"));
+    put(model, B("spine_01"), glass, 0.2, 0.98, 0.1, 0.15, 0, 1.25);
   }
 }
 
@@ -565,10 +501,11 @@ export function createHuman(spec) {
   root.add(spin);
   const shadow = new THREE.Mesh(
     new THREE.PlaneGeometry(1.15, 1.15),
-    new THREE.MeshBasicMaterial({ map: softDot(), transparent: true, depthWrite: false, opacity: 0.32, color: 0x000000 }),
+    new THREE.MeshBasicMaterial({ map: softDot(), transparent: true, depthWrite: false, opacity: 0.4, color: 0x140e0a, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }),
   );
   shadow.rotation.x = -Math.PI / 2;
-  shadow.position.y = 0.03;
+  shadow.position.y = 0.02;
+  shadow.scale.setScalar(1.15);
   shadow.renderOrder = 1;
   root.add(shadow);
 
@@ -702,32 +639,32 @@ function dress(api, assets) {
   if (spec.coat) {
     const coatMat = clothMat(spec.coat, 0.62, "leather");
     coatMat.side = THREE.DoubleSide;
-    bindLeather(coatMat, "photo");
-    const coat = new THREE.Mesh(dusterShell(), coatMat);
-    put(model, B("pelvis"), coat, 0, 1.22, 0.02);
-    const collar = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.03, 6, 16, Math.PI * 1.2), coatMat);
-    collar.rotation.x = Math.PI / 2.35;
-    collar.rotation.z = Math.PI;
-    put(model, B("spine_03"), collar, 0, 1.52, 0.02);
+    bindLeather(coatMat);
+    const coat = new THREE.Mesh(dusterGeometry(), coatMat);
+    coat.castShadow = true;
+    put(model, B("pelvis"), coat, 0, 0, 0.02);
+    const collar = new THREE.Mesh(collarGeometry(), coatMat);
+    collar.castShadow = true;
+    put(model, B("spine_03"), collar, 0, 0, 0);
     for (const s of [-1, 1]) {
-      const lapel = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.22, 0.02), coatMat);
-      put(model, B("spine_02"), lapel, s * 0.08, 1.32, 0.18, 0.2, s * -0.5, s * 0.4);
-      const tail = new THREE.Mesh(coatTail(s), coatMat);
-      put(model, B("pelvis"), tail, 0, 0.98, -0.1, 0.08, 0, 0);
+      const lapel = new THREE.Mesh(lapelGeometry(s), coatMat);
+      put(model, B("pelvis"), lapel, 0, 0, 0);
+      const tail = new THREE.Mesh(coatTailGeometry(s), coatMat);
       tail.userData.side = s;
+      put(model, B("pelvis"), tail, 0, 0, 0);
     }
     api._tails = [];
     model.traverse((o) => { if (o.userData && o.userData.side) api._tails.push(o); });
     const beltMat = clothMat(0x3a2418, 0.48, "leather");
-    bindLeather(beltMat, "grain");
-    const belt = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.05, 18), beltMat);
-    put(model, B("spine_01"), belt, 0, 0.98, 0.02);
-    const buckle = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.045, 0.02), clothMat(0xd7c08a, 0.35, "leather"));
-    put(model, B("spine_01"), buckle, 0, 0.98, 0.2);
-    const button = clothMat(0xd7c08a, 0.32, "leather");
+    bindLeather(beltMat);
+    const belt = new THREE.Mesh(new THREE.CylinderGeometry(0.23, 0.23, 0.045, 16), beltMat);
+    put(model, B("spine_01"), belt, 0, 1.0, 0);
+    const buckle = new THREE.Mesh(new THREE.BoxGeometry(0.055, 0.04, 0.018), metalMat(0xd7c08a, 0.32));
+    put(model, B("spine_01"), buckle, 0, 1.0, 0.2);
+    const button = metalMat(0xd7c08a, 0.3);
     for (let i = 0; i < 4; i++) {
-      const b = new THREE.Mesh(new THREE.SphereGeometry(0.014, 8, 6), button);
-      put(model, B("spine_02"), b, 0.015, 1.28 - i * 0.1, 0.2);
+      const b = new THREE.Mesh(new THREE.SphereGeometry(0.012, 8, 6), button);
+      put(model, B("spine_02"), b, 0.09, 1.32 - i * 0.1, 0.16);
     }
     model.updateMatrixWorld(true);
     for (const side of ["r", "l"]) {
@@ -741,13 +678,13 @@ function dress(api, assets) {
       lower.getWorldPosition(b);
       const hand = B("hand_" + side);
       if (hand) hand.getWorldPosition(c);
-      const len = Math.max(0.18, a.distanceTo(b));
-      const foreLen = hand ? Math.max(0.16, b.distanceTo(c)) : len * 0.85;
-      const upperSleeve = new THREE.Mesh(sleeveGeo(len * 0.96), coatMat);
-      upperSleeve.position.y = len * 0.5;
+      const len = Math.max(0.16, a.distanceTo(b));
+      const foreLen = hand ? Math.max(0.14, b.distanceTo(c)) : len * 0.85;
+      const upperSleeve = new THREE.Mesh(sleeveGeometry(len * 0.92), coatMat);
+      upperSleeve.position.y = len * 0.46;
       upper.add(upperSleeve);
-      const fore = new THREE.Mesh(sleeveGeo(foreLen * 0.9), coatMat);
-      fore.position.y = foreLen * 0.42;
+      const fore = new THREE.Mesh(sleeveGeometry(foreLen * 0.88), coatMat);
+      fore.position.y = foreLen * 0.4;
       lower.add(fore);
       for (const mesh of [upperSleeve, fore]) {
         mesh.castShadow = true;
@@ -806,7 +743,7 @@ function dress(api, assets) {
   if (spec.key) {
     B("hand_r").getWorldPosition(grip);
     const key = trailKey();
-    key.scale.setScalar(0.7);
+    key.scale.setScalar(1);
     put(model, B("hand_r"), key, grip.x, grip.y, grip.z, -0.95, 0.25, 0.35);
     api.keyMesh = key;
     key.visible = api._keyOn !== false;
