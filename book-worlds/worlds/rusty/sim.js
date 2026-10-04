@@ -1303,10 +1303,10 @@ export function createRustySim(scene, world, audio) {
     if (!boss.alive) return "Step through to the Pulse";
     if (player.x > 23 && !scenes.city.done) return "Seat the crystals";
     if (player.x < -24 && !scenes.goats.done) return "Pen the goats";
-    if (scenes.brawl.on && !scenes.brawl.done) return "Clear the deck";
-    if (player.z < 36 && Math.abs(player.x) < 10 && scenes.brawl.done) return "Steam across the gap";
-    if (player.z > 34 && !scenes.fort.done) return "Cross the crag";
-    if (scenes.fort.done && boss.alive) return "Baron in the hangar";
+    if (!scenes.brawl.done) return "Clear the deck";
+    if (player.z < 38 && Math.abs(player.x) < 10) return "Steam across the gap";
+    if (!scenes.fort.done) return "Cross the crag";
+    if (boss.alive) return "Baron in the hangar";
     return `Pages ${got}/5`;
   }
 

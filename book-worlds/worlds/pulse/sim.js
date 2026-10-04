@@ -1083,11 +1083,10 @@ export function createPulseSim(scene, world, audio) {
     if (boss.active && boss.alive && flags.phase2) return "The hum is changing";
     if (boss.active && boss.alive) return "Break the hum";
     if (!boss.alive) return "Step through to the mountain";
-    if (scenes.light.on && !scenes.light.done) return "Clear the first light";
-    if (!flags.pathLit && player.z > 28) return "Pulse the dark path";
-    if (player.z > 40 && !scenes.bridge.done) return "Quiet the ripples";
-    if (player.z > 60 && !scenes.wave.done) return "Cross the wave";
-    if (scenes.wave.done && boss.alive) return "The Hum in the wave";
+    if (!flags.pathLit) return player.z > 28 ? "Pulse the dark path" : "Clear the first light";
+    if (!scenes.bridge.done) return "Quiet the ripples";
+    if (!scenes.wave.done) return "Cross the wave";
+    if (boss.alive) return "The Hum in the wave";
     return `Pages ${pageCount()}/5`;
   }
 

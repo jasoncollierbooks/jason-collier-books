@@ -1146,10 +1146,9 @@ export function createOldmanSim(scene, world, audio) {
     if (boss.active && boss.alive && flags.phase2) return "The fog is swinging";
     if (boss.active && boss.alive) return "Free the Old Man";
     if (!boss.alive) return "Back to the truck";
-    if (scenes.timber.on && !scenes.timber.done) return "Clear the timber";
-    if (!flags.fogDriven && player.z > 48) return "Firelight the fog";
-    if (player.z > 62 && !scenes.watched.done) return "The treeline";
-    if (scenes.watched.done && boss.alive) return "The Old Man";
+    if (!flags.fogDriven) return player.z > 48 || scenes.timber.done ? "Firelight the fog" : "Clear the timber";
+    if (!scenes.watched.done) return "The treeline";
+    if (boss.alive) return "The Old Man";
     return `Pages ${pageCount()}/5`;
   }
 

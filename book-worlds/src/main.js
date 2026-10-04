@@ -8,11 +8,11 @@ import { createDialogue } from "./dialogue.js?v=7";
 import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass, GTAOPass, ShaderPass, FXAAPass } from "three/addons";
 import { buildWorld } from "./world.js?v=8";
 import { buildRustyWorld } from "../worlds/rusty/world.js?v=12";
-import { createRustySim } from "../worlds/rusty/sim.js?v=17";
+import { createRustySim } from "../worlds/rusty/sim.js?v=18";
 import { buildPulseWorld } from "../worlds/pulse/world.js?v=6";
-import { createPulseSim } from "../worlds/pulse/sim.js?v=10";
+import { createPulseSim } from "../worlds/pulse/sim.js?v=11";
 import { buildOldmanWorld } from "../worlds/oldman/world.js?v=2";
-import { createOldmanSim } from "../worlds/oldman/sim.js?v=2";
+import { createOldmanSim } from "../worlds/oldman/sim.js?v=3";
 import { createAbilities } from "./abilities.js?v=3";
 import { whenCastReady } from "./actors.js?v=10";
 import { tick as tickVfx, bind, spawn as spawnVfx, active as vfxActive } from "./vfx.js?v=1";
@@ -1103,6 +1103,7 @@ if (wantOldman && oldmanStarts.includes(start)) {
 } else {
   showHub();
 }
+if (!document.body.dataset.world) applyGrade(worldKey);
 
 function resize() {
   const w = window.innerWidth;
