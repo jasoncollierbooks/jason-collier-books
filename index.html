@@ -46,7 +46,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Josefin+Sans:wght@400;600&family=Pinyon+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/broadcast-theme/broadcast.css?v=1">
+<link rel="stylesheet" href="assets/broadcast-theme/broadcast.css?v=2">
 </head>
 <body class="broadcast home">
 <a class="skip" href="#top">Skip to content</a>
@@ -179,59 +179,50 @@
               </div></div>
             </section>
 
-            <section class="home-books" id="books">
-              <header class="titlecard books-card">
-                <p class="script">Presenting</p>
-                <h2 class="home-h">The Books</h2>
-                <p class="kicker">Explore</p>
-              </header>
-              <div class="home-inner">
-                <div class="bcards">
-                  <a class="bcard bcard-western" href="jang-and-tom.html">
-                    <span class="bcard-img"><img src="images/jang-and-tom-wagon-masters.jpg" alt="Cover of Jang and Tom: Wagon Masters by Jason Collier" loading="lazy"></span>
-                    <span class="bcard-text"><span class="bcard-genre">Comic Western</span><strong class="bcard-title">Jang &amp; Tom <small>Wagon Masters</small></strong><em class="teletype"><span class="tele-full">Two thousand miles of pure frontier chaos.</span><span class="tele-live" aria-hidden="true"></span></em><span class="bcard-go">Explore the book →</span></span>
-                  </a>
-                  <a class="bcard bcard-scifi" href="first-pulse.html">
-                    <span class="bcard-img"><img src="images/the-first-pulse.jpg" alt="Cover of The First Pulse by Jason Collier" loading="lazy"></span>
-                    <span class="bcard-text"><span class="bcard-genre">Science Fiction</span><strong class="bcard-title">The First Pulse</strong><em class="teletype"><span class="tele-full">Something older than stars is listening.</span><span class="tele-live" aria-hidden="true"></span></em><span class="bcard-go">Explore the book →</span></span>
-                  </a>
-                  <a class="bcard bcard-woods" href="old-man-on-the-mountain.html">
-                    <span class="bcard-img"><img src="images/old-man-on-the-mountain.jpg" alt="Cover of Old Man On The Mountain by Jason Collier" loading="lazy"></span>
-                    <span class="bcard-text"><span class="bcard-genre">Outdoor Suspense</span><strong class="bcard-title">Old Man <small>On The Mountain</small></strong><em class="teletype"><span class="tele-full">A great story for the woods.</span><span class="tele-live" aria-hidden="true"></span></em><span class="bcard-go">Explore the book →</span></span>
-                  </a>
-                  <a class="bcard bcard-brass" href="rusty-stack.html">
-                    <span class="bcard-img"><img src="images/the-rusty-stack.jpg" alt="Cover of The Rusty Stack Adventures by Jason Collier" width="832" height="1248" loading="lazy"><span class="soon">Coming soon</span></span>
-                    <span class="bcard-text"><span class="bcard-genre">Coming soon</span><strong class="bcard-title">The Rusty Stack <small>Adventures</small></strong><em class="teletype"><span class="tele-full">The ugliest freight hauler in the sky.</span><span class="tele-live" aria-hidden="true"></span></em><span class="bcard-go">Take a look →</span></span>
-                  </a>
-                </div>
-              </div>
-            </section>
-
-            <section class="home-more" id="more">
-              <div class="home-inner more-grid">
-                <a class="mcard" href="audiobooks.html">
-                  <span class="mcard-img"><img src="media/firstpulse_part4of7_poster.jpg" alt="" loading="lazy"></span>
-                  <span class="mcard-text"><span class="kicker">Listen</span><strong>Audiobooks</strong><em class="teletype"><span class="tele-full">The First Pulse and Jang &amp; Tom, as animated audiobooks brought to life with Grok.</span><span class="tele-live" aria-hidden="true"></span></em></span>
+            <section class="home-choices" id="books" aria-label="Choose a section">
+              <div class="choice-grid">
+                <a class="choice" href="#books">
+                  <span class="choice-media choice-media-books">
+                    <span class="choice-covers">
+                      <img src="images/jang-and-tom-wagon-masters.jpg" alt="" width="832" height="1248" loading="lazy">
+                      <img src="images/the-first-pulse.jpg" alt="" width="832" height="1248" loading="lazy">
+                      <img src="images/old-man-on-the-mountain.jpg" alt="" width="832" height="1248" loading="lazy">
+                      <img src="images/the-rusty-stack.jpg" alt="" width="832" height="1248" loading="lazy">
+                    </span>
+                    <span class="choice-soon">The Rusty Stack · Coming soon</span>
+                  </span>
+                  <span class="choice-copy">
+                    <span class="choice-title">Books</span>
+                    <span class="choice-line">Science fiction, outdoor suspense, and comic Western adventure.</span>
+                  </span>
                 </a>
-                <a class="mcard" href="art.html">
-                  <span class="mcard-img"><img src="media/art-slideshow-poster.jpg" alt="" loading="lazy"></span>
-                  <span class="mcard-text"><span class="kicker">Jason’s own work</span><strong>Paintings &amp; Photography</strong><em class="teletype"><span class="tele-full">Away from the keyboard, Jason paints, draws, and takes pictures.</span><span class="tele-live" aria-hidden="true"></span></em></span>
+                <a class="choice" href="audiobooks.html">
+                  <span class="choice-media"><img src="media/firstpulse_part4of7_poster.jpg" alt="" width="1280" height="720" loading="lazy"></span>
+                  <span class="choice-copy">
+                    <span class="choice-title">Audiobooks</span>
+                    <span class="choice-line">The First Pulse and Jang &amp; Tom, as animated audiobooks brought to life with Grok.</span>
+                  </span>
                 </a>
-                <a class="mcard" href="thorne-lab.html">
-                  <span class="mcard-img"><img src="images/lab/born-twice-banner.jpg" alt="" loading="lazy"></span>
-                  <span class="mcard-text"><span class="kicker">Research log, ongoing</span><strong>Thorne’s Lab</strong><em class="teletype"><span class="tele-full">Dr. Elias Thorne’s research journal, bench toys, and the Born Twice game.</span><span class="tele-live" aria-hidden="true"></span></em></span>
+                <a class="choice" href="past-inspirations.html">
+                  <span class="choice-media"><img src="images/hero/hero-4.jpg" alt="" width="1200" height="800" loading="lazy"></span>
+                  <span class="choice-copy">
+                    <span class="choice-title">Past Inspirations</span>
+                    <span class="choice-line">Public-domain comedy teams, pulp heroes, serials, and Westerns, streaming from the Internet Archive.</span>
+                  </span>
                 </a>
-                <a class="mcard" href="i-spy.html">
-                  <span class="mcard-img"><img src="images/scenes/transcon-s46.jpg" alt="" loading="lazy"></span>
-                  <span class="mcard-text"><span class="kicker">Picture game</span><strong>I Spy</strong><em class="teletype"><span class="tele-full">Pick a picture from the books and find ten hidden things.</span><span class="tele-live" aria-hidden="true"></span></em></span>
+                <a class="choice" id="more" href="play.html">
+                  <span class="choice-media"><img src="book-worlds/assets/play-cover.webp" alt="" width="1024" height="576" loading="lazy"></span>
+                  <span class="choice-copy">
+                    <span class="choice-title">Extras</span>
+                    <span class="choice-line">Play the games, the picture hunt, and the coloring pages from Jason Collier’s books.</span>
+                  </span>
                 </a>
-                <a class="mcard" href="coloring.html">
-                  <span class="mcard-img mcard-color"><img src="coloring/thumbs/runaway-horse.png" alt="" loading="lazy"></span>
-                  <span class="mcard-text"><span class="kicker">Printable pages</span><strong>Coloring Pages</strong><em class="teletype"><span class="tele-full">Color pictures from the books right on the screen, or print them out.</span><span class="tele-live" aria-hidden="true"></span></em></span>
-                </a>
-                <a class="mcard" href="about.html">
-                  <span class="mcard-img"><img src="images/author-as-jang.jpg" alt="" loading="lazy"></span>
-                  <span class="mcard-text"><span class="kicker">About &amp; Contact</span><strong>Jason Collier</strong><em class="teletype"><span class="tele-full">Reader mail, events, and media inquiries.</span><span class="tele-live" aria-hidden="true"></span></em></span>
+                <a class="choice" href="about.html">
+                  <span class="choice-media choice-media-portrait"><img src="images/author-as-jang.jpg" alt="" width="720" height="713" loading="lazy"></span>
+                  <span class="choice-copy">
+                    <span class="choice-title">Bio</span>
+                    <span class="choice-line">Reader mail, events, and media inquiries.</span>
+                  </span>
                 </a>
               </div>
             </section>
