@@ -18,7 +18,7 @@ function openShell(rows, gap) {
       const hem = iy / Math.max(1, rows.length - 1);
       const flare = 1 + Math.sin(a * 2.0) * 0.03 * hem;
       const x = Math.sin(a) * row.rx * flare + Math.sin(a) * fold;
-      const z = Math.cos(a) * row.rz * flare + Math.cos(a) * fold;
+      const z = Math.cos(a) * row.rz * flare + Math.cos(a) * fold + (row.z || 0);
       positions.push(x, row.y, z);
       uvs.push(t, iy / Math.max(1, rows.length - 1));
     }
@@ -39,7 +39,21 @@ function openShell(rows, gap) {
 }
 
 // Long duster: shoulders to mid-calf, open down the front, cinched at the waist.
-export function dusterGeometry() {
+// "close" is the Keeper's tailor: same cut, seated on the shoulder and narrowed
+// through the chest, back, sleeves, and hem. Other coats keep the original shell.
+export function dusterGeometry(fit) {
+  if (fit === "close") {
+    return openShell([
+      { y: 1.55, rx: 0.15, rz: 0.11, z: 0.012 },
+      { y: 1.48, rx: 0.355, rz: 0.15, z: -0.012 },
+      { y: 1.38, rx: 0.255, rz: 0.14, z: 0.0 },
+      { y: 1.24, rx: 0.188, rz: 0.15, z: 0.0 },
+      { y: 1.08, rx: 0.162, rz: 0.132, z: 0.006 },
+      { y: 0.88, rx: 0.188, rz: 0.142, z: 0.004 },
+      { y: 0.66, rx: 0.218, rz: 0.152, z: 0.0 },
+      { y: 0.42, rx: 0.252, rz: 0.168, z: 0.0 },
+    ], 0.56);
+  }
   return openShell([
     { y: 1.56, rx: 0.22, rz: 0.16 },
     { y: 1.44, rx: 0.32, rz: 0.21 },
@@ -51,7 +65,14 @@ export function dusterGeometry() {
   ], 0.62);
 }
 
-export function collarGeometry() {
+export function collarGeometry(fit) {
+  if (fit === "close") {
+    return openShell([
+      { y: 1.50, rx: 0.14, rz: 0.11, z: 0.01 },
+      { y: 1.57, rx: 0.18, rz: 0.135, z: 0.0 },
+      { y: 1.64, rx: 0.155, rz: 0.12, z: 0.0 },
+    ], 1.05);
+  }
   return openShell([
     { y: 1.50, rx: 0.15, rz: 0.12 },
     { y: 1.58, rx: 0.20, rz: 0.15 },
@@ -59,28 +80,32 @@ export function collarGeometry() {
   ], 1.05);
 }
 
-export function coatTailGeometry(side) {
-  const geo = new THREE.PlaneGeometry(0.22, 0.52, 3, 6);
-  geo.translate(side * 0.12, 0.22, -0.16);
+export function coatTailGeometry(side, fit) {
+  const close = fit === "close";
+  const geo = new THREE.PlaneGeometry(close ? 0.18 : 0.22, close ? 0.46 : 0.52, 3, 6);
+  geo.translate(side * (close ? 0.09 : 0.12), close ? 0.26 : 0.22, close ? -0.11 : -0.16);
   const pos = geo.attributes.position;
   for (let i = 0; i < pos.count; i++) {
     const y = pos.getY(i);
-    const drop = Math.max(0, 0.42 - y);
-    pos.setX(i, pos.getX(i) + side * drop * 0.16);
-    pos.setZ(i, pos.getZ(i) - drop * 0.22);
+    const drop = Math.max(0, (close ? 0.38 : 0.42) - y);
+    pos.setX(i, pos.getX(i) + side * drop * (close ? 0.1 : 0.16));
+    pos.setZ(i, pos.getZ(i) - drop * (close ? 0.12 : 0.22));
   }
   geo.computeVertexNormals();
   return geo;
 }
 
-export function sleeveGeometry(len) {
-  const geo = new THREE.CylinderGeometry(0.055, 0.072, Math.max(0.12, len), 12, 4, true);
+export function sleeveGeometry(len, fit) {
+  const close = fit === "close";
+  const height = Math.max(0.12, len);
+  // Close sleeves clear the arm (upper radius ~0.07) without the old shoulder puff.
+  const geo = new THREE.CylinderGeometry(close ? 0.068 : 0.055, close ? 0.08 : 0.072, height, 12, 4, true);
   const pos = geo.attributes.position;
   for (let i = 0; i < pos.count; i++) {
     const y = pos.getY(i);
-    const t = y / Math.max(0.05, len) + 0.5;
-    const cuff = t < 0.18 ? 1.18 : 1;
-    const wrinkle = 1 + Math.sin(t * 14) * 0.045;
+    const t = y / Math.max(0.05, height) + 0.5;
+    const cuff = close ? (t > 0.84 ? 1.05 : 1) : (t < 0.18 ? 1.18 : 1);
+    const wrinkle = 1 + Math.sin(t * 14) * (close ? 0.012 : 0.045);
     pos.setX(i, pos.getX(i) * wrinkle * cuff);
     pos.setZ(i, pos.getZ(i) * wrinkle * cuff);
   }
@@ -97,14 +122,16 @@ export function coverallGeometry() {
   ], 0.42);
 }
 
-export function lapelGeometry(side) {
-  const geo = new THREE.PlaneGeometry(0.09, 0.28, 1, 3);
-  geo.translate(side * 0.1, 1.36, 0.16);
+export function lapelGeometry(side, fit) {
+  const close = fit === "close";
+  const geo = new THREE.PlaneGeometry(close ? 0.072 : 0.09, close ? 0.26 : 0.28, 1, 3);
+  geo.translate(side * (close ? 0.082 : 0.1), close ? 1.34 : 1.36, close ? 0.145 : 0.16);
   const pos = geo.attributes.position;
   for (let i = 0; i < pos.count; i++) {
     const y = pos.getY(i);
-    pos.setX(i, pos.getX(i) + side * (y - 1.22) * 0.15);
-    pos.setZ(i, pos.getZ(i) + (y - 1.22) * 0.08);
+    const yoke = close ? 1.2 : 1.22;
+    pos.setX(i, pos.getX(i) + side * (y - yoke) * (close ? 0.12 : 0.15));
+    pos.setZ(i, pos.getZ(i) + (y - yoke) * (close ? 0.06 : 0.08));
   }
   geo.computeVertexNormals();
   return geo;

@@ -2,7 +2,7 @@
 // Standby figures wear the same coat, sleeve, and prop meshes as the skinned cast.
 import * as THREE from "three";
 import { damp } from "./util.js";
-import { dusterGeometry, collarGeometry, coatTailGeometry, sleeveGeometry, coverallGeometry, wrenchGroup, spyglassGroup, goggleRig } from "./costume.js?v=1";
+import { dusterGeometry, collarGeometry, coatTailGeometry, sleeveGeometry, coverallGeometry, wrenchGroup, spyglassGroup, goggleRig } from "./costume.js?v=2";
 
 const mats = new Map();
 function M(hex, opts = {}) {
@@ -82,14 +82,15 @@ export function createHuman(spec) {
 
   if (spec.coat) {
     const coatM = M(spec.coat, { side: THREE.DoubleSide, unique: true });
-    const coat = new THREE.Mesh(dusterGeometry(), coatM);
+    const fit = spec.key ? "close" : undefined;
+    const coat = new THREE.Mesh(dusterGeometry(fit), coatM);
     coat.castShadow = true;
     body.add(coat);
-    const collar = new THREE.Mesh(collarGeometry(), coatM);
+    const collar = new THREE.Mesh(collarGeometry(fit), coatM);
     collar.castShadow = true;
     body.add(collar);
     for (const s of [-1, 1]) {
-      const tail = new THREE.Mesh(coatTailGeometry(s), coatM);
+      const tail = new THREE.Mesh(coatTailGeometry(s, fit), coatM);
       tail.castShadow = true;
       tail.userData.side = s;
       body.add(tail);
@@ -134,10 +135,11 @@ export function createHuman(spec) {
     el.add(down(0.26, 0.042, spec.sleeves ? M(spec.sleeves) : cloth));
     if (spec.coat || spec.coverall) {
       const sleeveM = M(spec.coat || spec.sleeves || spec.cloth, { side: THREE.DoubleSide, unique: true });
-      const upperSleeve = new THREE.Mesh(sleeveGeometry(0.28), sleeveM);
+      const sleeveFit = spec.key ? "close" : undefined;
+      const upperSleeve = new THREE.Mesh(sleeveGeometry(0.28, sleeveFit), sleeveM);
       upperSleeve.position.y = -0.16;
       sh.add(upperSleeve);
-      const fore = new THREE.Mesh(sleeveGeometry(0.24), sleeveM);
+      const fore = new THREE.Mesh(sleeveGeometry(0.24, sleeveFit), sleeveM);
       fore.position.y = -0.14;
       el.add(fore);
     }

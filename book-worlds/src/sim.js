@@ -1,10 +1,10 @@
 import * as THREE from "three";
 import { clamp, damp, dampAngle, hypot2 } from "./util.js";
-import { halfWidth, heightAt } from "./world.js?v=8";
-import { createFog, handbillMesh } from "./rigs.js?v=5";
-import { createHuman } from "./actors.js?v=10";
+import { halfWidth, heightAt } from "./world.js?v=9";
+import { createFog, handbillMesh } from "./rigs.js?v=6";
+import { createHuman } from "./actors.js?v=11";
 import { armRing, note, spawn } from "./vfx.js?v=1";
-import { bossFor } from "../bosses/index.js?v=11";
+import { bossFor } from "../bosses/index.js?v=12";
 import { createAbilities } from "./abilities.js?v=3";
 
 const abilities = createAbilities();
