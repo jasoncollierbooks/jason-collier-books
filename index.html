@@ -43,7 +43,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Josefin+Sans:wght@400;600&family=Pinyon+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/broadcast-theme/broadcast.css">
+<link rel="stylesheet" href="assets/broadcast-theme/broadcast.css?v=1">
 </head>
 <body class="broadcast home">
 <a class="skip" href="#top">Skip to content</a>
@@ -276,13 +276,21 @@
           <span class="knob" aria-hidden="true"></span>
           <span class="static-label">Static</span>
         </button>
+        <button type="button" class="sound-btn" id="type-sound" aria-pressed="true" aria-label="Typewriter sounds on">
+          <svg class="sound-icon" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+            <path fill="currentColor" d="M8 24h10.5L36 10v44L18.5 40H8z"/>
+            <path class="sound-waves" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" d="M44 22c4.5 4.5 4.5 15.5 0 20M52 14c8 8 8 28 0 36"/>
+            <path class="sound-slash" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" d="M40 16 L58 46"/>
+          </svg>
+          <span class="static-label">Sound</span>
+        </button>
         <span class="speaker" aria-hidden="true"></span>
       </div>
     </div>
   </div>
 </div>
 
-<script src="assets/broadcast-theme/broadcast.js" defer></script>
+<script src="assets/broadcast-theme/broadcast.js?v=1" defer></script>
 <script src="main.js" defer></script>
 <script src="links.js" defer></script>
 </body>

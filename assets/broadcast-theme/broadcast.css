@@ -159,6 +159,24 @@ button, input { font: inherit; }
   font-family: var(--ui); font-size: .58rem; letter-spacing: .16em; text-transform: uppercase;
 }
 .static-btn[aria-pressed="true"] .knob::before { transform: translateX(-50%) rotate(48deg); transform-origin: 50% 160%; }
+.sound-btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .14rem;
+  flex: none; min-width: 56px; min-height: 64px; padding: .32rem .4rem .26rem;
+  border: 1px solid rgba(228, 208, 164, .66); border-radius: 6px; color: #f0ddb4; cursor: pointer;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255, 220, 170, .18), transparent 58%),
+    linear-gradient(180deg, #4e3420, #24160e);
+  box-shadow: inset 0 1px 0 rgba(255, 230, 190, .3), 0 2px 3px rgba(0, 0, 0, .4);
+  touch-action: manipulation; -webkit-tap-highlight-color: rgba(228, 208, 164, .35);
+}
+.sound-btn .sound-icon { width: 2.35rem; height: 2.35rem; display: block; }
+.sound-btn .static-label { font-size: .74rem; letter-spacing: .08em; font-weight: 600; line-height: 1; }
+.sound-btn[aria-pressed="true"] {
+  box-shadow: inset 0 1px 0 rgba(255, 230, 190, .42), 0 0 0 1px rgba(228, 208, 164, .3), 0 0 14px rgba(255, 168, 64, .4);
+}
+.sound-btn[aria-pressed="false"] { color: #cbbba4; }
+.sound-btn[aria-pressed="true"] .sound-slash { display: none; }
+.sound-btn[aria-pressed="false"] .sound-waves { display: none; }
 .speaker {
   display: block; flex: 1; height: 1.7rem; border-radius: .35rem;
   background-color: #3a2718;
@@ -445,7 +463,8 @@ footer a:hover, .end-url:hover, .end-nav a:hover { color: var(--ink); }
 @media (min-width: 880px) {
   .set-wrap { padding: 1.1rem 1.25rem 2rem; }
   .cabinet { padding: 1rem 1rem 1.2rem; }
-  .cabinet-main { display: grid; grid-template-columns: minmax(0, 1fr) 4.7rem; gap: .8rem; align-items: start; }
+  .cabinet-main { display: grid; grid-template-columns: minmax(0, 1fr) 5.75rem; gap: .8rem; align-items: start; }
+  .sound-btn { width: 100%; min-width: 0; min-height: 4.6rem; }
   .side {
     order: 0; position: sticky; top: .6rem; flex-direction: column; align-items: center;
     padding: .2rem 0 0; gap: .7rem;
