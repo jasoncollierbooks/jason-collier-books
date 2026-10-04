@@ -2,10 +2,10 @@
 // with gangplanks to a sinking garden city, a goat farm, and a storm fortress.
 import * as THREE from "three";
 import { clamp } from "../../src/util.js";
-import { createCritter, softDot } from "../../src/rigs.js?v=2";
+import { createCritter, softDot } from "../../src/rigs.js?v=3";
 import {
-  stackMetalTexture, makeStack, rigBalloon, cloudSea, distantTraffic, deckDetail, wheelhouse,
-} from "./dress.js?v=1";
+  stackMetalTexture, makeStack, rigBalloon, cloudSea, distantTraffic, deckDetail, wheelhouse, cloudTexture,
+} from "./dress.js?v=2";
 
 const ZONES = [
   { minX: -8.4, maxX: 8.4, minZ: -16.5, maxZ: 26.5 },
@@ -23,13 +23,41 @@ export function setDeckAttitude(roll, pitch) {
   deckRoll = roll;
   deckPitch = pitch;
 }
+
+// Plan of the hull. Wide amidships, narrower stern, pointed bow.
+export function deckBeam(z) {
+  if (z < -16.7 || z > 27.4) return 0;
+  let beam = 7.7;
+  if (z < -12) beam = 6.15 + (7.7 - 6.15) * ((z + 16.7) / 4.7);
+  if (z > 16) {
+    const t = clamp((z - 16) / 11.2, 0, 1);
+    const bow = 7.7 * Math.cos(t * Math.PI * 0.5);
+    beam = Math.min(beam, Math.max(0.42, bow));
+  }
+  return beam;
+}
+
+export function deckRise(z) {
+  if (z <= -15.4) return 0.62;
+  if (z < -8.4) return 0.62 * (1 - (z + 15.4) / 7);
+  if (z > 19.5) return 0.22 * clamp((z - 19.5) / 6.5, 0, 1);
+  return 0;
+}
+
+function onDeck(x, z) {
+  if (z < -16.5 || z > 26.6) return false;
+  return Math.abs(x) <= Math.max(0.35, deckBeam(z) - 0.38);
+}
+
 export function heightAt(x, z) {
-  if (x < -8.1 || x > 8.1 || z < -16.2 || z > 26.2) return 0;
-  return x * Math.sin(deckRoll) - (z - 5) * Math.sin(deckPitch);
+  if (!onDeck(x, z)) return 0;
+  return deckRise(z) + x * Math.sin(deckRoll) - (z - 5) * Math.sin(deckPitch);
 }
 
 function inside(x, z) {
-  for (const zn of ZONES) {
+  if (onDeck(x, z)) return true;
+  for (let i = 1; i < ZONES.length; i++) {
+    const zn = ZONES[i];
     if (x >= zn.minX && x <= zn.maxX && z >= zn.minZ && z <= zn.maxZ) return true;
   }
   return false;
@@ -38,13 +66,22 @@ function inside(x, z) {
 function closestPoint(x, z) {
   let best = { x, z };
   let bestD = 1e9;
-  for (const zn of ZONES) {
-    const cx = clamp(x, zn.minX, zn.maxX);
-    const cz = clamp(z, zn.minZ, zn.maxZ);
-    const d = (cx - x) ** 2 + (cz - z) ** 2;
+  const cz = clamp(z, -16.5, 26.6);
+  const lim = Math.max(0.35, deckBeam(cz) - 0.38);
+  const cx = clamp(x, -lim, lim);
+  const deckD = (cx - x) ** 2 + (cz - z) ** 2;
+  if (deckD < bestD) {
+    bestD = deckD;
+    best = { x: cx, z: cz };
+  }
+  for (let i = 1; i < ZONES.length; i++) {
+    const zn = ZONES[i];
+    const qx = clamp(x, zn.minX, zn.maxX);
+    const qz = clamp(z, zn.minZ, zn.maxZ);
+    const d = (qx - x) ** 2 + (qz - z) ** 2;
     if (d < bestD) {
       bestD = d;
-      best = { x: cx, z: cz };
+      best = { x: qx, z: qz };
     }
   }
   return best;
@@ -58,12 +95,13 @@ function canvasTex(w, h, draw) {
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-  tex.anisotropy = 4;
+  tex.anisotropy = 8;
   return tex;
 }
 
-function ironTexture() {
-  return canvasTex(512, 512, (g, w, h) => {
+function ironTexture(low) {
+  const size = low ? 512 : 1024;
+  return canvasTex(size, size, (g, w, h) => {
     g.fillStyle = "#6e7270";
     g.fillRect(0, 0, w, h);
     for (let y = 0; y < 4; y++) {
@@ -97,8 +135,9 @@ function ironTexture() {
   });
 }
 
-function plankTexture() {
-  return canvasTex(512, 512, (g, w, h) => {
+function plankTexture(low) {
+  const size = low ? 512 : 1024;
+  return canvasTex(size, size, (g, w, h) => {
     g.fillStyle = "#4a3c2e";
     g.fillRect(0, 0, w, h);
     const boards = 8;
@@ -130,9 +169,9 @@ function plankTexture() {
   });
 }
 
-function balloonTexture() {
-  const patches = ["#e4c27a", "#9a3030", "#2f6a62", "#c8b060", "#5a4068", "#d07040", "#f0e2c4", "#3d5a40", "#8a6840", "#6a3038"];
-  return canvasTex(512, 256, (g, w, h) => {
+function balloonTexture(low) {
+  const patches = ["#e4c27a", "#9a3030", "#2f6a62", "#c8b060", "#5a4068", "#d07040", "#f0e2c4", "#3d5a40", "#8a6840", "#6a3038", "#c45a48", "#3a6a98"];
+  return canvasTex(low ? 512 : 1024, low ? 256 : 512, (g, w, h) => {
     g.fillStyle = "#d8c4a4";
     g.fillRect(0, 0, w, h);
     g.strokeStyle = "rgba(90, 60, 40, 0.28)";
@@ -179,11 +218,181 @@ function pageTexture() {
   });
 }
 
+// Cross-section of the iron hull. v = 0 is the keel, v = 1 is the gunwale.
+function hullProfile(z, v) {
+  const beam = Math.max(0.28, deckBeam(z));
+  const rise = deckRise(z);
+  const vv = clamp(v, 0, 1);
+  const flare = Math.sin(Math.pow(vv, 0.78) * Math.PI * 0.5);
+  let half = beam * (0.035 + 0.99 * flare);
+  const mid = 1 - 0.28 * clamp((Math.abs(z - 2) - 12) / 12, 0, 1);
+  const keelDrop = 2.35 * mid;
+  let y = rise + 0.02 - keelDrop * Math.pow(1 - vv, 0.92);
+  if (z > 18) {
+    const stem = clamp((z - 18) / 8.4, 0, 1);
+    y += stem * Math.pow(1 - vv, 0.8) * 1.35;
+    half *= 1 - stem * 0.08 * (1 - vv);
+  }
+  if (z < -13) {
+    const tuck = clamp((-13 - z) / 3.6, 0, 1);
+    y += tuck * (1 - vv) * 0.45;
+    half *= 1 - tuck * 0.12;
+  }
+  return { half, y };
+}
+
+export function hullSample(z, v, side) {
+  const p = hullProfile(z, v);
+  return new THREE.Vector3((side < 0 ? -1 : 1) * p.half, p.y, z);
+}
+
+function pushTri(idx, a, b, c) {
+  idx.push(a, b, c);
+}
+
+function buildHullMesh(low) {
+  const z0 = -16.55;
+  const z1 = 26.7;
+  const nz = low ? 16 : 30;
+  const nv = low ? 6 : 10;
+  const ring = nv * 2 + 1;
+  const pos = [];
+  const uv = [];
+  for (let i = 0; i <= nz; i++) {
+    const z = z0 + (i / nz) * (z1 - z0);
+    const keel = hullProfile(z, 0);
+    pos.push(0, keel.y, z);
+    uv.push(0.5, i / nz);
+    for (let s = 0; s < nv; s++) {
+      const v = (s + 1) / nv;
+      const p = hullProfile(z, v);
+      pos.push(-p.half, p.y, z);
+      uv.push(0.5 - 0.5 * v, i / nz);
+    }
+    for (let s = 0; s < nv; s++) {
+      const v = (s + 1) / nv;
+      const p = hullProfile(z, v);
+      pos.push(p.half, p.y, z);
+      uv.push(0.5 + 0.5 * v, i / nz);
+    }
+  }
+  const idx = [];
+  const port = (i, s) => i * ring + 1 + s;
+  const star = (i, s) => i * ring + 1 + nv + s;
+  const keelAt = (i) => i * ring;
+  for (let i = 0; i < nz; i++) {
+    pushTri(idx, keelAt(i), keelAt(i + 1), port(i + 1, 0));
+    pushTri(idx, keelAt(i), port(i + 1, 0), port(i, 0));
+    pushTri(idx, keelAt(i), keelAt(i + 1), star(i + 1, 0));
+    pushTri(idx, keelAt(i), star(i + 1, 0), star(i, 0));
+    for (let s = 0; s < nv - 1; s++) {
+      pushTri(idx, port(i, s), port(i + 1, s), port(i + 1, s + 1));
+      pushTri(idx, port(i, s), port(i + 1, s + 1), port(i, s + 1));
+      pushTri(idx, star(i, s), star(i + 1, s), star(i + 1, s + 1));
+      pushTri(idx, star(i, s), star(i + 1, s + 1), star(i, s + 1));
+    }
+  }
+  const hull = new THREE.BufferGeometry();
+  hull.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+  hull.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2));
+  hull.setIndex(idx);
+  hull.computeVertexNormals();
+
+  const across = low ? 4 : 6;
+  const dPos = [];
+  const dUv = [];
+  const dIdx = [];
+  for (let i = 0; i <= nz; i++) {
+    const z = z0 + (i / nz) * (z1 - z0);
+    const beam = Math.max(0.18, deckBeam(z) - 0.16);
+    for (let j = 0; j <= across; j++) {
+      const u = -1 + (2 * j) / across;
+      const camber = 0.05 * (1 - u * u);
+      dPos.push(u * beam, deckRise(z) + 0.1 + camber, z);
+      dUv.push((u + 1) * 0.5, i / nz);
+    }
+  }
+  const row = across + 1;
+  for (let i = 0; i < nz; i++) {
+    for (let j = 0; j < across; j++) {
+      const a = i * row + j;
+      const b = (i + 1) * row + j;
+      const c = b + 1;
+      const d = a + 1;
+      dIdx.push(a, b, c, a, c, d);
+    }
+  }
+  const deck = new THREE.BufferGeometry();
+  deck.setAttribute("position", new THREE.Float32BufferAttribute(dPos, 3));
+  deck.setAttribute("uv", new THREE.Float32BufferAttribute(dUv, 2));
+  deck.setIndex(dIdx);
+  deck.computeVertexNormals();
+
+  const kPos = [];
+  const kIdx = [];
+  for (let i = 0; i <= nz; i++) {
+    const z = z0 + (i / nz) * (z1 - z0);
+    const keel = hullProfile(z, 0);
+    const drop = 0.38 + 0.16 * (1 - clamp(Math.abs(z - 4) / 16, 0, 1));
+    kPos.push(-0.07, keel.y + 0.02, z, 0.07, keel.y + 0.02, z, 0, keel.y - drop, z);
+  }
+  for (let i = 0; i < nz; i++) {
+    const a = i * 3;
+    const b = (i + 1) * 3;
+    kIdx.push(a, b, a + 2, b, b + 2, a + 2);
+    kIdx.push(a + 1, b + 1, a + 2, b + 1, b + 2, a + 2);
+    kIdx.push(a, a + 1, b + 1, a, b + 1, b);
+  }
+  const keel = new THREE.BufferGeometry();
+  keel.setAttribute("position", new THREE.Float32BufferAttribute(kPos, 3));
+  keel.setIndex(kIdx);
+  keel.computeVertexNormals();
+  return { hull, deck, keel };
+}
+
+function bagPinch(t) {
+  const nose = t > 0 ? t * 1.05 : t * 0.94;
+  const u = clamp(nose, -1, 1);
+  return Math.pow(Math.max(0, Math.cos(u * Math.PI * 0.5)), 0.58);
+}
+
+function cigarGeometry(bag, low) {
+  const segU = low ? 14 : 24;
+  const segV = low ? 16 : 28;
+  const pos = [];
+  const uv = [];
+  const idx = [];
+  for (let i = 0; i <= segV; i++) {
+    const t = -1 + (2 * i) / segV;
+    const k = bagPinch(t);
+    const rx = bag.rx * k;
+    const ry = bag.ry * k;
+    for (let j = 0; j <= segU; j++) {
+      const a = (j / segU) * Math.PI * 2;
+      pos.push(Math.cos(a) * rx, Math.sin(a) * ry, t * bag.rz);
+      uv.push(j / segU, i / segV);
+    }
+  }
+  const row = segU + 1;
+  for (let i = 0; i < segV; i++) {
+    for (let j = 0; j < segU; j++) {
+      const a = i * row + j;
+      idx.push(a, a + row, a + 1, a + 1, a + row, a + row + 1);
+    }
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2));
+  geo.setIndex(idx);
+  geo.computeVertexNormals();
+  return geo;
+}
+
 function loadRepeat(url, srgb) {
   const tex = new THREE.TextureLoader().load(url);
   tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
   tex.colorSpace = srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace;
-  tex.anisotropy = 4;
+  tex.anisotropy = 8;
   return tex;
 }
 
@@ -192,6 +401,7 @@ function skyMaterial() {
     uniforms: {
       uSun: { value: new THREE.Vector3(-0.55, 0.22, -0.45).normalize() },
       uTime: { value: 0 },
+      uCam: { value: new THREE.Vector2() },
     },
     side: THREE.BackSide,
     depthWrite: false,
@@ -207,6 +417,7 @@ function skyMaterial() {
       varying vec3 vDir;
       uniform vec3 uSun;
       uniform float uTime;
+      uniform vec2 uCam;
       float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
       float noise(vec2 p){
         vec2 i = floor(p); vec2 f = fract(p);
@@ -233,11 +444,14 @@ function skyMaterial() {
         float glow = pow(max(dot(n, uSun), 0.0), 5.0);
         col += vec3(1.0, 0.72, 0.42) * glow * 0.45;
         col += vec3(1.0, 0.96, 0.86) * sun;
-        vec2 uv = n.xz / max(abs(n.y), 0.12);
-        float c = fbm(uv * 0.28 + vec2(uTime * 0.008, 0.0));
-        float cloud = smoothstep(0.48, 0.72, c);
+        vec2 uv = n.xz / max(abs(n.y), 0.12) + uCam * 0.012;
+        float c = fbm(uv * 0.22 + vec2(uTime * 0.035, uTime * 0.012));
+        float c2 = fbm(uv * 0.55 + vec2(-uTime * 0.05, uTime * 0.02));
+        float cloud = smoothstep(0.46, 0.7, c * 0.65 + c2 * 0.35);
+        float streak = smoothstep(0.72, 0.9, c2) * smoothstep(0.15, 0.55, h);
         float belowCloud = smoothstep(-0.05, -0.28, h);
         col = mix(col, vec3(0.97, 0.98, 1.0), cloud * smoothstep(0.02, 0.22, h) * 0.9);
+        col = mix(col, vec3(1.0, 0.96, 0.92), streak * 0.45);
         col = mix(col, vec3(0.82, 0.88, 0.94), belowCloud * 0.85);
         gl_FragColor = vec4(col, 1.0);
       }
@@ -259,14 +473,14 @@ export function buildRustyWorld(scene, low) {
   const sun = new THREE.DirectionalLight(0xffd0a0, low ? 1.35 : 1.65);
   sun.position.set(-22, 28, -8);
   sun.castShadow = true;
-  sun.shadow.mapSize.set(low ? 512 : 1024, low ? 512 : 1024);
+  sun.shadow.mapSize.set(low ? 512 : 2048, low ? 512 : 2048);
   sun.shadow.camera.near = 2;
   sun.shadow.camera.far = 90;
   sun.shadow.camera.left = sun.shadow.camera.bottom = -28;
   sun.shadow.camera.right = sun.shadow.camera.top = 28;
-  sun.shadow.bias = -0.00045;
-  sun.shadow.normalBias = 0.05;
-  sun.shadow.radius = low ? 1.2 : 2.4;
+  sun.shadow.bias = -0.00025;
+  sun.shadow.normalBias = 0.028;
+  sun.shadow.radius = low ? 1.1 : 1.35;
   scene.add(sun, sun.target);
   const fill = new THREE.DirectionalLight(0xb7c8e0, 0.45);
   fill.position.set(16, 10, 12);
@@ -274,13 +488,19 @@ export function buildRustyWorld(scene, low) {
   const rimLight = new THREE.DirectionalLight(0xffb070, low ? 0.35 : 0.55);
   rimLight.position.set(18, 6, -24);
   scene.add(rimLight);
+  const charKey = new THREE.DirectionalLight(0xfff0d4, low ? 0.55 : 0.85);
+  charKey.position.set(4, 7, 5);
+  scene.add(charKey, charKey.target);
+  const charRim = new THREE.DirectionalLight(0x9eb6dc, low ? 0.28 : 0.48);
+  charRim.position.set(-6, 4, -5);
+  scene.add(charRim, charRim.target);
 
   const skyMat = skyMaterial();
   const sky = new THREE.Mesh(new THREE.SphereGeometry(420, low ? 20 : 28, low ? 14 : 18), skyMat);
   sky.frustumCulled = false;
   scene.add(sky);
 
-  const ironMap = ironTexture();
+  const ironMap = ironTexture(low);
   ironMap.repeat.set(4, 6);
   const iron = new THREE.MeshStandardMaterial({
     color: 0xffffff, map: ironMap, roughness: 0.62, metalness: 0.42,
@@ -289,7 +509,7 @@ export function buildRustyWorld(scene, low) {
   const brass = new THREE.MeshStandardMaterial({ color: 0xc6a15a, roughness: 0.34, metalness: 0.74 });
   const dark = new THREE.MeshStandardMaterial({ color: 0x2a2422, roughness: 0.55, metalness: 0.4 });
   const wood = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.86, metalness: 0.02 });
-  const planks = plankTexture();
+  const planks = plankTexture(low);
   planks.repeat.set(2, 6);
   wood.map = planks;
   const rockMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.92, metalness: 0.04 });
@@ -310,96 +530,147 @@ export function buildRustyWorld(scene, low) {
   shipPivot.add(ship);
   scene.add(shipPivot);
 
-  const deck = new THREE.Mesh(new THREE.BoxGeometry(16.2, 0.28, 42.4), wood);
-  deck.position.set(0, -0.14, 5);
+  const hullBuilt = buildHullMesh(low);
+  const hullMap = ironMap.clone();
+  hullMap.repeat.set(2, 9);
+  const hullIron = new THREE.MeshStandardMaterial({
+    color: 0xffffff, map: hullMap, roughness: 0.58, metalness: 0.48,
+  });
+  const hull = new THREE.Mesh(hullBuilt.hull, hullIron);
+  hull.castShadow = true;
+  hull.receiveShadow = true;
+  const deckMap = planks.clone();
+  deckMap.repeat.set(1.4, 8);
+  const deckMat = wood.clone();
+  deckMat.map = deckMap;
+  const deck = new THREE.Mesh(hullBuilt.deck, deckMat);
   deck.receiveShadow = true;
   deck.castShadow = true;
-  ship.add(deck);
-  const hull = new THREE.Mesh(new THREE.BoxGeometry(14.2, 2.15, 34), iron);
-  hull.position.set(0, -1.25, 4);
-  hull.castShadow = true;
-  ship.add(hull);
-  const bow = new THREE.Mesh(new THREE.ConeGeometry(7.1, 8, 4), iron);
-  bow.rotation.x = Math.PI / 2;
-  bow.rotation.y = Math.PI / 4;
-  bow.position.set(0, -0.9, 22.5);
-  bow.castShadow = true;
-  ship.add(bow);
-  for (const [x, z, w, hgt] of [[-6.6, 2, 1.4, 1.6], [6.4, 8, 1.1, 1.3], [-6.2, 14, 1.6, 1.1], [6.5, -4, 1.2, 1.8], [-5.8, -8, 1.5, 1.2]]) {
-    const plate = new THREE.Mesh(new THREE.BoxGeometry(0.12, hgt, w), (x + z) % 2 > 0 ? rust : brass);
-    plate.position.set(x, -0.7, z);
-    ship.add(plate);
+  const keel = new THREE.Mesh(hullBuilt.keel, new THREE.MeshStandardMaterial({ color: 0x4a3428, roughness: 0.72, metalness: 0.35 }));
+  keel.castShadow = true;
+  ship.add(hull, deck, keel);
+  for (const side of [-1, 1]) {
+    const railPts = [];
+    const steps = low ? 16 : 26;
+    for (let i = 0; i <= steps; i++) {
+      const z = -15.6 + (i / steps) * 40.2;
+      const b = Math.max(0.55, deckBeam(z) * 0.96);
+      if (b < 0.7 && z > 24) break;
+      railPts.push(new THREE.Vector3(side * b, deckRise(z) + 0.86, z));
+    }
+    const curve = new THREE.CatmullRomCurve3(railPts);
+    const rail = new THREE.Mesh(new THREE.TubeGeometry(curve, railPts.length * 2, 0.035, 5, false), brass);
+    rail.castShadow = !low;
+    ship.add(rail);
+    const postN = railPts.length;
+    const posts = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.035, 0.045, 0.82, 5), dark, postN);
+    const dummyPost = new THREE.Object3D();
+    railPts.forEach((p, i) => {
+      dummyPost.position.set(p.x, p.y - 0.4, p.z);
+      dummyPost.updateMatrix();
+      posts.setMatrixAt(i, dummyPost.matrix);
+    });
+    posts.castShadow = !low;
+    ship.add(posts);
   }
+  const portMat = new THREE.MeshStandardMaterial({
+    color: 0xc5dde6, roughness: 0.12, metalness: 0.45, emissive: 0x3a2a18, emissiveIntensity: 0.18,
+  });
+  for (const z of [-10, -4, 2, 8, 14]) {
+    for (const side of [-1, 1]) {
+      const p = hullSample(z, 0.58, side);
+      const port = new THREE.Mesh(new THREE.CircleGeometry(0.22, 10), portMat);
+      port.position.copy(p);
+      port.lookAt(0, p.y, p.z);
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.24, 0.035, 6, 12), brass);
+      ring.position.copy(port.position);
+      ring.quaternion.copy(port.quaternion);
+      ship.add(port, ring);
+    }
+  }
+  const figure = new THREE.Group();
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.09, 0.55, 6), brass);
+  neck.rotation.x = -0.8;
+  neck.position.set(0, 0.15, 0.1);
+  const skull = new THREE.Mesh(new THREE.SphereGeometry(0.11, 8, 6), brass);
+  skull.position.set(0, 0.38, 0.32);
+  const figureBeak = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.28, 5), dark);
+  figureBeak.rotation.x = Math.PI / 2;
+  figureBeak.position.set(0, 0.36, 0.5);
+  figure.add(neck, skull, figureBeak);
+  figure.position.set(0, deckRise(26.2) + 0.35, 26.6);
+  figure.traverse((o) => { if (o.isMesh) o.castShadow = true; });
+  ship.add(figure);
   const stackMap = stackMetalTexture(low ? 256 : 512);
   stackMap.wrapS = stackMap.wrapT = THREE.RepeatWrapping;
   const stackMat = new THREE.MeshStandardMaterial({ map: stackMap, color: 0xffffff, roughness: 0.55, metalness: 0.62 });
   const capMat = new THREE.MeshStandardMaterial({ color: 0x3a3836, roughness: 0.48, metalness: 0.55 });
   const stack = makeStack(0.55, 0.72, 3.6, stackMat, brass, capMat);
-  stack.position.set(2.4, 1.8, -6.2);
+  stack.position.set(2.4, 1.8 + deckRise(-6.2), -6.2);
   ship.add(stack);
   const stack2 = makeStack(0.4, 0.54, 2.7, stackMat, brass, capMat);
-  stack2.position.set(-2.2, 1.4, 10);
+  stack2.position.set(-2.2, 1.4 + deckRise(10), 10);
   ship.add(stack2);
   block(2.4, -6.2, 0.85);
   block(-2.2, 10, 0.7);
   camSphere(2.4, 2.2, -6.2, 0.9);
 
-  const railCount = low ? 36 : 64;
-  const postGeo = new THREE.CylinderGeometry(0.045, 0.055, 0.95, 6);
-  const posts = new THREE.InstancedMesh(postGeo, dark, railCount);
   const dummy = new THREE.Object3D();
-  for (let i = 0; i < railCount; i++) {
-    const along = -15 + (i % (railCount / 2)) * (40 / (railCount / 2));
-    const side = i < railCount / 2 ? -7.7 : 7.7;
-    dummy.position.set(side, 0.5, along);
-    dummy.updateMatrix();
-    posts.setMatrixAt(i, dummy.matrix);
-  }
-  posts.castShadow = !low;
-  ship.add(posts);
-  for (const side of [-7.7, 7.7]) {
-    const rail = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, 40), brass);
-    rail.position.set(side, 0.95, 5);
-    ship.add(rail);
-  }
-
   const pipeMat = brass;
   const pipeRuns = low
-    ? [[-6.2, 0.35, -10, 16], [6.2, 0.42, -8, 12]]
-    : [[-6.2, 0.35, -12, 22], [6.2, 0.42, -10, 18], [-4.2, 0.9, 6, 6], [3.5, 1.1, -2, 5]];
+    ? [[-5.2, 0.48, -2, 12], [5.2, 0.52, 1, 10]]
+    : [[-5.2, 0.48, -2, 14], [5.2, 0.52, 1, 12], [-3.4, 0.95, 8, 5], [3.1, 1.12, 3, 4]];
   for (const [x, y, z, len] of pipeRuns) {
     const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, len, 8), pipeMat);
     pipe.rotation.x = Math.PI / 2;
-    pipe.position.set(x, y, z);
+    pipe.position.set(x, y + deckRise(z), z);
     pipe.castShadow = !low;
     ship.add(pipe);
     const valve = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.025, 6, 10), brass);
-    valve.position.set(x, y + 0.16, z);
+    valve.position.set(x, y + deckRise(z) + 0.16, z);
     ship.add(valve);
   }
 
   const props = new THREE.Group();
-  const addProp = (x, y, z, spin, reach) => {
-    const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.22, 8), brass);
+  const rudders = [];
+  const addProp = (x, y, z, spin, reach, axis) => {
+    const mount = new THREE.Group();
+    mount.position.set(x, y, z);
+    if (axis === "z") mount.rotation.y = Math.PI / 2;
+    const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.28, 8), brass);
     hub.rotation.z = Math.PI / 2;
-    hub.position.set(x, y, z);
     const blades = new THREE.Group();
-    blades.position.copy(hub.position);
     blades.userData.spin = spin;
     for (let b = 0; b < 4; b++) {
       const wrap = new THREE.Group();
       wrap.rotation.z = (b / 4) * Math.PI * 2;
-      const blade = new THREE.Mesh(new THREE.BoxGeometry(0.14, reach, 0.28), cream);
-      blade.position.set(0, reach * 0.52, 0);
+      const blade = new THREE.Mesh(new THREE.BoxGeometry(0.1, reach, 0.28), cream);
+      blade.position.set(0, reach * 0.55, 0);
       wrap.add(blade);
       blades.add(wrap);
     }
-    props.add(hub, blades);
+    mount.add(hub, blades);
+    props.add(mount);
     props.userData.blades = props.userData.blades || [];
     props.userData.blades.push(blades);
   };
-  for (const s of [-1, 1]) addProp(s * 2.3, 0.55, -14.6, s, 1.15);
-  for (const s of [-1, 1]) addProp(s * 8.55, 1.15, 6.5, s, 1.45);
+  for (const s of [-1, 1]) {
+    const strut = new THREE.Mesh(new THREE.BoxGeometry(3.3, 0.12, 0.18), dark);
+    strut.position.set(s * 8.15, -0.2, 6.2);
+    const brace = new THREE.Mesh(new THREE.BoxGeometry(0.1, 1.05, 0.1), dark);
+    brace.position.set(s * 6.9, 0.25, 6.2);
+    brace.rotation.z = s * 0.55;
+    ship.add(strut, brace);
+    addProp(s * 9.7, -0.2, 6.2, s, 1.7, "x");
+  }
+  addProp(0, deckRise(-16.2) - 1.05, -17.35, 1, 1.35, "z");
+  for (const s of [-0.7, 0.7]) {
+    const fin = new THREE.Mesh(new THREE.BoxGeometry(0.07, 1.15, 0.85), dark);
+    fin.position.set(s, deckRise(-15.8) - 1.35, -15.7);
+    fin.castShadow = true;
+    ship.add(fin);
+    rudders.push(fin);
+  }
   ship.add(props);
 
   const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.16, 4.4, 8), dark);
@@ -416,16 +687,16 @@ export function buildRustyWorld(scene, low) {
   nestRail.position.set(-3.4, 4.35, -1.2);
   ship.add(nestRail);
 
-  const balloon = new THREE.Mesh(new THREE.SphereGeometry(6.2, low ? 24 : 32, low ? 16 : 22), new THREE.MeshStandardMaterial({
-    color: 0xfff6ea, map: balloonTexture(), roughness: 0.86, metalness: 0.02,
+  const bag = { cx: 0, cy: 8.7, cz: 4.2, rx: 3.15, ry: 2.45, rz: 14.6 };
+  const balloon = new THREE.Mesh(cigarGeometry(bag, low), new THREE.MeshStandardMaterial({
+    color: 0xfff3df, map: balloonTexture(low), roughness: 0.84, metalness: 0.02,
   }));
-  balloon.scale.set(0.92, 0.7, 2.05);
-  balloon.position.set(0, 9.4, 4);
   balloon.castShadow = !low;
+  balloon.position.set(bag.cx, bag.cy, bag.cz);
   ship.add(balloon);
-  camSphere(0, 9.4, 4, 4.2);
+  camSphere(0, bag.cy, bag.cz, 5.5);
   const ropeMat = new THREE.MeshStandardMaterial({ color: 0x6a4a34, roughness: 0.92 });
-  rigBalloon(ship, balloon, low, ropeMat, brass);
+  rigBalloon(ship, bag, low, ropeMat, brass);
 
   const chair = new THREE.Group();
   const seat = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.12, 0.55), redCloth);
@@ -435,7 +706,7 @@ export function buildRustyWorld(scene, low) {
   const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.5, 8), brass);
   pole.position.y = 0.25;
   chair.add(seat, back, pole);
-  chair.position.set(-1.5, 0, -12.4);
+  chair.position.set(-1.5, deckRise(-12.4), -12.4);
   ship.add(chair);
   block(-1.5, -12.4, 0.45);
 
@@ -447,14 +718,14 @@ export function buildRustyWorld(scene, low) {
     wheel.add(spoke);
   }
   wheel.add(rim);
-  wheel.position.set(0.2, 1.15, -14.2);
+  wheel.position.set(0.2, 1.15 + deckRise(-14.2), -14.2);
   wheel.rotation.x = 0.4;
   ship.add(wheel);
   block(0.2, -14.2, 0.4);
 
   const horn = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.55, 8), brass);
   horn.rotation.x = Math.PI / 2;
-  horn.position.set(1.6, 1.15, -14.6);
+  horn.position.set(1.6, 1.15 + deckRise(-14.6), -14.6);
   ship.add(horn);
 
   const parrot = new THREE.Group();
@@ -477,7 +748,7 @@ export function buildRustyWorld(scene, low) {
   perch.rotation.z = Math.PI / 2;
   perch.position.y = -0.16;
   parrot.add(body, head, beak, key, perch);
-  parrot.position.set(2.3, 1.15, -12.8);
+  parrot.position.set(2.3, 1.15 + deckRise(-12.8), -12.8);
   ship.add(parrot);
 
   const lanterns = [];
@@ -487,11 +758,11 @@ export function buildRustyWorld(scene, low) {
     const glow = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffc56a }));
     glow.position.y = 0.01;
     lamp.add(cage, glow);
-    lamp.position.set(x, 1.15, z);
+    lamp.position.set(x, 1.15 + deckRise(z), z);
     ship.add(lamp);
     if (lanterns.length < 2) {
       const light = new THREE.PointLight(0xffb060, 1.4, 6, 2);
-      light.position.set(x, 1.3, z);
+      light.position.set(x, 1.3 + deckRise(z), z);
       ship.add(light);
       lanterns.push(light);
     }
@@ -500,7 +771,7 @@ export function buildRustyWorld(scene, low) {
   const barrelGeo = new THREE.CylinderGeometry(0.28, 0.32, 0.62, 8);
   for (const [x, z] of [[-5.2, -4], [-5.5, -3.2], [5.4, 6.5], [4.6, 7.1], [-4.8, 16]]) {
     const barrel = new THREE.Mesh(barrelGeo, wood);
-    barrel.position.set(x, 0.32, z);
+    barrel.position.set(x, 0.32 + deckRise(z), z);
     barrel.castShadow = true;
     ship.add(barrel);
     block(x, z, 0.4);
@@ -508,14 +779,14 @@ export function buildRustyWorld(scene, low) {
   const crateGeo = new THREE.BoxGeometry(0.7, 0.55, 0.7);
   for (const [x, z] of [[4.2, -8], [5.1, 3.2], [-4.4, 9], [2.2, 5.4], [-3.4, 1.6], [3.6, 14]]) {
     const crate = new THREE.Mesh(crateGeo, wood);
-    crate.position.set(x, 0.3, z);
+    crate.position.set(x, 0.3 + deckRise(z), z);
     crate.castShadow = true;
     ship.add(crate);
     block(x, z, 0.48);
   }
   const coil = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.06, 6, 12), new THREE.MeshStandardMaterial({ color: 0x6a5038, roughness: 0.9 }));
   coil.rotation.x = Math.PI / 2;
-  coil.position.set(3.2, 0.1, 12);
+  coil.position.set(3.2, 0.1 + deckRise(12), 12);
   ship.add(coil);
   block(3.2, 12, 0.4);
 
@@ -734,6 +1005,30 @@ export function buildRustyWorld(scene, low) {
   for (const [x, z] of [[-8, 52], [8, 52], [-8, 60], [8, 60]]) block(x, z, 0.7);
 
   const banks = cloudSea(scene, low);
+  const wisps = [];
+  const wispMap = cloudTexture(low ? 128 : 256);
+  for (let i = 0; i < (low ? 4 : 8); i++) {
+    const mat = new THREE.MeshBasicMaterial({
+      map: wispMap.clone(), color: 0xffe6d4, transparent: true, opacity: 0.32,
+      depthWrite: false, side: THREE.DoubleSide,
+    });
+    mat.map.wrapS = mat.map.wrapT = THREE.RepeatWrapping;
+    const wisp = new THREE.Mesh(new THREE.PlaneGeometry(16, 5.5), mat);
+    wisp.position.set((i % 2 ? 1 : -1) * (16 + (i % 3) * 7), -1.5 + (i % 4) * 1.2, -24 + i * 14);
+    wisp.userData.speed = 6 + (i % 3) * 2.2;
+    wisps.push(wisp);
+    scene.add(wisp);
+  }
+  const streaks = [];
+  const streakMat = new THREE.MeshBasicMaterial({
+    color: 0xfff8f2, transparent: true, opacity: 0.2, depthWrite: false, side: THREE.DoubleSide,
+  });
+  for (let i = 0; i < (low ? 5 : 10); i++) {
+    const streak = new THREE.Mesh(new THREE.PlaneGeometry(0.055, 2.8 + (i % 3) * 0.6), streakMat);
+    streak.position.set((i % 2 ? 1 : -1) * (3.5 + (i % 5) * 2.1), 1.6 + (i % 4) * 1.15, -18 + i * 6);
+    streaks.push(streak);
+    scene.add(streak);
+  }
   const sea = new THREE.Mesh(
     new THREE.CircleGeometry(220, low ? 20 : 32),
     new THREE.MeshBasicMaterial({ color: 0xe7c4a4, transparent: true, opacity: 0.55, depthWrite: false }),
@@ -817,16 +1112,35 @@ export function buildRustyWorld(scene, low) {
       sun.target.position.set(focus.x, 0, focus.z);
       sun.target.updateMatrixWorld();
       skyMat.uniforms.uTime.value = t;
-      const roll = Math.sin(t * 0.55) * heel;
-      const pitch = Math.sin(t * 0.31) * heel * 0.65;
+      skyMat.uniforms.uCam.value.set(focus.x, focus.z);
+      charKey.position.set(focus.x + 3.2, focus.y + 5.6, focus.z + 2.2);
+      charKey.target.position.set(focus.x, focus.y + 1.15, focus.z);
+      charKey.target.updateMatrixWorld();
+      charRim.position.set(focus.x - 3.4, focus.y + 3.4, focus.z - 2.6);
+      charRim.target.position.copy(charKey.target.position);
+      charRim.target.updateMatrixWorld();
+      const roll = Math.sin(t * 0.55) * (0.04 + heel * 0.35);
+      const pitch = Math.sin(t * 0.31) * (0.026 + heel * 0.2);
       shipPivot.rotation.z = roll;
       shipPivot.rotation.x = pitch;
       setDeckAttitude(roll, pitch);
-      for (const bank of banks) bank.position.x = Math.sin(t * 0.05 + bank.position.y) * 4;
+      for (const bank of banks) {
+        bank.position.x = Math.sin(t * 0.05 + bank.position.y) * 6;
+        if (bank.material.map) bank.material.map.offset.y -= dt * (bank.userData.scroll || 0.02);
+      }
+      for (const wisp of wisps) {
+        wisp.position.z -= dt * wisp.userData.speed;
+        if (wisp.position.z < -80) wisp.position.z += 150;
+      }
+      for (const streak of streaks) {
+        streak.position.z -= dt * 16;
+        if (streak.position.z < -36) streak.position.z += 78;
+      }
       const blades = props.userData.blades || [];
-      for (const group of blades) group.rotation.x += dt * 8 * (group.userData.spin || 1);
+      for (const group of blades) group.rotation.x += dt * 9 * (group.userData.spin || 1);
+      for (const fin of rudders) fin.rotation.y = Math.sin(t * 0.48) * 0.22;
       vane.rotation.z += dt * 1.6;
-      parrot.position.y = 1.15 + Math.sin(t * 2.4) * 0.04;
+      parrot.position.y = 1.15 + deckRise(-12.8) + Math.sin(t * 2.4) * 0.04;
       parrot.rotation.y = Math.sin(t * 0.8) * 0.4;
       humGlow.material.opacity = 0.35 + Math.sin(t * 3) * 0.25;
       const steamArr = steam.geometry.attributes.position.array;
@@ -838,9 +1152,14 @@ export function buildRustyWorld(scene, low) {
       steam.geometry.attributes.position.needsUpdate = true;
       const smokeArr = smoke.geometry.attributes.position.array;
       for (let i = 0; i < smokeCount; i++) {
-        smokeArr[i * 3] = 2.4 + Math.sin(t + i) * 0.15;
-        smokeArr[i * 3 + 1] = 3.4 + ((t * 0.6 + i * 0.2) % 2.4);
-        smokeArr[i * 3 + 2] = -6.2 + Math.cos(t * 0.4 + i) * 0.2;
+        smokeArr[i * 3 + 1] += dt * (1.05 + (i % 4) * 0.12);
+        smokeArr[i * 3 + 2] -= dt * 1.7;
+        smokeArr[i * 3] += Math.sin(t * 1.4 + i) * dt * 0.35;
+        if (smokeArr[i * 3 + 1] > 7.4 || smokeArr[i * 3 + 2] < -13) {
+          smokeArr[i * 3] = 2.35 + ((i % 5) - 2) * 0.12;
+          smokeArr[i * 3 + 1] = 3.45;
+          smokeArr[i * 3 + 2] = -6.15;
+        }
       }
       smoke.geometry.attributes.position.needsUpdate = true;
       city.rotation.z = (0.14 * (1 - cityCalm)) + Math.sin(t * 0.4) * 0.015 * (1 - cityCalm);
@@ -874,7 +1193,7 @@ export function buildRustyWorld(scene, low) {
     },
     setQuality(level) {
       const small = level === "low";
-      sun.shadow.mapSize.set(small ? 512 : 1024, small ? 512 : 1024);
+      sun.shadow.mapSize.set(small ? 512 : 2048, small ? 512 : 2048);
       if (sun.shadow.map) {
         sun.shadow.map.dispose();
         sun.shadow.map = null;
@@ -1002,7 +1321,7 @@ function buildRadio(scene) {
   );
   glow.position.set(0, 0.55, 0.15);
   group.add(box, glow);
-  group.position.set(-2.4, 0, -13.1);
+  group.position.set(-2.4, deckRise(-13.1), -13.1);
   scene.add(group);
   return { x: -2.4, z: -13.1, mesh: group, glow };
 }
@@ -1027,7 +1346,7 @@ function buildHornGate(scene, brass, dark) {
   const lamp = new THREE.PointLight(0xffe2a8, 0, 8, 2);
   lamp.position.y = 1.6;
   root.add(post, bell, glow, sheet, lamp);
-  root.position.set(0, 0, -15.2);
+  root.position.set(0, deckRise(-15.2), -15.2);
   scene.add(root);
   return {
     root,

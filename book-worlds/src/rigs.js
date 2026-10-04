@@ -213,8 +213,8 @@ export function createHuman(spec) {
   }
   if (spec.wrench) {
     const wrench = wrenchGroup(brassMat());
-    wrench.position.set(0, -0.08, 0.03);
-    wrench.rotation.set(0.5, 0.2, 1.15);
+    wrench.position.set(0, -0.16, 0.03);
+    wrench.rotation.set(Math.PI, 0, 0);
     RA.hand.add(wrench);
   }
   if (spec.spyglass) {
@@ -225,14 +225,15 @@ export function createHuman(spec) {
   }
   if (spec.key) {
     key = trailKey();
-    key.position.set(0.02, -0.02, 0.04);
-    key.rotation.set(-0.5, 0.2, 0.15);
+    // Blade is authored along local -Y, which is out of the hanging fist.
+    key.position.set(0.015, -0.04, 0.03);
+    key.rotation.set(0, 0, 0);
     RA.hand.add(key);
   }
   if (spec.club) {
     const club = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.045, 0.55, 6), M(0x5a4030));
-    club.position.set(0, -0.2, 0.02);
-    club.rotation.x = 0.4;
+    club.position.set(0, -0.32, 0.02);
+    club.rotation.set(0, 0, 0);
     club.castShadow = true;
     RA.hand.add(club);
   }
@@ -313,24 +314,29 @@ export function createHuman(spec) {
     let rex = -0.28 - swing * 0.15;
     let keyX = -0.5;
 
-    if (a.action === "attack") {
+    if (a.action === "attack" || a.action === "shove") {
       const p = Math.min(1, a.actionT);
-      const swg = Math.sin(p * Math.PI);
-      const dir = a.combo === 2 ? -1 : 1;
-      if (a.combo === 3) {
-        rax = -2.35 + swg * 2.5;
-        raz = 0.2;
-        rex = -0.35 - swg * 0.55;
-        keyX = -1.35;
+      const u = Math.sin(Math.min(1, p) * Math.PI * 0.5);
+      const combo = a.combo || 1;
+      // Right arm hangs on -Y. Positive z keeps the swing outside the ribs;
+      // negative x carries it forward. The blade stays on that line.
+      if (combo >= 3) {
+        rax = -2.35 + u * 1.85;
+        raz = 0.95;
+        rex = -0.25 - u * 0.35;
+      } else if (combo === 2) {
+        rax = -1.25 + u * 1.55;
+        raz = 0.7 + u * 0.55;
+        rex = -0.45;
       } else {
-        rax = -0.45 - swg * 0.9;
-        raz = dir * (0.25 + swg * 1.35);
-        rex = -0.45 - swg * 0.65;
-        keyX = -0.55 - swg * 0.85;
+        rax = 0.55 - u * 1.85;
+        raz = 1.35 - u * 0.25;
+        rex = -0.35 - u * 0.4;
       }
-      lax = -0.9;
-      laz = -0.35;
-      lex = -0.4;
+      keyX = 0;
+      lax = -0.7;
+      laz = -0.45;
+      lex = -0.35;
     } else if (a.action === "flash") {
       const p = Math.sin(Math.min(1, a.actionT) * Math.PI);
       lax = -2.5 * p - 0.2;

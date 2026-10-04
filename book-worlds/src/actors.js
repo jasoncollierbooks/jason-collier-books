@@ -3,7 +3,8 @@
 // jumps, swings, and rolls layer on that skeleton.
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons";
-import { createHuman as createCapsule, trailKey, handbillMesh, softDot } from "./rigs.js?v=2";
+import { createHuman as createCapsule, trailKey, handbillMesh, softDot } from "./rigs.js?v=3";
+import { createTrail, swingWeapon } from "./swing.js?v=1";
 import {
   dusterGeometry, collarGeometry, coatTailGeometry, sleeveGeometry,
   coverallGeometry, lapelGeometry, wrenchGroup, spyglassGroup, goggleRig,
@@ -118,6 +119,28 @@ function gradeMesh(root, test, hex, rough = 0.86, kind = "cloth") {
   });
 }
 
+const _bladeBasis = new THREE.Matrix4();
+const _bladeX = new THREE.Vector3(0, 0, -1);
+const _bladeY = new THREE.Vector3(0, -1, 0);
+const _bladeZ = new THREE.Vector3(1, 0, 0);
+
+// Grip the weapon so its striking axis leaves the fist along the fingers.
+// flip: the Trail Key's edge is authored along local -Y.
+function holdBlade(bone, obj, tip, flip) {
+  obj.position.set(0, 0.045, 0.028);
+  if (flip) obj.quaternion.setFromRotationMatrix(_bladeBasis.makeBasis(_bladeX, _bladeY, _bladeZ));
+  else obj.quaternion.identity();
+  obj.userData.bladeTip = tip;
+  bone.add(obj);
+  obj.traverse((o) => {
+    if (o.isMesh) {
+      o.castShadow = !(o.material && o.material.transparent);
+      o.frustumCulled = false;
+    }
+  });
+  return obj;
+}
+
 function put(model, bone, obj, x, y, z, rx = 0, ry = 0, rz = 0) {
   obj.position.set(x, y, z);
   obj.rotation.set(rx, ry, rz);
@@ -161,7 +184,7 @@ function paintTex(size, draw, srgb) {
   const tex = new THREE.CanvasTexture(c);
   tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
   tex.colorSpace = srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace;
-  tex.anisotropy = 4;
+  tex.anisotropy = 8;
   return tex;
 }
 
@@ -192,6 +215,7 @@ function heightNormal(size, draw, strength) {
   const tex = new THREE.CanvasTexture(c);
   tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
   tex.colorSpace = THREE.NoColorSpace;
+  tex.anisotropy = 8;
   return tex;
 }
 
@@ -234,8 +258,8 @@ function surfLib() {
     }
   };
   const pack = (draw, rough) => ({
-    map: paintTex(128, draw, true),
-    nrm: heightNormal(128, draw, rough),
+    map: paintTex(256, draw, true),
+    nrm: heightNormal(256, draw, rough),
   });
   surfLib.cache = { skin: pack(skinDraw, 2.2), cloth: pack(clothDraw, 3.4), leather: pack(leatherDraw, 2.8) };
   return surfLib.cache;
@@ -262,7 +286,7 @@ function leatherTextures() {
     const url = new URL(`../assets/tex/${folder}/${file}`, import.meta.url).href;
     const tex = new THREE.TextureLoader().load(url, () => resolve(tex), undefined, () => resolve(null));
     tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-    tex.anisotropy = 4;
+    tex.anisotropy = 8;
     tex.colorSpace = srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace;
   });
   leatherPromise = Promise.all([
@@ -289,7 +313,7 @@ function leatherTextures() {
       grain = new THREE.CanvasTexture(canvas);
       grain.wrapS = grain.wrapT = THREE.RepeatWrapping;
       grain.colorSpace = THREE.SRGBColorSpace;
-      grain.anisotropy = 4;
+      grain.anisotropy = 8;
       grain.needsUpdate = true;
     }
     for (const tex of [col, grain, nrm, rgh]) {
@@ -484,9 +508,9 @@ function dressAirship(model, B, spec, crown, faceZ) {
   if (spec.wrench) {
     const bone = B("hand_r");
     if (bone) {
-      bone.getWorldPosition(grip);
       const wrench = wrenchGroup(metalMat(0xd4b46a, 0.28));
-      put(model, bone, wrench, grip.x, grip.y - 0.02, grip.z + 0.02, 0.4, 0.2, 1.2);
+      holdBlade(bone, wrench, new THREE.Vector3(0, 0.16, 0), false);
+      wrench.position.y = 0.08;
     }
   }
   if (spec.spyglass) {
@@ -741,18 +765,17 @@ function dress(api, assets) {
   model.updateMatrixWorld(true);
   const grip = new THREE.Vector3();
   if (spec.key) {
-    B("hand_r").getWorldPosition(grip);
     const key = trailKey();
-    key.scale.setScalar(1);
-    put(model, B("hand_r"), key, grip.x, grip.y, grip.z, -0.95, 0.25, 0.35);
+    key.scale.setScalar(1.05);
+    holdBlade(B("hand_r"), key, new THREE.Vector3(0, -0.52, 0.02), true);
     api.keyMesh = key;
     key.visible = api._keyOn !== false;
     api.hand = B("hand_r");
   }
   if (spec.club) {
-    B("hand_r").getWorldPosition(grip);
     const club = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.055, 0.62, 7), clothMat(0x5a4030, 0.85));
-    put(model, B("hand_r"), club, grip.x, grip.y + 0.18, grip.z, 0.35, 0, 0.15);
+    holdBlade(B("hand_r"), club, new THREE.Vector3(0, 0.31, 0), false);
+    club.position.y = 0.34;
   }
   if (spec.bills) {
     B("hand_l").getWorldPosition(grip);
@@ -763,6 +786,9 @@ function dress(api, assets) {
 
   model.scale.set(spec.bulk || 1, spec.height || 1, spec.bulk || 1);
   api._spin.add(model);
+  const trail = createTrail();
+  api.root.add(trail.mesh);
+  api._trail = trail;
 
   const mixer = new THREE.AnimationMixer(model);
   const acts = {};
@@ -853,7 +879,7 @@ function dress(api, assets) {
       }
     }
     mixer.update(dt);
-    gesture(bones, a);
+    gesture(model, bones, api.root, a, api._trail);
     const dodge = a.action === "dodge";
     if (dodge) {
       const spins = Math.min(1, a.actionT || 0) * Math.PI * 2;
@@ -878,26 +904,21 @@ function dress(api, assets) {
   };
 }
 
-function gesture(bones, a) {
+function gesture(model, bones, root, a, trail) {
   const B = (n) => bones[n];
-  if (a.action === "attack") {
+  if (a.action === "attack" || a.action === "shove") {
     const p = Math.min(1, a.actionT || 0);
     const sw = Math.sin(p * Math.PI);
     const combo = a.combo || 1;
-    if (combo >= 3) {
-      addEuler(B("upperarm_r"), -2.1 * sw, 0.15, -0.2);
-      addEuler(B("lowerarm_r"), -0.9 * sw, 0, 0);
-      addEuler(B("spine_02"), 0.35 * sw, 0.2, 0);
-    } else if (combo === 2) {
-      addEuler(B("upperarm_r"), -0.4, 0.2, 1.3 * sw);
-      addEuler(B("lowerarm_r"), -0.55 * sw, 0, 0);
-      addEuler(B("spine_02"), 0, -0.55 * sw, 0);
-    } else {
-      addEuler(B("upperarm_r"), -0.55 - sw * 0.4, -0.2, -1.25 * sw);
-      addEuler(B("lowerarm_r"), -0.7 * sw, 0, 0);
-      addEuler(B("spine_02"), 0, 0.5 * sw, 0);
-    }
-    addEuler(B("upperarm_l"), -0.7, 0, 0.35);
+    const wind = a.action === "shove" ? sw * 0.55 : sw;
+    addEuler(B("spine_02"), 0.12 * wind, (combo === 2 ? -0.42 : 0.38) * wind, 0);
+    addEuler(B("upperarm_l"), -0.55, 0, 0.4 * wind);
+    swingWeapon(model, {
+      upperarm_r: B("upperarm_r"),
+      lowerarm_r: B("lowerarm_r"),
+      hand_r: B("hand_r"),
+      upperarm_l: B("upperarm_l"),
+    }, root, a, trail);
   } else if (a.action === "flash") {
     const p = Math.sin(Math.min(1, a.actionT || 0) * Math.PI);
     addEuler(B("upperarm_l"), -2.2 * p, 0, 0.4);

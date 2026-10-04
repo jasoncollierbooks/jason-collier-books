@@ -1,10 +1,10 @@
 // Rusty Stack play. Same Keeper, Trail Key, and command combat as the wagon road.
 import * as THREE from "three";
 import { clamp, damp, dampAngle, hypot2 } from "../../src/util.js";
-import { heightAt } from "./world.js?v=5";
-import { createFog } from "../../src/rigs.js?v=2";
-import { createHuman } from "../../src/actors.js?v=4";
-import { boss as worldBoss } from "../../bosses/rusty-stack.js?v=5";
+import { heightAt } from "./world.js?v=7";
+import { createFog } from "../../src/rigs.js?v=3";
+import { createHuman } from "../../src/actors.js?v=5";
+import { boss as worldBoss } from "../../bosses/rusty-stack.js?v=6";
 
 const SAVE_KEY = "book-worlds-rusty-stack";
 const CLEAR_KEY = "book-worlds-world2-clear";
@@ -46,6 +46,7 @@ export function createRustySim(scene, world, audio) {
   };
 
   const swingHit = new Set();
+  let swingHold = null;
   let playerHits = 0;
   const sayQ = [];
   let sayGap = 0;
@@ -571,6 +572,18 @@ export function createRustySim(scene, world, audio) {
   }
 
   function updateAllies(dt) {
+    if (swingHold) {
+      const park = [[0.2, -4.8], [-0.3, -5.2]];
+      allies.forEach((a, i) => {
+        a.x = player.x + park[i][0];
+        a.z = player.z + park[i][1];
+        a.yaw = player.yaw;
+        a.rig.root.position.set(a.x, heightAt(a.x, a.z), a.z);
+        a.rig.root.rotation.y = a.yaw;
+        a.rig.update(dt, { speed: 0, air: false, action: "idle", actionT: 0, combo: 0, look: 0, hurt: 0, dodgeSide: 0 });
+      });
+      return;
+    }
     if (posed) {
       for (const a of allies) {
         a.yaw = posed.yaw;
@@ -1388,7 +1401,15 @@ export function createRustySim(scene, world, audio) {
     }
     if (posed) player.yaw = posed.yaw;
 
-    if (player.action !== "idle" && player.action !== "guard") {
+    if (swingHold) {
+      player.action = "attack";
+      player.combo = swingHold.combo;
+      player.actionDur = 0.55;
+      player.vx = player.vz = 0;
+      if (player.actionT < swingHold.holdAt) {
+        player.actionT = Math.min(swingHold.holdAt, player.actionT + dt / 0.55);
+      }
+    } else if (player.action !== "idle" && player.action !== "guard") {
       player.actionT += dt / player.actionDur;
       if (player.action === "attack" && player.actionT > 0.12 && player.actionT < 0.58) {
         const finisher = player.airCombo > 0 ? player.combo >= 3 : player.combo >= 4;
@@ -1740,6 +1761,28 @@ export function createRustySim(scene, world, audio) {
       const dmg = opts.dmg || e.prof.dmg;
       e.prof = { ...e.prof, dmg, reach: 4.2, lunge: 0 };
       return { id: e.id, dmg };
+    },
+    tuckExtras() {
+      allies[0].x = player.x + 1.6;
+      allies[0].z = player.z - 3.1;
+      allies[1].x = player.x - 1.5;
+      allies[1].z = player.z - 3.4;
+      enemies.forEach((e, i) => {
+        e.x = 34;
+        e.z = 6 + i * 1.4;
+        e.state = "idle";
+        e.speed = 0;
+      });
+    },
+    holdSwing(combo = 1) {
+      swingHold = { combo, holdAt: 0.42 };
+      player.action = "attack";
+      player.combo = combo;
+      player.actionDur = 0.55;
+      player.actionT = 0;
+      player.yaw = 0.35;
+      player.vx = player.vz = 0;
+      this.tuckExtras();
     },
     debugFoe() {
       const dist = 3.5;

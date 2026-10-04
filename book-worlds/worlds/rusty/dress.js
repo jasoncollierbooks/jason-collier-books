@@ -1,7 +1,7 @@
 // Deck dressing, riveted stacks, rope rigging, cloud sea, and distant traffic.
 // Static repeats are instanced. Textures are small canvases (512, or 256 on phones).
 import * as THREE from "three";
-import { softDot } from "../../src/rigs.js?v=2";
+import { softDot } from "../../src/rigs.js?v=3";
 
 const dummy = new THREE.Object3D();
 const up = new THREE.Vector3(0, 1, 0);
@@ -15,7 +15,7 @@ function canvasTex(w, h, draw, alpha) {
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
-  tex.anisotropy = 4;
+  tex.anisotropy = 8;
   if (alpha) tex.premultiplyAlpha = false;
   return tex;
 }
@@ -109,65 +109,95 @@ function setRope(mesh, i, a, b, radius) {
   mesh.setMatrixAt(i, dummy.matrix);
 }
 
-export function rigBalloon(ship, balloon, low, ropeMat, brass) {
-  const scale = balloon.scale;
-  const origin = balloon.position;
-  const rings = low ? 4 : 6;
-  const longs = low ? 6 : 8;
-  const pairs = [];
-  for (let i = 0; i < rings; i++) {
-    const t = -0.75 + (i / (rings - 1)) * 1.5;
-    const y = origin.y + t * 2.2;
-    const rx = 5.6 * scale.x * Math.cos(t * 0.7);
-    const rz = 5.4 * scale.z * Math.cos(t * 0.55) * 0.42;
-    const steps = low ? 10 : 14;
-    for (let s = 0; s < steps; s++) {
-      const a0 = (s / steps) * Math.PI * 2;
-      const a1 = ((s + 1) / steps) * Math.PI * 2;
-      pairs.push(
-        new THREE.Vector3(origin.x + Math.sin(a0) * rx, y, origin.z + Math.cos(a0) * rz),
-        new THREE.Vector3(origin.x + Math.sin(a1) * rx, y, origin.z + Math.cos(a1) * rz),
-      );
-    }
+function bagPinch(t) {
+  const nose = t > 0 ? t * 1.05 : t * 0.94;
+  const u = Math.max(-1, Math.min(1, nose));
+  return Math.pow(Math.max(0, Math.cos(u * Math.PI * 0.5)), 0.58);
+}
+
+function gunwaleX(z) {
+  let beam = 6.5;
+  if (z < -12) beam = 5.2;
+  if (z > 16) {
+    const t = Math.max(0, Math.min(1, (z - 16) / 11.2));
+    beam = Math.max(0.9, 6.5 * Math.cos(t * Math.PI * 0.5));
   }
+  return beam;
+}
+
+export function rigBalloon(ship, bag, low, ropeMat, brass) {
+  const { cx, cy, cz, rx, ry, rz } = bag;
+  const bands = low ? 4 : 6;
+  for (let i = 0; i < bands; i++) {
+    const t = -0.62 + (i / (bands - 1)) * 1.24;
+    const k = bagPinch(t);
+    const band = new THREE.Mesh(
+      new THREE.TorusGeometry(Math.max(0.35, rx * k + 0.04), 0.045, 6, low ? 14 : 22),
+      brass,
+    );
+    band.position.set(cx, cy, cz + t * rz);
+    band.scale.set(1, ry / rx, 1);
+    band.castShadow = !low;
+    ship.add(band);
+  }
+
+  const pairs = [];
+  const longs = low ? 4 : 6;
+  const steps = low ? 7 : 11;
   for (let i = 0; i < longs; i++) {
     const a = (i / longs) * Math.PI * 2;
-    const steps = 5;
     for (let s = 0; s < steps; s++) {
-      const t0 = -0.8 + (s / steps) * 1.6;
-      const t1 = -0.8 + ((s + 1) / steps) * 1.6;
-      const p = (t) => new THREE.Vector3(
-        origin.x + Math.sin(a) * 5.5 * scale.x * Math.cos(t * 0.7),
-        origin.y + t * 2.2,
-        origin.z + Math.cos(a) * 5.2 * scale.z * Math.cos(t * 0.55) * 0.42,
-      );
-      pairs.push(p(t0), p(t1));
+      const t0 = -0.9 + (s / steps) * 1.8;
+      const t1 = -0.9 + ((s + 1) / steps) * 1.8;
+      const at = (t) => {
+        const k = bagPinch(t);
+        return new THREE.Vector3(
+          cx + Math.cos(a) * rx * k,
+          cy + Math.sin(a) * ry * k,
+          cz + t * rz,
+        );
+      };
+      pairs.push(at(t0), at(t1));
     }
   }
-  const count = pairs.length / 2;
-  const ropes = ropeMesh(count, ropeMat);
-  ropes.castShadow = !low;
-  ropes.frustumCulled = false;
-  for (let i = 0; i < count; i++) setRope(ropes, i, pairs[i * 2], pairs[i * 2 + 1], 0.035);
-  ropes.instanceMatrix.needsUpdate = true;
-  ship.add(ropes);
+  const seams = ropeMesh(pairs.length / 2, ropeMat);
+  seams.castShadow = !low;
+  seams.frustumCulled = false;
+  for (let i = 0; i < pairs.length / 2; i++) setRope(seams, i, pairs[i * 2], pairs[i * 2 + 1], 0.03);
+  seams.instanceMatrix.needsUpdate = true;
+  ship.add(seams);
 
   const guys = [];
-  const n = low ? 6 : 10;
+  const n = low ? 5 : 8;
   for (let i = 0; i < n; i++) {
-    const x = -6.2 + (i / (n - 1)) * 12.4;
-    guys.push(new THREE.Vector3(x, 1.05, -6), new THREE.Vector3(x * 0.42, 6.6, 0.5));
-    guys.push(new THREE.Vector3(x, 1.05, 14), new THREE.Vector3(x * 0.42, 6.6, 7.5));
+    const t = -0.55 + (i / (n - 1)) * 1.1;
+    const k = bagPinch(t);
+    const z = cz + t * rz * 0.78;
+    const deckZ = Math.max(-14, Math.min(20, z));
+    const rise = deckZ <= -15.4 ? 0.62 : deckZ < -8.4 ? 0.62 * (1 - (deckZ + 15.4) / 7) : 0;
+    const gx = gunwaleX(deckZ);
+    for (const side of [-1, 1]) {
+      const belly = Math.PI * (side < 0 ? 1.22 : 1.78);
+      guys.push(
+        new THREE.Vector3(side * gx, 0.95 + rise, deckZ),
+        new THREE.Vector3(
+          cx + Math.cos(belly) * rx * k * 0.82,
+          cy + Math.sin(belly) * ry * k,
+          z,
+        ),
+      );
+    }
   }
   const lines = ropeMesh(guys.length / 2, ropeMat);
   lines.frustumCulled = false;
-  for (let i = 0; i < guys.length / 2; i++) setRope(lines, i, guys[i * 2], guys[i * 2 + 1], 0.028);
+  for (let i = 0; i < guys.length / 2; i++) setRope(lines, i, guys[i * 2], guys[i * 2 + 1], 0.026);
   lines.instanceMatrix.needsUpdate = true;
   ship.add(lines);
   for (let i = 0; i < n; i += 2) {
-    const x = -6.2 + (i / (n - 1)) * 12.4;
+    const t = -0.55 + (i / (n - 1)) * 1.1;
+    const z = Math.max(-14, Math.min(20, cz + t * rz * 0.78));
     const pulley = new THREE.Mesh(new THREE.TorusGeometry(0.09, 0.02, 6, 10), brass);
-    pulley.position.set(x, 1.15, i % 4 === 0 ? -6 : 14);
+    pulley.position.set(gunwaleX(z) * (i % 4 === 0 ? -1 : 1), 1.05, z);
     pulley.rotation.y = Math.PI / 2;
     ship.add(pulley);
   }
@@ -189,9 +219,13 @@ export function cloudSea(scene, low) {
     const mat = new THREE.MeshBasicMaterial({
       map, color: layer.c, transparent: true, opacity: layer.o, depthWrite: false, side: THREE.DoubleSide,
     });
+    mat.map = map.clone();
+    mat.map.wrapS = mat.map.wrapT = THREE.RepeatWrapping;
+    mat.map.repeat.set(2, 2);
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(layer.s * 4, layer.s * 4), mat);
     mesh.rotation.x = -Math.PI / 2;
     mesh.position.y = layer.y;
+    mesh.userData.scroll = 0.015 + banks.length * 0.004;
     scene.add(mesh);
     banks.push(mesh);
   }
@@ -229,7 +263,7 @@ export function deckDetail(ship, mats, low, block) {
   const strapN = low ? 8 : 14;
   const straps = new THREE.InstancedMesh(strapGeo, iron, strapN);
   for (let i = 0; i < strapN; i++) {
-    dummy.position.set(0, 0.04, -12 + i * (28 / strapN));
+    dummy.position.set(0, 0.12, -6 + i * (20 / strapN));
     dummy.rotation.set(0, 0, 0);
     dummy.scale.set(1, 1, 1);
     dummy.updateMatrix();
@@ -243,8 +277,8 @@ export function deckDetail(ship, mats, low, block) {
   const rivetN = low ? 40 : 80;
   const rivets = new THREE.InstancedMesh(rivetGeo, brass, rivetN);
   for (let i = 0; i < rivetN; i++) {
-    const along = -14 + (i % (rivetN / 2)) * (30 / (rivetN / 2));
-    const side = i < rivetN / 2 ? -3.4 : 3.4;
+    const along = -6 + (i % (rivetN / 2)) * (20 / (rivetN / 2));
+    const side = i < rivetN / 2 ? -2.8 : 2.8;
     dummy.position.set(side, 0.05, along);
     dummy.rotation.set(0, 0, 0);
     dummy.scale.set(1, 0.45, 1);
@@ -254,7 +288,7 @@ export function deckDetail(ship, mats, low, block) {
   rivets.frustumCulled = false;
   ship.add(rivets);
 
-  for (const [x, z] of [[-2.4, 6.5], [3.1, -8.5]]) {
+  for (const [x, z] of [[-2.4, 6.5], [3.1, -4]]) {
     const hatch = new THREE.Group();
     const frame = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.06, 1.15), dark);
     const lid = new THREE.Mesh(new THREE.BoxGeometry(1.25, 0.05, 0.9), wood);
