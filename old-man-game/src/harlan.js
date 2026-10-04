@@ -389,11 +389,13 @@ export function buildHarlan() {
       const b = st.bones;
       const stoop = o.sneak ? 0 : 0.08;
       const runK = o.sneak || o.pose || o.sitting ? 0 : smooth(2.3, 4.6, speed);
-      const sway = Math.sin(st.phase) * (moving ? 0.045 + runK * 0.02 : 0.01);
-      addRot(b.pelvis, 0, 0, sway);
-      addRot(b.spine_01, runK * 0.16, 0, -sway * 0.4);
-      addRot(b.spine_02, runK * 0.1);
-      addRot(b.spine_03, stoop * 0.6 + runK * 0.06);
+      const sway = Math.sin(st.phase) * (moving ? 0.055 + runK * 0.025 : 0.012);
+      const breath = Math.sin(performance.now() / 1000 * (o.afraid ? 2.8 : 1.35)) * (o.afraid ? 0.02 : 0.012);
+      const aimSway = o.aiming ? Math.sin(performance.now() / 1000 * 0.7) * 0.02 : 0;
+      addRot(b.pelvis, breath * 0.4, 0, sway);
+      addRot(b.spine_01, runK * 0.16 + breath, 0, -sway * 0.45);
+      addRot(b.spine_02, runK * 0.1 + breath * 0.6, aimSway, 0);
+      addRot(b.spine_03, stoop * 0.6 + runK * 0.06 + breath * 0.4, aimSway * 0.6, 0);
       addRot(b.neck_01, stoop * 0.3 - runK * 0.08 - (o.lookPitch || 0) * 0.4, (o.lookYaw || 0) * 0.4);
       addRot(b.Head, -stoop * 0.55 - (o.lookPitch || 0) * 0.6, (o.lookYaw || 0) * 0.6);
       // ground contact: kneel/sit clips carry their own hip height, so snap the lowest foot/knee to the snow

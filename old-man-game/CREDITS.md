@@ -10,7 +10,7 @@
 - **Fonts**: Barlow Condensed and Cormorant Garamond, SIL Open Font License 1.1 (vendor/fonts/).
 - **Scene art** (assets/title.jpg, truck.jpg, walker.jpg): Jason Collier's own art for the game.
 - Everything else (models, sounds, shaders) is procedural and original to this project.
-- **Harlan's thoughts** (`assets/voice/*.mp3`): short muttered lines, a few variants each, synthesized with [Piper](https://github.com/OHF-Voice/piper1-gpl) `en_GB-northern_english_male` (medium), then pitched down and slowed slightly. The voice model is finetuned from the lessac set on the [OpenSLR 83](http://www.openslr.org/83/) corpus, **CC-BY-SA 4.0**. Clips are a derivative of that voice.
+- **Harlan's thoughts** (`assets/voice/*.mp3`): inner-voice lines synthesized with [Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M) voice `am_echo` at speed 0.9 (Apache-2.0), then pitched down 2 semitones with a light close reverb so they sit with the World 4 Harlan clips. No music.
 
 ## Harlan (v3 rigged character) — all CC0 1.0 (public domain), by Quaternius (quaternius.com)
 - Body/outfit: `Male_Peasant` from **Modular Character Outfits – Fantasy** (CC0, https://quaternius.itch.io/modular-character-outfits-fantasy). Textures converted to JPG; unused normal/ORM maps dropped.

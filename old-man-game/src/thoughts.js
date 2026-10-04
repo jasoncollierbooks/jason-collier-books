@@ -1,70 +1,71 @@
-// Harlan's inner voice. Short mutters, always spoken when the game sound is on.
-// Several variants per moment; the speaker never repeats the line he just said.
-// Clips are pre-rendered (Piper, northern English male, pitched down, unhurried).
-// If a clip fails to load, fall back to speechSynthesis with the pitch forced down.
+// Harlan's inner voice. Short mutters and the captions he thinks out loud.
+// Clips are Kokoro `am_echo` at speed 0.9, pitched down 2 semitones, with a light close reverb.
+// One line at a time. Mute silences them. Playback waits for the first tap (iPhone Safari).
 import { getCtx, getMaster } from "./audio.js";
 
-export const LINES = {
-  tracks: ["Ain't elk.", "Too big for a deer.", "Heavy. Real heavy."],
-  elk: ["He's close.", "Still warm.", "Bull came through."],
-  night: ["Dark already.", "Sun's down.", "Long night."],
-  hear: ["That wasn't wind.", "I heard that.", "Something moved."],
-  nerve: ["Easy now.", "Breathe.", "Hands steady."],
-  fire: ["She took.", "That'll burn.", "Good enough."],
-  card: ["Looked right into it.", "Didn't flinch.", "Just stood there."],
-  sign: ["Old track.", "Couple days back.", "Nothing fresh."],
-  eyes: ["Edge of it.", "Just a piece.", "That ain't a branch."],
-  timber: ["Too quiet.", "Birds quit on me.", "Don't like it in here."],
-  retreat: ["Stepped off.", "Gone.", "Lost it."],
-  missed: ["Too slow.", "Wasn't looking.", "Damn."],
-  dawn: ["Light.", "Made it.", "Morning."],
-  close: ["Right here.", "It's close.", "Don't move."],
-  camp: ["Drawing good.", "Stay by the fire.", "This'll do tonight."],
-};
-
-const WHISPER = new Set(["close"]);
+export const LINES = {};
+const WHISPER = new Set(["close", "still", "smell"]);
 const buffers = {};
-let tried = false;
-let voice = null;
+const bytes = {};
+const captionIndex = new Map();
+let loadP = null;
+let catalogReady = false;
 let current = null;
 let busyUntil = 0;
+const queue = [];
 const lastPick = {};
 let lastText = "";
+let soundOn = () => true;
+
+export function setVoiceMuteCheck(fn) { soundOn = fn; }
+
+function guessMs(text) {
+  const words = String(text || "").split(/\s+/).filter(Boolean).length;
+  return Math.max(1700, Math.round(words * 430 + 700));
+}
+function showFor(sec) { return Math.max(1800, Math.round(sec * 1000 + 650)); }
 
 export function preloadThoughts() {
-  if (tried) return;
-  tried = true;
-  const audio = getCtx();
-  if (!audio) return;
-  for (const [id, lines] of Object.entries(LINES)) {
-    lines.forEach((_, i) => {
-      const key = `${id}-${i}`;
-      fetch(`./assets/voice/${key}.mp3`)
+  if (loadP) return loadP;
+  loadP = fetch("./assets/voice/catalog.json")
+    .then((r) => { if (!r.ok) throw new Error("catalog"); return r.json(); })
+    .then((cat) => {
+      for (const k of Object.keys(LINES)) delete LINES[k];
+      Object.assign(LINES, cat.thoughts || {});
+      captionIndex.clear();
+      (cat.captions || []).forEach((text, i) => captionIndex.set(text, i));
+      catalogReady = true;
+      const jobs = [];
+      for (const [id, lines] of Object.entries(LINES)) {
+        lines.forEach((_, i) => jobs.push([`${id}-${i}`, `./assets/voice/${id}-${i}.mp3`]));
+      }
+      (cat.captions || []).forEach((_, i) => {
+        const name = `cap-${String(i).padStart(3, "0")}`;
+        jobs.push([name, `./assets/voice/${name}.mp3`]);
+      });
+      return Promise.all(jobs.map(([key, url]) => fetch(url)
         .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(r.status)))
-        .then((b) => audio.decodeAudioData(b))
-        .then((buf) => { buffers[key] = buf; })
-        .catch(() => {});
-    });
-  }
-  const pick = () => {
-    const list = window.speechSynthesis?.getVoices?.() || [];
-    const men = list.filter((v) => /male|david|daniel|fred|alex|aaron|gordon|ralph|albert|rishi|arthur|daniel/i.test(v.name) && !/female|samantha|victoria|karen|moira|tessa|serena|allison/i.test(v.name));
-    men.sort((a, b) => (a.lang || "").startsWith("en") - (b.lang || "").startsWith("en"));
-    voice = men[0] || list.find((v) => (v.lang || "").startsWith("en")) || null;
-  };
-  try {
-    pick();
-    window.speechSynthesis?.addEventListener?.("voiceschanged", pick);
-  } catch { /* no speech API */ }
+        .then((b) => { bytes[key] = b; })
+        .catch(() => {})));
+    })
+    .then(() => decodeReady())
+    .catch((e) => { catalogReady = true; console.warn("voice catalog", e?.message || e); });
+  return loadP;
+}
+
+function decodeReady() {
+  // Decode one clip at play time. Decoding every line up front is too much for a phone.
 }
 
 export function voiceReady() { return Object.keys(buffers).length; }
-export function thoughtBusy() {
-  return performance.now() < busyUntil - 60;
-}
+export function voiceCatalogReady() { return catalogReady; }
+export function thoughtBusy() { return !!current || queue.length > 0 || performance.now() < busyUntil - 40; }
 
 export function armThought() {
-  busyUntil = 0;
+  const audio = getCtx();
+  if (audio && audio.state === "suspended") void audio.resume().then(() => decodeReady());
+  else decodeReady();
+  pump();
 }
 
 function fallbackSpeak(text, quiet) {
@@ -72,11 +73,10 @@ function fallbackSpeak(text, quiet) {
   if (!ss || typeof SpeechSynthesisUtterance === "undefined") return;
   try { ss.cancel(); } catch { /* ignore */ }
   const u = new SpeechSynthesisUtterance(text);
-  if (voice) u.voice = voice;
-  u.lang = voice?.lang || "en-US";
-  u.pitch = 0.32;
-  u.rate = 0.78;
-  u.volume = quiet ? 0.45 : 1;
+  u.lang = "en-US";
+  u.pitch = 0.55;
+  u.rate = 0.86;
+  u.volume = quiet ? 0.45 : 0.8;
   ss.speak(u);
 }
 
@@ -97,47 +97,101 @@ function pickLine(id) {
   return { i, text: lines[i], key: `${id}-${i}` };
 }
 
-/** Play one variant. Returns {text, ms} or null if unknown or he is still talking. */
-export function speakThought(id, soundOn, opts = {}) {
-  const lines = LINES[id];
-  if (!lines || !lines.length) return null;
-  if (thoughtBusy()) return null;
-  const { text, key } = pickLine(id);
-  const words = text.split(/\s+/).length;
-  const guess = Math.max(1600, Math.round(words * 480 + 700));
-  const showFor = (sec) => Math.max(1700, Math.round(sec * 1000 + 550));
-  if (!soundOn) {
-    try { window.speechSynthesis?.cancel(); } catch { /* ignore */ }
-    if (current) { try { current.stop(); } catch { /* ignore */ } current = null; }
-    busyUntil = performance.now() + guess;
-    return { text, ms: guess };
+function enqueue(job) {
+  if (queue.length && queue[queue.length - 1].text === job.text) return job;
+  if (queue.length >= 2) queue.shift();
+  const queued = !!current || queue.length > 0;
+  queue.push(job);
+  job.queued = queued;
+  pump();
+  return job;
+}
+
+function finishCurrent() {
+  current = null;
+  pump();
+}
+
+function pump() {
+  if (current || !queue.length) return;
+  const job = queue[0];
+  const audio = getCtx();
+  const audible = job.sound && soundOn();
+  if (audible && audio && bytes[job.key] && !buffers[job.key] && !job.decoding) {
+    job.decoding = true;
+    const resume = audio.state === "suspended" ? audio.resume() : Promise.resolve();
+    resume.then(() => audio.decodeAudioData(bytes[job.key].slice(0)))
+      .then((buf) => { buffers[job.key] = buf; })
+      .catch(() => { job.failed = true; })
+      .then(() => { job.decoding = false; if (queue[0] === job && !current) startHead(); });
+    return;
   }
+  startHead();
+}
+
+function startHead() {
+  if (current || !queue.length) return;
+  const job = queue.shift();
   const audio = getCtx();
   const master = getMaster();
-  const buf = buffers[key];
-  if (audio && master && buf) {
-    if (current) { try { current.stop(); } catch { /* ignore */ } current = null; }
-    const src = audio.createBufferSource();
-    src.buffer = buf;
-    const g = audio.createGain();
-    const whisper = WHISPER.has(id);
-    g.gain.value = whisper ? Math.min(opts.gain ?? 0.55, 0.7) : (opts.gain ?? 1.2);
-    src.connect(g);
-    g.connect(master);
-    src.start();
-    current = src;
-    src.onended = () => { if (current === src) current = null; };
-    const ms = showFor(buf.duration);
-    busyUntil = performance.now() + buf.duration * 1000 + 80;
-    return { text, ms };
+  const buf = buffers[job.key];
+  const audible = job.sound && soundOn() && !job.failed;
+  const ms = buf ? showFor(buf.duration) : guessMs(job.text);
+  try { job.onbegin?.(job.text, ms); } catch { /* hud */ }
+  busyUntil = performance.now() + (buf ? buf.duration * 1000 + 90 : ms);
+  if (!(audible && audio && master && buf)) {
+    if (audible) fallbackSpeak(job.text, job.quiet);
+    current = { fake: true };
+    setTimeout(() => { if (current && current.fake) finishCurrent(); }, buf ? buf.duration * 1000 : ms);
+    return;
   }
-  fallbackSpeak(text, WHISPER.has(id));
-  busyUntil = performance.now() + guess;
-  return { text, ms: guess };
+  const src = audio.createBufferSource();
+  src.buffer = buf;
+  const filter = audio.createBiquadFilter();
+  filter.type = "lowpass";
+  filter.frequency.value = job.quiet ? 2200 : 3400;
+  const g = audio.createGain();
+  g.gain.value = job.quiet ? Math.min(job.gain ?? 0.42, 0.55) : (job.gain ?? 0.82);
+  src.connect(filter);
+  filter.connect(g);
+  g.connect(master);
+  try { src.start(); } catch { finishCurrent(); return; }
+  current = src;
+  src.onended = () => { if (current === src) finishCurrent(); };
+}
+
+/** Play one variant. Returns {text, ms, queued} or null if that moment has no lines. */
+export function speakThought(id, sound, opts = {}) {
+  const lines = LINES[id];
+  if (!lines || !lines.length) return null;
+  const { text, key } = pickLine(id);
+  const quiet = WHISPER.has(id) || !!opts.quiet;
+  const job = enqueue({
+    key, text, sound: !!sound, quiet,
+    gain: opts.gain,
+    onbegin: opts.onbegin,
+  });
+  return { text, ms: guessMs(text), queued: !!job.queued };
+}
+
+/** Speak a caption if a clip exists for that exact line. */
+export function speakCaption(text, sound, onbegin) {
+  if (!text) return null;
+  const i = captionIndex.get(text);
+  if (i == null) return null;
+  const key = `cap-${String(i).padStart(3, "0")}`;
+  const job = enqueue({
+    key, text, sound: !!sound, quiet: false, gain: 0.78, onbegin,
+  });
+  return { text, ms: guessMs(text), queued: !!job.queued, key };
 }
 
 export function stopThought() {
-  if (current) { try { current.stop(); } catch { /* ignore */ } current = null; }
+  queue.length = 0;
+  if (current && !current.fake) { try { current.stop(); } catch { /* ignore */ } }
+  current = null;
   busyUntil = 0;
   try { window.speechSynthesis?.cancel(); } catch { /* ignore */ }
 }
+
+preloadThoughts();

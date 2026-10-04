@@ -127,22 +127,42 @@ export function buildElk({ bull = true } = {}) {
         head.rotation.y = Math.sin(t * 0.3) * 0.5;
         return;
       }
+      const graze = mode === "graze", alert = mode === "alert";
       legs.forEach((l, i) => {
         const off = i === 0 || i === 3 ? 0 : Math.PI;
-        const a = Math.sin(phase + off) * (run ? 0.75 : walk ? 0.4 : 0);
-        l.hip.rotation.x = a;
-        l.kn.rotation.x = Math.max(0, -Math.cos(phase + off)) * (run ? 1.1 : walk ? 0.5 : 0) * (l.front ? -1 : 1);
+        const a = Math.sin(phase + off) * (run ? 0.95 : walk ? 0.42 : 0);
+        l.hip.rotation.x = a + (run && l.front ? -0.15 : 0);
+        // bound: the lifted leg folds, the planted leg stays long
+        l.kn.rotation.x = Math.max(0, -Math.cos(phase + off)) * (run ? 1.35 : walk ? 0.55 : 0) * (l.front ? -1 : 1);
       });
-      if (run) body.position.y = Math.abs(Math.sin(phase)) * 0.18;
-      if (mode === "graze") {
-        neck.rotation.x = 1.15 + Math.sin(t * 1.3) * 0.06;
+      if (run) {
+        // a bound: gather, then a higher push off the hind legs
+        const hop = Math.max(0, Math.sin(phase));
+        body.position.y = hop * hop * 0.34;
+        body.rotation.x = -0.22 + hop * 0.18;
+        neck.rotation.x = 0.35;
         head.rotation.y = 0;
-      } else if (mode === "alert") {
-        neck.rotation.x = -0.35;
-        head.rotation.y = Math.sin(t * 0.7) * 0.15;
+        head.rotation.x = -0.15;
+      } else if (graze) {
+        // peck at the snow, then a small chew
+        const peck = Math.max(0, Math.sin(t * 1.6));
+        neck.rotation.x = 0.55 + peck * 0.85;
+        head.rotation.x = peck * 0.35;
+        head.rotation.y = Math.sin(t * 0.35) * 0.2;
+        body.position.y = 0;
+      } else if (alert) {
+        body.position.y = 0.02;
+        neck.rotation.x = -0.55;
+        head.rotation.x = -0.15;
+        head.rotation.y = Math.sin(t * 1.4) * 0.35;
+        // ears up
+        head.children.forEach((ch) => { if (ch.geometry?.type === "ConeGeometry") ch.rotation.z = Math.sign(ch.position.x || 1) * -0.35; });
       } else {
-        neck.rotation.x = run ? 0.1 : -0.1 + Math.sin(t * 0.5) * 0.05;
-        head.rotation.y = walk ? 0 : Math.sin(t * 0.35) * 0.4;
+        body.position.y = walk ? Math.abs(Math.sin(phase * 2)) * 0.03 : 0;
+        body.rotation.x = 0;
+        neck.rotation.x = walk ? 0.05 : -0.08 + Math.sin(t * 0.45) * 0.06;
+        head.rotation.x = 0;
+        head.rotation.y = walk ? Math.sin(t * 0.6) * 0.08 : Math.sin(t * 0.3) * 0.35;
       }
     },
   };
