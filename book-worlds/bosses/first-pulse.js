@@ -104,13 +104,13 @@ function create() {
   root.add(rig);
 
   const columnMat = staticMat();
-  const column = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 1.05, 4.6, 24, 1, true), columnMat);
+  const column = new THREE.Mesh(new THREE.CylinderGeometry(0.72, 0.88, 4.6, 24, 1, true), columnMat);
   column.position.y = 2.45;
   rig.add(column);
 
   const heart = new THREE.Mesh(
     new THREE.SphereGeometry(0.32, 16, 12),
-    new THREE.MeshBasicMaterial({ color: 0xeef6ff, transparent: true, opacity: 0.9 }),
+    new THREE.MeshBasicMaterial({ color: 0x8eb8c8, transparent: true, opacity: 0.42 }),
   );
   heart.position.y = 2.55;
   const halo = new THREE.Mesh(
@@ -126,7 +126,7 @@ function create() {
   for (let i = 0; i < 7; i++) {
     const brass = i % 2 === 0;
     const ring = new THREE.Mesh(
-      new THREE.TorusGeometry(0.85 + i * 0.22, i % 3 === 0 ? 0.045 : 0.028, 8, 36),
+      new THREE.TorusGeometry(0.95 + i * 0.28, i % 3 === 0 ? 0.07 : 0.045, 8, 40),
       new THREE.MeshStandardMaterial({
         color: brass ? 0xd7b56a : 0xd5e2ee,
         emissive: brass ? 0x6a4018 : 0x2a4860,
@@ -161,7 +161,7 @@ function create() {
   dust.material.size = 0.06;
   rig.add(dust);
 
-  const light = new THREE.PointLight(0xd5e6ff, 1.4, 11, 2);
+  const light = new THREE.PointLight(0xd5e6ff, 0.7, 9, 2);
   light.position.y = 2.6;
   const warm = new THREE.PointLight(0xffc56a, 0.45, 7, 2);
   warm.position.set(0.4, 1.2, 0.2);

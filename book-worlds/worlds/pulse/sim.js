@@ -4,8 +4,8 @@ import * as THREE from "three";
 import { clamp, damp, dampAngle, hypot2 } from "../../src/util.js";
 import { heightAt } from "./world.js?v=2";
 import { createHuman } from "../../src/actors.js?v=4";
-import { createEntity, createNative } from "./beings.js?v=1";
-import { boss as worldBoss } from "../../bosses/first-pulse.js?v=5";
+import { createEntity, createNative } from "./beings.js?v=2";
+import { boss as worldBoss } from "../../bosses/first-pulse.js?v=6";
 import { createAbilities } from "../../src/abilities.js?v=1";
 
 const SAVE_KEY = "book-worlds-first-pulse";
@@ -189,7 +189,10 @@ export function createPulseSim(scene, world, audio) {
       e.t = 0;
       if (e.kind !== "boss") {
         player.coins += 3;
-        if (e.rig.setFree) e.rig.setFree();
+        if (e.rig.setFree) {
+          e.rig.setFree();
+          e.freed = true;
+        }
         speak("native-free");
       }
       grantXp(e.kind === "boss" ? 90 : e.prof.xp);

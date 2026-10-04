@@ -10,7 +10,7 @@ import { buildWorld } from "./world.js?v=7";
 import { buildRustyWorld } from "../worlds/rusty/world.js?v=10";
 import { createRustySim } from "../worlds/rusty/sim.js?v=15";
 import { buildPulseWorld } from "../worlds/pulse/world.js?v=5";
-import { createPulseSim } from "../worlds/pulse/sim.js?v=5";
+import { createPulseSim } from "../worlds/pulse/sim.js?v=7";
 import { createAbilities } from "./abilities.js?v=1";
 import { whenCastReady } from "./actors.js?v=7";
 import { theBlank } from "../bosses/index.js?v=10";
@@ -1262,7 +1262,7 @@ window.__BOOKWORLDS = {
     const p = sim.player;
     return { x: p.x, y: p.y, z: p.z, hp: p.hp, yaw: p.yaw, hits: sim.hits(), mp: p.mp, coins: p.coins, potions: p.potions };
   },
-  enemies: () => sim.enemies.map((e) => ({ id: e.id, kind: e.kind, hp: e.hp, hpMax: e.hpMax, alive: e.alive, x: e.x, z: e.z, pendulum: !!e.pendulum, routed: !!e.routed })),
+  enemies: () => sim.enemies.map((e) => ({ id: e.id, kind: e.kind, hp: e.hp, hpMax: e.hpMax, alive: e.alive, freed: !!e.freed, x: e.x, z: e.z, pendulum: !!e.pendulum, routed: !!e.routed })),
   bulletin: () => narrate.current(),
   pages: () => sim.pageCount(),
   circus: () => sim.circusDone(),

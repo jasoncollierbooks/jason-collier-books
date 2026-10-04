@@ -3,17 +3,7 @@
 // until setFree() puts the color back.
 import * as THREE from "three";
 
-function crystalMat(color, taken) {
-  if (taken) {
-    return new THREE.MeshStandardMaterial({
-      color: 0x6a6e74,
-      emissive: 0x121416,
-      emissiveIntensity: 0.06,
-      roughness: 0.88,
-      metalness: 0.04,
-      flatShading: true,
-    });
-  }
+function crystalMat(color) {
   return new THREE.MeshStandardMaterial({
     color,
     emissive: color,
@@ -21,6 +11,33 @@ function crystalMat(color, taken) {
     roughness: 0.22,
     metalness: 0.32,
     flatShading: true,
+  });
+}
+
+function takenCrystalMat() {
+  return new THREE.ShaderMaterial({
+    uniforms: { uTime: { value: 0 } },
+    vertexShader: `
+      varying vec3 vP;
+      varying vec3 vN;
+      void main() {
+        vP = position;
+        vN = normalize(normalMatrix * normal);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform float uTime;
+      varying vec3 vP;
+      varying vec3 vN;
+      void main() {
+        float scan = sin(vP.y * 46.0 - uTime * 16.0) * 0.5 + 0.5;
+        float edge = pow(1.0 - abs(vN.y), 1.15);
+        vec3 col = mix(vec3(0.28, 0.30, 0.32), vec3(0.72, 0.74, 0.76), scan);
+        col = mix(col, vec3(0.12, 0.13, 0.14), edge * 0.55);
+        gl_FragColor = vec4(col, 1.0);
+      }
+    `,
   });
 }
 
@@ -194,9 +211,16 @@ export function createNative(opts = {}) {
   bob.scale.setScalar(scale);
 
   const parts = [];
+  const takenMats = [];
+  function useMat(color) {
+    if (!taken) return crystalMat(color);
+    const mat = takenCrystalMat();
+    takenMats.push(mat);
+    return mat;
+  }
   function addCrystal(geo, colorIndex, x, y, z, rot) {
     const color = pal[colorIndex % pal.length];
-    const mesh = new THREE.Mesh(geo, crystalMat(color, taken));
+    const mesh = new THREE.Mesh(geo, useMat(color));
     mesh.position.set(x, y, z);
     if (rot) mesh.rotation.set(rot[0], rot[1], rot[2]);
     mesh.castShadow = true;
@@ -208,13 +232,13 @@ export function createNative(opts = {}) {
 
   const legL = new THREE.Group();
   const legR = new THREE.Group();
-  legL.position.set(-0.16, 0.72, 0);
-  legR.position.set(0.16, 0.72, 0);
+  legL.position.set(-0.18, 0.78, 0);
+  legR.position.set(0.18, 0.78, 0);
   bob.add(legL, legR);
-  const legGeo = new THREE.ConeGeometry(0.11, 0.7, 5);
-  legGeo.translate(0, -0.32, 0);
-  const lMesh = new THREE.Mesh(legGeo, crystalMat(pal[1], taken));
-  const rMesh = new THREE.Mesh(legGeo, crystalMat(pal[2], taken));
+  const legGeo = new THREE.ConeGeometry(0.12, 0.78, 5);
+  legGeo.translate(0, -0.36, 0);
+  const lMesh = new THREE.Mesh(legGeo, useMat(pal[1]));
+  const rMesh = new THREE.Mesh(legGeo, useMat(pal[2]));
   lMesh.castShadow = rMesh.castShadow = true;
   lMesh.userData.color = pal[1];
   rMesh.userData.color = pal[2];
@@ -222,27 +246,27 @@ export function createNative(opts = {}) {
   legR.add(rMesh);
   parts.push(lMesh, rMesh);
 
-  addCrystal(new THREE.OctahedronGeometry(0.22, 0), 0, 0, 0.92, 0);
-  const torso = addCrystal(new THREE.OctahedronGeometry(0.34, 0), 1, 0, 1.32, 0);
-  torso.scale.set(0.85, 1.15, 0.6);
-  const head = addCrystal(new THREE.OctahedronGeometry(0.18, 0), 2, 0, 1.82, 0);
-  addCrystal(new THREE.ConeGeometry(0.08, 0.55, 5), 0, -0.38, 1.35, 0, [0, 0, 0.9]);
-  addCrystal(new THREE.ConeGeometry(0.08, 0.55, 5), 2, 0.38, 1.35, 0, [0, 0, -0.9]);
-  addCrystal(new THREE.ConeGeometry(0.06, 0.28, 4), 0, 0.12, 2.05, 0);
-  addCrystal(new THREE.ConeGeometry(0.05, 0.22, 4), 1, -0.22, 1.55, 0.12);
+  addCrystal(new THREE.OctahedronGeometry(0.26, 0), 0, 0, 0.98, 0);
+  const torso = addCrystal(new THREE.OctahedronGeometry(0.38, 0), 1, 0, 1.38, 0);
+  torso.scale.set(0.9, 1.2, 0.62);
+  const head = addCrystal(new THREE.OctahedronGeometry(0.2, 0), 2, 0, 1.92, 0);
+  addCrystal(new THREE.ConeGeometry(0.09, 0.62, 5), 0, -0.46, 1.4, 0, [0, 0, 1.05]);
+  addCrystal(new THREE.ConeGeometry(0.09, 0.62, 5), 2, 0.46, 1.4, 0, [0, 0, -1.05]);
+  addCrystal(new THREE.ConeGeometry(0.07, 0.32, 4), 0, 0.1, 2.18, 0);
+  addCrystal(new THREE.ConeGeometry(0.06, 0.24, 4), 1, -0.2, 1.62, 0.14);
 
   const eyeMatFree = new THREE.MeshBasicMaterial({ color: 0x7ee8e0 });
   const eyeMatTaken = new THREE.MeshBasicMaterial({ color: 0x9aa0a6 });
   const eyes = [-0.06, 0.06].map((x) => {
     const eye = new THREE.Mesh(new THREE.SphereGeometry(0.028, 8, 8), taken ? eyeMatTaken : eyeMatFree);
-    eye.position.set(x, 1.84, 0.12);
+    eye.position.set(x, 1.94, 0.14);
     bob.add(eye);
     return eye;
   });
 
-  const shell = new THREE.Mesh(new THREE.IcosahedronGeometry(0.62, 1), staticMat());
-  shell.position.y = 1.25;
-  shell.scale.set(0.85, 1.25, 0.75);
+  const shell = new THREE.Mesh(new THREE.IcosahedronGeometry(0.78, 1), staticMat());
+  shell.position.y = 1.35;
+  shell.scale.set(0.7, 1.15, 0.55);
   shell.visible = taken;
   bob.add(shell);
 
@@ -261,7 +285,8 @@ export function createNative(opts = {}) {
   bob.add(sparks);
 
   function paint() {
-    for (const mesh of parts) mesh.material = crystalMat(mesh.userData.color, taken);
+    takenMats.length = 0;
+    for (const mesh of parts) mesh.material = taken ? useMat(mesh.userData.color) : crystalMat(mesh.userData.color);
     for (const eye of eyes) eye.material = taken ? eyeMatTaken : eyeMatFree;
     shell.visible = taken;
     sparks.visible = taken;
@@ -284,6 +309,7 @@ export function createNative(opts = {}) {
     head.rotation.y = Math.sin(time * 0.8) * 0.2;
     if (taken) {
       shell.material.uniforms.uTime.value = time;
+      for (const mat of takenMats) mat.uniforms.uTime.value = time;
       shell.rotation.y = time * 0.4;
       const attr = sparks.geometry.attributes.position;
       for (let i = 0; i < 28; i++) {
