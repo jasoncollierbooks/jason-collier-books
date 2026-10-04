@@ -4,7 +4,7 @@ import { createInput } from "./input.js?v=4";
 import { createSim } from "./sim.js?v=10";
 import { damp, clamp, springAngle, angDelta } from "./util.js";
 import { createNarration } from "./narration.js?v=1";
-import { createDialogue } from "./dialogue.js?v=5";
+import { createDialogue } from "./dialogue.js?v=6";
 import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass, GTAOPass, ShaderPass, FXAAPass } from "three/addons";
 import { buildWorld } from "./world.js?v=7";
 import { buildRustyWorld } from "../worlds/rusty/world.js?v=11";
