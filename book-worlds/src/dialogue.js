@@ -3,7 +3,7 @@
 // Subtitles stay off unless the player asks, except when the clip is missing.
 // A new bark replaces the one already playing. It waits if the announcer is mid-line.
 const NAMES = { jang: "Jang", tom: "Tom", spacey: "Spacey", mira: "Mira", entity: "Entity", native: "Native" };
-const VOICE_REV = "4";
+const VOICE_REV = "5";
 
 export function createDialogue(audio) {
   const rows = new Map();

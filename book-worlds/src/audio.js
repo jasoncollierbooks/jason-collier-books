@@ -10,6 +10,7 @@ export function createAudio() {
   let windGain = null;
   let musicGain = null;
   let started = false;
+  let soundOn = true;
   let primed = false;
   let speaking = false;
   let ducked = false;
@@ -36,8 +37,17 @@ export function createAudio() {
     try {
       ctx = new AC();
       master = ctx.createGain();
-      master.gain.value = 0.8;
+      master.gain.value = soundOn ? 0.8 : 0;
       master.connect(ctx.destination);
+      ctx.addEventListener("statechange", () => {
+        if (ctx.state !== "running" || !started) return;
+        try { applyBed(); } catch { /* a refused node must not stall the picture */ }
+        if (markUnlocked) {
+          const done = markUnlocked;
+          markUnlocked = null;
+          done();
+        }
+      });
       sfxGain = ctx.createGain();
       sfxGain.connect(master);
       bedGain = ctx.createGain();
@@ -87,7 +97,7 @@ export function createAudio() {
 
   function burst(opts) {
     const audio = context();
-    if (!audio || !started || !master) return;
+    if (!audio || !started || !master || !soundOn || audio.state !== "running") return;
     const { dur = 0.12, freq = 240, type = "bandpass", gain = 0.2, q = 0.8, from = null, to = null } = opts;
     const src = audio.createBufferSource();
     src.buffer = noise(dur + 0.05);
@@ -195,7 +205,7 @@ export function createAudio() {
 
   function tone(freq, dur, gain, type = "sine") {
     const audio = context();
-    if (!audio || !started) return;
+    if (!audio || !started || !soundOn || audio.state !== "running") return;
     const t = audio.currentTime;
     const osc = audio.createOscillator();
     osc.type = type;
@@ -338,52 +348,87 @@ export function createAudio() {
   let pulseGain = null;
   let pulseTimer = null;
 
+  function addPartial(audio, freq, level, wobble) {
+    const osc = audio.createOscillator();
+    osc.type = "sine";
+    osc.frequency.value = freq;
+    const g = audio.createGain();
+    g.gain.value = level;
+    if (wobble) {
+      const lfo = audio.createOscillator();
+      lfo.frequency.value = wobble;
+      const lg = audio.createGain();
+      lg.gain.value = level * 0.42;
+      lfo.connect(lg);
+      lg.connect(g.gain);
+      lfo.start();
+    }
+    osc.connect(g);
+    g.connect(pulseGain);
+    osc.start();
+  }
+
+  function particle(freq) {
+    if (!ctx || !pulseGain || !soundOn || ctx.state !== "running" || bedName !== "pulse") return;
+    const t = ctx.currentTime;
+    const dur = 0.28 + Math.random() * 0.34;
+    const peak = 0.05;
+    const osc = ctx.createOscillator();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(freq, t);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(peak, t + 0.018);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    osc.connect(g);
+    g.connect(pulseGain);
+    osc.start(t);
+    osc.stop(t + dur + 0.03);
+    const src = ctx.createBufferSource();
+    src.buffer = noise(0.2);
+    const filter = ctx.createBiquadFilter();
+    filter.type = "bandpass";
+    filter.frequency.value = freq;
+    filter.Q.value = 8;
+    const ng = ctx.createGain();
+    ng.gain.setValueAtTime(peak * 0.55, t);
+    ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+    src.connect(filter);
+    filter.connect(ng);
+    ng.connect(pulseGain);
+    src.start(t);
+    src.stop(t + 0.16);
+  }
+
   function ensurePulseBed() {
     const audio = context();
-    if (!audio || !started) return;
+    // iOS stays silent if a node is started while the context is still suspended.
+    if (!audio || !started || audio.state !== "running") return;
     muteMusic();
     if (windGain) windGain.gain.value = 0;
     if (stackGain) stackGain.gain.value = 0;
     if (!pulseGain) {
       pulseGain = audio.createGain();
       pulseGain.connect(bedGain || master);
-      const hum = audio.createOscillator();
-      hum.type = "sine";
-      hum.frequency.value = 62;
-      const humG = audio.createGain();
-      humG.gain.value = 0.045;
-      const humLfo = audio.createOscillator();
-      humLfo.frequency.value = 0.07;
-      const humLfoG = audio.createGain();
-      humLfoG.gain.value = 8;
-      humLfo.connect(humLfoG);
-      humLfoG.connect(hum.frequency);
-      hum.connect(humG);
-      humG.connect(pulseGain);
-      hum.start();
-      humLfo.start();
-
-      const ship = audio.createBufferSource();
-      ship.buffer = noise(3);
-      ship.loop = true;
-      const shipFilter = audio.createBiquadFilter();
-      shipFilter.type = "lowpass";
-      shipFilter.frequency.value = 420;
-      const shipG = audio.createGain();
-      shipG.gain.value = 0.04;
-      ship.connect(shipFilter);
-      shipFilter.connect(shipG);
-      shipG.connect(pulseGain);
-      ship.start();
-
+      // Low hum, plus harmonics a phone speaker can actually move.
+      addPartial(audio, 55, 0.04, 0.07);
+      addPartial(audio, 110, 0.045, 0.05);
+      addPartial(audio, 165, 0.05, 0.09);
+      addPartial(audio, 220, 0.055, 0.06);
+      addPartial(audio, 330, 0.03, 0.11);
+      // Two close tones beat against each other. That is the shimmer, not a melody.
+      addPartial(audio, 590, 0.02, 0.13);
+      addPartial(audio, 596, 0.018, 0.17);
+      addPartial(audio, 884, 0.012, 0.08);
       const air = audio.createBufferSource();
       air.buffer = noise(2);
       air.loop = true;
       const airFilter = audio.createBiquadFilter();
-      airFilter.type = "highpass";
-      airFilter.frequency.value = 2400;
+      airFilter.type = "bandpass";
+      airFilter.frequency.value = 1800;
+      airFilter.Q.value = 0.6;
       const airG = audio.createGain();
-      airG.gain.value = 0.012;
+      airG.gain.value = 0.028;
       air.connect(airFilter);
       airFilter.connect(airG);
       airG.connect(pulseGain);
@@ -391,37 +436,34 @@ export function createAudio() {
     }
     pulseGain.gain.value = 1;
     if (pulseTimer) return;
+    const bells = [617, 873, 1049, 1480, 1760, 2217, 2637];
     const tick = () => {
       if (!ctx || !pulseGain) {
         pulseTimer = null;
         return;
       }
-      if (bedName === "pulse") {
-        const t = ctx.currentTime;
-        const osc = ctx.createOscillator();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(48, t);
-        osc.frequency.linearRampToValueAtTime(54, t + 1.6);
-        osc.frequency.linearRampToValueAtTime(47, t + 3.2);
-        const g = ctx.createGain();
-        g.gain.setValueAtTime(0.03, t);
-        g.gain.linearRampToValueAtTime(0.001, t + 3.2);
-        osc.connect(g);
-        g.connect(pulseGain);
-        osc.start(t);
-        osc.stop(t + 3.3);
-        if (Math.random() < 0.45) {
-          burst({ dur: 0.18, freq: 3200, type: "highpass", gain: 0.05, q: 0.4 });
-        }
-        if (Math.random() < 0.25) tone(880, 0.05, 0.03, "square");
-      }
-      pulseTimer = window.setTimeout(tick, 3200);
+      if (bedName === "pulse") particle(bells[Math.floor(Math.random() * bells.length)]);
+      pulseTimer = window.setTimeout(tick, 900 + Math.random() * 1400);
     };
     tick();
   }
 
+  function applyMaster() {
+    if (!master || !ctx) return;
+    const t = ctx.currentTime || 0;
+    const level = soundOn ? 0.8 : 0;
+    try {
+      master.gain.cancelScheduledValues(t);
+      master.gain.setValueAtTime(level, t);
+    } catch {
+      master.gain.value = level;
+    }
+  }
+
   function applyBed() {
     if (!started) return;
+    const audio = ctx;
+    if (audio && audio.state !== "running") return;
     if (bedName === "stack") {
       if (pulseGain) pulseGain.gain.value = 0;
       ensureStackBed();
@@ -660,17 +702,20 @@ export function createAudio() {
       if (!audio) return;
       started = true;
       whenUnlocked();
+      // resume() has to run inside the tap. iOS drops a context that only resumes later.
+      if (audio.state !== "running" && audio.resume) audio.resume();
       if (!primed) {
         primed = true;
         try {
           const blip = audio.createBufferSource();
-          blip.buffer = audio.createBuffer(1, 1, audio.sampleRate);
+          blip.buffer = audio.createBuffer(1, 1, audio.sampleRate || 44100);
           blip.connect(master);
-          blip.start();
+          blip.start(0);
         } catch { /* a suspended context still accepts the gesture */ }
       }
       primeMedia();
       const go = () => {
+        if (!ctx || ctx.state !== "running") return;
         try {
           applyBed();
         } catch { /* headless audio can refuse a node; the picture still plays */ }
@@ -680,8 +725,14 @@ export function createAudio() {
           done();
         }
       };
-      if (audio.state === "suspended") audio.resume().then(go).catch(go);
+      if (audio.state === "running") go();
+      else if (audio.resume) audio.resume().then(go).catch(go);
       else go();
+    },
+    sound(on) {
+      if (typeof on === "boolean") soundOn = on;
+      applyMaster();
+      return soundOn;
     },
     speaking() { return speaking; },
     levels() {
