@@ -93,22 +93,8 @@ export function buildProcHarlan() {
     sh.add(el);
     const fo = limb(0.3, 0.06, 0.05, coat);
     el.add(fo);
-    const glove = M(0x3a2c22);
-    const hand = new THREE.Group();
+    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.045, 6, 5), M(0x3a2c22));
     hand.position.y = -0.32;
-    const palm = new THREE.Mesh(new THREE.SphereGeometry(0.04, 10, 8), glove);
-    palm.scale.set(1.15, 0.75, 0.7);
-    hand.add(palm);
-    for (let f = 0; f < 4; f++) {
-      const fg = limb(0.055, 0.012, 0.008, glove);
-      fg.position.set((f - 1.5) * 0.016, -0.03, -0.012);
-      fg.rotation.x = 0.4;
-      hand.add(fg);
-    }
-    const thumb = limb(0.04, 0.013, 0.009, glove);
-    thumb.position.set(side * 0.03, -0.005, -0.01);
-    thumb.rotation.z = side * 1.1;
-    hand.add(thumb);
     el.add(hand);
     body.add(sh);
     return { sh, el };
@@ -136,22 +122,14 @@ export function buildProcHarlan() {
 
   // rifle slung across the back, muzzle up over the right shoulder
   const rifle = new THREE.Group();
-  const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.014, 0.62, 8), steel);
-  barrel.rotation.x = Math.PI / 2;
-  barrel.position.set(0, 0.02, -0.32);
-  const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.4, 8), steel);
-  tube.rotation.x = Math.PI / 2;
-  tube.position.set(0, 0.0, -0.22);
-  const fore = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.035, 0.26), stock);
-  fore.position.set(0, -0.01, -0.16);
-  const recv = new THREE.Mesh(new THREE.BoxGeometry(0.032, 0.05, 0.14), steel);
-  recv.position.set(0, 0.01, 0.02);
-  const stk = new THREE.Mesh(new THREE.BoxGeometry(0.036, 0.08, 0.34), stock);
-  stk.position.set(0, -0.01, 0.24);
-  const scope = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.22, 8), steel);
+  const barrel = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.03, 0.75), steel);
+  barrel.position.z = -0.35;
+  const stk = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.09, 0.42), stock);
+  stk.position.z = 0.2;
+  const scope = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.26, 6), steel);
   scope.rotation.x = Math.PI / 2;
-  scope.position.set(0, 0.055, -0.02);
-  rifle.add(barrel, tube, fore, recv, stk, scope);
+  scope.position.set(0, 0.05, -0.1);
+  rifle.add(barrel, stk, scope);
   const slung = new THREE.Group();
   slung.position.set(0.04, 1.3, 0.31);
   slung.rotation.set(-1.3, 0, 0.62);

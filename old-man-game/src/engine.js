@@ -4,8 +4,7 @@ import { buildSky } from "./sky.js";
 import { BOUNDS, CREEK, PLACES, PLACE_IDS, TRAILS, buildCreekWater, buildGround, heightAt, normalAt, trailDist } from "./terrain.js";
 import { buildForest, collide, logGeometry, occlusion, occlude, paint, rockGeometry } from "./forest.js";
 import { buildHarlan } from "./harlan.js";
-import { buildViewmodel } from "./viewmodel.js";
-import { buildWalker } from "./walker.js";
+import { buildWalker } from "./creatures.js";
 import { buildElk } from "./elk.js";
 import { Q } from "./quality.js";
 import { createPost } from "./post.js";
@@ -33,10 +32,8 @@ export function createEngine(canvas) {
   let quality = 1;
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x9aa4ae, 0.008);
-  const camera = new THREE.PerspectiveCamera(60, 1, 0.08, 1700);
+  const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1700);
   scene.add(camera);
-  const viewmodel = buildViewmodel();
-  camera.add(viewmodel.root);
 
   // lights
   const hemi = new THREE.HemisphereLight(0xdde6f0, 0x50555a, 1.2);
@@ -423,7 +420,7 @@ export function createEngine(canvas) {
     scene.add(c.root);
     return c;
   });
-  const walker = buildWalker(lowEnd);
+  const walker = buildWalker();
   walker.root.visible = false;
   scene.add(walker.root);
 
@@ -828,7 +825,7 @@ export function createEngine(canvas) {
   }
 
   return {
-    renderer, scene, camera, rig, harlan, bull, cows, walker, viewmodel, sky, lamp, lampFill, fireLight, hemi, sun,
+    renderer, scene, camera, rig, harlan, bull, cows, walker, sky, lamp, lampFill, fireLight, hemi, sun,
     prints, elkTracks, walkerTracks, blood, wallSegs, deadfall, camMeshes, posts, truck, propColliders, forest,
     resize, applyLight, updateFire, setFire, puff, updatePuffs, updateMist, worldToScreen, renderCard, setSticks, sticks, snowU,
     fireP,

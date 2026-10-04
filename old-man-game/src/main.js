@@ -545,7 +545,6 @@ function showCard(spot) {
         E.walker.root.position.set(p.x, heightAt(p.x, p.z), p.z);
         E.walker.root.rotation.y = p.yaw;
         E.walker.root.visible = true;
-        E.walker.setLod?.(spec[0]);
         E.walker.animate("stand", 0, 3.3, f.kind === "face" ? 1 : 0.2);
         vis.push(E.walker.root);
       }
@@ -950,8 +949,7 @@ function updateSpot(dt) {
   E.walker.root.visible = true;
   E.walker.root.position.set(W.x, heightAt(W.x, W.z), W.z);
   E.walker.root.rotation.y = W.yaw + Math.PI;
-  E.walker.setLod?.(Math.hypot(W.x - P.x, W.z - P.z));
-  E.walker.animate(looking ? "sniff" : "crouch", dt, t, G.isDark(S.minutes) || S.minutes > 17 * 60 ? 1 : 0.35);
+  E.walker.animate(looking ? "stand" : "walk", dt, t, G.isDark(S.minutes) || S.minutes > 17 * 60 ? 1 : 0.2);
   W.walkerNear = true;
   hud.fear(0.48 + Math.sin(t * 6.5) * 0.08);
   const fill = document.getElementById("spotfill");
@@ -971,7 +969,6 @@ function updateScare(dt) {
   E.walker.root.visible = true;
   E.walker.root.position.set(W.x, heightAt(W.x, W.z), W.z);
   E.walker.root.rotation.y = W.yaw + Math.PI;
-  E.walker.setLod?.(Math.hypot(W.x - P.x, W.z - P.z));
   E.walker.animate(k < 1 ? "run" : "reach", dt, T.now / 1000, 1);
   if (sc.t > 0.42 && !sc.stung) {
     sc.stung = true;
@@ -1091,11 +1088,7 @@ function updateWalker(dt) {
       const d = Math.hypot(W.x - P.x, W.z - P.z);
       const lookA = Math.abs(wrapPi(Math.atan2(-(W.x - P.x), -(W.z - P.z)) - cam.yaw));
       visible = d < 60;
-      {
-        const stalk = d < 30 && !P.moving && dark;
-        const pause = Math.sin(t * 0.23 + S.day) > 0.62;
-        anim = stalk ? "crouch" : pause ? "sniff" : P.moving ? "walk" : "stand";
-      }
+      anim = P.moving ? "walk" : "stand";
       eyes = dark ? (Math.sin(t * 0.7 + W.side) > -0.25 ? 1 : 0.1) : 0;
       // looking straight at it in the light: it steps behind a trunk
       const lit = (dark && d < 34) || (!dark && d < 50);
@@ -1131,7 +1124,6 @@ function updateWalker(dt) {
   if (visible) {
     E.walker.root.position.set(W.x, heightAt(W.x, W.z), W.z);
     E.walker.root.rotation.y = W.yaw + Math.PI;
-    E.walker.setLod?.(Math.hypot(W.x - P.x, W.z - P.z));
     E.walker.animate(anim, dt, t, eyes);
   }
 }
@@ -1163,7 +1155,6 @@ function updateChase(dt) {
   E.walker.root.visible = true;
   E.walker.root.position.set(W.x, heightAt(W.x, W.z), W.z);
   E.walker.root.rotation.y = W.yaw + Math.PI;
-  E.walker.setLod?.(d);
   E.walker.animate("run", dt, t, G.isDark(S.minutes) ? 1 : 0.6);
   C.step -= dt;
   if (C.step <= 0) { C.step = 0.42; X.heavyStep(panOf(W.x, W.z)); }
@@ -1217,8 +1208,7 @@ function updateHoldStill(dt) {
   E.walker.root.visible = true;
   E.walker.root.position.set(W.x, heightAt(W.x, W.z), W.z);
   E.walker.root.rotation.y = W.yaw + Math.PI;
-  E.walker.setLod?.(Math.hypot(W.x - P.x, W.z - P.z));
-  E.walker.animate(W.stillT < 1.2 ? "sniff" : "crouch", dt, t, 0.9);
+  E.walker.animate("walk", dt * 0.35, t, 0.8);
   if (Math.floor(W.stillT * 1.1) !== Math.floor((W.stillT - dt) * 1.1)) X.heavyStep(panOf(W.x, W.z));
   const ax = input.axes();
   const moved = Math.abs(ax.fwd) > 0.2 || Math.abs(ax.strafe) > 0.3 || Math.abs(ax.turn) > 0.5 || Math.abs(input.lookDX) > 40;
@@ -1275,7 +1265,6 @@ function updateAssault(dt) {
   E.walker.root.visible = true;
   E.walker.root.position.set(W.x, heightAt(W.x, W.z), W.z);
   E.walker.root.rotation.y = W.yaw + Math.PI;
-  E.walker.setLod?.(Math.hypot(W.x - P.x, W.z - P.z));
   E.walker.animate(A_.pinned > 0 ? "crouch" : "walk", dt, t, 1);
   W.walkerNear = true;
   hud.setWarn(A_.pinned > 0 ? "IT'S PINNED — SHOOT" : "IT'S COMING THROUGH — RIFLE", true);
@@ -1642,7 +1631,6 @@ function tick(now, dt, last) {
     E.walker.root.visible = true;
     E.walker.root.position.set(bx, heightAt(bx, bz), bz);
     E.walker.root.rotation.y = Math.atan2(P.x - bx, P.z - bz) + Math.PI;
-    E.walker.setLod?.(Math.hypot(bx - P.x, bz - P.z));
     E.walker.animate(window.__oldman.beastPose, dt, t, window.__oldman.beastEyes ?? 1);
   }
   updateViewLatch(dt, live);
@@ -1785,15 +1773,6 @@ function tick(now, dt, last) {
     const bf = baseFov() * lerp(1, 0.84, blend);
     if (Math.abs(camT.fov - bf) > 0.01) { camT.fov = bf; camT.updateProjectionMatrix(); }
   }
-  const phNow = H.phase();
-  E.viewmodel?.update(dt, {
-    show: !window.__oldman?.hideHands && optic?.kind !== "binos" && (fp.k > 0.55 || (mode === "optic" && optic?.kind === "scope")),
-    aim: mode === "optic" && optic?.kind === "scope",
-    phase: phNow,
-    speed: P.speed,
-    afraid,
-    sway: mode === "optic" ? Math.sin(t * 0.8) : 0,
-  });
   occlusion.uCam.value.copy(camT.position);
   occlusion.uPlayer.value.set(P.x, hy + 1.1, P.z);
   occlusion.uOn.value = mode === "optic" || fp.k > 0.45 ? 0 : 1;
