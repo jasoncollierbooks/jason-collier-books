@@ -29,12 +29,13 @@
 
   function spawn(kind, w, h, colors) {
     if (kind === "leaf") {
-      return { kind: kind, x: rand(0, w), y: rand(0, h), s: rand(6, 11), vy: rand(14, 26), sway: rand(10, 20), spin: rand(-0.7, 0.7), rot: rand(0, 6.28), t: rand(0, 6), a: rand(0.4, 0.62), color: pick(colors) };
+      var big = season === "thanksgiving";
+      return { kind: kind, x: rand(0, w), y: rand(0, h), s: big ? rand(13, 22) : rand(9, 15), vy: rand(16, 30), sway: rand(12, 24), spin: rand(-0.8, 0.8), rot: rand(0, 6.28), t: rand(0, 6), a: rand(0.62, 0.88), color: pick(colors) };
     }
     if (kind === "bat") {
-      return { kind: kind, x: rand(0, w), y: rand(h * 0.06, h * 0.78), s: rand(0.7, 1), vx: rand(18, 32) * (Math.random() < 0.5 ? -1 : 1), phase: rand(0, 6.28), a: rand(0.42, 0.6) };
+      return { kind: kind, x: rand(0, w), y: rand(h * 0.05, h * 0.8), s: rand(1.35, 1.85), vx: rand(22, 40) * (Math.random() < 0.5 ? -1 : 1), phase: rand(0, 6.28), a: rand(0.78, 0.95) };
     }
-    return { kind: kind, x: rand(0, w), y: rand(0, h), s: rand(0.7, 1.9), vy: rand(10, 24), sway: rand(8, 18), t: rand(0, 6), a: rand(0.32, 0.62) };
+    return { kind: kind, x: rand(0, w), y: rand(0, h), s: rand(1.7, 3.3), vy: rand(16, 34), sway: rand(10, 22), t: rand(0, 6), a: rand(0.55, 0.9) };
   }
 
   function drawLeaf(ctx, p) {
@@ -58,25 +59,36 @@
   }
 
   function drawBat(ctx, p, time) {
-    var flap = Math.sin(time * 7 + p.phase);
+    var flap = Math.sin(time * 9 + p.phase);
     ctx.save();
     ctx.translate(p.x, p.y);
     ctx.scale(p.s, p.s);
     if (p.vx < 0) ctx.scale(-1, 1);
     ctx.globalAlpha = p.a;
-    ctx.fillStyle = "#2a2436";
+    ctx.fillStyle = "#1c1628";
+    ctx.strokeStyle = "rgba(196, 176, 220, .45)";
+    ctx.lineWidth = 0.7;
     ctx.beginPath();
     ctx.moveTo(0, 0);
-    ctx.quadraticCurveTo(-6, -7 - flap * 3, -12, -1);
-    ctx.quadraticCurveTo(-7, -1, -3, 2);
-    ctx.quadraticCurveTo(-1.5, 0.4, 0, 0);
+    ctx.quadraticCurveTo(-8, -11 - flap * 7, -18, 1);
+    ctx.lineTo(-13, 2);
+    ctx.quadraticCurveTo(-7, 4 + flap * 2, 0, 1);
+    ctx.closePath();
     ctx.moveTo(0, 0);
-    ctx.quadraticCurveTo(6, -7 - flap * 3, 12, -1);
-    ctx.quadraticCurveTo(7, -1, 3, 2);
-    ctx.quadraticCurveTo(1.5, 0.4, 0, 0);
+    ctx.quadraticCurveTo(8, -11 - flap * 7, 18, 1);
+    ctx.lineTo(13, 2);
+    ctx.quadraticCurveTo(7, 4 + flap * 2, 0, 1);
+    ctx.closePath();
     ctx.fill();
+    ctx.stroke();
     ctx.beginPath();
-    ctx.ellipse(0, 0.4, 1.7, 1.15, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, 0.7, 2.3, 1.6, 0, 0, Math.PI * 2);
+    ctx.moveTo(-1.3, -0.4);
+    ctx.lineTo(-0.5, -3.1);
+    ctx.lineTo(0.15, -0.2);
+    ctx.moveTo(1.3, -0.4);
+    ctx.lineTo(0.5, -3.1);
+    ctx.lineTo(-0.15, -0.2);
     ctx.fill();
     ctx.restore();
   }
@@ -118,7 +130,7 @@
 
   Field.prototype.seed = function () {
     var colors = LEAF[season] || LEAF.halloween;
-    var plan = season === "christmas" ? { leaf: 0, bat: 0, snow: 8 } : season === "halloween" ? { leaf: 3, bat: 2, snow: 0 } : { leaf: 4, bat: 0, snow: 0 };
+    var plan = season === "christmas" ? { leaf: 0, bat: 0, snow: 12 } : season === "halloween" ? { leaf: 6, bat: 4, snow: 0 } : { leaf: 8, bat: 0, snow: 0 };
     var kind, n, i;
     this.parts = [];
     for (kind in plan) {
@@ -158,7 +170,43 @@
     }
   };
 
+  function lantern(hue) {
+    return '<svg viewBox="0 0 36 42" aria-hidden="true"><ellipse cx="18" cy="38" rx="9" ry="2.4" fill="rgba(255,150,40,.35)"/><path fill="#3c7a34" d="M18 5.2c.4 1.8 1.5 2.8 2.8 3-1.2.2-2 0-2.6-.9-.5 1-1.4 1.1-2.4.9 1-.6 1.6-1.6 2.2-3z"/><path fill="' + hue + '" d="M18 9.2c-2.2 0-3.2.9-3.6 1.8C10.6 12 7.4 15 7.4 21 7.4 27.2 11.6 32.4 18 32.4S28.6 27.2 28.6 21c0-6-3.2-9-7-9.9-.4-.9-1.4-1.9-3.6-1.9z"/><path fill="#2a160c" d="M13 18.2h2.4l-1.2 2.4zm7.6 0H23l-1.2 2.4zM14.6 24c.9 1.3 6 1.3 6.8 0-.9.9-5 .9-5.9 0z"/></svg>';
+  }
+  function gourd(fill) {
+    return '<svg viewBox="0 0 36 42" aria-hidden="true"><path fill="#6d8a3a" d="M18 6c.3 2 1.2 3 2.2 3.2-1 .2-1.6 0-2-.8-.4.8-1 1-1.8.8.8-.5 1.2-1.4 1.6-3.2z"/><path fill="' + fill + '" d="M18 10c-3 0-5 2-5 4.2 0 1.6 1.2 2.6 2.2 3.2-2.4.8-4.2 2.6-4.2 5.4 0 3.6 3.2 6.4 7 6.4s7-2.8 7-6.4c0-2.8-1.8-4.6-4.2-5.4 1-.6 2.2-1.6 2.2-3.2 0-2.2-2-4.2-5-4.2z"/><path fill="rgba(255,255,255,.18)" d="M15 14c.6 1.2.4 4 0 6-1-.4-1.6-1.4-1.6-2.8 0-1.4.6-2.4 1.6-3.2z"/></svg>';
+  }
+  function wheat() {
+    return '<svg viewBox="0 0 36 42" aria-hidden="true"><path stroke="#c4a15a" stroke-width="1.4" fill="none" d="M18 38c.2-8 .2-16 0-26"/><g fill="#e0b45a"><ellipse cx="18" cy="12" rx="2.2" ry="3.4"/><ellipse cx="13.4" cy="16" rx="2.1" ry="3" transform="rotate(-28 13.4 16)"/><ellipse cx="22.6" cy="16" rx="2.1" ry="3" transform="rotate(28 22.6 16)"/><ellipse cx="13.2" cy="21" rx="2" ry="2.8" transform="rotate(-26 13.2 21)"/><ellipse cx="22.8" cy="21" rx="2" ry="2.8" transform="rotate(26 22.8 21)"/><ellipse cx="13.8" cy="26" rx="1.8" ry="2.5" transform="rotate(-22 13.8 26)"/><ellipse cx="22.2" cy="26" rx="1.8" ry="2.5" transform="rotate(22 22.2 26)"/></g></svg>';
+  }
+
+  function mountDecor(hero) {
+    if (season === "halloween" || season === "thanksgiving") {
+      var ledge = document.createElement("div");
+      ledge.className = "season-ledge";
+      ledge.setAttribute("aria-hidden", "true");
+      ledge.innerHTML = season === "halloween"
+        ? lantern("#e57a22") + lantern("#d86818") + lantern("#ef8a30") + lantern("#e07020")
+        : lantern("#e07a28") + wheat() + gourd("#c46a32") + wheat() + gourd("#7d8f3e");
+      hero.appendChild(ledge);
+    }
+    if (season === "halloween") {
+      var fog = document.createElement("div");
+      fog.className = "season-fog";
+      fog.setAttribute("aria-hidden", "true");
+      hero.appendChild(fog);
+    }
+    if (season === "christmas") {
+      var drift = document.createElement("div");
+      drift.className = "season-drift";
+      drift.setAttribute("aria-hidden", "true");
+      hero.appendChild(drift);
+    }
+  }
+
   function boot() {
+    var hero = document.querySelector(".hero");
+    if (hero) mountDecor(hero);
     if (still()) return;
     var hosts = document.querySelectorAll(".hero .testcard, .hero .scene");
     if (!hosts.length) return;
