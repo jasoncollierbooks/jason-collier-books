@@ -41,6 +41,12 @@ button { font: inherit; color: inherit; }
   z-index: 3;
   background: radial-gradient(ellipse at center, transparent 45%, rgba(40, 18, 8, .28) 78%, rgba(8, 4, 2, .55) 100%);
 }
+body[data-world="oldman"] #vignette {
+  background: radial-gradient(ellipse at center, transparent 42%, rgba(12, 22, 42, .34) 76%, rgba(4, 8, 16, .62) 100%);
+}
+body[data-world="pulse"] #vignette {
+  background: radial-gradient(ellipse at center, transparent 46%, rgba(10, 16, 36, .3) 78%, rgba(4, 6, 14, .58) 100%);
+}
 #flash, #hurt { position: absolute; inset: 0; pointer-events: none; z-index: 4; opacity: 0; }
 #flash { background: rgba(255, 236, 200, .55); transition: opacity .12s linear; }
 #flash.on { opacity: .75; }
@@ -72,10 +78,10 @@ button { font: inherit; color: inherit; }
 .pips i { width: 18px; height: 4px; background: rgba(228, 208, 164, .25); display: block; }
 .pips i.on { background: var(--brass); }
 #obj {
-  margin-top: 6px; max-width: 18rem;
-  display: flex; align-items: center; gap: 8px;
-  font-family: var(--ui); letter-spacing: .04em; text-transform: uppercase;
-  font-size: 16px; color: var(--paper); text-shadow: 0 1px 2px #000;
+  margin-top: 6px; max-width: 22rem;
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--ui); letter-spacing: .05em; text-transform: uppercase;
+  font-size: 22px; font-weight: 650; color: #fff8ea; text-shadow: 0 2px 0 #000;
 }
 #obj i {
   width: 12px; height: 15px; flex: none; border: 1.5px solid var(--brass); border-radius: 1px;
@@ -256,9 +262,9 @@ body.flyby #floats { display: none !important; }
   display: none;
   position: absolute;
   right: calc(8px + env(safe-area-inset-right));
-  bottom: calc(148px + env(safe-area-inset-bottom));
+  bottom: calc(156px + env(safe-area-inset-bottom));
   z-index: 7;
-  width: 56px;
+  width: 64px;
   flex-direction: column-reverse;
   align-items: center;
   gap: 8px;
@@ -268,8 +274,8 @@ body.playing:not(.touch) #abilities { bottom: calc(86px + env(safe-area-inset-bo
 body.playing #abilities:not([hidden]) { display: flex; }
 #abilities button {
   position: relative;
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   padding: 0;
   border-radius: 50%;
   border: 1px solid rgba(228, 208, 164, .75);
@@ -289,8 +295,8 @@ body.playing #abilities:not([hidden]) { display: flex; }
 #abilities button circle {
   fill: none; stroke: #ffe2a8; stroke-width: 2.4; stroke-linecap: round;
 }
-#abilities button span { position: relative; font-size: 8px; max-width: 46px; text-align: center; line-height: 1.05; }
-#abilities button[data-ability="firelight"] span { font-size: 6.5px; letter-spacing: 0; }
+#abilities button span { position: relative; font-size: 11px; font-weight: 650; max-width: 52px; text-align: center; line-height: 1.05; }
+#abilities button[data-ability="firelight"] span { font-size: 10px; letter-spacing: 0; }
 #abilities button b {
   display: none;
   position: relative;
@@ -371,10 +377,19 @@ body.flyby #prompt { bottom: calc(12vh + 18px); z-index: 31; }
   font-style: italic; font-size: 1.12rem; line-height: 1.4;
   overflow: auto; min-height: 0; max-height: 32vh;
 }
+.story-card .card-result {
+  margin: .7rem auto 0; width: fit-content; max-width: 100%;
+  padding: .55rem .9rem;
+  background: #24180f; color: #fff8ea;
+  border: 2px solid #f3e6c8;
+  font-family: var(--ui); font-style: normal; font-weight: 650;
+  font-size: 1.35rem; letter-spacing: .04em; text-transform: uppercase;
+}
+.story-card .card-result[hidden] { display: none; }
 .story-card button {
-  margin-top: 1rem; min-height: 48px; padding: .7rem 1.3rem; cursor: pointer;
+  margin-top: 1rem; min-height: 56px; padding: .75rem 1.4rem; cursor: pointer;
   background: #f3e6c8; color: #24180f; border: 1px solid #f3e6c8;
-  font-family: var(--ui); letter-spacing: .16em; text-transform: uppercase; font-size: .78rem;
+  font-family: var(--ui); letter-spacing: .12em; text-transform: uppercase; font-size: 1.05rem;
 }
 .story-card .hint {
   margin-top: .75rem; color: var(--muted); font-family: var(--ui);
@@ -416,7 +431,7 @@ body.touch.playing #subtitle { bottom: calc(168px + env(safe-area-inset-bottom))
   .story-card h1 { font-size: 1.55rem; }
   .story-card .paper { font-size: 1rem; max-height: 28vh; padding: .7rem .75rem; }
   .story-card button { margin-top: .7rem; }
-  #obj { font-size: 16px; }
+  #obj { font-size: 20px; }
   .story-card.is-spoken .paper { display: none; }
 }
 
@@ -801,7 +816,14 @@ body.playing .meta {
   font-size: 16px; letter-spacing: .03em;
   white-space: nowrap;
 }
-body.playing #obj { max-width: none; margin-top: 4px; }
+body.playing #obj {
+  max-width: none; margin-top: 8px; width: fit-content;
+  font-size: 22px;
+  padding: 8px 12px;
+  background: rgba(8, 10, 16, .78);
+  border: 2px solid rgba(243, 230, 200, .9);
+  box-shadow: 0 2px 0 #000;
+}
 body.playing #bossbar {
   position: static;
   left: auto;
@@ -812,7 +834,7 @@ body.playing #bossbar {
   margin: 8px 0 0;
   text-align: left;
 }
-body.playing #bossbar span { font-size: 16px; }
+body.playing #bossbar span { font-size: 20px; font-weight: 650; }
 body.touch .meta { font-size: 16px; letter-spacing: .03em; }
 @media (max-height: 520px) {
   body.playing #gauges { width: 96px; height: 96px; }
@@ -829,8 +851,8 @@ body.touch .meta { font-size: 16px; letter-spacing: .03em; }
   }
   body.playing .bars { padding-top: 34px; }
 }
-body.touch #actions button { font-size: 11px; }
-body.touch #actions button.big { font-size: 12px; }
+body.touch #actions button { font-size: 13px; font-weight: 650; }
+body.touch #actions button.big { font-size: 15px; }
 body.touch #actions button[data-act="lock"],
 body.touch #actions button[data-act="flash"],
 body.touch #actions button[data-act="potion"],

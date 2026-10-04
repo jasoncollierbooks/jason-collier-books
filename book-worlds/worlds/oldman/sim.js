@@ -2,12 +2,12 @@
 // Harlan Wade walks the hunt. The fog takes wolves, shades, and the Old Man.
 import * as THREE from "three";
 import { clamp, damp, dampAngle, hypot2 } from "../../src/util.js";
-import { heightAt } from "./world.js?v=1";
+import { heightAt } from "./world.js?v=2";
 import { createHuman } from "../../src/actors.js?v=10";
 import { armRing, note, spawn } from "../../src/vfx.js?v=1";
-import { createWolf, createShade } from "./beings.js?v=1";
-import { boss as worldBoss } from "../../bosses/old-man.js?v=1";
-import { createAbilities } from "../../src/abilities.js?v=2";
+import { createWolf, createShade } from "./beings.js?v=2";
+import { boss as worldBoss } from "../../bosses/old-man.js?v=2";
+import { createAbilities } from "../../src/abilities.js?v=3";
 
 const SAVE_KEY = "book-worlds-old-man";
 const CLEAR_KEY = "book-worlds-world4-clear";
@@ -54,6 +54,7 @@ export function createOldmanSim(scene, world, audio) {
   let sayLast = "";
   let sayLastT = -10;
   let playTime = 0;
+  let freedN = 0;
   const flags = {};
   const events = [];
   const pending = [];
@@ -126,10 +127,11 @@ export function createOldmanSim(scene, world, audio) {
   }
   function profileFor(kind) {
     if (kind === "shade") return { hp: 68, radius: 0.72, speed: 1.85, tele: 0.5, lunge: 7.2, reach: 1.95, dmg: 13, xp: 20, flash: 20 };
-    return { hp: 40, radius: 0.52, speed: 3.15, tele: 0.36, lunge: 9, reach: 1.55, dmg: 9, xp: 14, flash: 24 };
+    if (kind === "alpha") return { hp: 74, radius: 0.7, speed: 2.65, tele: 0.52, lunge: 8.2, reach: 1.75, dmg: 12, xp: 22, flash: 22 };
+    return { hp: 40, radius: 0.52, speed: 3.15, tele: 0.4, lunge: 9, reach: 1.55, dmg: 9, xp: 14, flash: 24 };
   }
   function makeEnemy(kind, x, z, tag) {
-    const rig = kind === "shade" ? createShade() : createWolf();
+    const rig = kind === "shade" ? createShade() : createWolf({ scale: kind === "alpha" ? 1.38 : 1 });
     scene.add(rig.root);
     const prof = profileFor(kind);
     const enemy = {
@@ -161,7 +163,7 @@ export function createOldmanSim(scene, world, audio) {
     const dx = e.x - sx;
     const dz = e.z - sz;
     const len = hypot2(dx, dz) || 1;
-    const shove = (e.kind === "boss" ? 0.32 : 1.05) + (opts.knock || 0);
+    const shove = (e.kind === "boss" ? 0.45 : 1.35) + (opts.knock || 0);
     e.x += (dx / len) * shove;
     e.z += (dz / len) * shove;
     events.push({ type: "dmg", x: e.x, y: groundY(e.x, e.z) + 1.6, z: e.z, n: Math.round(dealt) });
@@ -169,7 +171,7 @@ export function createOldmanSim(scene, world, audio) {
     else audio.hit();
     if (!src) {
       player.team = Math.min(100, player.team + (opts.knock ? 16 : 10));
-      player.hitStop = Math.max(player.hitStop, opts.knock ? 0.07 : 0.04);
+      player.hitStop = Math.max(player.hitStop, opts.knock ? 0.09 : 0.055);
       events.push({ type: "hit", heavy: !!opts.knock });
       if (!flags.fight) {
         flags.fight = true;
@@ -193,9 +195,11 @@ export function createOldmanSim(scene, world, audio) {
           e.freed = true;
         }
         speak("harlan-free");
+        freedN += 1;
       }
       grantXp(e.kind === "boss" ? 90 : e.prof.xp);
       if (e.kind === "boss") {
+        freedN += 1;
         audio.roar();
         if (audio.chorus) audio.chorus();
         flags.won = true;
@@ -289,8 +293,19 @@ export function createOldmanSim(scene, world, audio) {
     }
     return best;
   }
+  function openFog() {
+    if (flags.fogDriven) return;
+    flags.fogDriven = true;
+    if (world.setFogGate) world.setFogGate(true);
+  }
   function abilityCtx() {
-    return { player, living, damageEnemy, events, audio, resolve: (x, z, r) => world.resolve(x, z, r) };
+    return {
+      player, living, damageEnemy, events, audio,
+      resolve: (x, z, r) => world.resolve(x, z, r),
+      onCast(id) {
+        if (id === "firelight" && player.z > 50 && player.z < 66) openFog();
+      },
+    };
   }
 
   function leaveTrack(e) {
@@ -326,8 +341,8 @@ export function createOldmanSim(scene, world, audio) {
     const k = wind ? Math.min(1, e.t / Math.max(0.2, e.prof.tele || 0.4)) : 1;
     e.tell.visible = true;
     e.tell.position.set(e.x, groundY(e.x, e.z) + 0.06, e.z);
-    e.tell.scale.setScalar(wind ? 0.35 + k * 1.6 : 1.6);
-    e.tell.material.opacity = wind ? 0.28 + k * 0.6 : 0.85;
+    e.tell.scale.setScalar(wind ? 0.55 + k * 2.1 : 2.05);
+    e.tell.material.opacity = wind ? 0.45 + k * 0.5 : 0.95;
     note(e.tell);
   }
 
@@ -747,6 +762,7 @@ export function createOldmanSim(scene, world, audio) {
     if (!scenes.benches.on && player.z > 22) {
       scenes.benches.on = true;
       makeEnemy("wolf", -2.2, 28, "benches");
+      makeEnemy("alpha", 0.3, 31, "benches");
       makeEnemy("shade", 2.4, 33, "benches");
       speak("harlan-tracks");
       events.push({ type: "bulletin", id: "scene-benches" });
@@ -762,6 +778,11 @@ export function createOldmanSim(scene, world, audio) {
     }
     if (scenes.park.on && !scenes.park.done && !taggedAlive("park")) scenes.park.done = true;
     if (!flags.fireAward && scenes.park.on && hypot2(player.x - world.camp.x, player.z - world.camp.z) < 5.5) {
+      flags.fireAward = true;
+      awardFire();
+      speak("harlan-fire");
+    }
+    if (!flags.fireAward && player.z > 54) {
       flags.fireAward = true;
       awardFire();
       speak("harlan-fire");
@@ -961,6 +982,7 @@ export function createOldmanSim(scene, world, audio) {
       bossDead: !boss.alive,
       complete: !!flags.cleared,
       fire: !!flags.fireAward,
+      fog: !!flags.fogDriven,
       scenes: {
         timber: scenes.timber.done, benches: scenes.benches.done,
         park: scenes.park.done, watched: scenes.watched.done,
@@ -1058,6 +1080,7 @@ export function createOldmanSim(scene, world, audio) {
       awardFire();
       armExit();
     }
+    if (data.fog || player.z > 64 || (data.scenes && data.scenes.watched)) openFog();
     if (data.complete) flags.cleared = true;
     flags.g1 = true;
   }
@@ -1120,12 +1143,12 @@ export function createOldmanSim(scene, world, audio) {
   }
 
   function objectiveFor() {
-    if (boss.active && boss.alive) return "Free him";
-    if (!boss.alive) return "Walk back to the truck";
-    if (scenes.timber.on && !scenes.timber.done) return "The timber";
-    if (player.z > 20 && !scenes.benches.done) return "Wrong tracks";
-    if (player.z > 40 && !scenes.park.done) return "The elk park";
-    if (player.z > 62 && !scenes.watched.done) return "Something is watching";
+    if (boss.active && boss.alive && flags.phase2) return "The fog is swinging";
+    if (boss.active && boss.alive) return "Free the Old Man";
+    if (!boss.alive) return "Back to the truck";
+    if (scenes.timber.on && !scenes.timber.done) return "Clear the timber";
+    if (!flags.fogDriven && player.z > 48) return "Firelight the fog";
+    if (player.z > 62 && !scenes.watched.done) return "The treeline";
     if (scenes.watched.done && boss.alive) return "The Old Man";
     return `Pages ${pageCount()}/5`;
   }
@@ -1230,6 +1253,7 @@ export function createOldmanSim(scene, world, audio) {
     const resolved = world.resolve(player.x, player.z, 0.38, boss.alive && boss.active ? [{ x: boss.x, z: boss.z, r: 1.2 }] : null);
     player.x = resolved.x;
     player.z = resolved.z;
+    if (!flags.fogDriven && player.z > 59.8 && player.z < 68) player.z = 59.8;
     if (bossWall && boss.alive && player.z < 79 && player.z > 70) player.z = 79;
 
     player.vy -= 28 * dt;
@@ -1487,6 +1511,7 @@ export function createOldmanSim(scene, world, audio) {
     allies: () => allies.map((a) => ({ id: a.id, x: a.x, z: a.z, hp: a.hp, hpMax: a.hpMax })),
     chests: () => world.chests.map((c) => !!c.open),
     exitReady: () => !!(world.gate && world.gate.ready),
+    recap: () => ({ freed: freedN, time: playTime }),
     keyOn: () => true,
     defeatForExit() {
       boss.hp = 0;

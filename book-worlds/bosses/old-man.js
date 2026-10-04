@@ -1,5 +1,6 @@
 // World IV signature boss. The Old Man, taken by the fog:
-// bark skin, branch limbs, moss hair, green eyes, amber sap.
+// a huge shaggy Bigfoot, more ape than tree, with bark on the
+// shoulders and forearms, moss, and a few twig snags.
 // Beating him frees him. The fog lifts. The eyes soften.
 import * as THREE from "three";
 
@@ -23,7 +24,7 @@ export const boss = {
   create,
 };
 
-function barkMat() {
+function furMat() {
   return new THREE.ShaderMaterial({
     uniforms: { uTime: { value: 0 }, uHit: { value: 0 }, uFog: { value: 1 } },
     vertexShader: `
@@ -43,15 +44,15 @@ function barkMat() {
       varying vec3 vN;
       float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
       void main() {
-        float ridge = sin(vP.y * 9.0 + vP.x * 4.0) * 0.5 + 0.5;
-        float grain = hash(floor(vP.xy * 7.0));
-        vec3 bark = mix(vec3(0.28, 0.16, 0.08), vec3(0.45, 0.28, 0.14), ridge);
-        bark = mix(bark, vec3(0.16, 0.22, 0.1), smoothstep(0.72, 0.95, grain) * 0.55);
-        vec3 gray = vec3(0.28, 0.3, 0.31);
-        vec3 col = mix(bark, gray, uFog * 0.28);
-        col = mix(col, vec3(0.86, 0.48, 0.1), uHit * 0.75);
-        float fres = pow(1.0 - abs(vN.z), 1.4);
-        col += vec3(0.15, 0.2, 0.08) * fres * (1.0 - uFog);
+        float strand = hash(floor(vP.xy * vec2(14.0, 36.0) + vec2(uTime * 0.15, 0.0)));
+        float ridge = sin(vP.y * 26.0 + vP.x * 5.0) * 0.5 + 0.5;
+        vec3 fur = mix(vec3(0.04, 0.028, 0.02), vec3(0.18, 0.09, 0.045), ridge);
+        fur = mix(fur, vec3(0.015, 0.01, 0.008), smoothstep(0.55, 0.95, strand) * 0.7);
+        vec3 mist = vec3(0.45, 0.5, 0.58);
+        vec3 col = mix(fur, mist, uFog * 0.28);
+        col = mix(col, vec3(0.92, 0.55, 0.22), uHit * 0.65);
+        float fres = pow(1.0 - abs(vN.z), 1.5);
+        col += vec3(0.16, 0.1, 0.06) * fres * (0.35 + (1.0 - uFog) * 0.4);
         gl_FragColor = vec4(col, 1.0);
       }
     `,
@@ -79,10 +80,10 @@ function fogMat() {
       varying vec3 vP;
       varying vec3 vN;
       void main() {
-        float scan = sin(vP.y * 16.0 - uTime * 6.0) * 0.5 + 0.5;
-        float fres = pow(1.0 - abs(vN.y), 1.3);
-        float alpha = (0.08 + scan * 0.16 + fres * 0.2) * uFog;
-        gl_FragColor = vec4(vec3(0.55, 0.58, 0.6), clamp(alpha, 0.0, 0.42));
+        float scan = sin(vP.y * 10.0 - uTime * 2.4 + vP.x * 3.0) * 0.5 + 0.5;
+        float fres = pow(1.0 - abs(vN.y), 1.2);
+        float alpha = (0.05 + scan * 0.12 + fres * 0.16) * uFog;
+        gl_FragColor = vec4(vec3(0.62, 0.7, 0.8), clamp(alpha, 0.0, 0.38));
       }
     `,
   });
@@ -93,87 +94,132 @@ function create() {
   const rig = new THREE.Group();
   root.add(rig);
 
-  const bark = barkMat();
+  const fur = furMat();
+  const barkMat = new THREE.MeshStandardMaterial({ color: 0x3a2818, roughness: 1 });
   const mossMat = new THREE.MeshStandardMaterial({ color: 0x3d5a32, roughness: 0.95 });
-  const sapMat = new THREE.MeshStandardMaterial({
-    color: 0xd88a28, emissive: 0xff9a2a, emissiveIntensity: 0.15, roughness: 0.35,
-  });
+  const twigMat = new THREE.MeshStandardMaterial({ color: 0x24180f, roughness: 0.92 });
 
-  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.72, 0.95, 2.15, 10, 3), bark);
+  const torso = new THREE.Mesh(new THREE.SphereGeometry(0.92, 12, 10), fur);
+  torso.scale.set(1.45, 1.05, 1.05);
   torso.position.y = 2.05;
   torso.castShadow = true;
   rig.add(torso);
 
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.52, 12, 10), bark);
-  head.position.y = 3.45;
-  head.scale.set(1.05, 1.15, 0.95);
+  const yoke = new THREE.Mesh(new THREE.SphereGeometry(0.7, 10, 8), fur);
+  yoke.scale.set(1.9, 0.55, 0.9);
+  yoke.position.set(0, 2.72, 0.06);
+  yoke.castShadow = true;
+  rig.add(yoke);
+
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.42, 12, 10), fur);
+  head.scale.set(1.08, 1.12, 1.18);
+  head.position.set(0, 3.42, 0.22);
   head.castShadow = true;
   rig.add(head);
 
+  const brow = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.1, 0.2), fur);
+  brow.position.set(0, 3.55, 0.52);
+  rig.add(brow);
+
+  const muzzle = new THREE.Mesh(new THREE.SphereGeometry(0.16, 8, 6), fur);
+  muzzle.scale.set(1.15, 0.65, 1.35);
+  muzzle.position.set(0, 3.22, 0.52);
+  rig.add(muzzle);
+
+  function arm(side) {
+    const g = new THREE.Group();
+    g.position.set(side * 1.18, 2.62, 0.08);
+    const upper = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.24, 1.2, 7), fur);
+    upper.position.y = -0.58;
+    upper.castShadow = true;
+    const fore = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.18, 1.1, 6), fur);
+    fore.position.y = -1.55;
+    fore.castShadow = true;
+    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.22, 8, 6), fur);
+    hand.scale.set(1.15, 0.62, 0.75);
+    hand.position.y = -2.15;
+    const patch = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.5, 0.08), barkMat);
+    patch.position.set(side * 0.1, -1.45, 0.14);
+    g.add(upper, fore, hand, patch);
+    rig.add(g);
+    return g;
+  }
+  const armL = arm(-1);
+  const armR = arm(1);
+
+  function leg(side) {
+    const g = new THREE.Group();
+    g.position.set(side * 0.42, 1.05, 0.02);
+    const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.22, 0.9, 7), fur);
+    thigh.position.y = -0.32;
+    thigh.castShadow = true;
+    const shin = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.2, 0.72, 6), fur);
+    shin.position.y = -1.02;
+    shin.castShadow = true;
+    const foot = new THREE.Mesh(new THREE.SphereGeometry(0.24, 7, 6), fur);
+    foot.scale.set(0.85, 0.38, 1.45);
+    foot.position.set(0, -1.38, 0.16);
+    g.add(thigh, shin, foot);
+    rig.add(g);
+    return g;
+  }
+  const legL = leg(-1);
+  const legR = leg(1);
+
+  [-1, 1].forEach((side) => {
+    const patch = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.32, 0.16), barkMat);
+    patch.position.set(side * 0.92, 2.88, 0.12);
+    patch.rotation.z = side * -0.35;
+    patch.rotation.x = 0.2;
+    rig.add(patch);
+  });
+
   const moss = [];
   for (let i = 0; i < 7; i++) {
-    const clump = new THREE.Mesh(new THREE.IcosahedronGeometry(0.16 + (i % 3) * 0.04, 0), mossMat);
-    const a = (i / 7) * Math.PI * 2;
-    clump.position.set(Math.cos(a) * 0.28, 3.85 + (i % 3) * 0.08, Math.sin(a) * 0.22);
+    const clump = new THREE.Mesh(new THREE.IcosahedronGeometry(0.07 + (i % 3) * 0.015, 0), mossMat);
+    clump.scale.set(0.8, 2.1, 0.7);
+    clump.position.set((i - 3) * 0.16, 2.55 + (i % 3) * 0.12, -0.55);
     rig.add(clump);
     moss.push(clump);
   }
 
-  function limb(side) {
-    const g = new THREE.Group();
-    g.position.set(side * 0.85, 2.7, 0);
-    const upper = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.16, 1.15, 6), bark);
-    upper.position.y = -0.45;
-    const fork = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.1, 0.7, 5), bark);
-    fork.position.set(side * 0.18, -1.05, 0.05);
-    fork.rotation.z = side * -0.6;
-    g.add(upper, fork);
-    rig.add(g);
-    return g;
+  function snag(x, y, z, rz, len) {
+    const stick = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.032, len, 4), twigMat);
+    stick.position.set(x, y, z);
+    stick.rotation.z = rz;
+    stick.rotation.x = 0.55;
+    const fork = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.018, len * 0.42, 3), twigMat);
+    fork.position.set(x + Math.sin(rz) * 0.12, y + len * 0.32, z - 0.04);
+    fork.rotation.z = rz + 0.9;
+    fork.rotation.x = 0.2;
+    rig.add(stick, fork);
   }
-  const armL = limb(-1);
-  const armR = limb(1);
+  snag(-0.16, 3.82, -0.02, -0.55, 0.52);
+  snag(0.18, 3.88, 0.02, 0.62, 0.46);
+  snag(0.04, 3.05, -0.72, 0.15, 0.68);
+  snag(-0.28, 2.55, -0.62, -0.45, 0.5);
 
-  function leg(side) {
-    const mesh = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.24, 1.15, 7), bark);
-    mesh.position.set(side * 0.38, 0.58, 0);
-    mesh.castShadow = true;
-    rig.add(mesh);
-    return mesh;
-  }
-  leg(-1);
-  leg(1);
-
-  const eyeMat = new THREE.MeshBasicMaterial({ color: 0x39ff6a });
+  const eyeMat = new THREE.MeshBasicMaterial({ color: 0x8dffc0 });
   const eyes = [-1, 1].map((s) => {
-    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 6), eyeMat);
-    eye.position.set(s * 0.18, 3.5, 0.42);
+    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 6), eyeMat);
+    eye.position.set(s * 0.15, 3.48, 0.58);
     rig.add(eye);
     return eye;
   });
 
-  const sap = [];
-  [[0.2, 2.2, 0.7], [-0.35, 1.7, 0.55], [0.5, 2.8, 0.4]].forEach(([x, y, z]) => {
-    const drop = new THREE.Mesh(new THREE.SphereGeometry(0.06, 6, 5), sapMat);
-    drop.scale.set(0.7, 1.3, 0.7);
-    drop.position.set(x, y, z);
-    rig.add(drop);
-    sap.push(drop);
-  });
-
   const fog = fogMat();
-  const shell = new THREE.Mesh(new THREE.SphereGeometry(1.55, 16, 12), fog);
-  shell.position.y = 2.15;
-  shell.scale.set(1.02, 1.2, 0.92);
+  const shell = new THREE.Mesh(new THREE.SphereGeometry(1.85, 14, 10), fog);
+  shell.position.y = 2.05;
+  shell.scale.set(1.2, 1.15, 1.0);
   rig.add(shell);
 
-  const glow = new THREE.PointLight(0x39ff6a, 1.1, 9, 2);
-  glow.position.y = 3.4;
+  const glow = new THREE.PointLight(0x8dffc0, 1.15, 9, 2);
+  glow.position.set(0, 3.4, 0.4);
   root.add(glow);
 
   let fogK = 1;
   let freed = false;
-  const green = new THREE.Color(0x39ff6a);
+  const green = new THREE.Color(0x8dffc0);
   const warm = new THREE.Color(0xe7c48a);
   const eyeColor = new THREE.Color();
 
@@ -188,41 +234,51 @@ function create() {
     update(dt, a) {
       const t = performance.now() / 1000;
       const dead = a.state === "dead" || freed;
+      const phase = a.phase || 1;
       if (dead) fogK = Math.max(0, fogK - dt * 0.55);
-      else fogK = Math.min(1, fogK + dt * 0.4);
+      else fogK = Math.min(phase >= 2 ? 1 : 0.85, fogK + dt * 0.35);
       if (a.freed) applyFree();
-      bark.uniforms.uTime.value = t;
-      bark.uniforms.uHit.value = a.hit || 0;
-      bark.uniforms.uFog.value = fogK;
+      fur.uniforms.uTime.value = t;
+      fur.uniforms.uHit.value = a.hit || 0;
+      fur.uniforms.uFog.value = fogK;
       fog.uniforms.uTime.value = t;
       fog.uniforms.uFog.value = fogK;
       const tell = dead ? 0 : (a.tell || 0);
-      const breathe = 1 + Math.sin(t * 1.3) * 0.015;
-      torso.scale.set(breathe, 1, breathe);
-      sapMat.emissiveIntensity = dead ? 0.05 : 0.15 + (a.hit || 0) * 1.6;
-      moss.forEach((clump, i) => {
-        clump.rotation.y = t * 0.15 + i;
-      });
+      const moving = !!a.moving;
+      const stride = moving ? Math.sin(t * 3.1) : Math.sin(t * 0.7) * 0.2;
       const state = a.state || "idle";
-      let liftL = Math.sin(t * 0.6) * 0.08;
-      let liftR = Math.sin(t * 0.6 + 1) * 0.08;
-      if (state === "slamWind") { liftL = -2.2; liftR = -2.2; }
-      else if (state === "slam") { liftL = 0.4; liftR = 0.4; }
-      else if (state.startsWith("log")) { liftR = state === "logWind" ? -1.7 : 0.9; }
-      else if (state.startsWith("roar")) { liftL = -1.2; liftR = -1.2; }
-      else if (state.startsWith("trap")) { liftL = 0.9; liftR = -0.4; }
-      else if (dead) { liftL = 0.55; liftR = 0.45; }
-      armL.rotation.z = THREE.MathUtils.lerp(armL.rotation.z, 0.35 + liftL * 0.35, 0.12);
-      armR.rotation.z = THREE.MathUtils.lerp(armR.rotation.z, -0.35 - liftR * 0.35, 0.12);
-      const lean = state === "charge" ? 0.35 : dead ? 0.08 : tell * 0.05;
-      rig.rotation.x = THREE.MathUtils.lerp(rig.rotation.x, lean, 0.1);
+      const hunch = dead ? 0.16 : phase >= 3 ? 0.42 : phase >= 2 ? 0.36 : 0.28;
+      rig.rotation.x = THREE.MathUtils.lerp(rig.rotation.x, state === "charge" ? hunch + 0.22 : hunch, 0.08);
+      rig.position.y = dead ? 0 : Math.abs(stride) * (moving ? 0.14 : 0.03);
+      const sway = moving ? stride * 0.08 : Math.sin(t * 0.5) * 0.02;
+      yoke.rotation.z = sway;
+      torso.rotation.z = sway * 0.4;
+      legL.rotation.x = stride * (moving ? 0.55 : 0.08);
+      legR.rotation.x = -stride * (moving ? 0.55 : 0.08);
+      let swingL = -stride * 0.65;
+      let swingR = stride * 0.65;
+      if (state === "slamWind") { swingL = -2.1; swingR = -2.1; }
+      else if (state === "slam") { swingL = 0.7; swingR = 0.7; }
+      else if (state.startsWith("log")) { swingR = state === "logWind" ? -1.8 : 0.85; }
+      else if (state.startsWith("roar")) { swingL = -1.35; swingR = -1.35; }
+      else if (state.startsWith("trap")) { swingL = 0.4; swingR = -1.5; }
+      else if (dead) { swingL = 0.35; swingR = 0.28; }
+      armL.rotation.x = THREE.MathUtils.lerp(armL.rotation.x, swingL, 0.14);
+      armR.rotation.x = THREE.MathUtils.lerp(armR.rotation.x, swingR, 0.14);
+      armL.rotation.z = THREE.MathUtils.lerp(armL.rotation.z, 0.18, 0.1);
+      armR.rotation.z = THREE.MathUtils.lerp(armR.rotation.z, -0.18, 0.1);
+      const nod = state.startsWith("roar") ? -0.25 : state === "charge" ? 0.2 : dead ? 0.35 : 0.08;
+      head.rotation.x = THREE.MathUtils.lerp(head.rotation.x, nod, 0.1);
+      moss.forEach((clump, i) => {
+        clump.rotation.z = Math.sin(t * 1.2 + i) * 0.15;
+      });
       eyeColor.copy(green).lerp(warm, 1 - fogK);
       eyeMat.color.copy(eyeColor);
       glow.color.copy(eyeMat.color);
-      glow.intensity = dead ? 0.35 : 0.7 + tell * 1.1 + Math.sin(t * 3) * 0.15;
-      if (state.startsWith("roar") && !dead) {
-        rig.scale.setScalar(1 + Math.sin(t * 18) * 0.02);
-      } else rig.scale.setScalar(1);
+      const phaseGlow = phase >= 3 ? 1.5 : phase >= 2 ? 1.15 : 0.85;
+      glow.intensity = dead ? 0.28 : phaseGlow + tell * 0.9 + Math.sin(t * 2.4) * 0.08;
+      const bulk = dead ? 1 : phase >= 3 ? 1.08 : phase >= 2 ? 1.04 : 1;
+      rig.scale.setScalar(state.startsWith("roar") && !dead ? bulk + Math.sin(t * 14) * 0.015 : bulk);
     },
   };
 }

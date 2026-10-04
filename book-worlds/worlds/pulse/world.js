@@ -280,6 +280,7 @@ export function buildPulseWorld(scene, low) {
   ];
   const radio = buildRadio(scene);
   const gate = buildGate(scene);
+  const dark = buildDarkPath(scene);
 
   return {
     obstacles,
@@ -287,6 +288,7 @@ export function buildPulseWorld(scene, low) {
     pages,
     radio,
     gate,
+    setPathLit(v) { dark.setLit(!!v); },
     update(dt, t, player) {
       nebulaMat.uniforms.uTime.value = t;
       ribbonMat.uniforms.uTime.value = t;
@@ -315,6 +317,7 @@ export function buildPulseWorld(scene, low) {
         attr.needsUpdate = true;
       }
       posePages(pages, t);
+      dark.update(t);
       if (player) {
         rimWarm.position.set(player.x - 1.2, 1.7, player.z - 0.4);
         rimCool.position.set(player.x + 1.1, 1.45, player.z + 0.6);
@@ -373,6 +376,41 @@ export function buildPulseWorld(scene, low) {
         }
       }
       return { x: px, z: pz };
+    },
+  };
+}
+
+function buildDarkPath(scene) {
+  const fog = new THREE.Mesh(
+    new THREE.BoxGeometry(16, 7, 9),
+    new THREE.MeshBasicMaterial({ color: 0x07060e, transparent: true, opacity: 0.62, depthWrite: false }),
+  );
+  fog.position.set(0, 2.4, 39.2);
+  const lamp = new THREE.PointLight(0xd7ecff, 0, 18, 1.5);
+  lamp.position.set(0, 2.6, 39.2);
+  const marks = [];
+  for (let i = 0; i < 6; i++) {
+    const mark = new THREE.Mesh(
+      new THREE.CircleGeometry(0.42, 14),
+      new THREE.MeshBasicMaterial({ color: 0x140e22, transparent: true, opacity: 0.9 }),
+    );
+    mark.rotation.x = -Math.PI / 2;
+    mark.position.set(0, 0.05, 35.6 + i * 1.25);
+    scene.add(mark);
+    marks.push(mark);
+  }
+  scene.add(fog, lamp);
+  let lit = false;
+  return {
+    setLit(v) { lit = !!v; },
+    update(t) {
+      const target = lit ? 0.05 : 0.58 + Math.sin(t * 1.2) * 0.04;
+      fog.material.opacity += (target - fog.material.opacity) * 0.08;
+      lamp.intensity = lit ? 7 + Math.sin(t * 3) * 0.5 : 0;
+      for (const mark of marks) {
+        mark.material.color.setHex(lit ? 0xf0c56a : 0x120c20);
+        mark.material.opacity = lit ? 0.9 : 0.75;
+      }
     },
   };
 }

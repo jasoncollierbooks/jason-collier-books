@@ -177,7 +177,9 @@ function create() {
       columnMat.uniforms.uTime.value = t;
       columnMat.uniforms.uHit.value = a.hit || 0;
       columnMat.uniforms.uTell.value = tell;
-      const flare = 1 + tell * 0.45 + (a.state === "pulse" ? 0.12 : 0);
+      const phase = a.phase || 1;
+      const flare = (phase >= 3 ? 1.18 : phase >= 2 ? 1.08 : 1) + tell * 0.45 + (a.state === "pulse" ? 0.12 : 0);
+      if (phase >= 2 && !dead) light.color.setHex(phase >= 3 ? 0xffe2a8 : 0xf0c56a);
       column.scale.set(flare, 1, flare);
       heart.material.opacity = dead ? 0.08 : 0.35 + hum * 0.28 + tell * 0.25;
       heart.scale.setScalar(1 + hum * 0.18 + tell * 0.35);

@@ -13,7 +13,8 @@ const ZONES = [
   { minX: 22.2, maxX: 42.8, minZ: -8.6, maxZ: 17.6 },
   { minX: -26.8, maxX: -7.2, minZ: -2.4, maxZ: 4.4 },
   { minX: -46.2, maxX: -22.2, minZ: -14.2, maxZ: 16.2 },
-  { minX: -2.7, maxX: 2.7, minZ: 24.2, maxZ: 43.2 },
+  { minX: -2.7, maxX: 2.7, minZ: 24.2, maxZ: 30.3 },
+  { minX: -2.7, maxX: 2.7, minZ: 36.2, maxZ: 43.2 },
   { minX: -16.6, maxX: 16.6, minZ: 40.4, maxZ: 72.2 },
 ];
 
@@ -851,11 +852,18 @@ export function buildRustyWorld(scene, low) {
   westPlank.position.set(-22, -0.02, 1);
   westPlank.receiveShadow = true;
   scene.add(westPlank);
-  const northPlank = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.14, 10), plankMat);
-  northPlank.position.set(0, -0.02, 37.2);
-  northPlank.receiveShadow = true;
-  scene.add(northPlank);
-  const bridges = [eastPlank, westPlank, northPlank];
+  const nearPlank = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.14, 5.4), plankMat);
+  nearPlank.position.set(0, -0.02, 27.5);
+  nearPlank.receiveShadow = true;
+  const farPlank = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.14, 6.4), plankMat);
+  farPlank.position.set(0, -0.02, 39.3);
+  farPlank.receiveShadow = true;
+  const broken = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.08, 1.5), plankMat);
+  broken.position.set(0.35, -0.7, 33.1);
+  broken.rotation.x = 0.85;
+  broken.rotation.z = 0.2;
+  scene.add(nearPlank, farPlank, broken);
+  const bridges = [eastPlank, westPlank, nearPlank, farPlank];
 
   const city = new THREE.Group();
   const cityRock = new THREE.Mesh(new THREE.CylinderGeometry(10.2, 12.5, 3.2, low ? 7 : 10), rockMat);
