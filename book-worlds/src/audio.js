@@ -347,6 +347,11 @@ export function createAudio() {
 
   let pulseGain = null;
   let pulseTimer = null;
+  let oldmanGain = null;
+  let oldmanWindFilter = null;
+  let oldmanTimer = null;
+  let moodDread = 0;
+  let moodFire = 0;
 
   function addPartial(audio, freq, level, wobble) {
     const osc = audio.createOscillator();
@@ -460,19 +465,102 @@ export function createAudio() {
     }
   }
 
+  function bugle() {
+    burst({ dur: 0.55, freq: 520, type: "bandpass", gain: 0.07, q: 4, from: 340, to: 520 });
+  }
+
+  function bellow(amount = 0.5) {
+    const gain = 0.08 + amount * 0.2;
+    const from = Math.max(48, 96 - amount * 36);
+    burst({ dur: 0.7 + amount * 0.35, freq: 80, type: "lowpass", gain, q: 0.7, from, to: 40 });
+  }
+
+  function howl() {
+    burst({ dur: 0.85, freq: 640, type: "bandpass", gain: 0.08, q: 3, from: 380, to: 720 });
+  }
+
+  function chorus() {
+    bellow(1);
+    window.setTimeout(() => bellow(0.8), 160);
+    window.setTimeout(() => bellow(1), 340);
+    window.setTimeout(() => bellow(0.65), 520);
+  }
+
+  function ensureOldmanBed() {
+    const audio = context();
+    // iOS stays silent if a node is started while the context is still suspended.
+    if (!audio || !started || audio.state !== "running") return;
+    muteMusic();
+    if (windGain) windGain.gain.value = 0;
+    if (stackGain) stackGain.gain.value = 0;
+    if (pulseGain) pulseGain.gain.value = 0;
+    if (!oldmanGain) {
+      oldmanGain = audio.createGain();
+      oldmanGain.connect(bedGain || master);
+      const src = audio.createBufferSource();
+      src.buffer = noise(3);
+      src.loop = true;
+      oldmanWindFilter = audio.createBiquadFilter();
+      oldmanWindFilter.type = "lowpass";
+      oldmanWindFilter.frequency.value = 460;
+      const g = audio.createGain();
+      g.gain.value = 0.085;
+      src.connect(oldmanWindFilter);
+      oldmanWindFilter.connect(g);
+      g.connect(oldmanGain);
+      src.start();
+    }
+    oldmanGain.gain.value = 1;
+    if (oldmanTimer) return;
+    const tick = () => {
+      if (!ctx || !oldmanGain) {
+        oldmanTimer = null;
+        return;
+      }
+      if (bedName === "oldman" && soundOn && ctx.state === "running") {
+        burst({
+          dur: 0.45 + Math.random() * 0.55,
+          freq: 480,
+          type: "lowpass",
+          gain: 0.07 + Math.random() * 0.08 + moodDread * 0.06,
+          q: 0.45,
+          from: 120,
+          to: 60,
+        });
+        if (oldmanWindFilter) oldmanWindFilter.frequency.value = 300 + Math.random() * 380 + moodDread * 80;
+        if (moodFire > 0.18 && Math.random() < 0.8) {
+          burst({ dur: 0.07, freq: 2200, type: "highpass", gain: 0.035 * moodFire, q: 0.55 });
+        }
+        if (moodDread < 0.32 && Math.random() < 0.34) bugle();
+        if (moodDread > 0.16 && Math.random() < 0.25 + moodDread * 0.4) bellow(moodDread);
+        if (moodDread > 0.42 && Math.random() < 0.38) howl();
+      }
+      oldmanTimer = window.setTimeout(tick, 1500 + Math.random() * 2100);
+    };
+    tick();
+  }
+
   function applyBed() {
     if (!started) return;
     const audio = ctx;
     if (audio && audio.state !== "running") return;
     if (bedName === "stack") {
       if (pulseGain) pulseGain.gain.value = 0;
+      if (oldmanGain) oldmanGain.gain.value = 0;
       ensureStackBed();
     } else if (bedName === "pulse") {
       if (stackGain) stackGain.gain.value = 0;
+      if (oldmanGain) oldmanGain.gain.value = 0;
       ensurePulseBed();
+    } else if (bedName === "oldman") {
+      if (stackGain) stackGain.gain.value = 0;
+      if (pulseGain) pulseGain.gain.value = 0;
+      if (windGain) windGain.gain.value = 0;
+      ensureOldmanBed();
     } else {
       if (stackGain) stackGain.gain.value = 0;
       if (pulseGain) pulseGain.gain.value = 0;
+      if (oldmanGain) oldmanGain.gain.value = 0;
       if (windGain) windGain.gain.value = 0.045;
       ensureWind();
       ensureMusic();
@@ -782,8 +870,12 @@ export function createAudio() {
     },
     setTension(v) { tension = v; },
     setBed(name) {
-      bedName = name === "stack" ? "stack" : name === "pulse" ? "pulse" : "trail";
+      bedName = name === "stack" ? "stack" : name === "pulse" ? "pulse" : name === "oldman" ? "oldman" : "trail";
       applyBed();
+    },
+    setMood(dread, fire) {
+      moodDread = Math.max(0, Math.min(1, dread || 0));
+      moodFire = Math.max(0, Math.min(1, fire || 0));
     },
     bed() { return bedName; },
     thunder() { burst({ dur: 0.9, freq: 70, type: "lowpass", gain: 0.34, from: 80, to: 36 }); },
@@ -794,6 +886,12 @@ export function createAudio() {
     whip() { burst({ dur: 0.16, freq: 1400, type: "bandpass", gain: 0.14, q: 1.4, from: 420, to: 180 }); },
     hiss() { burst({ dur: 0.28, freq: 2200, type: "highpass", gain: 0.1, q: 0.5 }); },
     pulse() { burst({ dur: 0.42, freq: 90, type: "lowpass", gain: 0.28, from: 140, to: 40 }); },
+    firelight() { burst({ dur: 0.36, freq: 1600, type: "bandpass", gain: 0.16, q: 0.65, from: 240, to: 80 }); },
+    rifle() { burst({ dur: 0.11, freq: 1500, type: "highpass", gain: 0.15, q: 1.1, from: 190, to: 70 }); },
+    bugle() { bugle(); },
+    howl() { howl(); },
+    bellow() { bellow(moodDread || 0.4); },
+    chorus() { chorus(); },
     hit() { burst({ dur: 0.1, freq: 180, type: "lowpass", gain: 0.28, from: 220, to: 70 }); },
     hurt() { burst({ dur: 0.16, freq: 140, type: "lowpass", gain: 0.22, from: 180, to: 60 }); },
     flash() { burst({ dur: 0.28, freq: 1400, type: "bandpass", gain: 0.16, q: 4, from: 660, to: 1320 }); },
@@ -805,6 +903,10 @@ export function createAudio() {
       const now = performance.now();
       if (now - stepAt < 280) return;
       stepAt = now;
+      if (bedName === "oldman") {
+        burst({ dur: 0.06, freq: 1400, type: "highpass", gain: 0.04, q: 0.7, from: 160, to: 70 });
+        return;
+      }
       burst({ dur: 0.05, freq: 160, type: "lowpass", gain: 0.05 });
     },
     jump() { burst({ dur: 0.08, freq: 420, type: "bandpass", gain: 0.08, q: 0.7, from: 280, to: 520 }); },
@@ -818,6 +920,8 @@ export function createAudio() {
     dispose() {
       if (musicTimer) clearTimeout(musicTimer);
       if (stackTimer) clearTimeout(stackTimer);
+      if (pulseTimer) clearTimeout(pulseTimer);
+      if (oldmanTimer) clearTimeout(oldmanTimer);
       try { ctx && ctx.close(); } catch { /* ignore */ }
     },
   };

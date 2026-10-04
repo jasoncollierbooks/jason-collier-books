@@ -289,7 +289,8 @@ body.playing #abilities:not([hidden]) { display: flex; }
 #abilities button circle {
   fill: none; stroke: #ffe2a8; stroke-width: 2.4; stroke-linecap: round;
 }
-#abilities button span { position: relative; font-size: 8px; }
+#abilities button span { position: relative; font-size: 8px; max-width: 46px; text-align: center; line-height: 1.05; }
+#abilities button[data-ability="firelight"] span { font-size: 6.5px; letter-spacing: 0; }
 #abilities button b {
   display: none;
   position: relative;

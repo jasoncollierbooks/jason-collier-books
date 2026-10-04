@@ -1,6 +1,7 @@
 // Announcer bulletins. Trail lines live in narration.json.
 // The Rusty Stack pack lives in worlds/rusty/announcer_script.json.
 // The First Pulse announcer lines live in worlds/pulse/voices.json.
+// Old Man on the Mountain announcer lines live in worlds/oldman/voices.json.
 // A matching mp3 plays when present. One line at a time.
 // Captions run even if sound is still locked. The pack is snapshotted
 // when say() is called so a station change cannot rewrite a line in flight.
@@ -20,6 +21,13 @@ export function createNarration(audio) {
   function kickerStack(id) {
     if (id.startsWith("page-")) return "Story page";
     if (id === "restored") return "Station 2";
+    if (id === "blank-next") return "Dead air";
+    return "Special bulletin";
+  }
+
+  function kickerOldman(id) {
+    if (id.startsWith("page-")) return "Story page";
+    if (id === "restored") return "Station 4";
     if (id === "blank-next") return "Dead air";
     return "Special bulletin";
   }
@@ -62,6 +70,11 @@ export function createNarration(audio) {
       ...loadPack("../worlds/pulse/voices.json", "announcer"),
       clip(id) { return `../audio/announcer/pulse/${id}.mp3`; },
       kicker: kickerPulse,
+    },
+    oldman: {
+      ...loadPack("../worlds/oldman/voices.json", "announcer"),
+      clip(id) { return `../audio/announcer/oldman/${id}.mp3`; },
+      kicker: kickerOldman,
     },
   };
 

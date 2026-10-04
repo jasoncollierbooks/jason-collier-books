@@ -6,12 +6,14 @@ export const ABILITIES = [
   { id: "lasso", name: "Lasso", key: "V", world: "trail", cool: 6.5 },
   { id: "steam", name: "Steam", key: "X", world: "stack", cool: 6 },
   { id: "pulse", name: "Pulse", key: "Z", world: "pulse", cool: 7.5 },
+  { id: "firelight", name: "Firelight", key: "H", world: "oldman", cool: 7 },
 ];
 
 const CLEAR = {
   lasso: "book-worlds-world1-clear",
   steam: "book-worlds-world2-clear",
   pulse: "book-worlds-world3-clear",
+  firelight: "book-worlds-world4-clear",
 };
 
 let shared = null;
@@ -19,7 +21,7 @@ let shared = null;
 export function createAbilities() {
   if (shared) return shared;
   const owned = new Set();
-  const cd = { lasso: 0, steam: 0, pulse: 0 };
+  const cd = { lasso: 0, steam: 0, pulse: 0, firelight: 0 };
 
   function save() {
     try { localStorage.setItem(STORE, JSON.stringify([...owned])); } catch { /* private mode */ }
@@ -149,6 +151,29 @@ export function createAbilities() {
       ctx.player.iframes = Math.max(ctx.player.iframes || 0, 0.2);
       ctx.events.push({ type: "pulse", x: ctx.player.x, z: ctx.player.z });
       if (ctx.audio && ctx.audio.pulse) ctx.audio.pulse();
+      return true;
+    }
+    if (id === "firelight") {
+      cd.firelight = spec.cool;
+      const rad = 5.4;
+      for (const e of ctx.living()) {
+        const d = Math.hypot(e.x - ctx.player.x, e.z - ctx.player.z);
+        if (d >= rad) continue;
+        ctx.damageEnemy(e, e.kind === "boss" ? 14 : 16, null, { knock: e.kind === "boss" ? 0.35 : 1.35 });
+        if (!e.alive) continue;
+        if (e.kind === "boss") {
+          e.state = "stagger";
+          e.t = 0;
+          e.stunFor = Math.max(e.stunFor || 0, 0.85);
+        } else {
+          e.state = "stun";
+          e.t = 0;
+          e.stunFor = Math.max(e.stunFor || 0, 1.15);
+        }
+      }
+      ctx.player.iframes = Math.max(ctx.player.iframes || 0, 0.22);
+      ctx.events.push({ type: "firelight", x: ctx.player.x, y: ctx.player.y || 0, z: ctx.player.z });
+      if (ctx.audio && ctx.audio.firelight) ctx.audio.firelight();
       return true;
     }
     return false;

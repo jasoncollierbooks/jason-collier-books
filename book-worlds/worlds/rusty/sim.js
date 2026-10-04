@@ -3,10 +3,10 @@ import * as THREE from "three";
 import { clamp, damp, dampAngle, hypot2 } from "../../src/util.js";
 import { heightAt } from "./world.js?v=11";
 import { createFog } from "../../src/rigs.js?v=5";
-import { createHuman } from "../../src/actors.js?v=9";
+import { createHuman } from "../../src/actors.js?v=10";
 import { armRing, note, spawn } from "../../src/vfx.js?v=1";
 import { boss as worldBoss } from "../../bosses/rusty-stack.js?v=8";
-import { createAbilities } from "../../src/abilities.js?v=1";
+import { createAbilities } from "../../src/abilities.js?v=2";
 
 const abilities = createAbilities();
 
@@ -1363,8 +1363,8 @@ export function createRustySim(scene, world, audio) {
     if (edge.devil) startDevil();
     if (edge.mend) startMend();
     if (edge.special) startTeam();
-    if (edge.lasso || edge.steam || edge.pulse) {
-      const id = edge.pulse ? "pulse" : edge.steam ? "steam" : "lasso";
+    if (edge.lasso || edge.steam || edge.pulse || edge.firelight) {
+      const id = edge.firelight ? "firelight" : edge.pulse ? "pulse" : edge.steam ? "steam" : "lasso";
       abilities.cast(id, {
         player, living, damageEnemy, events, audio,
         resolve: (x, z, r) => world.resolve(x, z, r),

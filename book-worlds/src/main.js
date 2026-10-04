@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createAudio } from "./audio.js?v=4";
+import { createAudio } from "./audio.js?v=5";
 import { createInput } from "./input.js?v=4";
 import { createSim } from "./sim.js?v=10";
 import { damp, clamp, springAngle, angDelta } from "./util.js";
@@ -11,9 +11,11 @@ import { buildRustyWorld } from "../worlds/rusty/world.js?v=11";
 import { createRustySim } from "../worlds/rusty/sim.js?v=16";
 import { buildPulseWorld } from "../worlds/pulse/world.js?v=5";
 import { createPulseSim } from "../worlds/pulse/sim.js?v=9";
-import { createAbilities } from "./abilities.js?v=1";
-import { whenCastReady } from "./actors.js?v=9";
-import { tick as tickVfx, bind, active as vfxActive } from "./vfx.js?v=1";
+import { buildOldmanWorld } from "../worlds/oldman/world.js?v=1";
+import { createOldmanSim } from "../worlds/oldman/sim.js?v=1";
+import { createAbilities } from "./abilities.js?v=2";
+import { whenCastReady } from "./actors.js?v=10";
+import { tick as tickVfx, bind, spawn as spawnVfx, active as vfxActive } from "./vfx.js?v=1";
 import { theBlank } from "../bosses/index.js?v=10";
 
 const canvas = document.getElementById("view");
@@ -47,7 +49,15 @@ let pulseScene = null;
 let pulseCamera = null;
 let pulseWorld = null;
 let pulseSim = null;
+let oldmanScene = null;
+let oldmanCamera = null;
+let oldmanWorld = null;
+let oldmanSim = null;
 const input = createInput(app);
+try {
+  const grant = new URLSearchParams(location.search).get("grant");
+  if (grant === "firelight") localStorage.setItem("book-worlds-world4-clear", "1");
+} catch { /* private mode */ }
 const abilities = createAbilities();
 const narrate = createNarration(audio);
 const dialogue = createDialogue(audio);
@@ -143,6 +153,31 @@ const shockFx = bind({
     shock.visible = false;
   },
 });
+function burstEmbers(x, y, z) {
+  const n = low ? 8 : 14;
+  for (let i = 0; i < n; i++) {
+    const ember = new THREE.Mesh(
+      new THREE.SphereGeometry(0.05, 5, 4),
+      new THREE.MeshBasicMaterial({ color: i % 2 ? 0xffe2a0 : 0xff6a22, transparent: true }),
+    );
+    scene.add(ember);
+    const ang = (i / n) * Math.PI * 2 + i * 0.2;
+    const sp = 0.7 + (i % 4) * 0.4;
+    spawnVfx({
+      tag: "ember",
+      mesh: ember,
+      disposable: true,
+      life: 720,
+      onTick(k) {
+        const u = 1 - k;
+        ember.position.set(x + Math.cos(ang) * sp * u, y + 0.4 + u * 1.45, z + Math.sin(ang) * sp * u);
+        ember.material.opacity = k;
+        ember.scale.setScalar(0.35 + k * 0.7);
+      },
+    });
+  }
+}
+
 const lassoFx = bind({
   tag: "lasso",
   mesh: lassoLine,
@@ -160,11 +195,12 @@ const direct = ["ford", "play", "gate", "almost", "rope", "bank"].includes(start
 let mode = direct ? "play" : "hub";
 let playing = mode === "play";
 let station = 0;
-const restored = { trail: false, stack: false, pulse: false };
+const restored = { trail: false, stack: false, pulse: false, oldman: false };
 try {
   restored.trail = localStorage.getItem("book-worlds-world1-clear") === "1";
   restored.stack = localStorage.getItem("book-worlds-world2-clear") === "1";
   restored.pulse = localStorage.getItem("book-worlds-world3-clear") === "1";
+  restored.oldman = localStorage.getItem("book-worlds-world4-clear") === "1";
 } catch { /* private mode */ }
 let transitioning = false;
 let pullTimer = 0;
@@ -251,7 +287,7 @@ const STATIONS = [
   { id: "trail", freq: "54.7", script: "On the air", title: "The California Trail", sub: "Jang & Tom · Wagon Masters", live: true },
   { id: "stack", freq: "67.2", script: "On the air", title: "The Rusty Stack", sub: "Spacey & Mira · Sky Freight", live: true, note: "Recommended after the Trail" },
   { id: "pulse", freq: "103.0", script: "On the air", title: "The First Pulse", sub: "The Entity · Quantum Realm", live: true, note: "Recommended after the Stack" },
-  { id: "oldman", freq: "81.4", script: "No signal", title: "Old Man on the Mountain", sub: "A ridge with its own weather", live: false },
+  { id: "oldman", freq: "81.4", script: "On the air", title: "Old Man on the Mountain", sub: "Harlan Wade · High Country", live: true, note: "Recommended after the Pulse" },
 ];
 
 const CARDS = {
@@ -391,6 +427,61 @@ const PULSE_PAGES = {
   },
 };
 
+const OLDMAN_CARDS = {
+  title: {
+    script: "Please stand by",
+    kicker: "Book Worlds  ·  Station 4",
+    title: "Old Man on the Mountain",
+    body: "Nonimaginaires — brain fogs born where imagination dies — are leaking through the broadcast and eating this story. Five pages are going gray in the high country. The Keeper has to gather those pages, walk the timber, the benches, and the elk park, and restore the imagination on this channel. The Old Man has been taken by the fog and waits on the ridge. This channel is a snowy hunt at dusk. Harlan Wade keeps the fire. The weapon in the Keeper's hand is the same brass skeleton key — the Trail Key.",
+    btn: "Step into the snow",
+    hint: true,
+  },
+  outro: {
+    script: "End of the bulletin",
+    kicker: "World IV",
+    title: "The ridges answer",
+    body: "The fog lifts off the Old Man. The green goes out of his eyes. Amber sap dries where the key found bark. A chorus of bellows rolls down from every ridge, and then the mountain keeps its secrets. Harlan Wade walks back to the truck. The screen home stays shut until every torn page is back in the book.",
+    btn: "Back to the snow",
+    hint: false,
+  },
+  dead: {
+    script: "The cold settles",
+    kicker: "The mountain keeps your boots",
+    title: "Not yet",
+    body: "The Keeper hits the snow. Harlan keeps the fire up and offers a gloved hand.",
+    btn: "Retry",
+    hint: false,
+  },
+};
+
+const OLDMAN_PAGES = {
+  "seven-days": {
+    script: "A torn page",
+    title: "Seven days of food",
+    body: "A torn page. Harlan Wade went up alone for elk, with seven days of food.",
+  },
+  "wall-tent": {
+    script: "A torn page",
+    title: "The wall tent",
+    body: "A torn page. A small wall tent. He built the fire high when the cold went below zero.",
+  },
+  "steep-timber": {
+    script: "A torn page",
+    title: "Steep timber",
+    body: "A torn page. Steep timber, then benches, then parks where the elk should have been.",
+  },
+  "bark-skin": {
+    script: "A torn page",
+    title: "Bark for skin",
+    body: "A torn page. It had bark for skin, and eyes that shone green. Where it bled, the blood was amber, like sap.",
+  },
+  "the-ridges": {
+    script: "A torn page",
+    title: "Every ridge",
+    body: "A torn page. A chorus of bellows rolled down from every ridge. The mountain kept its secrets.",
+  },
+};
+
 const PAGES = {
   handbills: {
     script: "A torn page",
@@ -422,12 +513,14 @@ const PAGES = {
 function cardsFor() {
   if (worldKey === "stack") return STACK_CARDS;
   if (worldKey === "pulse") return PULSE_CARDS;
+  if (worldKey === "oldman") return OLDMAN_CARDS;
   return CARDS;
 }
 
 function pagesFor() {
   if (worldKey === "stack") return STACK_PAGES;
   if (worldKey === "pulse") return PULSE_PAGES;
+  if (worldKey === "oldman") return OLDMAN_PAGES;
   return PAGES;
 }
 
@@ -588,12 +681,14 @@ function glimpseBlank() {
 }
 
 function flickerBlank(exitKey) {
-  const pack = exitKey === "stack" ? "stack" : exitKey === "pulse" ? "pulse" : "trail";
+  const pack = exitKey === "stack" ? "stack" : exitKey === "pulse" ? "pulse" : exitKey === "oldman" ? "oldman" : "trail";
   el.blankVoice.textContent = exitKey === "stack"
     ? "The next sky is already forgetting its name."
     : exitKey === "pulse"
       ? "The next dark is already forgetting the name of its star."
-      : theBlank.voice;
+      : exitKey === "oldman"
+        ? "The next ridge is already forgetting its own weather."
+        : theBlank.voice;
   el.blankFace.hidden = false;
   el.blankFace.classList.remove("is-on");
   void el.blankFace.offsetWidth;
@@ -629,6 +724,16 @@ function ensurePulse() {
   pulseSim = createPulseSim(pulseScene, pulseWorld, audio);
 }
 
+function ensureOldman() {
+  if (oldmanScene) return;
+  oldmanScene = new THREE.Scene();
+  oldmanCamera = new THREE.PerspectiveCamera(52, 1, 0.12, 700);
+  oldmanScene.add(oldmanCamera);
+  installEnvironment(renderer, oldmanScene, low, "oldman");
+  oldmanWorld = buildOldmanWorld(oldmanScene, low);
+  oldmanSim = createOldmanSim(oldmanScene, oldmanWorld, audio);
+}
+
 function retargetComposer(nextScene, nextCam) {
   if (composer) {
     try { composer.dispose(); } catch { /* an old pass can already be gone */ }
@@ -649,6 +754,11 @@ function bindStation(key) {
     narrate.use("pulse");
     audio.setBed("pulse");
     if (kicker) kicker.textContent = "In the foam";
+  } else if (key === "oldman") {
+    dialogue.setWorld("old-man");
+    narrate.use("oldman");
+    audio.setBed("oldman");
+    if (kicker) kicker.textContent = "On the mountain";
   } else {
     dialogue.setWorld("california-trail");
     narrate.use("trail");
@@ -674,6 +784,13 @@ function enterWorld(key) {
     world = pulseWorld;
     sim = pulseSim;
     worldKey = "pulse";
+  } else if (key === "oldman") {
+    ensureOldman();
+    scene = oldmanScene;
+    camera = oldmanCamera;
+    world = oldmanWorld;
+    sim = oldmanSim;
+    worldKey = "oldman";
   } else {
     scene = trailScene;
     camera = trailCamera;
@@ -700,7 +817,7 @@ function finishThrough() {
   hideBlankShade();
   transitioning = false;
   const key = STATIONS[station].id;
-  const liveKey = key === "stack" || key === "pulse" ? key : "trail";
+  const liveKey = key === "stack" || key === "pulse" || key === "oldman" ? key : "trail";
   if (key !== worldKey) enterWorld(liveKey);
   else bindStation(liveKey);
   sim.resetTrail();
@@ -836,11 +953,38 @@ if (params.get("shot")) document.body.classList.add("shot");
 const worldParam = params.get("world");
 const wantStack = worldParam === "stack" || worldParam === "rusty";
 const wantPulse = worldParam === "pulse" || worldParam === "first-pulse";
+const wantOldman = worldParam === "oldman" || worldParam === "old-man";
 const stackStarts = ["play", "deck", "boss", "city", "goats", "brawl", "fort"];
 const pulseStarts = ["play", "boss", "dish", "bridge", "light", "gate", "wave"];
+const oldmanStarts = ["play", "boss", "camp", "timber", "park", "gate", "freed", "fire"];
 if (wantStack) station = 1;
 if (wantPulse) station = 2;
-if (wantPulse && pulseStarts.includes(start)) {
+if (wantOldman) station = 3;
+if (wantOldman && oldmanStarts.includes(start)) {
+  enterWorld("oldman");
+  if (start === "boss") {
+    sim.place(0, 82, 0);
+    sim.wakeBoss();
+    if (sim.poseBoss) sim.poseBoss();
+  } else if (start === "freed") {
+    sim.place(-1.2, 83, 0.15);
+    sim.defeatForExit();
+    if (sim.poseCrew) sim.poseCrew();
+  } else if (start === "camp") {
+    sim.place(0.2, 45.2, 0.2);
+    if (params.get("shot") === "harlan" && sim.poseCrew) sim.poseCrew();
+  } else if (start === "timber") sim.place(0, 8, 0);
+  else if (start === "park") sim.place(0, 48, 0);
+  else if (start === "gate") sim.skipToGate();
+  else if (start === "fire") {
+    sim.place(0, 12, 0);
+    if (sim.armFireDemo) sim.armFireDemo();
+  }
+  hideCard();
+  audio.unlock();
+} else if (wantOldman) {
+  showHub();
+} else if (wantPulse && pulseStarts.includes(start)) {
   enterWorld("pulse");
   if (start === "boss" || start === "wave") {
     sim.place(0, params.get("shot") === "boss" ? 76 : 74, 0);
@@ -1074,6 +1218,12 @@ function frame(now) {
       shotLight.target.position.set(snap.player.x, y + 1, snap.player.z);
       scene.add(shotLight, shotLight.target);
     }
+  } else if (shot === "harlan" && snap) {
+    camPos.set(snap.player.x - 5.4, snap.player.y + 2.15, snap.player.z + 0.8);
+    lookAt.set(snap.player.x + 1.1, snap.player.y + 1.05, snap.player.z + 1.4);
+  } else if (shot === "freed" && snap.boss) {
+    camPos.set(snap.boss.x - 4.6, 2.5, snap.boss.z - 7.4);
+    lookAt.set(snap.boss.x + 0.2, 2.2, snap.boss.z + 0.2);
   } else if (shot === "boss" && snap.boss) {
     camPos.set(-2.15, 2.2, snap.boss.z - 5.5);
     lookAt.set(0.15, 1.65, snap.boss.z + 0.2);
@@ -1132,12 +1282,15 @@ function frame(now) {
     }
     else if (ev.type === "hit") shake = Math.max(shake, ev.heavy ? 0.55 : 0.26);
     else if (ev.type === "level") addFloat(ev.x, ev.y, ev.z, "Lv " + ev.n, true);
-    else if (ev.type === "flash" || ev.type === "steam" || ev.type === "pulse") {
-      flashPeak = ev.type === "steam" ? 0.45 : 1;
-      flashFx.restart(ev.type === "steam" ? 205 : 455);
-      shock.material.color.setHex(ev.type === "pulse" ? 0xd7ecff : ev.type === "steam" ? 0xe7d2b4 : 0xfff0c8);
-      shockFx.restart(450);
+    else if (ev.type === "flash" || ev.type === "steam" || ev.type === "pulse" || ev.type === "firelight") {
+      const fire = ev.type === "firelight";
+      flashPeak = ev.type === "steam" ? 0.45 : fire ? 0.9 : 1;
+      flashLight.color.setHex(fire ? 0xff7a32 : ev.type === "pulse" ? 0xd7ecff : ev.type === "steam" ? 0xe7d2b4 : 0xffe6b8);
+      flashFx.restart(fire ? 520 : ev.type === "steam" ? 205 : 455);
+      shock.material.color.setHex(fire ? 0xff8a3a : ev.type === "pulse" ? 0xd7ecff : ev.type === "steam" ? 0xe7d2b4 : 0xfff0c8);
+      shockFx.restart(fire ? 560 : 450);
       if (ev.type !== "steam") screenFlash.restart(160);
+      if (fire) burstEmbers(ev.x, ev.y || 0, ev.z);
     }
     else if (ev.type === "lasso") {
       const attr = lassoLine.geometry.attributes.position;
@@ -1147,7 +1300,7 @@ function frame(now) {
       lassoFx.restart(420);
     }
     else if (ev.type === "ability") {
-      const names = { lasso: "Lasso", steam: "Steam", pulse: "Pulse" };
+      const names = { lasso: "Lasso", steam: "Steam", pulse: "Pulse", firelight: "Firelight" };
       addFloat(snap.player.x, snap.player.y + 1.8, snap.player.z, names[ev.id] || "Ability", true);
     }
     else if (ev.type === "dead") showCard("dead");
@@ -1290,7 +1443,7 @@ window.__BOOKWORLDS = {
     return !!restored[key];
   },
   worldKey: () => worldKey,
-  worldId: () => (worldKey === "stack" ? "rusty-stack" : worldKey === "pulse" ? "first-pulse" : "california-trail"),
+  worldId: () => (worldKey === "stack" ? "rusty-stack" : worldKey === "pulse" ? "first-pulse" : worldKey === "oldman" ? "old-man" : "california-trail"),
   abilities: () => abilities.list().map((a) => ({ id: a.id, ready: a.ready, cd: a.cd })),
   fx: () => vfxActive(),
   player: () => {
@@ -1690,6 +1843,11 @@ function installEnvironment(gl, rootScene, lowQ, kind) {
     grd.addColorStop(0.42, "#7aa0c8");
     grd.addColorStop(0.68, "#e8b07a");
     grd.addColorStop(1, "#8a6848");
+  } else if (kind === "oldman") {
+    grd.addColorStop(0, "#12182c");
+    grd.addColorStop(0.38, "#3a3a58");
+    grd.addColorStop(0.62, "#c46a3a");
+    grd.addColorStop(1, "#5a4a3c");
   } else if (kind === "pulse") {
     grd.addColorStop(0, "#2a1458");
     grd.addColorStop(0.28, "#6a3a28");
