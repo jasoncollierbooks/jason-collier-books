@@ -7,10 +7,10 @@ import { createNarration } from "./narration.js";
 import { createDialogue } from "./dialogue.js?v=3";
 import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass, GTAOPass, ShaderPass, FXAAPass } from "three/addons";
 import { buildWorld } from "./world.js?v=4";
-import { buildRustyWorld } from "../worlds/rusty/world.js?v=5";
-import { createRustySim } from "../worlds/rusty/sim.js?v=5";
+import { buildRustyWorld } from "../worlds/rusty/world.js?v=6";
+import { createRustySim } from "../worlds/rusty/sim.js?v=10";
 import { whenCastReady } from "./actors.js?v=4";
-import { theBlank } from "../bosses/index.js?v=4";
+import { theBlank } from "../bosses/index.js?v=5";
 
 const canvas = document.getElementById("view");
 const app = document.getElementById("app");
@@ -122,6 +122,7 @@ let camFaceWait = 0;
 let camRecenter = 0;
 const camPos = new THREE.Vector3(0, 3, -10);
 const lookAt = new THREE.Vector3();
+let shotLight = null;
 let flashI = 0;
 let shockK = 0;
 let shake = 0;
@@ -628,6 +629,8 @@ el.btn.addEventListener("click", () => {
   }
 });
 
+if (params.get("shot")) document.body.classList.add("shot");
+
 const worldParam = params.get("world");
 const wantStack = worldParam === "stack" || worldParam === "rusty";
 const stackStarts = ["play", "deck", "boss", "city", "goats", "brawl", "fort"];
@@ -635,12 +638,19 @@ if (wantStack) station = 1;
 if (wantStack && stackStarts.includes(start)) {
   enterWorld("stack");
   if (start === "boss") {
-    sim.place(0, 58, Math.PI);
-    sim.wakeBoss();
+    if (params.get("shot") === "boss") {
+      sim.place(-9, 44, 0);
+      if (sim.poseBoss) sim.poseBoss();
+    }
+    else {
+      sim.place(0, 58, Math.PI);
+      sim.wakeBoss();
+    }
   } else if (start === "city") sim.place(32, 2, 0);
   else if (start === "goats") sim.place(-34, 2, 0);
   else if (start === "brawl") sim.place(0, 18, 0);
   else if (start === "fort") sim.place(0, 48, 0);
+  if (params.get("shot") === "crew" && sim.poseCrew) sim.poseCrew();
   hideCard();
   audio.unlock();
 } else if (wantStack) {
@@ -751,7 +761,7 @@ function frame(now) {
     guard++;
   }
 
-  if (mode === "play" && playing && snap) {
+  if (mode === "play" && playing && snap && !params.get("shot")) {
     const preset = CAM_PRESET[settings.cam] || CAM_PRESET.slow;
     const face = snap.player.yaw;
     const turned = Math.abs(angDelta(camFace, face));
@@ -790,34 +800,55 @@ function frame(now) {
   const rightX = -Math.cos(camYaw);
   const rightZ = Math.sin(camYaw);
   const shot = params.get("shot");
-  let dist = 5.05 + camPitch * 1.25;
-  let lift = 1.62 + camPitch * 1.55;
-  if (shot === "crew") { dist = -3.15; lift = 1.35; }
-  else if (shot === "deck") { dist = 8.4; lift = 3.6; }
-  else if (shot === "boss") { dist = 6.4; lift = 2.15; }
-  const shoulder = 0.46;
-  let lookX = snap.player.x + lookDirX * 1.55 + rightX * 0.12;
-  let lookY = snap.player.y + 1.38;
-  let lookZ = snap.player.z + lookDirZ * 1.55 + rightZ * 0.12;
-  if (snap.lock && mode === "play") {
-    const dx = snap.lock.x - snap.player.x;
-    const dz = snap.lock.z - snap.player.z;
-    const sep = Math.hypot(dx, dz);
-    dist = clamp(5.3 + sep * 0.24, 5.2, 9.6);
-    lookX = snap.player.x + dx * 0.4;
-    lookZ = snap.player.z + dz * 0.4;
-    lookY = (snap.player.y + 1.3 + snap.lock.y) * 0.5;
-  }
-  const cx = snap.player.x - lookDirX * dist + rightX * shoulder;
-  const cz = snap.player.z - lookDirZ * dist + rightZ * shoulder;
-  const cy = snap.player.y + lift;
-  camPos.x = damp(camPos.x, cx, 5.2, raw);
-  camPos.y = damp(camPos.y, cy, 5.2, raw);
-  camPos.z = damp(camPos.z, cz, 5.2, raw);
-  const focus = new THREE.Vector3(snap.player.x, snap.player.y + 1.2, snap.player.z);
-  camPos.copy(world.pullCamera(focus, camPos));
   shake = Math.max(0, shake - raw);
-  lookAt.set(lookX, lookY, lookZ);
+  if (shot === "crew") {
+    const y = snap.player.y;
+    camPos.set(snap.player.x - 4.65, y + 1.7, snap.player.z);
+    lookAt.set(snap.player.x, y + 0.82, snap.player.z);
+    if (!shotLight) {
+      shotLight = new THREE.DirectionalLight(0xfff3e2, 3.1);
+      shotLight.position.set(snap.player.x - 6, y + 4, snap.player.z);
+      shotLight.target.position.set(snap.player.x, y + 1, snap.player.z);
+      scene.add(shotLight, shotLight.target);
+    }
+  } else if (shot === "boss" && snap.boss) {
+    camPos.set(-2.15, 2.2, snap.boss.z - 5.5);
+    lookAt.set(0.15, 1.65, snap.boss.z + 0.2);
+    if (!shotLight) {
+      shotLight = new THREE.DirectionalLight(0xffe2c0, 3.6);
+      shotLight.position.set(-6, 5.5, snap.boss.z - 6);
+      shotLight.target.position.set(0, 1.8, snap.boss.z);
+      scene.add(shotLight, shotLight.target);
+    }
+  } else if (shot === "deck") {
+    camPos.set(0.6, snap.player.y + 8.4, snap.player.z - 6.8);
+    lookAt.set(0, 2.1, snap.player.z + 18);
+  } else {
+    let dist = 5.05 + camPitch * 1.25;
+    let lift = 1.62 + camPitch * 1.55;
+    const shoulder = 0.46;
+    let lookX = snap.player.x + lookDirX * 1.55 + rightX * 0.12;
+    let lookY = snap.player.y + 1.38;
+    let lookZ = snap.player.z + lookDirZ * 1.55 + rightZ * 0.12;
+    if (snap.lock && mode === "play") {
+      const dx = snap.lock.x - snap.player.x;
+      const dz = snap.lock.z - snap.player.z;
+      const sep = Math.hypot(dx, dz);
+      dist = clamp(5.3 + sep * 0.24, 5.2, 9.6);
+      lookX = snap.player.x + dx * 0.4;
+      lookZ = snap.player.z + dz * 0.4;
+      lookY = (snap.player.y + 1.3 + snap.lock.y) * 0.5;
+    }
+    const cx = snap.player.x - lookDirX * dist + rightX * shoulder;
+    const cz = snap.player.z - lookDirZ * dist + rightZ * shoulder;
+    const cy = snap.player.y + lift;
+    camPos.x = damp(camPos.x, cx, 5.2, raw);
+    camPos.y = damp(camPos.y, cy, 5.2, raw);
+    camPos.z = damp(camPos.z, cz, 5.2, raw);
+    const focus = new THREE.Vector3(snap.player.x, snap.player.y + 1.2, snap.player.z);
+    camPos.copy(world.pullCamera(focus, camPos));
+    lookAt.set(lookX, lookY, lookZ);
+  }
   camera.position.copy(camPos);
   camera.position.x += Math.sin(now / 40) * shake * 0.12;
   camera.position.y += Math.cos(now / 35) * shake * 0.08;
@@ -1132,6 +1163,7 @@ let menuInit = false;
 let rotateDismissed = false;
 let rotateShownAt = 0;
 try { rotateDismissed = sessionStorage.getItem("bw-rotate") === "1"; } catch { /* private mode */ }
+if (params.get("shot")) rotateDismissed = true;
 
 function menuList() {
   return MENU[menuPane] || MENU.root;
@@ -1172,6 +1204,10 @@ function syncRotateHint(snap) {
 function maybeShowHelp() {
   const panel = document.getElementById("help");
   if (!panel) return;
+  if (params.get("shot")) {
+    panel.hidden = true;
+    return;
+  }
   let seen = false;
   try { seen = localStorage.getItem("bw-help") === "1"; } catch { /* private mode */ }
   panel.hidden = seen;

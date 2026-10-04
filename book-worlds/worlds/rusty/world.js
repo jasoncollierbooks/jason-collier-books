@@ -726,6 +726,9 @@ export function buildRustyWorld(scene, low) {
   fort.add(slime, capeScrap);
   fort.position.set(0, 0, 46);
   scene.add(fort);
+  const hangar = new THREE.PointLight(0xffc080, 28, 22, 2);
+  hangar.position.set(1.6, 3.6, 58);
+  scene.add(hangar);
   block(-3.2, 47.2, 0.7);
   block(3.2, 47.2, 0.7);
   for (const [x, z] of [[-8, 52], [8, 52], [-8, 60], [8, 60]]) block(x, z, 0.7);

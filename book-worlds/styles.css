@@ -204,6 +204,22 @@ body.playing:not(.touch) #actions button:not(.magic) { display: none; }
 #help p:not(.set-kicker) {
   margin-top: 10px; font-family: var(--ui); font-size: 18px; line-height: 1.45; letter-spacing: .02em; color: var(--paper);
 }
+#help-touch { display: none; }
+#help-touch p { margin-top: 8px; }
+body.touch #help-touch { display: block; }
+body.touch #help-keys { display: none; }
+body.touch #help {
+  width: min(24rem, calc(100% - 24px)); padding: 22px 20px 18px;
+}
+body.touch #help .set-kicker { font-size: 18px; }
+body.touch #help-touch p {
+  font-size: 26px; line-height: 1.22; font-weight: 600; letter-spacing: .03em;
+}
+body.shot #help,
+body.shot #bulletin,
+body.shot #subtitle,
+body.shot #rotate-hint,
+body.shot #tutor { display: none !important; }
 #help button, #settings #help-reopen {
   display: block; width: 100%; margin-top: 14px; min-height: 48px; cursor: pointer; border-radius: 10px;
   border: 1px solid rgba(228, 208, 164, .55); background: rgba(243, 230, 200, .82); color: #24180f;

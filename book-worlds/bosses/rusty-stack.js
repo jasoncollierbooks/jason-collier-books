@@ -79,11 +79,11 @@ function create() {
   rig.scale.setScalar(1.42);
   root.add(rig);
 
-  const iron = metal(0x8a8680, 0.42, 0.68);
+  const iron = metal(0x9a968f, 0.48, 0.42);
   const plate = metal(0x5e5a56, 0.38, 0.74);
   const brass = metal(0xd4b15a, 0.28, 0.82);
-  const cloth = new THREE.MeshStandardMaterial({ color: 0x4a3038, roughness: 0.9, metalness: 0.02, side: THREE.DoubleSide });
-  const capeMat = new THREE.MeshStandardMaterial({ color: 0x6a2430, roughness: 0.86, side: THREE.DoubleSide });
+  const cloth = new THREE.MeshStandardMaterial({ color: 0x5c3a42, roughness: 0.9, metalness: 0.02, side: THREE.DoubleSide });
+  const capeMat = new THREE.MeshStandardMaterial({ color: 0x8e343c, roughness: 0.78, side: THREE.DoubleSide });
   const skin = new THREE.MeshStandardMaterial({ color: 0xb9a090, roughness: 0.72 });
   const faceMat = new THREE.MeshStandardMaterial({ color: 0xd4d4d4, roughness: 0.55, emissive: 0x9a9a9a, emissiveIntensity: 0.18 });
 
