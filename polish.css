@@ -257,9 +257,13 @@ footer a{color:#b9ab9a;transition:color .2s}
 .play-feature-title small{display:block;margin-top:.45rem;font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;text-transform:none;font-size:.62em;color:var(--fire2);letter-spacing:0}
 .play-feature-text{color:var(--muted);max-width:34rem;line-height:1.6}
 .play-feature .btn{margin-top:.4rem;pointer-events:none}
+.play-feature.bw-card img{
+  aspect-ratio:16/9;object-fit:contain;object-position:center center;background:#100e0c
+}
 @media (max-width:560px){
   .play-feature{grid-template-columns:1fr;gap:1rem}
   .play-feature img{aspect-ratio:16/10;object-position:center 75%}
+  .play-feature.bw-card img{aspect-ratio:16/9;object-fit:contain;object-position:center center}
   .play-feature .btn{width:100%}
 }
 .book .buy .btn-game{border-color:rgba(255,138,42,.6);color:var(--fire2)}

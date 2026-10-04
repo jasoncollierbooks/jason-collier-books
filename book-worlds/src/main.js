@@ -1,16 +1,19 @@
 import * as THREE from "three";
-import { createAudio } from "./audio.js?v=2";
-import { createInput } from "./input.js?v=3";
-import { createSim } from "./sim.js?v=8";
+import { createAudio } from "./audio.js?v=3";
+import { createInput } from "./input.js?v=4";
+import { createSim } from "./sim.js?v=9";
 import { damp, clamp, springAngle, angDelta } from "./util.js";
-import { createNarration } from "./narration.js";
-import { createDialogue } from "./dialogue.js?v=3";
+import { createNarration } from "./narration.js?v=1";
+import { createDialogue } from "./dialogue.js?v=5";
 import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass, GTAOPass, ShaderPass, FXAAPass } from "three/addons";
 import { buildWorld } from "./world.js?v=7";
 import { buildRustyWorld } from "../worlds/rusty/world.js?v=10";
-import { createRustySim } from "../worlds/rusty/sim.js?v=14";
+import { createRustySim } from "../worlds/rusty/sim.js?v=15";
+import { buildPulseWorld } from "../worlds/pulse/world.js?v=5";
+import { createPulseSim } from "../worlds/pulse/sim.js?v=7";
+import { createAbilities } from "./abilities.js?v=1";
 import { whenCastReady } from "./actors.js?v=7";
-import { theBlank } from "../bosses/index.js?v=8";
+import { theBlank } from "../bosses/index.js?v=10";
 
 const canvas = document.getElementById("view");
 const app = document.getElementById("app");
@@ -39,7 +42,12 @@ let stackScene = null;
 let stackCamera = null;
 let stackWorld = null;
 let stackSim = null;
+let pulseScene = null;
+let pulseCamera = null;
+let pulseWorld = null;
+let pulseSim = null;
 const input = createInput(app);
+const abilities = createAbilities();
 const narrate = createNarration(audio);
 const dialogue = createDialogue(audio);
 const SETTINGS_KEY = "bw-settings";
@@ -96,6 +104,15 @@ const shock = new THREE.Mesh(
 );
 shock.rotation.x = -Math.PI / 2;
 scene.add(shock);
+const lassoGeo = new THREE.BufferGeometry();
+const lassoPos = new Float32Array(6);
+lassoGeo.setAttribute("position", new THREE.BufferAttribute(lassoPos, 3));
+const lassoLine = new THREE.Line(
+  lassoGeo,
+  new THREE.LineBasicMaterial({ color: 0xe4c56a, transparent: true, opacity: 0 }),
+);
+scene.add(lassoLine);
+let lassoK = 0;
 
 const params = new URLSearchParams(location.search);
 const start = params.get("start");
@@ -103,10 +120,11 @@ const direct = ["ford", "play", "gate", "almost", "rope", "bank"].includes(start
 let mode = direct ? "play" : "hub";
 let playing = mode === "play";
 let station = 0;
-const restored = { trail: false, stack: false };
+const restored = { trail: false, stack: false, pulse: false };
 try {
   restored.trail = localStorage.getItem("book-worlds-world1-clear") === "1";
   restored.stack = localStorage.getItem("book-worlds-world2-clear") === "1";
+  restored.pulse = localStorage.getItem("book-worlds-world3-clear") === "1";
 } catch { /* private mode */ }
 let transitioning = false;
 let pullTimer = 0;
@@ -182,8 +200,8 @@ const el = {
 const STATIONS = [
   { id: "trail", freq: "54.7", script: "On the air", title: "The California Trail", sub: "Jang & Tom · Wagon Masters", live: true },
   { id: "stack", freq: "67.2", script: "On the air", title: "The Rusty Stack", sub: "Spacey & Mira · Sky Freight", live: true, note: "Recommended after the Trail" },
+  { id: "pulse", freq: "103.0", script: "On the air", title: "The First Pulse", sub: "The Entity · Quantum Realm", live: true, note: "Recommended after the Stack" },
   { id: "oldman", freq: "81.4", script: "No signal", title: "Old Man on the Mountain", sub: "A ridge with its own weather", live: false },
-  { id: "pulse", freq: "103.0", script: "No signal", title: "The First Pulse", sub: "Space, and the Hum beneath it", live: false },
 ];
 
 const CARDS = {
@@ -268,6 +286,61 @@ const STACK_PAGES = {
   },
 };
 
+const PULSE_CARDS = {
+  title: {
+    script: "Please stand by",
+    kicker: "Book Worlds  ·  Station 3",
+    title: "The First Pulse",
+    body: "Nonimaginaires — brain fogs born where imagination dies — are leaking through the broadcast and eating this story. Five pages are going gray in the quantum foam. The Keeper has to gather those pages, walk the first light, the ripples, and the wave, and restore the imagination on this channel. The Hum has fused with the fog and waits ahead. This channel is a quantum realm of particle fields and crystalline islands. The Entity keeps the light. A native of the foam keeps the path. The weapon in the Keeper's hand is the same brass skeleton key — the Trail Key.",
+    btn: "Step into the foam",
+    hint: true,
+  },
+  outro: {
+    script: "End of the bulletin",
+    kicker: "World III",
+    title: "The signal remembers",
+    body: "The Blank Hum comes apart, fog first and then the vibration the book still remembers. Color crawls back into the foam. The Entity takes the quiet. A native watches a neighbor turn from gray to gold and nods once. The screen home stays shut until every torn page is back in the book.",
+    btn: "Back to the foam",
+    hint: false,
+  },
+  dead: {
+    script: "The carrier drops",
+    kicker: "The foam keeps your boots",
+    title: "Not yet",
+    body: "The Keeper hits the light underfoot. The Entity holds a probability open. A native offers a hand that is still the right color.",
+    btn: "Retry",
+    hint: false,
+  },
+};
+
+const PULSE_PAGES = {
+  "only-hum": {
+    script: "A torn page",
+    title: "Only the hum",
+    body: "A torn page. In the beginning there was no light, no matter, no void. Only the hum.",
+  },
+  "it-answered": {
+    script: "A torn page",
+    title: "It answered",
+    body: "A torn page. The hum was already listening. Then, one day, or one epoch, it answered.",
+  },
+  "the-dish": {
+    script: "A torn page",
+    title: "The foam",
+    body: "A torn page. The entity drifted through the quantum foam, tasting probabilities. It learned it could become a wave.",
+  },
+  "no-medium": {
+    script: "A torn page",
+    title: "No medium",
+    body: "A torn page. A wave needs no medium. It moves at the speed of light, indifferent to distance, indifferent to time.",
+  },
+  invitations: {
+    script: "A torn page",
+    title: "Invitations",
+    body: "A torn page. Humanity's breakthroughs are not accidents. They are invitations.",
+  },
+};
+
 const PAGES = {
   handbills: {
     script: "A torn page",
@@ -297,11 +370,15 @@ const PAGES = {
 };
 
 function cardsFor() {
-  return worldKey === "stack" ? STACK_CARDS : CARDS;
+  if (worldKey === "stack") return STACK_CARDS;
+  if (worldKey === "pulse") return PULSE_CARDS;
+  return CARDS;
 }
 
 function pagesFor() {
-  return worldKey === "stack" ? STACK_PAGES : PAGES;
+  if (worldKey === "stack") return STACK_PAGES;
+  if (worldKey === "pulse") return PULSE_PAGES;
+  return PAGES;
 }
 
 function showCard(id) {
@@ -461,8 +538,12 @@ function glimpseBlank() {
 }
 
 function flickerBlank(exitKey) {
-  const stack = exitKey === "stack";
-  el.blankVoice.textContent = stack ? "The next sky is already forgetting its name." : theBlank.voice;
+  const pack = exitKey === "stack" ? "stack" : exitKey === "pulse" ? "pulse" : "trail";
+  el.blankVoice.textContent = exitKey === "stack"
+    ? "The next sky is already forgetting its name."
+    : exitKey === "pulse"
+      ? "The next dark is already forgetting the name of its star."
+      : theBlank.voice;
   el.blankFace.hidden = false;
   el.blankFace.classList.remove("is-on");
   void el.blankFace.offsetWidth;
@@ -474,9 +555,7 @@ function flickerBlank(exitKey) {
     el.blankFace.hidden = true;
   }, 5400);
   blankVoiceTimer = window.setTimeout(() => {
-    if (mode === "hub" && restored[exitKey] && !transitioning) {
-      narrate.sayFrom(stack ? "stack" : "trail", "blank-next");
-    }
+    if (mode === "hub" && restored[exitKey] && !transitioning) narrate.sayFrom(pack, "blank-next");
   }, 4600);
 }
 
@@ -490,12 +569,42 @@ function ensureStack() {
   stackSim = createRustySim(stackScene, stackWorld, audio);
 }
 
+function ensurePulse() {
+  if (pulseScene) return;
+  pulseScene = new THREE.Scene();
+  pulseCamera = new THREE.PerspectiveCamera(52, 1, 0.12, 800);
+  pulseScene.add(pulseCamera);
+  installEnvironment(renderer, pulseScene, low, "pulse");
+  pulseWorld = buildPulseWorld(pulseScene, low);
+  pulseSim = createPulseSim(pulseScene, pulseWorld, audio);
+}
+
 function retargetComposer(nextScene, nextCam) {
   if (composer) {
     try { composer.dispose(); } catch { /* an old pass can already be gone */ }
     composer = null;
   }
   composer = makeComposer(renderer, nextScene, nextCam, low);
+}
+
+function bindStation(key) {
+  const kicker = document.getElementById("tutor-kicker");
+  if (key === "stack") {
+    dialogue.setWorld("rusty-stack");
+    narrate.use("stack");
+    audio.setBed("stack");
+    if (kicker) kicker.textContent = "On the deck";
+  } else if (key === "pulse") {
+    dialogue.setWorld("first-pulse");
+    narrate.use("pulse");
+    audio.setBed("pulse");
+    if (kicker) kicker.textContent = "In the foam";
+  } else {
+    dialogue.setWorld("california-trail");
+    narrate.use("trail");
+    audio.setBed("trail");
+    if (kicker) kicker.textContent = "On the trail";
+  }
 }
 
 function enterWorld(key) {
@@ -508,26 +617,25 @@ function enterWorld(key) {
     world = stackWorld;
     sim = stackSim;
     worldKey = "stack";
-    dialogue.setWorld("rusty-stack");
-    narrate.use("stack");
-    audio.setBed("stack");
-    const kicker = document.getElementById("tutor-kicker");
-    if (kicker) kicker.textContent = "On the deck";
+  } else if (key === "pulse") {
+    ensurePulse();
+    scene = pulseScene;
+    camera = pulseCamera;
+    world = pulseWorld;
+    sim = pulseSim;
+    worldKey = "pulse";
   } else {
     scene = trailScene;
     camera = trailCamera;
     world = trailWorld;
     sim = trailSim;
     worldKey = "trail";
-    dialogue.setWorld("california-trail");
-    narrate.use("trail");
-    audio.setBed("trail");
-    const kicker = document.getElementById("tutor-kicker");
-    if (kicker) kicker.textContent = "On the trail";
   }
+  bindStation(worldKey);
   scene.add(camera);
   scene.add(flashLight);
   scene.add(shock);
+  scene.add(lassoLine);
   retargetComposer(scene, camera);
   camera.aspect = window.innerWidth / Math.max(1, window.innerHeight);
   camera.updateProjectionMatrix();
@@ -542,18 +650,11 @@ function finishThrough() {
   hideBlankShade();
   transitioning = false;
   const key = STATIONS[station].id;
-  if (key !== worldKey) enterWorld(key === "stack" ? "stack" : "trail");
-  else if (key === "stack") {
-    dialogue.setWorld("rusty-stack");
-    narrate.use("stack");
-    audio.setBed("stack");
-  } else {
-    dialogue.setWorld("california-trail");
-    narrate.use("trail");
-    audio.setBed("trail");
-  }
+  const liveKey = key === "stack" || key === "pulse" ? key : "trail";
+  if (key !== worldKey) enterWorld(liveKey);
+  else bindStation(liveKey);
   sim.resetTrail();
-  camYaw = key === "stack" ? 0.2 : 0.55;
+  camYaw = key === "trail" ? 0.55 : 0.2;
   camPitch = 0.4;
   showCard("title");
 }
@@ -684,9 +785,27 @@ if (params.get("shot")) document.body.classList.add("shot");
 
 const worldParam = params.get("world");
 const wantStack = worldParam === "stack" || worldParam === "rusty";
+const wantPulse = worldParam === "pulse" || worldParam === "first-pulse";
 const stackStarts = ["play", "deck", "boss", "city", "goats", "brawl", "fort"];
+const pulseStarts = ["play", "boss", "dish", "bridge", "light", "gate", "wave"];
 if (wantStack) station = 1;
-if (wantStack && stackStarts.includes(start)) {
+if (wantPulse) station = 2;
+if (wantPulse && pulseStarts.includes(start)) {
+  enterWorld("pulse");
+  if (start === "boss" || start === "wave") {
+    sim.place(0, params.get("shot") === "boss" ? 76 : 74, 0);
+    sim.wakeBoss();
+    if (sim.poseBoss) sim.poseBoss();
+  } else if (start === "dish") sim.place(0, 26, 0);
+  else if (start === "bridge") sim.place(0, 50, 0);
+  else if (start === "light") sim.place(0, 8, 0);
+  else if (start === "gate") sim.skipToGate();
+  if (params.get("shot") === "crew" && sim.poseCrew) sim.poseCrew();
+  hideCard();
+  audio.unlock();
+} else if (wantPulse) {
+  showHub();
+} else if (wantStack && stackStarts.includes(start)) {
   enterWorld("stack");
   if (start === "boss") {
     if (params.get("shot") === "boss") {
@@ -782,6 +901,7 @@ let last = performance.now();
 function frame(now) {
   const raw = Math.min(0.3, Math.max(0.001, (now - last) / 1000));
   last = now;
+  abilities.tick(raw);
   if (mode === "title") {
     camYaw = 0.62 + Math.sin(now / 1000 * 0.18) * 0.08;
     camPitch = 0.4;
@@ -938,6 +1058,10 @@ function frame(now) {
     shock.scale.setScalar(1 + (1 - shockK / 0.45) * 6);
     shock.material.opacity = shockK * 1.2;
   } else shock.material.opacity = 0;
+  if (lassoK > 0) {
+    lassoK = Math.max(0, lassoK - raw);
+    lassoLine.material.opacity = lassoK * 2.4;
+  } else lassoLine.material.opacity = 0;
 
   for (const ev of snap.events) {
     if (ev.type === "say") dialogue.say(ev.id);
@@ -955,7 +1079,26 @@ function frame(now) {
     }
     else if (ev.type === "hit") shake = Math.max(shake, ev.heavy ? 0.55 : 0.26);
     else if (ev.type === "level") addFloat(ev.x, ev.y, ev.z, "Lv " + ev.n, true);
-    else if (ev.type === "flash") { flashI = 1; shockK = 0.45; el.flash.classList.add("on"); setTimeout(() => el.flash.classList.remove("on"), 160); }
+    else if (ev.type === "flash" || ev.type === "steam" || ev.type === "pulse") {
+      flashI = ev.type === "steam" ? 0.45 : 1;
+      shockK = 0.45;
+      shock.material.color.setHex(ev.type === "pulse" ? 0xd7ecff : ev.type === "steam" ? 0xe7d2b4 : 0xfff0c8);
+      if (ev.type !== "steam") {
+        el.flash.classList.add("on");
+        setTimeout(() => el.flash.classList.remove("on"), 160);
+      }
+    }
+    else if (ev.type === "lasso") {
+      const attr = lassoLine.geometry.attributes.position;
+      attr.setXYZ(0, ev.x, snap.player.y + 1.15, ev.z);
+      attr.setXYZ(1, ev.tx, snap.player.y + 0.9, ev.tz);
+      attr.needsUpdate = true;
+      lassoK = 0.42;
+    }
+    else if (ev.type === "ability") {
+      const names = { lasso: "Lasso", steam: "Steam", pulse: "Pulse" };
+      addFloat(snap.player.x, snap.player.y + 1.8, snap.player.z, names[ev.id] || "Ability", true);
+    }
     else if (ev.type === "dead") showCard("dead");
     else if (ev.type === "outro") showCard("outro");
     else if (ev.type === "gate") pullBack();
@@ -969,6 +1112,7 @@ function frame(now) {
     if (hurtFlash <= 0) el.hurt.classList.remove("on");
   }
   paintHud(snap);
+  paintAbilities();
   if (flyby && flyby.arm > 0.35 && !helpOpen()) {
     el.prompt.hidden = false;
     el.prompt.classList.remove("is-react");
@@ -1080,7 +1224,7 @@ function paintHud(snap) {
   const line = dialogue.active();
   if (line && el.tag && mode === "play") {
     const head = snap.heads[line.speaker];
-    const pt = head && project(head.x, head.y + 0.35, head.z);
+    const pt = head && project(head.x, head.y + 0.72, head.z);
     if (pt) {
       el.tag.hidden = false;
       el.tag.style.transform = `translate(${pt.x}px, ${pt.y}px) translate(-50%, -100%)`;
@@ -1112,12 +1256,13 @@ window.__BOOKWORLDS = {
     return !!restored[key];
   },
   worldKey: () => worldKey,
-  worldId: () => (worldKey === "stack" ? "rusty-stack" : "california-trail"),
+  worldId: () => (worldKey === "stack" ? "rusty-stack" : worldKey === "pulse" ? "first-pulse" : "california-trail"),
+  abilities: () => abilities.list().map((a) => ({ id: a.id, ready: a.ready, cd: a.cd })),
   player: () => {
     const p = sim.player;
     return { x: p.x, y: p.y, z: p.z, hp: p.hp, yaw: p.yaw, hits: sim.hits(), mp: p.mp, coins: p.coins, potions: p.potions };
   },
-  enemies: () => sim.enemies.map((e) => ({ id: e.id, kind: e.kind, hp: e.hp, hpMax: e.hpMax, alive: e.alive, x: e.x, z: e.z, pendulum: !!e.pendulum, routed: !!e.routed })),
+  enemies: () => sim.enemies.map((e) => ({ id: e.id, kind: e.kind, hp: e.hp, hpMax: e.hpMax, alive: e.alive, freed: !!e.freed, x: e.x, z: e.z, pendulum: !!e.pendulum, routed: !!e.routed })),
   bulletin: () => narrate.current(),
   pages: () => sim.pageCount(),
   circus: () => sim.circusDone(),
@@ -1192,6 +1337,42 @@ document.getElementById("interact").addEventListener("pointerup", (e) => {
   if (mode !== "play" || !playing) return;
   input.press("use");
 });
+document.getElementById("abilities")?.addEventListener("pointerup", (e) => {
+  const btn = e.target.closest("[data-ability]");
+  if (!btn) return;
+  e.preventDefault();
+  e.stopPropagation();
+  if (mode !== "play" || !playing) return;
+  input.press(btn.getAttribute("data-ability"));
+});
+
+function paintAbilities() {
+  const box = document.getElementById("abilities");
+  if (!box) return;
+  const rows = mode === "play" ? abilities.list() : [];
+  box.hidden = rows.length === 0;
+  const touch = document.body.classList.contains("touch");
+  const ids = rows.map((a) => a.id).join(",");
+  if (box.dataset.ids !== ids || box.dataset.touch !== (touch ? "1" : "0")) {
+    box.dataset.ids = ids;
+    box.dataset.touch = touch ? "1" : "0";
+    box.innerHTML = rows.map((a) => {
+      const key = touch ? "" : `<b>${a.key}</b>`;
+      return `<button type="button" data-ability="${a.id}"><svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15"></circle></svg><span>${a.name}</span>${key}</button>`;
+    }).join("");
+  }
+  const circ = 2 * Math.PI * 15;
+  for (const btn of box.querySelectorAll("button")) {
+    const row = rows.find((a) => a.id === btn.dataset.ability);
+    if (!row) continue;
+    btn.classList.toggle("is-dry", !row.ready);
+    const ring = btn.querySelector("circle");
+    if (!ring) continue;
+    const left = row.cool > 0 ? Math.min(1, row.cd / row.cool) : 0;
+    ring.style.strokeDasharray = String(circ);
+    ring.style.strokeDashoffset = String(circ * left);
+  }
+}
 
 function paintParty(snap) {
   const rows = snap.party || [];
@@ -1453,6 +1634,12 @@ function installEnvironment(gl, rootScene, lowQ, kind) {
     grd.addColorStop(0.42, "#7aa0c8");
     grd.addColorStop(0.68, "#e8b07a");
     grd.addColorStop(1, "#8a6848");
+  } else if (kind === "pulse") {
+    grd.addColorStop(0, "#2a1458");
+    grd.addColorStop(0.28, "#6a3a28");
+    grd.addColorStop(0.48, "#e0a04a");
+    grd.addColorStop(0.68, "#1a7a78");
+    grd.addColorStop(1, "#140818");
   } else {
     grd.addColorStop(0, "#1a2744");
     grd.addColorStop(0.42, "#c45a3a");

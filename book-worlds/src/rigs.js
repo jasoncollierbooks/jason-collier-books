@@ -508,6 +508,7 @@ const fogShader = {
     uniform float uTime;
     uniform float uHit;
     uniform float uFade;
+    uniform float uWisp;
     varying vec3 vN;
     varying vec3 vLocal;
     float hash(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
@@ -531,23 +532,36 @@ const fogShader = {
       float n = noise(vLocal * 2.1 + vec3(0.0, uTime * 0.32, uTime * 0.1));
       float n2 = noise(vLocal * 4.8 - vec3(uTime * 0.4, uTime * 0.15, 0.0));
       float n3 = noise(vLocal * 1.1 + vec3(uTime * 0.08, 0.0, uTime * 0.05));
-      float core = smoothstep(0.95, 0.15, length(vLocal));
-      float alpha = (0.08 + n * 0.34 + n2 * 0.2 + n3 * 0.16) * (0.22 + fres * 0.9) * uFade;
-      alpha = mix(alpha * 0.45, alpha * 1.35, core);
-      vec3 col = mix(vec3(0.32, 0.33, 0.36), vec3(0.86, 0.87, 0.88), n);
-      col = mix(col, vec3(0.62, 0.64, 0.68), fres * 0.55);
-      col += vec3(0.55) * uHit;
-      gl_FragColor = vec4(col, clamp(alpha, 0.0, 0.72));
+      if (uWisp > 0.5) {
+        float radial = length(vLocal.xz);
+        float hollow = smoothstep(0.08, 0.55, radial);
+        float wisps = fres * (0.15 + n * 0.55 + n3 * 0.2);
+        float alpha = wisps * (0.25 + hollow * 0.75) * uFade;
+        float spark = step(0.9, n2);
+        vec3 col = mix(vec3(0.03, 0.032, 0.036), vec3(0.32, 0.34, 0.37), fres);
+        col += vec3(0.62, 0.7, 0.8) * spark * 0.45;
+        col += vec3(0.35) * uHit;
+        gl_FragColor = vec4(col, clamp(alpha, 0.0, 0.26));
+      } else {
+        float core = smoothstep(0.95, 0.15, length(vLocal));
+        float alpha = (0.08 + n * 0.34 + n2 * 0.2 + n3 * 0.16) * (0.22 + fres * 0.9) * uFade;
+        alpha = mix(alpha * 0.45, alpha * 1.35, core);
+        vec3 col = mix(vec3(0.32, 0.33, 0.36), vec3(0.86, 0.87, 0.88), n);
+        col = mix(col, vec3(0.62, 0.64, 0.68), fres * 0.55);
+        col += vec3(0.55) * uHit;
+        gl_FragColor = vec4(col, clamp(alpha, 0.0, 0.72));
+      }
     }
   `,
 };
 
-function fogMat() {
+function fogMat(wisp) {
   return new THREE.ShaderMaterial({
     uniforms: {
       uTime: { value: 0 },
       uHit: { value: 0 },
       uFade: { value: 1 },
+      uWisp: { value: wisp ? 1 : 0 },
     },
     vertexShader: fogShader.vertexShader,
     fragmentShader: fogShader.fragmentShader,
@@ -559,38 +573,62 @@ function fogMat() {
 
 export function createFog(opts = {}) {
   const tall = !!opts.tall;
+  const wisp = !!opts.wisp;
   const root = new THREE.Group();
   const body = new THREE.Group();
   root.add(body);
   const shells = [];
-  const volumes = [
-    { p: [0, tall ? 1.05 : 0.78, 0], s: [0.42, tall ? 0.72 : 0.5, 0.34] },
-    { p: [0.05, tall ? 1.55 : 1.15, 0.02], s: [0.28, tall ? 0.42 : 0.3, 0.24] },
-    { p: [0, tall ? 0.45 : 0.32, 0], s: [0.5, 0.22, 0.36] },
-  ];
-  for (let shell = 0; shell < 4; shell++) {
+  const volumes = wisp
+    ? [
+      { p: [0, tall ? 1.2 : 0.95, 0], s: [0.16, tall ? 0.9 : 0.62, 0.12] },
+      { p: [0.14, tall ? 1.45 : 1.1, 0.04], s: [0.12, 0.38, 0.1] },
+      { p: [-0.12, tall ? 0.72 : 0.52, -0.03], s: [0.22, 0.28, 0.1] },
+      { p: [0.04, tall ? 0.32 : 0.22, 0.02], s: [0.14, 0.4, 0.1] },
+    ]
+    : [
+      { p: [0, tall ? 1.05 : 0.78, 0], s: [0.42, tall ? 0.72 : 0.5, 0.34] },
+      { p: [0.05, tall ? 1.55 : 1.15, 0.02], s: [0.28, tall ? 0.42 : 0.3, 0.24] },
+      { p: [0, tall ? 0.45 : 0.32, 0], s: [0.5, 0.22, 0.36] },
+    ];
+  const layers = wisp ? 3 : 4;
+  for (let shell = 0; shell < layers; shell++) {
     for (const v of volumes) {
-      const mat = fogMat();
+      const mat = fogMat(wisp);
       mat.uniforms.uFade.value = 0.55 + shell * 0.18;
-      const mesh = new THREE.Mesh(new THREE.SphereGeometry(1, 18, 14), mat);
+      const mesh = new THREE.Mesh(new THREE.SphereGeometry(1, wisp ? 12 : 18, wisp ? 10 : 14), mat);
       mesh.position.set(v.p[0], v.p[1], v.p[2]);
-      const k = 1 + shell * 0.16;
+      const k = 1 + shell * (wisp ? 0.22 : 0.16);
       mesh.scale.set(v.s[0] * k, v.s[1] * k, v.s[2] * k);
       mesh.frustumCulled = false;
       body.add(mesh);
       shells.push(mesh);
     }
   }
-  const faceMat = new THREE.MeshBasicMaterial({ color: 0xd8d8d8, transparent: true, opacity: 0.9, depthWrite: false });
-  const face = new THREE.Mesh(new THREE.CircleGeometry(tall ? 0.16 : 0.11, 18), faceMat);
-  face.position.set(0, tall ? 1.62 : 1.22, tall ? 0.22 : 0.18);
-  body.add(face);
-  const dust = makeDust(tall ? 70 : 42, 0xdcdcdc, tall ? 1.8 : 1.15);
+  let face = null;
+  const eyes = [];
+  if (wisp) {
+    for (const s of [-1, 1]) {
+      const eye = new THREE.Mesh(
+        new THREE.SphereGeometry(tall ? 0.04 : 0.032, 8, 6),
+        new THREE.MeshBasicMaterial({ color: 0xd7ecff, transparent: true, opacity: 0.9, depthWrite: false }),
+      );
+      eye.position.set(s * (tall ? 0.08 : 0.065), tall ? 1.55 : 1.16, tall ? 0.12 : 0.1);
+      body.add(eye);
+      eyes.push(eye);
+    }
+  } else {
+    const faceMat = new THREE.MeshBasicMaterial({ color: 0xd8d8d8, transparent: true, opacity: 0.9, depthWrite: false });
+    face = new THREE.Mesh(new THREE.CircleGeometry(tall ? 0.16 : 0.11, 18), faceMat);
+    face.position.set(0, tall ? 1.62 : 1.22, tall ? 0.22 : 0.18);
+    body.add(face);
+    const shadow = blobShadow();
+    shadow.scale.setScalar(tall ? 1.55 : 1.05);
+    root.add(shadow);
+  }
+  const dust = makeDust(wisp ? (tall ? 90 : 64) : (tall ? 70 : 42), wisp ? 0xb7bcc4 : 0xdcdcdc, wisp ? (tall ? 1.5 : 1.05) : (tall ? 1.8 : 1.15));
   dust.position.y = tall ? 1.2 : 0.85;
+  if (wisp) dust.material.size = 0.055;
   root.add(dust);
-  const shadow = blobShadow();
-  shadow.scale.setScalar(tall ? 1.55 : 1.05);
-  root.add(shadow);
   if (opts.scale) root.scale.setScalar(opts.scale);
   let phase = Math.random() * 6;
   return {
@@ -606,12 +644,16 @@ export function createFog(opts = {}) {
       for (const mesh of shells) {
         mesh.material.uniforms.uTime.value = phase;
         mesh.material.uniforms.uHit.value = hit;
-        mesh.material.uniforms.uFade.value = (1 - dead) * (0.45 + (mesh.scale.x % 0.2));
+        mesh.material.uniforms.uFade.value = (1 - dead) * (wisp ? 0.7 : 0.45 + (mesh.scale.x % 0.2));
       }
-      face.position.y = (tall ? 1.62 : 1.22) + bob * 0.4;
-      face.material.opacity = 0.92 * (1 - dead);
+      if (face) {
+        face.position.y = (tall ? 1.62 : 1.22) + bob * 0.4;
+        face.material.opacity = 0.92 * (1 - dead);
+      }
+      const flick = 0.35 + Math.abs(Math.sin(phase * 3.7)) * 0.65;
+      for (const eye of eyes) eye.material.opacity = flick * (1 - dead);
       spinDust(dust, phase);
-      dust.material.opacity = 0.7 * (1 - dead);
+      dust.material.opacity = (wisp ? 0.55 : 0.7) * (1 - dead);
       return { step: false };
     },
   };
