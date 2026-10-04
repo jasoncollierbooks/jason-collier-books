@@ -73,7 +73,7 @@ export function createNarration(audio) {
     },
     oldman: {
       ...loadPack("../worlds/oldman/voices.json", "announcer"),
-      clip(id) { return `../audio/announcer/oldman/${id}.mp3`; },
+      clip(id) { return `../audio/announcer/oldman/${id}.mp3?v=1`; },
       kicker: kickerOldman,
     },
   };

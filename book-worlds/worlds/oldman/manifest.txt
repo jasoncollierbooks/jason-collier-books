@@ -1,0 +1,40 @@
+# Book Worlds - World 4 'Old Man on the Mountain' voice clips
+# Paths relative to book-worlds/audio/. mono mp3 44.1kHz 96kbps, -16 LUFS integrated, true peak <= -1.5 dBTP.
+# announcer: Chatterbox clone of promo-v2 ref_announcer.wav (radio EQ, 1.05x tempo), same as worlds 1-3.
+# harlan: Kokoro am_echo, speed 0.9, pitch -2 st (asetrate/atempo x0.891), 70Hz HPF, light outdoor slap+tail reverb.
+# votes = Whisper small.en passes out of 3 against the script text.
+path	speaker	id	duration_s	whisper_votes	take	transcript
+announcer/oldman/intro.mp3	announcer	intro	10.63	3/3	3	We interrupt this program to bring you a special bulletin. Non-imaginaires, the brain fogs, are eating old man on the mountain. Five pages are going gray in the high country. The cold is real. Something in the timber is not.
+announcer/oldman/enter.mp3	announcer	enter	5.02	3/3	2	You are on Harlan Wade's hunt. Seven days of food. The pages are torn. Put them back.
+announcer/oldman/page-seven-days.mp3	announcer	page-seven-days	3.97	3/3	1	A torn page. Harlan Wade went up alone for elk with seven days of food.
+announcer/oldman/page-wall-tent.mp3	announcer	page-wall-tent	4.96	3/3	1	A torn page, a small wall tent, he built the fire high when the cold went below zero.
+announcer/oldman/page-steep-timber.mp3	announcer	page-steep-timber	4.62	3/3	3	A torn page, steep timber, then benches, then parks where the elk should have been.
+announcer/oldman/page-bark-skin.mp3	announcer	page-bark-skin	6.74	3/3	1	A torn page, it had bark for skin, and eyes that shone green. Where it bled, the blood was amber, like sap.
+announcer/oldman/page-the-ridges.mp3	announcer	page-the-ridges	5.72	3/3	1	A torn page, a chorus of bellows rolled down from every ridge, the mountain kept its secrets.
+announcer/oldman/scene-timber.mp3	announcer	scene-timber	2.77	3/3	5	Steep timber. The snow takes a boot print and keeps it.
+announcer/oldman/scene-benches.mp3	announcer	scene-benches	2.38	3/3	1	The benches. These tracks are not elk.
+announcer/oldman/scene-park.mp3	announcer	scene-park	2.87	3/3	1	An elk park and a fire on the knoll. The tent is Harlan's.
+announcer/oldman/scene-watched.mp3	announcer	scene-watched	2.53	3/3	1	The tree line is watching the eyes are green
+announcer/oldman/boss.mp3	announcer	boss	5.54	3/3	1	Stand by. The old man has been taken by the fog. The bark and the green eyes stayed.
+announcer/oldman/restored.mp3	announcer	restored	4.62	3/3	1	Old man on the mountain has its color back. The ridges are quiet. They are only listening.
+announcer/oldman/blank-next.mp3	announcer	blank-next	2.43	3/3	1	The next ridge is already forgetting its own weather.
+voices/harlan/harlan-greet.mp3	harlan	harlan-greet	5.15	3/3	1	Name's Harlan Wade. I came up for elk. Seven days of food. You can walk with me.
+voices/harlan/harlan-food.mp3	harlan	harlan-food	3.32	3/3	1	That's the last of the seven days, if I count honest.
+voices/harlan/harlan-cold.mp3	harlan	harlan-cold	4.21	3/3	1	Below zero last night, I built the fire high and the tent held.
+voices/harlan/harlan-tracks.mp3	harlan	harlan-tracks	3.79	3/3	1	Those are not elk tracks, too long, and they do not wander.
+voices/harlan/harlan-park.mp3	harlan	harlan-park	3.47	3/3	2	Park opens here. Elk should be feeding. They are not.
+voices/harlan/harlan-eyes.mp3	harlan	harlan-eyes	3.79	3/3	1	Do not shine a light at the tree line, something shines back.
+voices/harlan/harlan-fight.mp3	harlan	harlan-fight	3.63	3/3	1	Fog taken. Hit the gray. Leave the animal under it.
+voices/harlan/harlan-watched.mp3	harlan	harlan-watched	3.37	3/3	1	We are being followed. I have felt it since the benches.
+voices/harlan/harlan-boss.mp3	harlan	harlan-boss	4.02	3/3	1	That is him bark for skin. The fog is wearing the old man.
+voices/harlan/harlan-pin.mp3	harlan	harlan-pin	2.12	3/3	5	The spruce pin that arm.
+voices/harlan/harlan-win.mp3	harlan	harlan-win	3.24	3/3	1	The green went out of his eyes. He is free of it.
+voices/harlan/harlan-walk.mp3	harlan	harlan-walk	3.53	3/3	1	Listen every ridge. I am walking back to the truck.
+voices/harlan/harlan-low.mp3	harlan	harlan-low	3.34	3/3	1	Keepers stay on your feet. I am not packing you out.
+voices/harlan/harlan-page.mp3	harlan	harlan-page	2.93	3/3	1	A page, the book wants it, so do I.
+voices/harlan/harlan-chest.mp3	harlan	harlan-chest	2.19	3/3	1	Cash take what is useful.
+voices/harlan/harlan-save.mp3	harlan	harlan-save	2.30	3/3	1	The truck will remember this spot.
+voices/harlan/harlan-gate.mp3	harlan	harlan-gate	2.87	3/3	1	Truck's right there. We are done on this mountain.
+voices/harlan/harlan-free.mp3	harlan	harlan-free	1.96	3/3	1	They're the gray let go.
+voices/harlan/harlan-half.mp3	harlan	harlan-half	2.95	3/3	1	He is still in there, the fog is what swings.
+voices/harlan/harlan-fire.mp3	harlan	harlan-fire	3.40	3/3	1	Firelight, it burns the fog off them. Use it.

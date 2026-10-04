@@ -1,6 +1,6 @@
 # Voice lines — Old Man on the Mountain
 
-Record these after the build. Short lines. Spoken audio is the intended delivery. Until a clip exists, the game falls back to a caption and does not add new buttons.
+Short lines. Spoken audio is the delivery. Each id below has a clip under `book-worlds/audio/`. If a clip fails to play, the game shows that line as a caption and does not add new buttons. Subtitles stay off unless the player turns them on.
 
 No music on this station. Wind, snow, fire, bugles, bellows, and howls are synthesized.
 
