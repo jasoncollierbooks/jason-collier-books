@@ -938,7 +938,7 @@ export function createOldmanSim(scene, world, audio) {
       const t = d <= inner ? 1 : clamp(1 - (d - inner) / (outer - inner), 0, 1);
       drain = Math.max(drain, t);
     }
-    return drain;
+    return drain * 0.42;
   }
   function dreadNow() {
     if (!boss.alive) return 0.15;

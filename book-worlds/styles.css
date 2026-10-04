@@ -699,6 +699,7 @@ body.playing #party, body.playing #cmd, body.playing #gauges { display: block; }
   width: min(200px, 46vw); pointer-events: none;
 }
 #party p { display: grid; grid-template-columns: 6.2rem 1fr; gap: 6px; align-items: center; margin-top: 4px; }
+#party p[hidden] { display: none; }
 #party span {
   font-family: var(--ui); font-size: 16px; letter-spacing: .04em; text-transform: uppercase; color: var(--paper);
   text-shadow: 0 1px 2px #000; white-space: nowrap;

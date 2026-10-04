@@ -48,7 +48,7 @@ function barkMat() {
         vec3 bark = mix(vec3(0.28, 0.16, 0.08), vec3(0.45, 0.28, 0.14), ridge);
         bark = mix(bark, vec3(0.16, 0.22, 0.1), smoothstep(0.72, 0.95, grain) * 0.55);
         vec3 gray = vec3(0.28, 0.3, 0.31);
-        vec3 col = mix(bark, gray, uFog * 0.72);
+        vec3 col = mix(bark, gray, uFog * 0.28);
         col = mix(col, vec3(0.86, 0.48, 0.1), uHit * 0.75);
         float fres = pow(1.0 - abs(vN.z), 1.4);
         col += vec3(0.15, 0.2, 0.08) * fres * (1.0 - uFog);
@@ -146,7 +146,7 @@ function create() {
 
   const eyeMat = new THREE.MeshBasicMaterial({ color: 0x39ff6a });
   const eyes = [-1, 1].map((s) => {
-    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 6), eyeMat);
+    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 6), eyeMat);
     eye.position.set(s * 0.18, 3.5, 0.42);
     rig.add(eye);
     return eye;
@@ -164,7 +164,7 @@ function create() {
   const fog = fogMat();
   const shell = new THREE.Mesh(new THREE.SphereGeometry(1.55, 16, 12), fog);
   shell.position.y = 2.15;
-  shell.scale.set(1.15, 1.55, 1.05);
+  shell.scale.set(1.02, 1.2, 0.92);
   rig.add(shell);
 
   const glow = new THREE.PointLight(0x39ff6a, 1.1, 9, 2);

@@ -43,7 +43,7 @@ export function buildOldmanWorld(scene, low) {
   const obstacles = [];
   const block = (x, z, r) => obstacles.push({ x, z, r });
 
-  scene.fog = new THREE.FogExp2(0x1a2436, low ? 0.028 : 0.02);
+  scene.fog = new THREE.FogExp2(0x1a2436, low ? 0.016 : 0.012);
   scene.background = new THREE.Color(0x1a2436);
 
   const hemi = new THREE.HemisphereLight(0x8aa0c4, 0x3a342c, low ? 0.55 : 0.7);
@@ -150,7 +150,7 @@ export function buildOldmanWorld(scene, low) {
       if (freed) fogC.setHex(0x243044);
       scene.fog.color.copy(fogC);
       scene.background.copy(fogC);
-      scene.fog.density = (low ? 0.026 : 0.018) + dread * 0.008;
+      scene.fog.density = (low ? 0.016 : 0.012) + (freed ? 0 : dread * 0.006);
       for (const pair of eyes) {
         const blink = Math.sin(t * 1.7 + pair.phase) > 0.2 ? 1 : 0.15;
         const near = player ? clamp(1 - Math.hypot(player.x - pair.x, player.z - pair.z) / 18, 0, 1) : 0.4;

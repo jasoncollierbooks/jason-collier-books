@@ -167,7 +167,7 @@ function burstEmbers(x, y, z) {
       tag: "ember",
       mesh: ember,
       disposable: true,
-      life: 720,
+      life: 1100,
       onTick(k) {
         const u = 1 - k;
         ember.position.set(x + Math.cos(ang) * sp * u, y + 0.4 + u * 1.45, z + Math.sin(ang) * sp * u);
@@ -963,8 +963,9 @@ if (wantOldman) station = 3;
 if (wantOldman && oldmanStarts.includes(start)) {
   enterWorld("oldman");
   if (start === "boss") {
-    sim.place(0, 82, 0);
+    sim.place(-1.7, 83.2, 0.35);
     sim.wakeBoss();
+    if (sim.poseCrew) sim.poseCrew();
     if (sim.poseBoss) sim.poseBoss();
   } else if (start === "freed") {
     sim.place(-1.2, 83, 0.15);
@@ -1219,18 +1220,21 @@ function frame(now) {
       scene.add(shotLight, shotLight.target);
     }
   } else if (shot === "harlan" && snap) {
-    camPos.set(snap.player.x - 5.4, snap.player.y + 2.15, snap.player.z + 0.8);
-    lookAt.set(snap.player.x + 1.1, snap.player.y + 1.05, snap.player.z + 1.4);
+    camPos.set(snap.player.x - 3.4, snap.player.y + 1.65, snap.player.z - 4.8);
+    lookAt.set(snap.player.x + 0.7, snap.player.y + 1.2, snap.player.z + 0.6);
+  } else if (shot === "fire" && snap) {
+    camPos.set(snap.player.x - 4.4, snap.player.y + 1.75, snap.player.z - 0.6);
+    lookAt.set(snap.player.x + 0.3, snap.player.y + 1.05, snap.player.z + 2.2);
   } else if (shot === "freed" && snap.boss) {
-    camPos.set(snap.boss.x - 4.6, 2.5, snap.boss.z - 7.4);
-    lookAt.set(snap.boss.x + 0.2, 2.2, snap.boss.z + 0.2);
+    camPos.set(snap.boss.x + 2.4, 2.15, snap.boss.z - 6.4);
+    lookAt.set(snap.boss.x, 2.45, snap.boss.z);
   } else if (shot === "boss" && snap.boss) {
-    camPos.set(-2.15, 2.2, snap.boss.z - 5.5);
-    lookAt.set(0.15, 1.65, snap.boss.z + 0.2);
+    camPos.set(snap.boss.x + 0.15, 2.2, snap.boss.z - 6.5);
+    lookAt.set(snap.boss.x, 2.5, snap.boss.z);
     if (!shotLight) {
       shotLight = new THREE.DirectionalLight(0xffe2c0, 3.6);
-      shotLight.position.set(-6, 5.5, snap.boss.z - 6);
-      shotLight.target.position.set(0, 1.8, snap.boss.z);
+      shotLight.position.set(snap.boss.x - 8, 7.2, snap.boss.z - 4);
+      shotLight.target.position.set(snap.boss.x, 2.8, snap.boss.z);
       scene.add(shotLight, shotLight.target);
     }
   } else {
