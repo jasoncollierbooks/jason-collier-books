@@ -1950,9 +1950,7 @@ function wireHome() {
     if (input) input.enabled = false;
     if (leave) leave.hidden = false;
   };
-  for (const id of ["home-pin", "home-hub", "home-card", "settings-home"]) {
-    document.getElementById(id)?.addEventListener("pointerup", ask);
-  }
+  document.getElementById("home-pin")?.addEventListener("pointerup", ask);
   document.getElementById("leave-no")?.addEventListener("pointerup", (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -1966,59 +1964,6 @@ function wireHome() {
   });
 }
 
-const SHARE_LINE = "Jason Collier — books, audiobooks and games";
-function sharePayload() {
-  const label = document.body.classList.contains("home") ? SHARE_LINE : document.title;
-  return { title: label, text: label, url: location.href };
-}
-function showCopied() {
-  let el = document.getElementById("link-toast");
-  if (!el) {
-    el = document.createElement("p");
-    el.id = "link-toast";
-    el.setAttribute("role", "status");
-    document.getElementById("app").appendChild(el);
-  }
-  el.textContent = "Link copied";
-  el.classList.add("on");
-  clearTimeout(showCopied._t);
-  showCopied._t = setTimeout(() => el.classList.remove("on"), 2200);
-}
-async function sharePage(e) {
-  if (e) {
-    e.preventDefault();
-    e.stopPropagation();
-  }
-  const data = sharePayload();
-  if (navigator.share) {
-    try {
-      await navigator.share(data);
-      return;
-    } catch (err) {
-      if (err && err.name === "AbortError") return;
-    }
-  }
-  try {
-    await navigator.clipboard.writeText(data.url);
-  } catch (err) {
-    const field = document.createElement("textarea");
-    field.value = data.url;
-    field.setAttribute("readonly", "");
-    field.style.position = "fixed";
-    field.style.left = "-999px";
-    document.body.appendChild(field);
-    field.select();
-    try { document.execCommand("copy"); } catch (e2) { /* ignore */ }
-    field.remove();
-  }
-  showCopied();
-}
-function wireShare() {
-  document.getElementById("share-hub")?.addEventListener("pointerup", sharePage);
-  document.getElementById("settings-share")?.addEventListener("pointerup", sharePage);
-}
-
 wireSettings();
 wireHome();
-wireShare();
 requestAnimationFrame(frame);

@@ -217,7 +217,7 @@ function showTitle() {
       <div style="margin-top:22px">
         ${has ? `<button class="btn hot" id="tContinue">CONTINUE</button>` : ""}
         <button class="btn ${has ? "" : "hot"}" id="tNew">LEAVE THE TRUCK</button>
-        <button type="button" class="btn home-big" id="tHome"><svg viewBox="0 0 24 24" aria-hidden="true" width="26" height="26"><path fill="currentColor" d="M12 3.2 3 11h2v9h5v-6h4v6h5v-9h2L12 3.2z"/></svg>Home</button>
+        <button type="button" class="btn home-big" id="tHome" aria-label="Home"><svg viewBox="0 0 24 24" aria-hidden="true" width="22" height="22"><path fill="currentColor" d="M12 3.2 3 11h2v9h5v-6h4v6h5v-9h2L12 3.2z"/></svg></button>
       </div>
       <p class="small" style="margin-top:14px">Headphones. Lights off.</p>
       <div class="tload" id="tLoad"><div class="loadtrack"><i class="loadbar-fill"></i></div><small class="loadbar-msg">Loading the mountain…</small></div>
@@ -287,7 +287,7 @@ function pauseMenu() {
      <button class="btn" id="pHow">HOW TO HUNT</button><br>
      <button class="btn" id="pMute">${X.muted() ? "SOUND ON" : "SOUND OFF"}</button><br>
      <button class="btn ghost" id="pNew">ABANDON HUNT</button><br>
-     <button type="button" class="btn home-big" id="pHome"><svg viewBox="0 0 24 24" aria-hidden="true" width="26" height="26"><path fill="currentColor" d="M12 3.2 3 11h2v9h5v-6h4v6h5v-9h2L12 3.2z"/></svg>Home</button>`,
+     <button type="button" class="btn home-big" id="pHome" aria-label="Home"><svg viewBox="0 0 24 24" aria-hidden="true" width="22" height="22"><path fill="currentColor" d="M12 3.2 3 11h2v9h5v-6h4v6h5v-9h2L12 3.2z"/></svg></button>`,
   );
   c.querySelector("#pRes").onclick = () => { hud.closeOverlay(); paused = false; };
   c.querySelector("#pHow").onclick = () => controlsCard(false);

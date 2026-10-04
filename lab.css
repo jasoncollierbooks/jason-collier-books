@@ -170,7 +170,7 @@
 .hud-box{font:1.2rem/1 "VT323",monospace;color:var(--ph);background:#040a06;border:1px solid rgba(93,255,155,.3);border-radius:3px;padding:.45rem .7rem;text-shadow:0 0 6px rgba(93,255,155,.6);box-shadow:inset 0 0 12px rgba(0,0,0,.8)}
 .hud-box b{font-weight:400;color:#caffdf}
 .hud-btn{font:700 .68rem/1 "Inter",sans-serif;letter-spacing:.14em;text-transform:uppercase;padding:.7rem .9rem;border-radius:3px;border:1px solid rgba(255,179,71,.4);background:rgba(0,0,0,.35);color:#f1e6cf;cursor:pointer}
-.hud-home{display:inline-flex;align-items:center;gap:.4rem;min-height:48px;text-decoration:none}
+.hud-btn.hud-home{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;min-width:40px;min-height:40px;padding:0;border-radius:50%;text-decoration:none}
 .hud-home svg{display:block;flex:none}
 .hud-btn:hover{border-color:var(--amber);color:var(--amber)}
 .ispy-wrap{display:grid;grid-template-columns:minmax(0,1fr) 15rem;gap:1.2rem;align-items:start}

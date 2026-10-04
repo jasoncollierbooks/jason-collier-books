@@ -28,8 +28,6 @@ body { font-family: var(--ui); -webkit-user-select: none; user-select: none; tou
   text-decoration: none; pointer-events: auto; touch-action: manipulation;
 }
 .home-pin svg { display: block; }
-.home-big { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 64px; min-width: 180px; font-size: 22px; letter-spacing: 0.16em; }
-.home-big svg { width: 26px; height: 26px; display: block; }
 .leave { position: absolute; inset: 0; z-index: 75; display: grid; place-items: center; padding: 20px; background: rgba(4, 5, 8, 0.78); }
 .leave-card { width: min(22rem, 100%); text-align: center; padding: 28px 18px 18px; background: #07090c; border: 1px solid rgba(236, 230, 218, 0.28); }
 .leave-card p { margin: 0 0 18px; font: 500 32px/1.15 var(--display); }
@@ -124,6 +122,11 @@ body:not(.touch) .stick, body:not(.touch) .touchhint { display: none !important;
 .overlay-card .tip-line { margin: 12px 0 0; }
 .overlay-card .tip-line a { color: var(--accent); }
 .overlay-card .btn { margin: 6px; min-width: 150px; }
+.overlay-card .btn.home-big {
+  display: inline-grid; place-items: center; width: 44px; min-width: 44px; height: 44px; min-height: 44px;
+  padding: 0; border-radius: 50%; letter-spacing: 0;
+}
+.overlay-card .btn.home-big svg { width: 22px; height: 22px; display: block; }
 .overlay-card img, .overlay-card canvas.card { width: 100%; max-height: 52vh; object-fit: cover; border: 1px solid rgba(255,255,255,0.15); display: block; margin: 0 auto 12px; }
 .ring { width: 120px; height: 120px; margin: 10px auto; }
 .controls { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; text-align: left; font-size: 16px; letter-spacing: 0.06em; margin: 10px auto 14px; max-width: 24rem; }
