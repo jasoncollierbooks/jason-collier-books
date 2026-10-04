@@ -4,7 +4,7 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons";
 import { createHuman as createCapsule, trailKey, handbillMesh, softDot } from "./rigs.js?v=5";
-import { createTrail, swingWeapon } from "./swing.js?v=3";
+import { createTrail, swingWeapon } from "./swing.js?v=4";
 import {
   dusterGeometry, collarGeometry, coatTailGeometry, sleeveGeometry,
   coverallGeometry, lapelGeometry, wrenchGroup, spyglassGroup, goggleRig,
@@ -786,9 +786,7 @@ function dress(api, assets) {
 
   model.scale.set(spec.bulk || 1, spec.height || 1, spec.bulk || 1);
   api._spin.add(model);
-  const trail = createTrail();
-  api.root.add(trail.mesh);
-  api._trail = trail;
+  api._trail = createTrail(api.root);
 
   const mixer = new THREE.AnimationMixer(model);
   const acts = {};

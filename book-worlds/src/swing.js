@@ -177,9 +177,22 @@ function clearBlade(hand, dir, scale) {
   return _blade;
 }
 
-export function createTrail() {
+// Each sample dies on a wall-clock timer. The ribbon fades and the mesh is
+// disposed even if the swing is interrupted, the sim skips a frame, or the
+// tab comes back long after the blade stopped.
+const TRAIL_MS = 380;
+const liveTrails = new Set();
+
+export function createTrail(root) {
+  const trail = { root: root || null, mesh: null, pts: [], max: 40 };
+  liveTrails.add(trail);
+  return trail;
+}
+
+function ensureMesh(trail) {
+  if (trail.mesh) return trail.mesh;
+  const max = trail.max;
   const geo = new THREE.BufferGeometry();
-  const max = 18;
   geo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(max * 2 * 3), 3));
   geo.setAttribute("color", new THREE.BufferAttribute(new Float32Array(max * 2 * 3), 3));
   const mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
@@ -193,44 +206,80 @@ export function createTrail() {
   mesh.frustumCulled = false;
   mesh.renderOrder = 2;
   mesh.visible = false;
-  return { mesh, pts: [], life: 0, max };
+  trail.mesh = mesh;
+  if (trail.root) trail.root.add(mesh);
+  return mesh;
 }
 
-function writeTrail(trail, root) {
+function disposeTrailMesh(trail) {
+  const mesh = trail.mesh;
+  if (!mesh) return;
+  mesh.removeFromParent();
+  mesh.geometry.dispose();
+  mesh.material.dispose();
+  trail.mesh = null;
+}
+
+function expirePoints(trail, now) {
   const pts = trail.pts;
-  const pos = trail.mesh.geometry.attributes.position;
-  const col = trail.mesh.geometry.attributes.color;
+  let i = 0;
+  while (i < pts.length && now - pts[i].born >= TRAIL_MS) i++;
+  if (i > 0) pts.splice(0, i);
+}
+
+function writeTrail(trail, now) {
+  const pts = trail.pts;
   const n = pts.length;
-  if (n < 2) {
-    trail.mesh.visible = false;
+  const root = trail.root;
+  if (n < 2 || !root) {
+    disposeTrailMesh(trail);
     return;
   }
-  trail.mesh.visible = true;
+  const mesh = ensureMesh(trail);
+  const pos = mesh.geometry.attributes.position;
+  const col = mesh.geometry.attributes.color;
+  mesh.visible = true;
   let count = 0;
   for (let i = 0; i < n; i++) {
-    const f = n === 1 ? 1 : i / (n - 1);
-    const w = 0.11 + f * 0.42;
-    _a.copy(pts[Math.max(0, i - 1)]);
-    _b.copy(pts[Math.min(n - 1, i + 1)]);
+    const f = i / (n - 1);
+    const age = Math.min(1, Math.max(0, (now - pts[i].born) / TRAIL_MS));
+    const w = (0.11 + f * 0.42) * (1 - age * 0.35);
+    _a.copy(pts[Math.max(0, i - 1)].at);
+    _b.copy(pts[Math.min(n - 1, i + 1)].at);
     _width.subVectors(_b, _a);
     if (_width.lengthSq() < 1e-6) _width.set(0, 1, 0);
     _width.normalize();
     _side.crossVectors(_width, _up);
     if (_side.lengthSq() < 1e-5) _side.set(1, 0, 0);
     _side.normalize().multiplyScalar(w);
-      const fade = 0.45 + 0.55 * f;
-      for (const sign of [-1, 1]) {
-        _local.copy(pts[i]).addScaledVector(_side, sign);
-        root.worldToLocal(_local);
-        pos.setXYZ(count, _local.x, _local.y, _local.z);
-        col.setXYZ(count, 1 * fade, 0.68 * fade, 0.16 * fade);
+    const fade = (1 - age) * (0.45 + 0.55 * f);
+    for (const sign of [-1, 1]) {
+      _local.copy(pts[i].at).addScaledVector(_side, sign);
+      root.worldToLocal(_local);
+      pos.setXYZ(count, _local.x, _local.y, _local.z);
+      col.setXYZ(count, 1 * fade, 0.68 * fade, 0.16 * fade);
       count++;
     }
   }
   pos.needsUpdate = true;
   col.needsUpdate = true;
-  trail.mesh.geometry.setDrawRange(0, count);
-  trail.mesh.geometry.computeBoundingSphere();
+  mesh.geometry.setDrawRange(0, count);
+  mesh.geometry.computeBoundingSphere();
+}
+
+function fadeTrail(trail, now) {
+  if (!trail) return;
+  expirePoints(trail, now);
+  if (trail.pts.length < 2) {
+    if (trail.pts.length === 0 || now - trail.pts[0].born >= TRAIL_MS) trail.pts.length = 0;
+    disposeTrailMesh(trail);
+    return;
+  }
+  writeTrail(trail, now);
+}
+
+export function tickTrails(now = performance.now()) {
+  for (const trail of liveTrails) fadeTrail(trail, now);
 }
 
 export function swingWeapon(model, bones, root, spec, trail) {
@@ -238,18 +287,8 @@ export function swingWeapon(model, bones, root, spec, trail) {
   const lower = bones.lowerarm_r;
   const hand = bones.hand_r;
   const weapon = hand && hand.children.find((c) => c.userData && c.userData.bladeTip);
-  if (!upper || !lower || !hand || !weapon) return;
-
   const attacking = spec.action === "attack" || spec.action === "shove";
-  if (!attacking) {
-    if (trail) {
-      trail.life = Math.max(0, trail.life - 0.05);
-      if (trail.life <= 0) trail.pts.length = 0;
-      else if (trail.pts.length) trail.pts.shift();
-      writeTrail(trail, root);
-    }
-    return;
-  }
+  if (!upper || !lower || !hand || !weapon || !attacking) return;
 
   model.updateMatrixWorld(true);
   upper.getWorldPosition(_shoulder);
@@ -284,13 +323,19 @@ export function swingWeapon(model, bones, root, spec, trail) {
   hand.updateMatrixWorld(true);
 
   if (!trail) return;
+  const now = performance.now();
+  expirePoints(trail, now);
   _tip.copy(weapon.userData.bladeTip).applyMatrix4(weapon.matrixWorld);
   const last = trail.pts[trail.pts.length - 1];
-  if (!last || last.distanceTo(_tip) > 0.045 * scale) {
-    trail.pts.push(_tip.clone());
+  const freshSwing = (spec.actionT || 0) < 0.05 && last && now - last.born > 50;
+  if (freshSwing) {
+    trail.pts.length = 0;
+    disposeTrailMesh(trail);
+  }
+  const prev = trail.pts[trail.pts.length - 1];
+  if (!prev || prev.at.distanceTo(_tip) > 0.045 * scale) {
+    trail.pts.push({ at: _tip.clone(), born: now });
     if (trail.pts.length > trail.max) trail.pts.shift();
   }
-  trail.life = 1;
-  writeTrail(trail, root);
   void _mid;
 }
