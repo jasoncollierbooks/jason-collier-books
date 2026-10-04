@@ -2,7 +2,8 @@ import * as THREE from "three";
 import { clamp, damp, dampAngle, hypot2 } from "./util.js";
 import { halfWidth, heightAt } from "./world.js?v=7";
 import { createFog, handbillMesh } from "./rigs.js?v=5";
-import { createHuman } from "./actors.js?v=8";
+import { createHuman } from "./actors.js?v=9";
+import { armRing, note, spawn } from "./vfx.js?v=1";
 import { bossFor } from "../bosses/index.js?v=8";
 import { createAbilities } from "./abilities.js?v=1";
 
@@ -141,7 +142,27 @@ export function createSim(scene, world, audio) {
   );
   gust.rotation.x = -Math.PI / 2;
   scene.add(gust);
-  let gustT = 0;
+  const gustFx = armRing(gust, {
+    tag: "gust",
+    life: 480,
+    scale: (k) => 1 + (1 - k) * 8,
+    opacity: (k) => k * 0.624,
+  });
+  function armBill(mesh) {
+    return spawn({
+      tag: "bill",
+      mesh,
+      life: 1600,
+      disposable: true,
+      onStop() {
+        if (!mesh || mesh.userData.vfxDead) return;
+        mesh.userData.vfxDead = true;
+        mesh.removeFromParent();
+        if (mesh.geometry && mesh.geometry.dispose) mesh.geometry.dispose();
+        if (mesh.material && mesh.material.dispose) mesh.material.dispose();
+      },
+    });
+  }
 
   let circus = false;
   let reaction = null;
@@ -649,6 +670,7 @@ export function createSim(scene, world, audio) {
     e.tell.scale.setScalar(wind ? 0.35 + k * 1.7 : 1.75);
     e.tell.material.opacity = wind ? 0.28 + k * 0.62 : 0.9;
     e.tell.material.color.setHex(wind && k < 0.72 ? 0xffc56a : 0xff2a1c);
+    note(e.tell);
   }
 
   function showRing(radius, k) {
@@ -657,6 +679,7 @@ export function createSim(scene, world, audio) {
     ring.scale.setScalar(s);
     ring.material.opacity = 0.15 + 0.45 * k;
     ring.material.color.set(boss.state.startsWith("roar") ? 0xd2c4ee : 0xe7c48a);
+    note(ring);
   }
 
   function separate(dt) {
@@ -752,7 +775,7 @@ export function createSim(scene, world, audio) {
           a.animT = 0;
           const mesh = handbillMesh();
           scene.add(mesh);
-          bills.push({ mesh, x: a.x, y: 1.3, z: a.z, foe, life: 0 });
+          bills.push({ mesh, x: a.x, y: 1.3, z: a.z, foe, life: 0, fx: armBill(mesh) });
         }
       }
       const y = heightAt(a.x, a.z);
@@ -772,6 +795,10 @@ export function createSim(scene, world, audio) {
     }
     for (let i = bills.length - 1; i >= 0; i--) {
       const b = bills[i];
+      if (!b.fx || !b.fx.alive) {
+        bills.splice(i, 1);
+        continue;
+      }
       b.life += dt;
       const target = b.foe && b.foe.alive ? b.foe : null;
       const tx = target ? target.x : b.x;
@@ -795,10 +822,10 @@ export function createSim(scene, world, audio) {
           target.hit = 1;
         }
         if (!flags.bill) { flags.bill = true; speak("jang-bill"); }
-        scene.remove(b.mesh);
+        b.fx.stop();
         bills.splice(i, 1);
       } else if (b.life > 1.6) {
-        scene.remove(b.mesh);
+        b.fx.stop();
         bills.splice(i, 1);
       }
     }
@@ -1140,12 +1167,7 @@ export function createSim(scene, world, audio) {
     separate(dt);
     updateAllies(dt, camYaw);
     updateOrbs(dt);
-    if (gustT > 0) {
-      gustT = Math.max(0, gustT - dt);
-      gust.position.set(player.x, player.y + 0.08, player.z);
-      gust.scale.setScalar(1 + (1 - gustT / 0.48) * 8);
-      gust.material.opacity = gustT * 1.3;
-    } else gust.material.opacity = 0;
+    gustFx.follow(player.x, player.y + 0.08, player.z);
 
     for (const chest of world.chests) {
       const target = chest.open ? -1.2 : 0;
@@ -1377,7 +1399,7 @@ export function createSim(scene, world, audio) {
     player.action = "flash";
     player.actionT = 0;
     player.actionDur = 0.38;
-    gustT = 0.48;
+    gustFx.fire(player.x, player.y + 0.08, player.z);
     audio.wind();
     for (const e of living()) {
       const dx = e.x - player.x;
@@ -1426,6 +1448,7 @@ export function createSim(scene, world, audio) {
       bills.push({
         mesh, x: allies[0].x, y: 1.35, z: allies[0].z, foe: tgt, life: 0,
         vx: Math.sin(yaw) * 4, vz: Math.cos(yaw) * 4,
+        fx: armBill(mesh),
       });
     }
   }
@@ -2211,7 +2234,7 @@ export function createSim(scene, world, audio) {
     resetTrail() {
       while (bills.length) {
         const b = bills.pop();
-        scene.remove(b.mesh);
+        if (b.fx) b.fx.stop();
       }
       pending.length = 0;
       for (const k of Object.keys(flags)) delete flags[k];

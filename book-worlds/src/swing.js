@@ -1,6 +1,7 @@
 // Wide outward weapon arcs. The blade is aimed in world space and nudged
 // off the torso every frame, so a combo cannot pass the edge through the body.
 import * as THREE from "three";
+import { system, tag, untag } from "./vfx.js?v=1";
 
 const _shoulder = new THREE.Vector3();
 const _elbowNow = new THREE.Vector3();
@@ -208,22 +209,37 @@ function ensureMesh(trail) {
   mesh.visible = false;
   trail.mesh = mesh;
   if (trail.root) trail.root.add(mesh);
+  tag(mesh, {
+    tag: "trail",
+    dispose: true,
+    onExpire() {
+      trail.pts.length = 0;
+      trail.sealed = true;
+      if (trail.mesh === mesh) disposeTrailMesh(trail);
+    },
+  });
   return mesh;
 }
 
 function disposeTrailMesh(trail) {
   const mesh = trail.mesh;
   if (!mesh) return;
+  untag(mesh);
+  trail.mesh = null;
+  mesh.visible = false;
   mesh.removeFromParent();
   mesh.geometry.dispose();
   mesh.material.dispose();
-  trail.mesh = null;
 }
 
 function expirePoints(trail, now) {
   const pts = trail.pts;
   let i = 0;
-  while (i < pts.length && now - pts[i].born >= TRAIL_MS) i++;
+  while (i < pts.length) {
+    const age = now - pts[i].born;
+    if (!Number.isFinite(age) || age >= TRAIL_MS || age >= 2000) i++;
+    else break;
+  }
   if (i > 0) pts.splice(0, i);
 }
 
@@ -239,6 +255,7 @@ function writeTrail(trail, now) {
   const pos = mesh.geometry.attributes.position;
   const col = mesh.geometry.attributes.color;
   mesh.visible = true;
+  root.updateMatrixWorld(true);
   let count = 0;
   for (let i = 0; i < n; i++) {
     const f = i / (n - 1);
@@ -269,9 +286,18 @@ function writeTrail(trail, now) {
 
 function fadeTrail(trail, now) {
   if (!trail) return;
+  const born = trail.mesh && trail.mesh.userData.vfxBorn;
+  if (trail.mesh && Number.isFinite(born) && now - born >= 2000) {
+    trail.pts.length = 0;
+    trail.sealed = true;
+    disposeTrailMesh(trail);
+    return;
+  }
   expirePoints(trail, now);
   if (trail.pts.length < 2) {
-    if (trail.pts.length === 0 || now - trail.pts[0].born >= TRAIL_MS) trail.pts.length = 0;
+    if (trail.pts.length === 0 || !Number.isFinite(trail.pts[0].born) || now - trail.pts[0].born >= TRAIL_MS) {
+      trail.pts.length = 0;
+    }
     disposeTrailMesh(trail);
     return;
   }
@@ -279,8 +305,11 @@ function fadeTrail(trail, now) {
 }
 
 export function tickTrails(now = performance.now()) {
-  for (const trail of liveTrails) fadeTrail(trail, now);
+  const t = Number.isFinite(now) ? now : performance.now();
+  for (const trail of liveTrails) fadeTrail(trail, t);
 }
+
+system((now) => tickTrails(now));
 
 export function swingWeapon(model, bones, root, spec, trail) {
   const upper = bones.upperarm_r;
@@ -288,6 +317,7 @@ export function swingWeapon(model, bones, root, spec, trail) {
   const hand = bones.hand_r;
   const weapon = hand && hand.children.find((c) => c.userData && c.userData.bladeTip);
   const attacking = spec.action === "attack" || spec.action === "shove";
+  if (trail && !attacking) trail.sealed = false;
   if (!upper || !lower || !hand || !weapon || !attacking) return;
 
   model.updateMatrixWorld(true);
@@ -322,7 +352,7 @@ export function swingWeapon(model, bones, root, spec, trail) {
   aimBone(hand, _blade, _up, 1);
   hand.updateMatrixWorld(true);
 
-  if (!trail) return;
+  if (!trail || trail.sealed) return;
   const now = performance.now();
   expirePoints(trail, now);
   _tip.copy(weapon.userData.bladeTip).applyMatrix4(weapon.matrixWorld);

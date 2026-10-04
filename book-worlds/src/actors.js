@@ -4,7 +4,7 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons";
 import { createHuman as createCapsule, trailKey, handbillMesh, softDot } from "./rigs.js?v=5";
-import { createTrail, swingWeapon } from "./swing.js?v=4";
+import { createTrail, swingWeapon } from "./swing.js?v=5";
 import {
   dusterGeometry, collarGeometry, coatTailGeometry, sleeveGeometry,
   coverallGeometry, lapelGeometry, wrenchGroup, spyglassGroup, goggleRig,

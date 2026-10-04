@@ -3,7 +3,8 @@ import * as THREE from "three";
 import { clamp, damp, dampAngle, hypot2 } from "../../src/util.js";
 import { heightAt } from "./world.js?v=11";
 import { createFog } from "../../src/rigs.js?v=5";
-import { createHuman } from "../../src/actors.js?v=8";
+import { createHuman } from "../../src/actors.js?v=9";
+import { armRing, note, spawn } from "../../src/vfx.js?v=1";
 import { boss as worldBoss } from "../../bosses/rusty-stack.js?v=8";
 import { createAbilities } from "../../src/abilities.js?v=1";
 
@@ -66,7 +67,6 @@ export function createRustySim(scene, world, audio) {
   let lockTarget = null;
   let reaction = null;
   let reactCd = 0;
-  let gustT = 0;
   let outroT = -1;
   let outroArmed = true;
   let bossWall = false;
@@ -106,6 +106,12 @@ export function createRustySim(scene, world, audio) {
   );
   gust.rotation.x = -Math.PI / 2;
   scene.add(gust);
+  const gustFx = armRing(gust, {
+    tag: "gust",
+    life: 480,
+    scale: (k) => 1 + (1 - k) * 8,
+    opacity: (k) => k * 0.624,
+  });
   const orbGeo = new THREE.SphereGeometry(0.14, 8, 6);
 
   function speak(id) {
@@ -307,6 +313,7 @@ export function createRustySim(scene, world, audio) {
     e.tell.scale.setScalar(wind ? 0.35 + k * 1.7 : 1.75);
     e.tell.material.opacity = wind ? 0.28 + k * 0.62 : 0.9;
     e.tell.material.color.setHex(wind && k < 0.72 ? 0xffc56a : 0xff2a1c);
+    note(e.tell);
   }
 
   function updateEnemy(e, dt) {
@@ -420,6 +427,7 @@ export function createRustySim(scene, world, audio) {
     ring.scale.setScalar(Math.max(0.2, radius * k));
     ring.material.opacity = 0.16 + 0.5 * k;
     ring.material.color.setHex(color || 0xe7c48a);
+    note(ring);
   }
   function updateBoss(dt) {
     boss.hit = Math.max(0, boss.hit - dt * 2.5);
@@ -570,10 +578,25 @@ export function createRustySim(scene, world, audio) {
     );
     scene.add(mesh);
     const yaw = from.yaw;
-    shots.push({
-      mesh, x: from.x, y: 1.2, z: from.z, foe, life: 0,
+    const shot = {
+      mesh, x: from.x, y: 1.2, z: from.z, foe,
       vx: Math.sin(yaw) * 11, vz: Math.cos(yaw) * 11,
+      fx: null,
+    };
+    shot.fx = spawn({
+      tag: "match",
+      mesh,
+      life: 1400,
+      disposable: true,
+      onStop() {
+        if (mesh.userData.vfxDead) return;
+        mesh.userData.vfxDead = true;
+        mesh.removeFromParent();
+        mesh.geometry.dispose();
+        mesh.material.dispose();
+      },
     });
+    shots.push(shot);
   }
 
   function updateAllies(dt) {
@@ -653,7 +676,10 @@ export function createRustySim(scene, world, audio) {
     }
     for (let i = shots.length - 1; i >= 0; i--) {
       const b = shots[i];
-      b.life += dt;
+      if (!b.fx || !b.fx.alive) {
+        shots.splice(i, 1);
+        continue;
+      }
       const target = b.foe && b.foe.alive ? b.foe : null;
       if (target) {
         b.vx = damp(b.vx, (target.x - b.x) * 6, 6, dt);
@@ -661,17 +687,14 @@ export function createRustySim(scene, world, audio) {
       }
       b.x += b.vx * dt;
       b.z += b.vz * dt;
-      b.y = 1.15 + Math.sin(b.life * 18) * 0.04;
+      b.y = 1.15 + Math.sin(performance.now() / 1000 * 18) * 0.04;
       b.mesh.position.set(b.x, b.y, b.z);
       b.mesh.rotation.z += dt * 10;
       const hit = target && hypot2(target.x - b.x, target.z - b.z) < 0.7;
       if (hit) {
         damageEnemy(target, 8, { x: b.x, z: b.z });
         if (target.kind !== "boss" && target.alive) { target.state = "stun"; target.t = 0; target.stunFor = 0.7; }
-        scene.remove(b.mesh);
-        shots.splice(i, 1);
-      } else if (b.life > 1.4) {
-        scene.remove(b.mesh);
+        b.fx.stop();
         shots.splice(i, 1);
       }
     }
@@ -1004,7 +1027,7 @@ export function createRustySim(scene, world, audio) {
     player.action = "flash";
     player.actionT = 0;
     player.actionDur = 0.38;
-    gustT = 0.48;
+    gustFx.fire(player.x, player.y + 0.08, player.z);
     audio.wind();
     for (const e of living()) {
       const dx = e.x - player.x;
@@ -1468,12 +1491,7 @@ export function createRustySim(scene, world, audio) {
     updateCrystals();
     updateGoats(dt);
     updateScenes();
-    if (gustT > 0) {
-      gustT = Math.max(0, gustT - dt);
-      gust.position.set(player.x, player.y + 0.08, player.z);
-      gust.scale.setScalar(1 + (1 - gustT / 0.48) * 8);
-      gust.material.opacity = gustT * 1.3;
-    } else gust.material.opacity = 0;
+    gustFx.follow(player.x, player.y + 0.08, player.z);
     for (const chest of world.chests) {
       const open = !!chest.open;
       chest.lid.rotation.x = damp(chest.lid.rotation.x, open ? -1.2 : 0, open ? 14 : 8, dt);
@@ -1588,7 +1606,7 @@ export function createRustySim(scene, world, audio) {
     });
     clearEnemies();
     spawnStarters();
-    for (const s of shots) scene.remove(s.mesh);
+    for (const s of shots) if (s.fx) s.fx.stop();
     shots.length = 0;
     for (const o of orbs) scene.remove(o.mesh);
     orbs.length = 0;
