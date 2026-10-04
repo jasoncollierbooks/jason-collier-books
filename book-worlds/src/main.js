@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { createAudio } from "./audio.js?v=5";
-import { createInput } from "./input.js?v=4";
+import { createInput } from "./input.js?v=5";
 import { createSim } from "./sim.js?v=10";
 import { damp, clamp, springAngle, angDelta } from "./util.js";
 import { createNarration } from "./narration.js?v=1";
@@ -1938,5 +1938,34 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
+function wireHome() {
+  const leave = document.getElementById("leave");
+  const ask = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (mode === "hub") {
+      location.href = "../index.html";
+      return;
+    }
+    if (input) input.enabled = false;
+    if (leave) leave.hidden = false;
+  };
+  for (const id of ["home-pin", "home-hub", "home-card", "settings-home"]) {
+    document.getElementById(id)?.addEventListener("pointerup", ask);
+  }
+  document.getElementById("leave-no")?.addEventListener("pointerup", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (leave) leave.hidden = true;
+    if (input && mode === "play") input.enabled = true;
+  });
+  document.getElementById("leave-yes")?.addEventListener("pointerup", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    location.href = "../index.html";
+  });
+}
+
 wireSettings();
+wireHome();
 requestAnimationFrame(frame);

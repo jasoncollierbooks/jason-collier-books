@@ -217,6 +217,7 @@ function showTitle() {
       <div style="margin-top:22px">
         ${has ? `<button class="btn hot" id="tContinue">CONTINUE</button>` : ""}
         <button class="btn ${has ? "" : "hot"}" id="tNew">LEAVE THE TRUCK</button>
+        <button type="button" class="btn home-big" id="tHome"><svg viewBox="0 0 24 24" aria-hidden="true" width="26" height="26"><path fill="currentColor" d="M12 3.2 3 11h2v9h5v-6h4v6h5v-9h2L12 3.2z"/></svg>Home</button>
       </div>
       <p class="small" style="margin-top:14px">Headphones. Lights off.</p>
       <div class="tload" id="tLoad"><div class="loadtrack"><i class="loadbar-fill"></i></div><small class="loadbar-msg">Loading the mountain…</small></div>
@@ -225,6 +226,11 @@ function showTitle() {
   c.querySelector("#tNew").onclick = () => { A.unlockAudio(); freshGame(); intro(); };
   const cont = c.querySelector("#tContinue");
   if (cont) cont.onclick = () => { A.unlockAudio(); if (load()) startPlay(); else { freshGame(); intro(); } };
+  c.querySelector("#tHome").addEventListener("pointerup", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    location.href = "../index.html";
+  });
 }
 function intro() {
   const lines = [
@@ -280,13 +286,46 @@ function pauseMenu() {
      <button class="btn hot" id="pRes">RESUME</button><br>
      <button class="btn" id="pHow">HOW TO HUNT</button><br>
      <button class="btn" id="pMute">${X.muted() ? "SOUND ON" : "SOUND OFF"}</button><br>
-     <button class="btn ghost" id="pNew">ABANDON HUNT</button>`,
+     <button class="btn ghost" id="pNew">ABANDON HUNT</button><br>
+     <button type="button" class="btn home-big" id="pHome"><svg viewBox="0 0 24 24" aria-hidden="true" width="26" height="26"><path fill="currentColor" d="M12 3.2 3 11h2v9h5v-6h4v6h5v-9h2L12 3.2z"/></svg>Home</button>`,
   );
   c.querySelector("#pRes").onclick = () => { hud.closeOverlay(); paused = false; };
   c.querySelector("#pHow").onclick = () => controlsCard(false);
   c.querySelector("#pMute").onclick = () => { X.toggleMute(); if (X.muted()) stopThought(); hud.closeOverlay(); paused = false; };
   c.querySelector("#pNew").onclick = () => { localStorage.removeItem(SAVE_KEY); hud.closeOverlay(); showTitle(); };
+  c.querySelector("#pHome").addEventListener("pointerup", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    askLeave();
+  });
 }
+let leaveWasPaused = false;
+function askLeave() {
+  leaveWasPaused = paused;
+  paused = true;
+  input.clear();
+  document.getElementById("leave").classList.remove("hidden");
+}
+document.getElementById("home-pin").addEventListener("pointerup", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  if (mode === "title") {
+    location.href = "../index.html";
+    return;
+  }
+  askLeave();
+});
+document.getElementById("leave-no").addEventListener("pointerup", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  document.getElementById("leave").classList.add("hidden");
+  if (!leaveWasPaused && !hud.overlayOpen) paused = false;
+});
+document.getElementById("leave-yes").addEventListener("pointerup", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  location.href = "../index.html";
+});
 function notesSheet() {
   paused = true;
   input.clear();
