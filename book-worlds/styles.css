@@ -883,29 +883,6 @@ body.portrait #rotate-hint:not([hidden]) { display: flex; }
   touch-action: manipulation;
 }
 #home-pin svg { display: block; }
-.home-big {
-  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-  min-height: 64px; min-width: 148px; padding: 0 18px; cursor: pointer;
-  background: #f3e6c8; color: #24180f; border: 2px solid #f3e6c8; border-radius: 12px;
-  font-family: var(--ui); font-size: 22px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
-  touch-action: manipulation;
-}
-.home-big svg { display: block; width: 28px; height: 28px; }
-.hub-tools {
-  position: absolute; left: calc(8px + env(safe-area-inset-left));
-  top: calc(8px + env(safe-area-inset-top)); z-index: 8;
-  display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
-}
-#link-toast {
-  position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); z-index: 30;
-  min-width: min(16rem, 86vw); margin: 0; padding: 1.3rem 1.4rem; text-align: center;
-  background: #100e0c; color: #fbf6ee; border: 2px solid rgba(243, 230, 200, .85); border-radius: 16px;
-  font-family: var(--ui); font-size: 32px; letter-spacing: .04em;
-  opacity: 0; pointer-events: none;
-}
-#link-toast.on { opacity: 1; }
-.story-card .home-big { margin: .7rem auto 0; align-self: center; min-height: 64px; font-size: 22px; }
-#settings .home-big { width: 100%; margin-top: 12px; }
 #leave {
   position: absolute; inset: 0; z-index: 20; display: grid; place-items: center;
   padding: 20px; background: rgba(8, 6, 4, .78);

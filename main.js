@@ -1,7 +1,6 @@
 /* Share the current page. Home uses the site line. Inner pages use the page title. */
 (() => {
   const HOME_LINE = "Jason Collier — books, audiobooks and games";
-  const icon = '<svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 15V4m0 0 4 4m-4-4L8 8M6 11v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-7"/></svg>';
   function payload() {
     const home = document.body.classList.contains("home");
     const label = home ? HOME_LINE : document.title;
@@ -45,22 +44,6 @@
       field.remove();
       toast("Link copied");
     }
-  }
-  const nav = document.getElementById("nav");
-  if (nav && !nav.querySelector(".nav-share")) {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "nav-share";
-    btn.setAttribute("aria-label", "Share");
-    btn.innerHTML = icon;
-    const toggle = nav.querySelector(".nav-toggle");
-    if (toggle) nav.insertBefore(btn, toggle);
-    else nav.appendChild(btn);
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      sharePage();
-    });
   }
   document.addEventListener("click", (e) => {
     const btn = e.target.closest && e.target.closest("[data-share]");
