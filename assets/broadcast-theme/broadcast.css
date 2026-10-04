@@ -640,16 +640,7 @@ html.reduce-motion .track { width: auto; flex-wrap: wrap; justify-content: cente
   .choice-grid { grid-template-columns: 1fr 1fr; gap: 1.15rem; }
   .choice-title { font-size: 1.8rem; }
   .home-choices { padding-top: 1.35rem; padding-bottom: 1.7rem; }
-  .choice:last-child {
-    grid-column: 1 / -1;
-    width: calc((100% - 1.15rem) / 2);
-    justify-self: center;
-  }
 }
 @media (min-width: 1100px) {
-  .choice-grid { grid-template-columns: repeat(6, 1fr); }
-  .choice { grid-column: span 2; }
-  .choice:nth-child(4) { grid-column: 2 / span 2; }
-  .choice:nth-child(5) { grid-column: 4 / span 2; }
-  .choice:last-child { width: auto; justify-self: stretch; }
+  .choice-grid { grid-template-columns: 1fr 1fr 1fr; }
 }
