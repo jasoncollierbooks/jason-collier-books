@@ -1,19 +1,19 @@
 import * as THREE from "three";
 import { createAudio } from "./audio.js?v=3";
 import { createInput } from "./input.js?v=4";
-import { createSim } from "./sim.js?v=9";
+import { createSim } from "./sim.js?v=10";
 import { damp, clamp, springAngle, angDelta } from "./util.js";
 import { createNarration } from "./narration.js?v=1";
 import { createDialogue } from "./dialogue.js?v=5";
 import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass, GTAOPass, ShaderPass, FXAAPass } from "three/addons";
 import { buildWorld } from "./world.js?v=7";
 import { buildRustyWorld } from "../worlds/rusty/world.js?v=11";
-import { createRustySim } from "../worlds/rusty/sim.js?v=15";
+import { createRustySim } from "../worlds/rusty/sim.js?v=16";
 import { buildPulseWorld } from "../worlds/pulse/world.js?v=5";
-import { createPulseSim } from "../worlds/pulse/sim.js?v=8";
+import { createPulseSim } from "../worlds/pulse/sim.js?v=9";
 import { createAbilities } from "./abilities.js?v=1";
-import { whenCastReady } from "./actors.js?v=8";
-import { tickTrails } from "./swing.js?v=4";
+import { whenCastReady } from "./actors.js?v=9";
+import { tick as tickVfx, bind, active as vfxActive } from "./vfx.js?v=1";
 import { theBlank } from "../bosses/index.js?v=10";
 
 const canvas = document.getElementById("view");
@@ -113,7 +113,41 @@ const lassoLine = new THREE.Line(
   new THREE.LineBasicMaterial({ color: 0xe4c56a, transparent: true, opacity: 0 }),
 );
 scene.add(lassoLine);
-let lassoK = 0;
+const fxFocus = new THREE.Vector3();
+let flashPeak = 1;
+const flashFx = bind({
+  tag: "flash",
+  life: 455,
+  onTick(k) {
+    flashLight.intensity = k * flashPeak * 16;
+    flashLight.position.set(fxFocus.x, fxFocus.y + 1.35, fxFocus.z);
+  },
+  onStop() { flashLight.intensity = 0; },
+});
+const shockFx = bind({
+  tag: "shock",
+  mesh: shock,
+  life: 450,
+  onTick(k) {
+    shock.position.copy(fxFocus);
+    shock.scale.setScalar(1 + (1 - k) * 6);
+    shock.material.opacity = k * 0.54;
+  },
+  onStop() {
+    shock.material.opacity = 0;
+    shock.visible = false;
+  },
+});
+const lassoFx = bind({
+  tag: "lasso",
+  mesh: lassoLine,
+  life: 420,
+  onTick(k) { lassoLine.material.opacity = k * 1.008; },
+  onStop() {
+    lassoLine.material.opacity = 0;
+    lassoLine.visible = false;
+  },
+});
 
 const params = new URLSearchParams(location.search);
 const start = params.get("start");
@@ -142,11 +176,8 @@ let camRecenter = 0;
 const camPos = new THREE.Vector3(0, 3, -10);
 const lookAt = new THREE.Vector3();
 let shotLight = null;
-let flashI = 0;
-let shockK = 0;
 let shake = 0;
-let hurtFlash = 0;
-const floats = [];
+let hurtFx = null;
 const v = new THREE.Vector3();
 
 const el = {
@@ -197,6 +228,19 @@ const el = {
   blankFace: document.getElementById("blank-face"),
   blankVoice: document.getElementById("blank-voice"),
 };
+
+hurtFx = bind({
+  tag: "hurt",
+  life: 360,
+  onTick() { el.hurt.classList.add("on"); },
+  onStop() { el.hurt.classList.remove("on"); },
+});
+const screenFlash = bind({
+  tag: "screen-flash",
+  life: 160,
+  onTick() { el.flash.classList.add("on"); },
+  onStop() { el.flash.classList.remove("on"); },
+});
 
 const STATIONS = [
   { id: "trail", freq: "54.7", script: "On the air", title: "The California Trail", sub: "Jang & Tom · Wagon Masters", live: true },
@@ -895,7 +939,21 @@ function addFloat(x, y, z, text, coin) {
   node.className = coin ? "floater coin" : "floater";
   node.textContent = coin ? `+${text}` : String(text);
   el.floaters.appendChild(node);
-  floats.push({ x, y, z, t: 0, node });
+  const home = { x, y, z };
+  bind({
+    tag: coin ? "coin" : "dmg",
+    life: 900,
+    onTick(k) {
+      const pt = project(home.x, home.y + (1 - k) * 0.72, home.z);
+      if (!pt) {
+        node.style.opacity = "0";
+        return;
+      }
+      node.style.transform = `translate(${pt.x}px, ${pt.y}px)`;
+      node.style.opacity = String(Math.max(0, k));
+    },
+    onStop() { node.remove(); },
+  }).restart(900);
 }
 
 let last = performance.now();
@@ -903,9 +961,9 @@ function frame(now) {
   const raw = Math.min(0.3, Math.max(0.001, (now - last) / 1000));
   last = now;
   abilities.tick(raw);
-  // Drop expired swing ribbons before the sim, so a hidden tab or a skipped
-  // update cannot leave last frame's streak frozen on the blade.
-  tickTrails(now);
+  // Expire trails, rings, ropes, and flashes before the sim. A hidden tab,
+  // hit-stop, or caption cannot keep last frame's effect on the body.
+  tickVfx(performance.now());
   if (mode === "title") {
     camYaw = 0.62 + Math.sin(now / 1000 * 0.18) * 0.08;
     camPitch = 0.4;
@@ -939,8 +997,6 @@ function frame(now) {
     left -= dt;
     guard++;
   }
-  tickTrails(now);
-
   if (mode === "play" && playing && snap && !params.get("shot")) {
     const preset = CAM_PRESET[settings.cam] || CAM_PRESET.slow;
     const face = snap.player.yaw;
@@ -1054,27 +1110,14 @@ function frame(now) {
   camera.lookAt(lookAt);
 
   world.update(raw, now / 1000, snap.player);
-  flashI = Math.max(0, flashI - raw * 2.2);
-  flashLight.intensity = flashI * 16;
-  flashLight.position.set(snap.player.x, snap.player.y + 1.4, snap.player.z);
-  if (shockK > 0) {
-    shockK = Math.max(0, shockK - raw);
-    shock.position.set(snap.player.x, snap.player.y + 0.05, snap.player.z);
-    shock.scale.setScalar(1 + (1 - shockK / 0.45) * 6);
-    shock.material.opacity = shockK * 1.2;
-  } else shock.material.opacity = 0;
-  if (lassoK > 0) {
-    lassoK = Math.max(0, lassoK - raw);
-    lassoLine.material.opacity = lassoK * 2.4;
-  } else lassoLine.material.opacity = 0;
+  fxFocus.set(snap.player.x, snap.player.y + 0.05, snap.player.z);
 
   for (const ev of snap.events) {
     if (ev.type === "say") dialogue.say(ev.id);
     else if (ev.type === "dmg") addFloat(ev.x, ev.y, ev.z, ev.n, ev.coin);
     else if (ev.type === "hurt") {
       shake = Math.max(shake, 0.55);
-      hurtFlash = 0.36;
-      el.hurt.classList.add("on");
+      hurtFx.restart(360);
       const ring = document.getElementById("hp-ring");
       if (ring) {
         ring.classList.add("is-hit");
@@ -1085,20 +1128,18 @@ function frame(now) {
     else if (ev.type === "hit") shake = Math.max(shake, ev.heavy ? 0.55 : 0.26);
     else if (ev.type === "level") addFloat(ev.x, ev.y, ev.z, "Lv " + ev.n, true);
     else if (ev.type === "flash" || ev.type === "steam" || ev.type === "pulse") {
-      flashI = ev.type === "steam" ? 0.45 : 1;
-      shockK = 0.45;
+      flashPeak = ev.type === "steam" ? 0.45 : 1;
+      flashFx.restart(ev.type === "steam" ? 205 : 455);
       shock.material.color.setHex(ev.type === "pulse" ? 0xd7ecff : ev.type === "steam" ? 0xe7d2b4 : 0xfff0c8);
-      if (ev.type !== "steam") {
-        el.flash.classList.add("on");
-        setTimeout(() => el.flash.classList.remove("on"), 160);
-      }
+      shockFx.restart(450);
+      if (ev.type !== "steam") screenFlash.restart(160);
     }
     else if (ev.type === "lasso") {
       const attr = lassoLine.geometry.attributes.position;
       attr.setXYZ(0, ev.x, snap.player.y + 1.15, ev.z);
       attr.setXYZ(1, ev.tx, snap.player.y + 0.9, ev.tz);
       attr.needsUpdate = true;
-      lassoK = 0.42;
+      lassoFx.restart(420);
     }
     else if (ev.type === "ability") {
       const names = { lasso: "Lasso", steam: "Steam", pulse: "Pulse" };
@@ -1112,10 +1153,7 @@ function frame(now) {
     else if (ev.type === "boss") shake = 0.2;
   }
 
-  if (hurtFlash > 0) {
-    hurtFlash = Math.max(0, hurtFlash - raw);
-    if (hurtFlash <= 0) el.hurt.classList.remove("on");
-  }
+  tickVfx(performance.now());
   paintHud(snap);
   paintAbilities();
   if (flyby && flyby.arm > 0.35 && !helpOpen()) {
@@ -1224,7 +1262,7 @@ function paintHud(snap) {
       el.reticle.style.transform = `translate(${pt.x}px, ${pt.y}px)`;
     } else el.reticle.hidden = true;
   } else el.reticle.hidden = true;
-  el.hurt.style.opacity = hurtFlash > 0 ? "0.66" : (mode === "play" && p.hp > 0 && p.hp < 35 ? "0.22" : "0");
+  el.hurt.style.opacity = hurtFx.alive ? "0.66" : (mode === "play" && p.hp > 0 && p.hp < 35 ? "0.22" : "0");
 
   const line = dialogue.active();
   if (line && el.tag && mode === "play") {
@@ -1235,20 +1273,6 @@ function paintHud(snap) {
       el.tag.style.transform = `translate(${pt.x}px, ${pt.y}px) translate(-50%, -100%)`;
     } else el.tag.hidden = true;
   } else if (el.tag) el.tag.hidden = true;
-
-  for (let i = floats.length - 1; i >= 0; i--) {
-    const f = floats[i];
-    f.t += 0.016;
-    f.y += 0.016 * 0.8;
-    const pt = project(f.x, f.y, f.z);
-    if (!pt || f.t > 0.9) {
-      f.node.remove();
-      floats.splice(i, 1);
-      continue;
-    }
-    f.node.style.transform = `translate(${pt.x}px, ${pt.y}px)`;
-    f.node.style.opacity = String(1 - f.t / 0.9);
-  }
 }
 
 window.__BOOKWORLDS = {
@@ -1263,6 +1287,7 @@ window.__BOOKWORLDS = {
   worldKey: () => worldKey,
   worldId: () => (worldKey === "stack" ? "rusty-stack" : worldKey === "pulse" ? "first-pulse" : "california-trail"),
   abilities: () => abilities.list().map((a) => ({ id: a.id, ready: a.ready, cd: a.cd })),
+  fx: () => vfxActive(),
   player: () => {
     const p = sim.player;
     return { x: p.x, y: p.y, z: p.z, hp: p.hp, yaw: p.yaw, hits: sim.hits(), mp: p.mp, coins: p.coins, potions: p.potions };

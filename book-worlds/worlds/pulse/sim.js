@@ -3,7 +3,8 @@
 import * as THREE from "three";
 import { clamp, damp, dampAngle, hypot2 } from "../../src/util.js";
 import { heightAt } from "./world.js?v=2";
-import { createHuman } from "../../src/actors.js?v=8";
+import { createHuman } from "../../src/actors.js?v=9";
+import { armRing, note } from "../../src/vfx.js?v=1";
 import { createEntity, createNative } from "./beings.js?v=2";
 import { boss as worldBoss } from "../../bosses/first-pulse.js?v=6";
 import { createAbilities } from "../../src/abilities.js?v=1";
@@ -67,7 +68,6 @@ export function createPulseSim(scene, world, audio) {
   let lockTarget = null;
   let reaction = null;
   let reactCd = 0;
-  let gustT = 0;
   let outroT = -1;
   let outroArmed = true;
   let bossWall = false;
@@ -106,6 +106,12 @@ export function createPulseSim(scene, world, audio) {
   );
   gust.rotation.x = -Math.PI / 2;
   scene.add(gust);
+  const gustFx = armRing(gust, {
+    tag: "gust",
+    life: 480,
+    scale: (k) => 1 + (1 - k) * 8,
+    opacity: (k) => k * 0.624,
+  });
 
   function speak(id) {
     if (!id || (id === sayLast && playTime - sayLastT < 5) || sayQ.includes(id) || sayQ.length >= 4) return;
@@ -309,6 +315,7 @@ export function createPulseSim(scene, world, audio) {
     e.tell.scale.setScalar(wind ? 0.35 + k * 1.7 : 1.75);
     e.tell.material.opacity = wind ? 0.28 + k * 0.62 : 0.9;
     e.tell.material.color.setHex(wind && k < 0.72 ? 0xffc56a : 0xff2a1c);
+    note(e.tell);
   }
 
   function updateEnemy(e, dt) {
@@ -414,6 +421,7 @@ export function createPulseSim(scene, world, audio) {
     ring.scale.setScalar(Math.max(0.2, radius * k));
     ring.material.opacity = 0.16 + 0.5 * k;
     ring.material.color.setHex(color || 0xd7e6f4);
+    note(ring);
   }
   function updateBoss(dt) {
     boss.hit = Math.max(0, boss.hit - dt * 2.5);
@@ -793,7 +801,7 @@ export function createPulseSim(scene, world, audio) {
     player.action = "flash";
     player.actionT = 0;
     player.actionDur = 0.38;
-    gustT = 0.48;
+    gustFx.fire(player.x, 0.08, player.z);
     audio.wind();
     for (const e of living()) {
       const dx = e.x - player.x;
@@ -1237,12 +1245,7 @@ export function createPulseSim(scene, world, audio) {
     separate();
     updateAllies(dt);
     updateScenes();
-    if (gustT > 0) {
-      gustT = Math.max(0, gustT - dt);
-      gust.position.set(player.x, 0.08, player.z);
-      gust.scale.setScalar(1 + (1 - gustT / 0.48) * 8);
-      gust.material.opacity = gustT * 1.3;
-    } else gust.material.opacity = 0;
+    gustFx.follow(player.x, 0.08, player.z);
     for (const chest of world.chests) {
       const open = !!chest.open;
       chest.lid.rotation.x = damp(chest.lid.rotation.x, open ? -1.2 : 0, open ? 14 : 8, dt);
