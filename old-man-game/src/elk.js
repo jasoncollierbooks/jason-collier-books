@@ -93,7 +93,7 @@ export function buildElk({ bull = true } = {}) {
       proc.animate(mode, dt, t); // keeps the procedural pose (and hit boxes) in step; hidden once loaded
       if (!st.ready) return;
       if (mode !== st.mode) { st.mode = mode; play(mode); }
-      holder.position.y = mode === "bed" ? -0.75 : 0; // bedded: legs folded under, sunk in snow
+      holder.position.y = mode === "bed" ? -0.75 : mode === "run" ? Math.pow(Math.max(0, Math.sin(t * 9)), 2) * 0.1 : 0;
       // gait matched to how fast the game actually moves him (measured from the root), so hooves plant
       const p = proc.root.position;
       if (st.last && dt > 0) { const v = Math.hypot(p.x - st.last.x, p.z - st.last.z) / dt; st.speed += (v - st.speed) * (1 - Math.exp(-6 * dt)); }

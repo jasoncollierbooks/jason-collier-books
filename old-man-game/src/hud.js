@@ -56,13 +56,20 @@ export function createHud() {
       if (el.warn.textContent !== text) el.warn.textContent = text || "";
       el.warn.classList.toggle("hot", !!hot);
     },
-    setLine(text, now) {
-      const clamp4 = (ms) => Math.max(4000, Math.min(6000, ms));
-      if (text && text !== lastLine) {
+    setLine(text, now, ms) {
+      if (!text) {
+        lastLine = "";
+        el.line.textContent = "";
+        el.line.classList.remove("show");
+        lineTimer = 0;
+        return;
+      }
+      const dur = ms || Math.max(5200, Math.min(16000, (text || "").length * 68));
+      if (text && (text !== lastLine || ms)) {
         lastLine = text;
         el.line.textContent = text;
         el.line.classList.add("show");
-        lineTimer = now + clamp4(text.length * 40); // playtest: narration fades after ~4 s
+        lineTimer = now + Math.max(4200, dur);
       }
       if (lineTimer && now > lineTimer) {
         el.line.classList.remove("show");

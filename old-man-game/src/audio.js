@@ -40,7 +40,17 @@ function context() {
 function unlockAudio() {
   const audio = context();
   if (!audio) return;
-  if (audio.state === "suspended") void audio.resume();
+  const go = () => {
+    try {
+      const buf = audio.createBuffer(1, 1, audio.sampleRate);
+      const src = audio.createBufferSource();
+      src.buffer = buf;
+      src.connect(audio.destination);
+      src.start(0);
+    } catch { /* already running */ }
+  };
+  if (audio.state === "suspended") void audio.resume().then(go);
+  else go();
 }
 function resumeAudio() {
   if (ctx && ctx.state === "suspended") void ctx.resume();

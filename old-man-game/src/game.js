@@ -424,7 +424,19 @@ export function objective(s, ctx) {
 export function readSign(s, place, near) {
   if (near === "walker") {
     s.heart = clamp(s.heart - 3, 0, 100);
-    return "Long, narrow prints, no claw marks. The stride too even, almost measured. Not crossing your trail. Following it.";
+    const keys = ["tracks", "tree", "hair", "scat", "smell"];
+    const lines = {
+      tracks: "Long, narrow prints, no claw marks. The stride too even, almost measured. Not crossing your trail. Following it.",
+      tree: "A spruce snapped off above your head. The break is fresh and pale. Nothing fell on it.",
+      hair: "Dark hair in the bark, long as your hand. Not deer. Not elk.",
+      scat: "A pile in the snow, too big, grass and bone in it. It was warm this morning.",
+      smell: "Wet earth and rot, hung in the cold air. Something stood here and breathed.",
+    };
+    const n = s.flags.signN | 0;
+    const k = keys[n % keys.length];
+    s.flags.signN = n + 1;
+    s.flags.signPick = k;
+    return lines[k];
   }
   if (near === "elk") {
     const bp = bullPlace(s);
