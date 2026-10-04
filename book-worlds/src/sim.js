@@ -1,11 +1,11 @@
 import * as THREE from "three";
 import { clamp, damp, dampAngle, hypot2 } from "./util.js";
-import { halfWidth, heightAt } from "./world.js?v=7";
+import { halfWidth, heightAt } from "./world.js?v=8";
 import { createFog, handbillMesh } from "./rigs.js?v=5";
 import { createHuman } from "./actors.js?v=10";
 import { armRing, note, spawn } from "./vfx.js?v=1";
-import { bossFor } from "../bosses/index.js?v=8";
-import { createAbilities } from "./abilities.js?v=2";
+import { bossFor } from "../bosses/index.js?v=11";
+import { createAbilities } from "./abilities.js?v=3";
 
 const abilities = createAbilities();
 
@@ -105,7 +105,7 @@ export function createSim(scene, world, audio) {
       id: "narrows", minZ: 28, maxZ: 66, wave: 0, active: false, cleared: false,
       waves: [
         [{ kind: "blanker", x: -2.2, z: 38 }],
-        [{ kind: "bandit", x: 2.2, z: 52 }, { kind: "fog", x: -1.2, z: 60 }],
+        [{ kind: "bandit", x: 2.2, z: 52 }, { kind: "fog", x: -1.2, z: 60 }, { kind: "raider", x: -2.4, z: 48 }],
       ],
     },
     {
@@ -174,6 +174,7 @@ export function createSim(scene, world, audio) {
   function profileFor(kind) {
     if (kind === "fog") return { hp: 42, radius: 0.55, speed: 2.7, tele: 0.46, lunge: 9.2, reach: 1.7, dmg: 8, xp: 14, flash: 30 };
     if (kind === "blanker") return { hp: 74, radius: 0.82, speed: 1.55, tele: 0.58, lunge: 7.2, reach: 2.15, dmg: 16, xp: 22, flash: 24 };
+    if (kind === "raider") return { hp: 78, radius: 0.58, speed: 1.85, tele: 0.64, lunge: 7.6, reach: 2.05, dmg: 14, xp: 22, flash: 18 };
     return { hp: 58, radius: 0.48, speed: 2.3, tele: 0.5, lunge: 8.4, reach: 1.85, dmg: 12, xp: 20, flash: 16 };
   }
 
@@ -210,12 +211,13 @@ export function createSim(scene, world, audio) {
 
   function makeEnemy(kind, x, z, pendulum = false) {
     const fog = kind === "fog" || kind === "blanker";
+    const raider = kind === "raider";
     const rig = fog
       ? createFog({ tall: kind === "blanker", scale: kind === "blanker" ? 1.38 : 0.92 })
       : createHuman({
-        cloth: 0x6e6e6a, cloth2: 0x4e4e4a, pants: 0x5a5a56, boots: 0x2a2a28,
-        hat: 0x3a3a38, hair: 0x1a1410, skin: 0xb08a68, bandana: true, club: true, fog: true,
-        height: 1.02, bulk: 1.02, chest: 1.05,
+        cloth: raider ? 0x4a4038 : 0x6e6e6a, cloth2: raider ? 0x3a3028 : 0x4e4e4a, pants: 0x5a5a56, boots: 0x2a2a28,
+        hat: raider ? 0x241c16 : 0x3a3a38, hair: 0x1a1410, skin: 0xb08a68, bandana: true, club: true, fog: true,
+        height: raider ? 1.18 : 1.02, bulk: raider ? 1.2 : 1.02, chest: raider ? 1.16 : 1.05,
       });
     scene.add(rig.root);
     const prof = profileFor(kind);
@@ -273,7 +275,7 @@ export function createSim(scene, world, audio) {
     const dx = e.x - (src ? src.x : player.x);
     const dz = e.z - (src ? src.z : player.z);
     const l = hypot2(dx, dz) || 1;
-    const shove = (e.kind === "boss" ? 0.4 : e.kind === "dummy" ? 0.12 : 1.15) + (opts.knock || 0);
+    const shove = (e.kind === "boss" ? 0.48 : e.kind === "dummy" ? 0.12 : 1.35) + (opts.knock || 0);
     e.x += (dx / l) * shove;
     e.z += (dz / l) * shove;
     events.push({ type: "dmg", x: e.x, y: 1.6, z: e.z, n: Math.round(dealt) });
@@ -281,7 +283,7 @@ export function createSim(scene, world, audio) {
     else audio.hit();
     if (!src) {
       player.team = Math.min(100, player.team + (opts.knock ? 16 : 10));
-      player.hitStop = Math.max(player.hitStop, opts.knock ? 0.072 : 0.042);
+      player.hitStop = Math.max(player.hitStop, opts.knock ? 0.09 : 0.055);
       events.push({ type: "hit", heavy: !!opts.knock });
     }
     if (opts.knock && e.alive && e.kind !== "boss") {
@@ -295,7 +297,10 @@ export function createSim(scene, world, audio) {
       e.alive = false;
       e.state = "dead";
       e.t = 0;
-      if (e.kind !== "dummy") dropLoot(e);
+      if (e.kind !== "dummy") {
+        dropLoot(e);
+        freedN += 1;
+      }
       grantXp(e.kind === "boss" ? 90 : e.kind === "dummy" ? 2 : (e.prof ? e.prof.xp : 20));
       if (e.kind === "boss") {
         audio.roar();
@@ -564,6 +569,15 @@ export function createSim(scene, world, audio) {
     boss.t += dt;
     let moving = false;
     const face = Math.atan2(player.x - boss.x, player.z - boss.z);
+    const phaseNow = bossPhase();
+    if (!flags.phase2 && phaseNow >= 2) {
+      flags.phase2 = true;
+      speak("tom-half");
+      audio.roar();
+      events.push({ type: "boss" });
+      boss.state = "roarWind";
+      boss.t = 0;
+    }
     if (boss.state === "intro") {
       boss.yaw = dampAngle(boss.yaw, face, 4, dt);
       if (boss.t > 1.3) beginBoss("charge");
@@ -641,7 +655,7 @@ export function createSim(scene, world, audio) {
     bossRig.root.position.set(boss.x, heightAt(boss.x, boss.z), boss.z);
     bossRig.root.rotation.y = boss.yaw;
     bossRig.root.visible = true;
-    bossRig.update(dt, { moving, state: boss.state, hit: boss.hit });
+    bossRig.update(dt, { moving, state: boss.state, hit: boss.hit, phase: bossPhase() });
   }
 
   function beginBoss(name) {
@@ -667,8 +681,8 @@ export function createSim(scene, world, audio) {
     const k = wind ? Math.min(1, e.t / Math.max(0.2, e.prof.tele || 0.4)) : 1;
     e.tell.visible = true;
     e.tell.position.set(e.x, heightAt(e.x, e.z) + 0.08, e.z);
-    e.tell.scale.setScalar(wind ? 0.35 + k * 1.7 : 1.75);
-    e.tell.material.opacity = wind ? 0.28 + k * 0.62 : 0.9;
+    e.tell.scale.setScalar(wind ? 0.55 + k * 2.15 : 2.1);
+    e.tell.material.opacity = wind ? 0.45 + k * 0.5 : 0.95;
     e.tell.material.color.setHex(wind && k < 0.72 ? 0xffc56a : 0xff2a1c);
     note(e.tell);
   }
@@ -849,6 +863,12 @@ export function createSim(scene, world, audio) {
     speak("jang-chest");
   }
 
+  function openLasso() {
+    if (flags.lassoOpen) return;
+    flags.lassoOpen = true;
+    if (world.lassoBar) world.lassoBar.setOpen(true);
+  }
+
   function armExit() {
     bossWall = false;
     outroArmed = false;
@@ -959,6 +979,7 @@ export function createSim(scene, world, audio) {
       e.z += 0.8;
       dropLoot(e);
       grantXp(12);
+      freedN += 1;
       any = true;
     }
     if (any) {
@@ -985,6 +1006,7 @@ export function createSim(scene, world, audio) {
   let outroT = -1;
   let outroArmed = true;
   let playTime = 0;
+  let freedN = 0;
 
   function update(dt, input, camYaw, play, fresh = true) {
     if (fresh) {
@@ -1060,6 +1082,15 @@ export function createSim(scene, world, audio) {
       abilities.cast(id, {
         player, living, damageEnemy, events, audio,
         resolve: (x, z, r) => world.resolve(x, z, r),
+        lassoGate: () => !flags.lassoOpen && player.z > 58 && player.z < 72,
+        onCast(abilityId, foe) {
+          if (abilityId !== "lasso") return;
+          if (player.z > 58 && player.z < 72) openLasso();
+          if (foe && foe.pendulum && world.rope && flags.lassoOpen) {
+            foe.x = world.rope.x;
+            foe.z = world.rope.z;
+          }
+        },
       });
     }
     const held = input.held ? input.held() : { guard: false };
@@ -1108,6 +1139,7 @@ export function createSim(scene, world, audio) {
     if (!circus && player.z > 103.2) player.z = 103.2;
     if (bossWall && boss.alive && player.z > 123) player.z = 123;
     if (tutorialOn && player.z > 5.8) player.z = 5.8;
+    if (!flags.lassoOpen && player.z > 65.5 && player.z < 74) player.z = 65.5;
     clampArenas();
 
     player.vy -= 28 * dt;
@@ -1187,6 +1219,11 @@ export function createSim(scene, world, audio) {
       speak("jang-ford");
       events.push({ type: "bulletin", id: "scene-circus" });
     }
+    if (!flags.lassoGiven && !tutorialOn && player.z > 52) {
+      flags.lassoGiven = true;
+      if (abilities.unlock("lasso")) events.push({ type: "ability", id: "lasso" });
+      speak("jang-lasso");
+    }
     if (!flags.rope && player.z > 72 && player.z < 90) {
       flags.rope = true;
       speak("jang-rope");
@@ -1245,13 +1282,15 @@ export function createSim(scene, world, audio) {
     updateTutorial(dt, camYaw, edge);
 
     let objective = tutorialOn ? "Learn the road" : "Follow the trail";
-    if (!flags.rout && player.z > 70 && player.z < 92 && boss.alive) objective = "Rope the bandits";
+    const here = arenas.find((a) => a.active && !a.cleared);
+    if (here && boss.alive && player.z < 58) objective = "Clear the trail";
+    if (!flags.lassoOpen && player.z > 50 && boss.alive) objective = "Lasso the rope gate";
+    if (flags.lassoOpen && !flags.rout && player.z < 94 && boss.alive) objective = "Lasso the bandits";
     if (!circus && player.z > 90) objective = "Float the wagons";
     if (circus && boss.alive && !boss.active) objective = "Bear at the ford";
-    if (boss.active && boss.alive) objective = "Break the bear";
-    if (!boss.alive) objective = "Step through";
-    const here = arenas.find((a) => a.active && !a.cleared);
-    if (here && (objective === "Follow the trail" || objective.startsWith("Pages"))) objective = "Clear the fog";
+    if (boss.active && boss.alive && flags.phase2) objective = "The bear is changing";
+    else if (boss.active && boss.alive) objective = "Break the bear";
+    if (!boss.alive) objective = "Step through to the Stack";
 
     lastPrompt = reaction || prompt;
     lastObjective = objective;
@@ -1660,6 +1699,7 @@ export function createSim(scene, world, audio) {
       circus, bossDead: !boss.alive,
       arenas: arenas.filter((a) => a.cleared).map((a) => a.id),
       chests: world.chests.map((c) => !!c.open),
+      lasso: !!flags.lassoOpen,
       complete: !!(complete || flags.cleared),
     };
   }
@@ -1715,6 +1755,7 @@ export function createSim(scene, world, audio) {
       flags.won = true;
       armExit();
     }
+    if (data.lasso || player.z > 66) openLasso();
     if (data.complete) flags.cleared = true;
     const cleared = new Set(data.arenas || []);
     for (const a of arenas) if (cleared.has(a.id)) a.cleared = true;
@@ -2377,6 +2418,7 @@ export function createSim(scene, world, audio) {
     allies: () => allies.map((a) => ({ id: a.id, x: a.x, z: a.z, hp: a.hp, hpMax: a.hpMax })),
     chests: () => world.chests.map((c) => !!c.open),
     exitReady: () => !!(world.gate && world.gate.ready),
+    recap: () => ({ freed: freedN, time: playTime }),
     defeatForExit() {
       settleCircus();
       boss.hp = 0;

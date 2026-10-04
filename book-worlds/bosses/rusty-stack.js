@@ -292,6 +292,7 @@ function create() {
         }
       }
       cape.visible = phase < 3;
+      rig.scale.setScalar(dead ? 1 : phase >= 3 ? 1.08 : phase >= 2 ? 1.04 : 1);
       spinDust(dust, phaseT);
       rig.rotation.x = damp(rig.rotation.x, a.state === "charge" ? 0.18 : 0, 6, dt);
       void wind;

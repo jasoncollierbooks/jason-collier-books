@@ -2,12 +2,12 @@
 // The realm is quantum. Companions are the Entity and a friendly native.
 import * as THREE from "three";
 import { clamp, damp, dampAngle, hypot2 } from "../../src/util.js";
-import { heightAt } from "./world.js?v=2";
+import { heightAt } from "./world.js?v=6";
 import { createHuman } from "../../src/actors.js?v=10";
 import { armRing, note } from "../../src/vfx.js?v=1";
 import { createEntity, createNative } from "./beings.js?v=2";
-import { boss as worldBoss } from "../../bosses/first-pulse.js?v=6";
-import { createAbilities } from "../../src/abilities.js?v=2";
+import { boss as worldBoss } from "../../bosses/first-pulse.js?v=7";
+import { createAbilities } from "../../src/abilities.js?v=3";
 
 const SAVE_KEY = "book-worlds-first-pulse";
 const CLEAR_KEY = "book-worlds-world3-clear";
@@ -59,6 +59,7 @@ export function createPulseSim(scene, world, audio) {
   let sayLast = "";
   let sayLastT = -10;
   let playTime = 0;
+  let freedN = 0;
   const flags = {};
   const events = [];
   const pending = [];
@@ -131,12 +132,13 @@ export function createPulseSim(scene, world, audio) {
   function profileFor(kind) {
     if (kind === "fog") return { hp: 42, radius: 0.55, speed: 2.5, tele: 0.42, lunge: 8.6, reach: 1.7, dmg: 8, xp: 14, flash: 28 };
     if (kind === "blanker") return { hp: 76, radius: 0.82, speed: 1.45, tele: 0.55, lunge: 7.2, reach: 2.1, dmg: 14, xp: 22, flash: 22 };
+    if (kind === "wisp") return { hp: 30, radius: 0.4, speed: 3.2, tele: 0.42, lunge: 9.4, reach: 1.4, dmg: 7, xp: 12, flash: 30 };
     return { hp: 58, radius: 0.48, speed: 2.15, tele: 0.48, lunge: 8, reach: 1.75, dmg: 11, xp: 18, flash: 16 };
   }
   function makeEnemy(kind, x, z, tag) {
     const rig = createNative({
       taken: true,
-      scale: kind === "blanker" ? 1.24 : 0.98,
+      scale: kind === "blanker" ? 1.24 : kind === "wisp" ? 0.66 : 0.98,
       seed: seq + (kind === "blanker" ? 2 : 0),
     });
     scene.add(rig.root);
@@ -167,7 +169,7 @@ export function createPulseSim(scene, world, audio) {
     const dx = e.x - sx;
     const dz = e.z - sz;
     const len = hypot2(dx, dz) || 1;
-    const shove = (e.kind === "boss" ? 0.35 : 1.05) + (opts.knock || 0);
+    const shove = (e.kind === "boss" ? 0.48 : 1.35) + (opts.knock || 0);
     e.x += (dx / len) * shove;
     e.z += (dz / len) * shove;
     events.push({ type: "dmg", x: e.x, y: 1.6, z: e.z, n: Math.round(dealt) });
@@ -175,7 +177,7 @@ export function createPulseSim(scene, world, audio) {
     else audio.hit();
     if (!src) {
       player.team = Math.min(100, player.team + (opts.knock ? 16 : 10));
-      player.hitStop = Math.max(player.hitStop, opts.knock ? 0.07 : 0.04);
+      player.hitStop = Math.max(player.hitStop, opts.knock ? 0.09 : 0.055);
       events.push({ type: "hit", heavy: !!opts.knock });
       if (!flags.fight) {
         flags.fight = true;
@@ -199,10 +201,12 @@ export function createPulseSim(scene, world, audio) {
           e.rig.setFree();
           e.freed = true;
         }
+        freedN += 1;
         speak("native-free");
       }
       grantXp(e.kind === "boss" ? 90 : e.prof.xp);
       if (e.kind === "boss") {
+        freedN += 1;
         audio.roar();
         flags.won = true;
         bossWall = false;
@@ -293,8 +297,19 @@ export function createPulseSim(scene, world, audio) {
     }
     return best;
   }
+  function lightPath() {
+    if (flags.pathLit) return;
+    flags.pathLit = true;
+    if (world.setPathLit) world.setPathLit(true);
+  }
   function abilityCtx() {
-    return { player, living, damageEnemy, events, audio, resolve: (x, z, r) => world.resolve(x, z, r) };
+    return {
+      player, living, damageEnemy, events, audio,
+      resolve: (x, z, r) => world.resolve(x, z, r),
+      onCast(id) {
+        if (id === "pulse" && player.z > 32 && player.z < 44) lightPath();
+      },
+    };
   }
 
   function showTell(e) {
@@ -312,8 +327,8 @@ export function createPulseSim(scene, world, audio) {
     const k = wind ? Math.min(1, e.t / Math.max(0.2, e.prof.tele || 0.4)) : 1;
     e.tell.visible = true;
     e.tell.position.set(e.x, 0.08, e.z);
-    e.tell.scale.setScalar(wind ? 0.35 + k * 1.7 : 1.75);
-    e.tell.material.opacity = wind ? 0.28 + k * 0.62 : 0.9;
+    e.tell.scale.setScalar(wind ? 0.55 + k * 2.15 : 2.1);
+    e.tell.material.opacity = wind ? 0.45 + k * 0.5 : 0.95;
     e.tell.material.color.setHex(wind && k < 0.72 ? 0xffc56a : 0xff2a1c);
     note(e.tell);
   }
@@ -641,7 +656,12 @@ export function createPulseSim(scene, world, audio) {
     if (!scenes.light.on && player.z > 2) {
       scenes.light.on = true;
       makeEnemy("fog", -2.4, 8, "light");
+      makeEnemy("wisp", 0.4, 10.5, "light");
       makeEnemy("fog", 2.6, 12, "light");
+      if (!flags.pulseGiven) {
+        flags.pulseGiven = true;
+        if (abilities.unlock("pulse")) pending.push({ type: "ability", id: "pulse" });
+      }
       speak("entity-light");
       speak("native-light");
       events.push({ type: "bulletin", id: "scene-light" });
@@ -888,6 +908,7 @@ export function createPulseSim(scene, world, audio) {
       bossDead: !boss.alive,
       complete: !!flags.cleared,
       scenes: { light: scenes.light.done, dish: scenes.dish.done, bridge: scenes.bridge.done, wave: scenes.wave.done },
+      path: !!flags.pathLit,
       chests: world.chests.map((c) => !!c.open),
     };
   }
@@ -982,6 +1003,7 @@ export function createPulseSim(scene, world, audio) {
       abilities.unlock("pulse");
       armExit();
     }
+    if (data.path || player.z > 42 || (data.scenes && data.scenes.bridge)) lightPath();
     if (data.complete) flags.cleared = true;
     flags.g1 = true;
     flags.g2 = true;
@@ -1058,13 +1080,13 @@ export function createPulseSim(scene, world, audio) {
   }
 
   function objectiveFor() {
+    if (boss.active && boss.alive && flags.phase2) return "The hum is changing";
     if (boss.active && boss.alive) return "Break the hum";
-    if (!boss.alive) return "Step through";
-    if (scenes.light.on && !scenes.light.done) return "Clear the first light";
-    if (player.z > 18 && !scenes.dish.done) return "Cross the foam";
-    if (player.z > 40 && !scenes.bridge.done) return "Quiet the ripples";
-    if (player.z > 64 && !scenes.wave.done) return "Cross the wave";
-    if (scenes.wave.done && boss.alive) return "The Hum in the wave";
+    if (!boss.alive) return "Step through to the mountain";
+    if (!flags.pathLit) return player.z > 28 ? "Pulse the dark path" : "Clear the first light";
+    if (!scenes.bridge.done) return "Quiet the ripples";
+    if (!scenes.wave.done) return "Cross the wave";
+    if (boss.alive) return "The Hum in the wave";
     return `Pages ${pageCount()}/5`;
   }
 
@@ -1179,6 +1201,7 @@ export function createPulseSim(scene, world, audio) {
     const resolved = world.resolve(player.x, player.z, 0.38, boss.alive && boss.active ? [{ x: boss.x, z: boss.z, r: 1.15 }] : null);
     player.x = resolved.x;
     player.z = resolved.z;
+    if (!flags.pathLit && player.z > 37.4 && player.z < 46) player.z = 37.4;
     if (bossWall && boss.alive && player.z < 73 && player.z > 64) player.z = 73;
 
     player.vy -= 28 * dt;
@@ -1440,6 +1463,7 @@ export function createPulseSim(scene, world, audio) {
     allies: () => allies.map((a) => ({ id: a.id, x: a.x, z: a.z, hp: a.hp, hpMax: a.hpMax })),
     chests: () => world.chests.map((c) => !!c.open),
     exitReady: () => !!(world.gate && world.gate.ready),
+    recap: () => ({ freed: freedN, time: playTime }),
     keyOn: () => true,
     defeatForExit() {
       boss.hp = 0;

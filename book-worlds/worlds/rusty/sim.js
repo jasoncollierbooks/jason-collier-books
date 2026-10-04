@@ -1,12 +1,12 @@
 // Rusty Stack play. Same Keeper, Trail Key, and command combat as the wagon road.
 import * as THREE from "three";
 import { clamp, damp, dampAngle, hypot2 } from "../../src/util.js";
-import { heightAt } from "./world.js?v=11";
+import { heightAt } from "./world.js?v=12";
 import { createFog } from "../../src/rigs.js?v=5";
 import { createHuman } from "../../src/actors.js?v=10";
 import { armRing, note, spawn } from "../../src/vfx.js?v=1";
-import { boss as worldBoss } from "../../bosses/rusty-stack.js?v=8";
-import { createAbilities } from "../../src/abilities.js?v=2";
+import { boss as worldBoss } from "../../bosses/rusty-stack.js?v=9";
+import { createAbilities } from "../../src/abilities.js?v=3";
 
 const abilities = createAbilities();
 
@@ -57,6 +57,7 @@ export function createRustySim(scene, world, audio) {
   let sayLast = "";
   let sayLastT = -10;
   let playTime = 0;
+  let freedN = 0;
   const flags = {};
   const events = [];
   const pending = [];
@@ -132,12 +133,13 @@ export function createRustySim(scene, world, audio) {
   function profileFor(kind) {
     if (kind === "fog") return { hp: 42, radius: 0.55, speed: 2.5, tele: 0.42, lunge: 8.6, reach: 1.7, dmg: 8, xp: 14, flash: 28 };
     if (kind === "blanker") return { hp: 76, radius: 0.82, speed: 1.45, tele: 0.55, lunge: 7.2, reach: 2.1, dmg: 14, xp: 22, flash: 22 };
+    if (kind === "grappler") return { hp: 66, radius: 0.7, speed: 1.7, tele: 0.64, lunge: 7.4, reach: 2.05, dmg: 13, xp: 20, flash: 20 };
     return { hp: 58, radius: 0.48, speed: 2.15, tele: 0.48, lunge: 8, reach: 1.75, dmg: 11, xp: 18, flash: 16 };
   }
   function makeEnemy(kind, x, z, tag) {
-    const fog = kind === "fog" || kind === "blanker";
+    const fog = kind === "fog" || kind === "blanker" || kind === "grappler";
     const rig = fog
-      ? createFog({ tall: kind === "blanker", scale: kind === "blanker" ? 1.28 : 0.92 })
+      ? createFog({ tall: kind !== "fog", scale: kind === "blanker" ? 1.28 : kind === "grappler" ? 1.12 : 0.92 })
       : createHuman({
         cloth: 0x6a6864, cloth2: 0x5a3434, pants: 0x3e3e3c, boots: 0x2a2422,
         hat: 0x2c2424, wideHat: true, hair: 0x1a1410, skin: 0xb09880,
@@ -173,7 +175,7 @@ export function createRustySim(scene, world, audio) {
     const dx = e.x - sx;
     const dz = e.z - sz;
     const len = hypot2(dx, dz) || 1;
-    const shove = (e.kind === "boss" ? 0.35 : 1.05) + (opts.knock || 0);
+    const shove = (e.kind === "boss" ? 0.48 : 1.35) + (opts.knock || 0);
     e.x += (dx / len) * shove;
     e.z += (dz / len) * shove;
     events.push({ type: "dmg", x: e.x, y: 1.6, z: e.z, n: Math.round(dealt) });
@@ -181,7 +183,7 @@ export function createRustySim(scene, world, audio) {
     else audio.hit();
     if (!src) {
       player.team = Math.min(100, player.team + (opts.knock ? 16 : 10));
-      player.hitStop = Math.max(player.hitStop, opts.knock ? 0.07 : 0.04);
+      player.hitStop = Math.max(player.hitStop, opts.knock ? 0.09 : 0.055);
       events.push({ type: "hit", heavy: !!opts.knock });
       if (!flags.fight) {
         flags.fight = true;
@@ -200,6 +202,7 @@ export function createRustySim(scene, world, audio) {
       e.state = "dead";
       e.t = 0;
       if (e.kind !== "boss") dropLoot(e);
+      freedN += 1;
       grantXp(e.kind === "boss" ? 90 : e.prof.xp);
       if (e.kind === "boss") {
         audio.roar();
@@ -310,8 +313,8 @@ export function createRustySim(scene, world, audio) {
     const k = wind ? Math.min(1, e.t / Math.max(0.2, e.prof.tele || 0.4)) : 1;
     e.tell.visible = true;
     e.tell.position.set(e.x, heightAt(e.x, e.z) + 0.08, e.z);
-    e.tell.scale.setScalar(wind ? 0.35 + k * 1.7 : 1.75);
-    e.tell.material.opacity = wind ? 0.28 + k * 0.62 : 0.9;
+    e.tell.scale.setScalar(wind ? 0.55 + k * 2.15 : 2.1);
+    e.tell.material.opacity = wind ? 0.45 + k * 0.5 : 0.95;
     e.tell.material.color.setHex(wind && k < 0.72 ? 0xffc56a : 0xff2a1c);
     note(e.tell);
   }
@@ -815,11 +818,16 @@ export function createRustySim(scene, world, audio) {
       speak("spacey-brawl");
       speak("mira-brawl");
       events.push({ type: "bulletin", id: "scene-brawl" });
+      if (!flags.steamGiven) {
+        flags.steamGiven = true;
+        if (abilities.unlock("steam")) events.push({ type: "ability", id: "steam" });
+      }
       if (audio.clank) audio.clank();
     }
     if (scenes.brawl.on && !scenes.brawl.done && scenes.brawl.wave === 1 && !taggedAlive("brawl")) {
       scenes.brawl.wave = 2;
       makeEnemy("blanker", 0.2, 23, "brawl");
+      makeEnemy("grappler", -1.4, 22.4, "brawl");
       makeEnemy("fog", -2.5, 21, "brawl");
       makeEnemy("boarder", 2.2, 19.5, "brawl");
     }
@@ -1290,13 +1298,15 @@ export function createRustySim(scene, world, audio) {
 
   function objectiveFor() {
     const got = pageCount();
+    if (boss.active && boss.alive && flags.phase2) return "The baron sheds his plates";
     if (boss.active && boss.alive) return "Break the baron";
-    if (!boss.alive) return "Step through";
-    if (scenes.brawl.on && !scenes.brawl.done) return "Clear the deck";
+    if (!boss.alive) return "Step through to the Pulse";
     if (player.x > 23 && !scenes.city.done) return "Seat the crystals";
     if (player.x < -24 && !scenes.goats.done) return "Pen the goats";
-    if (player.z > 42 && !scenes.fort.done) return "Cross the crag";
-    if (scenes.fort.done && boss.alive && player.z > 48) return "Baron in the hangar";
+    if (!scenes.brawl.done) return "Clear the deck";
+    if (player.z < 38 && Math.abs(player.x) < 10) return "Steam across the gap";
+    if (!scenes.fort.done) return "Cross the crag";
+    if (boss.alive) return "Baron in the hangar";
     return `Pages ${got}/5`;
   }
 
@@ -1368,6 +1378,15 @@ export function createRustySim(scene, world, audio) {
       abilities.cast(id, {
         player, living, damageEnemy, events, audio,
         resolve: (x, z, r) => world.resolve(x, z, r),
+        gapLeap() {
+          if (player.z >= 26 && player.z <= 30.6 && Math.abs(player.x) < 3.4 && Math.cos(player.yaw) > 0.35) {
+            return { x: Math.max(-1.4, Math.min(1.4, player.x)), z: 37.2 };
+          }
+          if (player.z >= 36 && player.z <= 40.5 && Math.abs(player.x) < 3.4 && Math.cos(player.yaw) < -0.35) {
+            return { x: Math.max(-1.4, Math.min(1.4, player.x)), z: 29.2 };
+          }
+          return null;
+        },
       });
     }
     const held = input.held ? input.held() : { guard: false };
@@ -1414,6 +1433,9 @@ export function createRustySim(scene, world, audio) {
     const resolved = world.resolve(player.x, player.z, 0.38, boss.alive && boss.active ? [{ x: boss.x, z: boss.z, r: 1.2 }] : null);
     player.x = resolved.x;
     player.z = resolved.z;
+    if (player.z > 30.35 && player.z < 36.15 && Math.abs(player.x) < 4) {
+      player.z = player.z < 33.2 ? 30.15 : 36.35;
+    }
     if (bossWall && boss.alive && player.z < 49.2 && player.z > 40) player.z = 49.2;
 
     player.vy -= 28 * dt;
@@ -1768,6 +1790,7 @@ export function createRustySim(scene, world, audio) {
     allies: () => allies.map((a) => ({ id: a.id, x: a.x, z: a.z, hp: a.hp, hpMax: a.hpMax })),
     chests: () => world.chests.map((c) => !!c.open),
     exitReady: () => !!(world.gate && world.gate.ready),
+    recap: () => ({ freed: freedN, time: playTime }),
     defeatForExit() {
       boss.hp = 0;
       boss.alive = false;

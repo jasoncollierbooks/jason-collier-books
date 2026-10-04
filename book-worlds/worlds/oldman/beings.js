@@ -62,41 +62,63 @@ function shadeMat() {
   });
 }
 
-export function createWolf() {
+export function createWolf(opts = {}) {
   const root = new THREE.Group();
   const bob = new THREE.Group();
   root.add(bob);
+  root.scale.setScalar(opts.scale || 1);
   const taken = grayMat();
-  const fur = new THREE.MeshStandardMaterial({ color: 0x6e5844, roughness: 0.88 });
+  const fur = new THREE.MeshStandardMaterial({ color: 0x5c4636, roughness: 0.9 });
+  const earMatTaken = taken;
   const meshes = [];
-  const add = (geo, x, y, z, rx = 0) => {
-    const mesh = new THREE.Mesh(geo, taken);
+  const legs = [];
+  const add = (geo, x, y, z, mat = taken) => {
+    const mesh = new THREE.Mesh(geo, mat);
     mesh.position.set(x, y, z);
-    mesh.rotation.x = rx;
     mesh.castShadow = true;
     bob.add(mesh);
     meshes.push(mesh);
     return mesh;
   };
-  const body = add(new THREE.SphereGeometry(0.28, 10, 8), 0, 0.48, 0);
-  body.scale.set(1.7, 0.85, 0.95);
-  const head = add(new THREE.SphereGeometry(0.16, 8, 7), 0, 0.62, 0.42);
-  head.scale.set(0.9, 0.85, 1.25);
-  const snout = add(new THREE.SphereGeometry(0.08, 7, 6), 0, 0.56, 0.58);
-  snout.scale.set(0.7, 0.55, 1.2);
-  const legs = [];
-  const legGeo = new THREE.CylinderGeometry(0.045, 0.05, 0.32, 6);
-  [[-0.14, 0.22], [0.14, 0.22], [-0.14, -0.22], [0.14, -0.22]].forEach(([x, z]) => {
-    const leg = add(legGeo, x, 0.2, z);
-    legs.push(leg);
+  const chest = add(new THREE.SphereGeometry(0.22, 8, 7), 0, 0.52, 0.28);
+  chest.scale.set(0.9, 0.85, 1.1);
+  const body = add(new THREE.SphereGeometry(0.26, 10, 8), 0, 0.58, -0.08);
+  body.scale.set(1.05, 0.82, 2.15);
+  const hip = add(new THREE.SphereGeometry(0.16, 8, 6), 0, 0.58, -0.48);
+  hip.scale.set(0.85, 0.75, 1);
+  const neck = add(new THREE.SphereGeometry(0.1, 7, 6), 0, 0.66, 0.42);
+  neck.scale.set(0.7, 0.7, 1.3);
+  const head = add(new THREE.SphereGeometry(0.15, 8, 7), 0, 0.72, 0.62);
+  head.scale.set(0.85, 0.8, 1.05);
+  const snout = add(new THREE.ConeGeometry(0.07, 0.28, 6), 0, 0.66, 0.82);
+  snout.rotation.x = Math.PI / 2;
+  const nose = add(new THREE.SphereGeometry(0.035, 6, 5), 0, 0.68, 0.96);
+  nose.scale.set(0.8, 0.6, 0.7);
+  const ears = [-1, 1].map((s) => {
+    const ear = add(new THREE.ConeGeometry(0.05, 0.16, 5), s * 0.09, 0.9, 0.58, earMatTaken);
+    ear.rotation.z = s * -0.25;
+    ear.rotation.x = -0.3;
+    return ear;
   });
-  const tail = add(new THREE.CylinderGeometry(0.03, 0.05, 0.34, 5), 0, 0.58, -0.48, -0.8);
+  const legGeo = new THREE.CylinderGeometry(0.04, 0.045, 0.42, 5);
+  [[-0.12, 0.22], [0.12, 0.22], [-0.13, -0.32], [0.13, -0.32]].forEach(([x, z]) => {
+    const hipBone = new THREE.Group();
+    hipBone.position.set(x, 0.42, z);
+    const leg = new THREE.Mesh(legGeo, taken);
+    leg.position.y = -0.18;
+    leg.castShadow = true;
+    hipBone.add(leg);
+    bob.add(hipBone);
+    meshes.push(leg);
+    legs.push(hipBone);
+  });
+  const tail = add(new THREE.ConeGeometry(0.07, 0.42, 6), 0, 0.72, -0.72);
+  tail.rotation.x = 1.15;
   const eyeMat = new THREE.MeshBasicMaterial({ color: 0x3dffa8 });
-  const eyes = [-1, 1].map((s) => {
+  [-1, 1].forEach((s) => {
     const eye = new THREE.Mesh(new THREE.SphereGeometry(0.028, 6, 5), eyeMat);
-    eye.position.set(s * 0.07, 0.66, 0.54);
+    eye.position.set(s * 0.07, 0.76, 0.74);
     bob.add(eye);
-    return eye;
   });
   let time = 0;
   let freed = false;
@@ -110,13 +132,16 @@ export function createWolf() {
     time += dt;
     if (taken.uniforms) taken.uniforms.uTime.value = time;
     const speed = anim.speed || 0;
-    const swing = speed > 0.2 ? Math.sin(time * 11) : 0;
-    legs.forEach((leg, i) => { leg.rotation.x = swing * (i % 2 ? 1 : -1) * 0.7; });
-    tail.rotation.x = -0.8 + Math.sin(time * 2.4) * 0.15;
-    const lunge = anim.action === "attack" ? -0.35 : 0;
+    const swing = speed > 0.2 ? Math.sin(time * 10) : Math.sin(time * 1.4) * 0.08;
+    legs.forEach((leg, i) => { leg.rotation.x = swing * (i % 2 ? 1 : -1) * 0.85; });
+    tail.rotation.x = 1.15 + Math.sin(time * 2.2) * 0.18;
+    tail.rotation.z = Math.sin(time * 1.6) * 0.2;
+    const lunge = anim.action === "attack" ? -0.38 : 0;
     body.rotation.x = lunge;
-    head.position.z = 0.42 + (anim.action === "attack" ? 0.06 : 0);
-    bob.position.y = Math.abs(swing) * 0.03;
+    head.position.z = 0.62 + (anim.action === "attack" ? 0.08 : 0);
+    head.rotation.x = anim.action === "attack" ? -0.25 : 0;
+    ears.forEach((ear, i) => { ear.rotation.x = -0.3 + (anim.action === "attack" ? -0.25 : Math.sin(time * 2 + i) * 0.05); });
+    bob.position.y = Math.abs(swing) * 0.04;
   }
   return { root, update, setFree };
 }

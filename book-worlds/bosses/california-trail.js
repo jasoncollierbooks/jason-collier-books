@@ -166,6 +166,9 @@ function create() {
     root,
     update(dt, a) {
       phase += dt * (a.moving ? 6.5 : 1.5);
+      const tier = a.phase || 1;
+      const bulk = a.state === "dead" ? 1 : tier >= 3 ? 1.12 : tier >= 2 ? 1.06 : 1;
+      rig.scale.setScalar(bulk);
       rig.position.y = a.state === "dead" ? 0 : Math.abs(Math.sin(phase)) * (a.moving ? 0.05 : 0.02);
       legs.forEach((hip, i) => {
         const walk = a.moving ? Math.sin(phase + (i % 2) * Math.PI) * 0.55 : Math.sin(phase * 0.35 + i) * 0.04;
@@ -179,8 +182,8 @@ function create() {
               : 0.05;
       head.rotation.x = damp(head.rotation.x, nod, 8, dt);
       bearFog.uniforms.uTime.value = phase;
-      bearFog.uniforms.uHit.value = (a.hit || 0) * 0.7 + (a.state === "roar" ? 0.25 : 0);
-      hide.emissive.setHex((a.hit || 0) > 0.2 ? 0xd8d8d8 : 0x2a2a28);
+      bearFog.uniforms.uHit.value = (a.hit || 0) * 0.7 + (a.state === "roar" ? 0.25 : 0) + (tier >= 2 ? 0.22 : 0);
+      hide.emissive.setHex((a.hit || 0) > 0.2 || tier >= 3 ? 0xd8d8d8 : tier >= 2 ? 0x4a4a48 : 0x2a2a28);
       faceMat.emissiveIntensity = 0.08 + (a.hit || 0) * 0.6;
       spinDust(dust, phase);
       rig.rotation.x = damp(rig.rotation.x, a.state === "charge" ? 0.1 : 0, 6, dt);

@@ -128,6 +128,7 @@ export function buildWorld(scene, low) {
   const rope = buildRope(scene, wood);
   block(-3.3, rope.z0, 0.5);
   block(3.3, rope.z0, 0.5);
+  const lassoBar = buildLassoBar(scene, wood);
 
   const radio = buildRadio(scene);
 
@@ -162,6 +163,7 @@ export function buildWorld(scene, low) {
     pages,
     floats,
     rope,
+    lassoBar,
     radio,
     town,
     gate,
@@ -469,6 +471,33 @@ function buildFloats(scene, wood, canvas, dark) {
     scene.add(mesh);
     return { mesh, x, z, homeX: x, homeZ: z, drift: false, floated: false };
   });
+}
+
+function buildLassoBar(scene, wood) {
+  const z = 66;
+  const g = new THREE.Group();
+  const ropeMat = new THREE.MeshStandardMaterial({ color: 0xc6a15a, roughness: 0.72 });
+  for (const x of [-2.4, 2.4]) {
+    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.14, 2.4, 6), wood);
+    post.position.set(x, heightAt(x, z) + 1.2, z);
+    post.castShadow = true;
+    g.add(post);
+  }
+  const rope = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 4.8, 8), ropeMat);
+  rope.rotation.z = Math.PI / 2;
+  rope.position.set(0, heightAt(0, z) + 1.45, z);
+  rope.castShadow = true;
+  g.add(rope);
+  scene.add(g);
+  return {
+    z,
+    open: false,
+    setOpen(v) {
+      this.open = !!v;
+      rope.position.y = heightAt(0, z) + (v ? 0.28 : 1.45);
+      rope.rotation.z = v ? 0.2 : Math.PI / 2;
+    },
+  };
 }
 
 function buildRope(scene, wood) {

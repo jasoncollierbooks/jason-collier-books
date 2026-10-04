@@ -1,22 +1,22 @@
 import * as THREE from "three";
 import { createAudio } from "./audio.js?v=5";
 import { createInput } from "./input.js?v=5";
-import { createSim } from "./sim.js?v=10";
+import { createSim } from "./sim.js?v=11";
 import { damp, clamp, springAngle, angDelta } from "./util.js";
 import { createNarration } from "./narration.js?v=2";
 import { createDialogue } from "./dialogue.js?v=7";
 import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass, GTAOPass, ShaderPass, FXAAPass } from "three/addons";
-import { buildWorld } from "./world.js?v=7";
-import { buildRustyWorld } from "../worlds/rusty/world.js?v=11";
-import { createRustySim } from "../worlds/rusty/sim.js?v=16";
-import { buildPulseWorld } from "../worlds/pulse/world.js?v=5";
-import { createPulseSim } from "../worlds/pulse/sim.js?v=9";
-import { buildOldmanWorld } from "../worlds/oldman/world.js?v=1";
-import { createOldmanSim } from "../worlds/oldman/sim.js?v=1";
-import { createAbilities } from "./abilities.js?v=2";
+import { buildWorld } from "./world.js?v=8";
+import { buildRustyWorld } from "../worlds/rusty/world.js?v=12";
+import { createRustySim } from "../worlds/rusty/sim.js?v=18";
+import { buildPulseWorld } from "../worlds/pulse/world.js?v=6";
+import { createPulseSim } from "../worlds/pulse/sim.js?v=11";
+import { buildOldmanWorld } from "../worlds/oldman/world.js?v=2";
+import { createOldmanSim } from "../worlds/oldman/sim.js?v=3";
+import { createAbilities } from "./abilities.js?v=3";
 import { whenCastReady } from "./actors.js?v=10";
 import { tick as tickVfx, bind, spawn as spawnVfx, active as vfxActive } from "./vfx.js?v=1";
-import { theBlank } from "../bosses/index.js?v=10";
+import { theBlank } from "../bosses/index.js?v=11";
 
 const canvas = document.getElementById("view");
 const app = document.getElementById("app");
@@ -90,22 +90,47 @@ window.addEventListener("touchstart", unlockAudio, { capture: true, passive: tru
 window.addEventListener("touchend", unlockAudio, { capture: true, passive: true });
 
 const GRADE = {
-  uniforms: { tDiffuse: { value: null } },
+  uniforms: {
+    tDiffuse: { value: null },
+    uWarm: { value: 0.42 },
+    uBias: { value: new THREE.Vector3(0.025, 0.006, -0.018) },
+  },
   vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
   fragmentShader: `
     uniform sampler2D tDiffuse;
+    uniform float uWarm;
+    uniform vec3 uBias;
     varying vec2 vUv;
     void main() {
       vec3 c = texture2D(tDiffuse, vUv).rgb;
       float l = dot(c, vec3(0.30, 0.52, 0.18));
       c = (c - 0.5) * 1.08 + 0.5;
-      c = mix(c, c * vec3(1.12, 0.94, 0.78), smoothstep(0.55, 0.05, l) * 0.42);
-      c.r += 0.025; c.g += 0.006; c.b -= 0.018;
+      c = mix(c, c * vec3(1.12, 0.94, 0.78), smoothstep(0.55, 0.05, l) * uWarm);
+      c += uBias;
       c = mix(c, vec3(l), -0.06);
       gl_FragColor = vec4(clamp(c, 0.0, 1.0), 1.0);
     }
   `,
 };
+
+function applyGrade(key) {
+  const warm = GRADE.uniforms.uWarm;
+  const bias = GRADE.uniforms.uBias.value;
+  if (key === "oldman") {
+    warm.value = 0;
+    bias.set(-0.04, 0.006, 0.055);
+  } else if (key === "pulse") {
+    warm.value = 0.08;
+    bias.set(0.0, 0.004, 0.02);
+  } else if (key === "stack") {
+    warm.value = 0.22;
+    bias.set(0.016, 0.006, -0.006);
+  } else {
+    warm.value = 0.42;
+    bias.set(0.025, 0.006, -0.018);
+  }
+  document.body.dataset.world = key || "trail";
+}
 
 installEnvironment(renderer, scene, low);
 let composer = makeComposer(renderer, scene, camera, low);
@@ -304,7 +329,7 @@ const CARDS = {
     kicker: "World I",
     title: "The river remembers",
     body: "The Blank Bear comes apart, fog first and then the shape of a hunt the book still remembers. The sepia crawls back into the ford. Jang counts the oxen twice and gets a different number both times. Tom scratches the back of his neck and admits, quietly, that the picture has its color again. The screen home stays shut until every torn page is back in the book.",
-    btn: "Back to the trail",
+    btn: "On to the Stack",
     hint: false,
   },
   dead: {
@@ -331,7 +356,7 @@ const STACK_CARDS = {
     kicker: "World II",
     title: "The stack keeps its color",
     body: "The Blank Baron comes apart, fog first and then the shape of an axe the book still remembers. Sunset crawls back into the rivets. Spacey does not light the cigar. Mira checks a gauge that was gray a minute ago and nods once. The screen home stays shut until every torn page is back in the book.",
-    btn: "Back to the deck",
+    btn: "On to the Pulse",
     hint: false,
   },
   dead: {
@@ -386,7 +411,7 @@ const PULSE_CARDS = {
     kicker: "World III",
     title: "The signal remembers",
     body: "The Blank Hum comes apart, fog first and then the vibration the book still remembers. Color crawls back into the foam. The Entity takes the quiet. A native watches a neighbor turn from gray to gold and nods once. The screen home stays shut until every torn page is back in the book.",
-    btn: "Back to the foam",
+    btn: "On to the mountain",
     hint: false,
   },
   dead: {
@@ -441,7 +466,7 @@ const OLDMAN_CARDS = {
     kicker: "World IV",
     title: "The ridges answer",
     body: "The fog lifts off the Old Man. The green goes out of his eyes. Amber sap dries where the key found bark. A chorus of bellows rolls down from every ridge, and then the mountain keeps its secrets. Harlan Wade walks back to the truck. The screen home stays shut until every torn page is back in the book.",
-    btn: "Back to the snow",
+    btn: "Back to the cabinet",
     hint: false,
   },
   dead: {
@@ -531,6 +556,20 @@ function showCard(id) {
   el.kicker.textContent = c.kicker;
   el.title.textContent = c.title;
   el.body.textContent = c.body;
+  const result = document.getElementById("card-result");
+  if (result) {
+    if (id === "outro" && sim.recap) {
+      const recap = sim.recap();
+      const secs = Math.max(0, Math.round(recap.time || 0));
+      const mins = Math.floor(secs / 60);
+      const rem = String(secs % 60).padStart(2, "0");
+      result.hidden = false;
+      result.textContent = `Freed ${recap.freed || 0}. Time ${mins}:${rem}.`;
+    } else {
+      result.hidden = true;
+      result.textContent = "";
+    }
+  }
   el.btn.textContent = c.btn;
   el.hint.hidden = !c.hint;
   el.body.hidden = false;
@@ -798,6 +837,7 @@ function enterWorld(key) {
     sim = trailSim;
     worldKey = "trail";
   }
+  applyGrade(worldKey);
   bindStation(worldKey);
   scene.add(camera);
   scene.add(flashLight);
@@ -859,6 +899,8 @@ function pullBack() {
   transitioning = true;
   const exitKey = worldKey;
   restored[exitKey] = true;
+  const nextStation = { trail: 1, stack: 2, pulse: 3 };
+  if (nextStation[exitKey] != null) station = nextStation[exitKey];
   playing = false;
   input.enabled = false;
   mode = "hub";
@@ -1061,6 +1103,7 @@ if (wantOldman && oldmanStarts.includes(start)) {
 } else {
   showHub();
 }
+if (!document.body.dataset.world) applyGrade(worldKey);
 
 function resize() {
   const w = window.innerWidth;
@@ -1848,10 +1891,10 @@ function installEnvironment(gl, rootScene, lowQ, kind) {
     grd.addColorStop(0.68, "#e8b07a");
     grd.addColorStop(1, "#8a6848");
   } else if (kind === "oldman") {
-    grd.addColorStop(0, "#12182c");
-    grd.addColorStop(0.38, "#3a3a58");
-    grd.addColorStop(0.62, "#c46a3a");
-    grd.addColorStop(1, "#5a4a3c");
+    grd.addColorStop(0, "#0e1428");
+    grd.addColorStop(0.42, "#243456");
+    grd.addColorStop(0.72, "#3a4c6c");
+    grd.addColorStop(1, "#1a2438");
   } else if (kind === "pulse") {
     grd.addColorStop(0, "#2a1458");
     grd.addColorStop(0.28, "#6a3a28");

@@ -87,8 +87,15 @@ export function createAbilities() {
     if (!spec) return false;
     if (id === "lasso") {
       const foe = nearest(ctx, 14);
-      if (!foe) return false;
+      const gate = !!(ctx.lassoGate && ctx.lassoGate());
+      if (!foe && !gate) return false;
       cd.lasso = spec.cool;
+      if (!foe) {
+        ctx.events.push({ type: "lasso", x: ctx.player.x, z: ctx.player.z, tx: ctx.player.x, tz: ctx.player.z + 1.2 });
+        if (ctx.audio && ctx.audio.whip) ctx.audio.whip();
+        if (ctx.onCast) ctx.onCast(id, null);
+        return true;
+      }
       const yaw = Math.atan2(foe.x - ctx.player.x, foe.z - ctx.player.z);
       ctx.player.yaw = yaw;
       const hold = 1.65;
@@ -111,19 +118,23 @@ export function createAbilities() {
       ctx.damageEnemy(foe, foe.kind === "boss" ? 10 : 8, null, { knock: 0.15 });
       ctx.events.push({ type: "lasso", x: ctx.player.x, z: ctx.player.z, tx: foe.x, tz: foe.z });
       if (ctx.audio && ctx.audio.whip) ctx.audio.whip();
+      if (ctx.onCast) ctx.onCast(id, foe);
       return true;
     }
     if (id === "steam") {
       cd.steam = spec.cool;
       const yaw = ctx.player.yaw;
+      const leap = ctx.gapLeap ? ctx.gapLeap() : null;
       const dist = 6.4;
+      const destX = leap ? leap.x : ctx.player.x + Math.sin(yaw) * dist;
+      const destZ = leap ? leap.z : ctx.player.z + Math.cos(yaw) * dist;
       let x = ctx.player.x;
       let z = ctx.player.z;
       const hit = new Set();
       for (let i = 1; i <= 7; i++) {
-        const nx = ctx.player.x + Math.sin(yaw) * dist * (i / 7);
-        const nz = ctx.player.z + Math.cos(yaw) * dist * (i / 7);
-        const spot = ctx.resolve ? ctx.resolve(nx, nz, 0.38) : { x: nx, z: nz };
+        const nx = ctx.player.x + (destX - ctx.player.x) * (i / 7);
+        const nz = ctx.player.z + (destZ - ctx.player.z) * (i / 7);
+        const spot = (!leap && ctx.resolve) ? ctx.resolve(nx, nz, 0.38) : { x: nx, z: nz };
         x = spot.x;
         z = spot.z;
         for (const e of ctx.living()) {
@@ -134,11 +145,13 @@ export function createAbilities() {
           }
         }
       }
+      if (leap) { x = destX; z = destZ; }
       ctx.player.x = x;
       ctx.player.z = z;
       ctx.player.iframes = Math.max(ctx.player.iframes || 0, 0.34);
       ctx.events.push({ type: "steam", x, z });
       if (ctx.audio && ctx.audio.hiss) ctx.audio.hiss();
+      if (ctx.onCast) ctx.onCast(id);
       return true;
     }
     if (id === "pulse") {
@@ -151,6 +164,7 @@ export function createAbilities() {
       ctx.player.iframes = Math.max(ctx.player.iframes || 0, 0.2);
       ctx.events.push({ type: "pulse", x: ctx.player.x, z: ctx.player.z });
       if (ctx.audio && ctx.audio.pulse) ctx.audio.pulse();
+      if (ctx.onCast) ctx.onCast(id);
       return true;
     }
     if (id === "firelight") {
@@ -174,6 +188,7 @@ export function createAbilities() {
       ctx.player.iframes = Math.max(ctx.player.iframes || 0, 0.22);
       ctx.events.push({ type: "firelight", x: ctx.player.x, y: ctx.player.y || 0, z: ctx.player.z });
       if (ctx.audio && ctx.audio.firelight) ctx.audio.firelight();
+      if (ctx.onCast) ctx.onCast(id);
       return true;
     }
     return false;
