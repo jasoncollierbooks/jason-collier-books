@@ -4,13 +4,13 @@ import { createInput } from "./input.js?v=4";
 import { createSim } from "./sim.js?v=9";
 import { damp, clamp, springAngle, angDelta } from "./util.js";
 import { createNarration } from "./narration.js?v=1";
-import { createDialogue } from "./dialogue.js?v=4";
+import { createDialogue } from "./dialogue.js?v=5";
 import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass, GTAOPass, ShaderPass, FXAAPass } from "three/addons";
 import { buildWorld } from "./world.js?v=7";
 import { buildRustyWorld } from "../worlds/rusty/world.js?v=10";
 import { createRustySim } from "../worlds/rusty/sim.js?v=15";
-import { buildPulseWorld } from "../worlds/pulse/world.js?v=1";
-import { createPulseSim } from "../worlds/pulse/sim.js?v=2";
+import { buildPulseWorld } from "../worlds/pulse/world.js?v=5";
+import { createPulseSim } from "../worlds/pulse/sim.js?v=5";
 import { createAbilities } from "./abilities.js?v=1";
 import { whenCastReady } from "./actors.js?v=7";
 import { theBlank } from "../bosses/index.js?v=10";
@@ -200,7 +200,7 @@ const el = {
 const STATIONS = [
   { id: "trail", freq: "54.7", script: "On the air", title: "The California Trail", sub: "Jang & Tom · Wagon Masters", live: true },
   { id: "stack", freq: "67.2", script: "On the air", title: "The Rusty Stack", sub: "Spacey & Mira · Sky Freight", live: true, note: "Recommended after the Trail" },
-  { id: "pulse", freq: "103.0", script: "On the air", title: "The First Pulse", sub: "Listener & Pilot · The Hum", live: true, note: "Recommended after the Stack" },
+  { id: "pulse", freq: "103.0", script: "On the air", title: "The First Pulse", sub: "The Entity · Quantum Realm", live: true, note: "Recommended after the Stack" },
   { id: "oldman", freq: "81.4", script: "No signal", title: "Old Man on the Mountain", sub: "A ridge with its own weather", live: false },
 ];
 
@@ -291,23 +291,23 @@ const PULSE_CARDS = {
     script: "Please stand by",
     kicker: "Book Worlds  ·  Station 3",
     title: "The First Pulse",
-    body: "Nonimaginaires — brain fogs born where imagination dies — are leaking through the broadcast and eating this story. Five pages are going gray in the dark between stars. The Keeper has to gather those pages, put the first light, the dish, and the bridge back the way the book remembers, and restore the imagination on this channel. The Hum has fused with the fog and waits in the wave. This channel is a research ship pointed at the first light. The Listener keeps the dish. The Pilot keeps the board. The weapon in the Keeper's hand is the same brass skeleton key — the Trail Key.",
-    btn: "Step onto the ship",
+    body: "Nonimaginaires — brain fogs born where imagination dies — are leaking through the broadcast and eating this story. Five pages are going gray in the quantum foam. The Keeper has to gather those pages, walk the first light, the ripples, and the wave, and restore the imagination on this channel. The Hum has fused with the fog and waits ahead. This channel is a quantum realm of particle fields and crystalline islands. The Entity keeps the light. A native of the foam keeps the path. The weapon in the Keeper's hand is the same brass skeleton key — the Trail Key.",
+    btn: "Step into the foam",
     hint: true,
   },
   outro: {
     script: "End of the bulletin",
     kicker: "World III",
     title: "The signal remembers",
-    body: "The Blank Hum comes apart, fog first and then the vibration the book still remembers. Color crawls back into the carrier. The Listener takes the quiet. The Pilot watches a gauge that was gray a minute ago and nods once. The screen home stays shut until every torn page is back in the book.",
-    btn: "Back to the ship",
+    body: "The Blank Hum comes apart, fog first and then the vibration the book still remembers. Color crawls back into the foam. The Entity takes the quiet. A native watches a neighbor turn from gray to gold and nods once. The screen home stays shut until every torn page is back in the book.",
+    btn: "Back to the foam",
     hint: false,
   },
   dead: {
     script: "The carrier drops",
-    kicker: "The ship keeps your boots",
+    kicker: "The foam keeps your boots",
     title: "Not yet",
-    body: "The Keeper hits the deck plates. The Listener holds the frequency. The Pilot offers the long end of a switch that still answers.",
+    body: "The Keeper hits the light underfoot. The Entity holds a probability open. A native offers a hand that is still the right color.",
     btn: "Retry",
     hint: false,
   },
@@ -326,8 +326,8 @@ const PULSE_PAGES = {
   },
   "the-dish": {
     script: "A torn page",
-    title: "The dish",
-    body: "A torn page. A dish on the dark side of the ship drank the oldest radio in the sky, and something in it drank back.",
+    title: "The foam",
+    body: "A torn page. The entity drifted through the quantum foam, tasting probabilities. It learned it could become a wave.",
   },
   "no-medium": {
     script: "A torn page",
@@ -598,7 +598,7 @@ function bindStation(key) {
     dialogue.setWorld("first-pulse");
     narrate.use("pulse");
     audio.setBed("pulse");
-    if (kicker) kicker.textContent = "On the ship";
+    if (kicker) kicker.textContent = "In the foam";
   } else {
     dialogue.setWorld("california-trail");
     narrate.use("trail");
@@ -1224,7 +1224,7 @@ function paintHud(snap) {
   const line = dialogue.active();
   if (line && el.tag && mode === "play") {
     const head = snap.heads[line.speaker];
-    const pt = head && project(head.x, head.y + 0.35, head.z);
+    const pt = head && project(head.x, head.y + 0.72, head.z);
     if (pt) {
       el.tag.hidden = false;
       el.tag.style.transform = `translate(${pt.x}px, ${pt.y}px) translate(-50%, -100%)`;
@@ -1352,13 +1352,26 @@ function paintAbilities() {
   const rows = mode === "play" ? abilities.list() : [];
   box.hidden = rows.length === 0;
   const touch = document.body.classList.contains("touch");
-  const sig = rows.map((a) => `${a.id}:${a.ready ? 1 : 0}:${Math.ceil(a.cd)}:${touch ? 1 : 0}`).join("|");
-  if (box.dataset.sig === sig) return;
-  box.dataset.sig = sig;
-  box.innerHTML = rows.map((a) => {
-    const label = touch ? a.name : `${a.name} · ${a.key}`;
-    return `<button type="button" data-ability="${a.id}" class="${a.ready ? "" : "is-dry"}">${label}</button>`;
-  }).join("");
+  const ids = rows.map((a) => a.id).join(",");
+  if (box.dataset.ids !== ids || box.dataset.touch !== (touch ? "1" : "0")) {
+    box.dataset.ids = ids;
+    box.dataset.touch = touch ? "1" : "0";
+    box.innerHTML = rows.map((a) => {
+      const key = touch ? "" : `<b>${a.key}</b>`;
+      return `<button type="button" data-ability="${a.id}"><svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15"></circle></svg><span>${a.name}</span>${key}</button>`;
+    }).join("");
+  }
+  const circ = 2 * Math.PI * 15;
+  for (const btn of box.querySelectorAll("button")) {
+    const row = rows.find((a) => a.id === btn.dataset.ability);
+    if (!row) continue;
+    btn.classList.toggle("is-dry", !row.ready);
+    const ring = btn.querySelector("circle");
+    if (!ring) continue;
+    const left = row.cool > 0 ? Math.min(1, row.cd / row.cool) : 0;
+    ring.style.strokeDasharray = String(circ);
+    ring.style.strokeDashoffset = String(circ * left);
+  }
 }
 
 function paintParty(snap) {
@@ -1622,10 +1635,11 @@ function installEnvironment(gl, rootScene, lowQ, kind) {
     grd.addColorStop(0.68, "#e8b07a");
     grd.addColorStop(1, "#8a6848");
   } else if (kind === "pulse") {
-    grd.addColorStop(0, "#070814");
-    grd.addColorStop(0.42, "#1c2448");
-    grd.addColorStop(0.7, "#3a2a4a");
-    grd.addColorStop(1, "#100e16");
+    grd.addColorStop(0, "#2a1458");
+    grd.addColorStop(0.28, "#6a3a28");
+    grd.addColorStop(0.48, "#e0a04a");
+    grd.addColorStop(0.68, "#1a7a78");
+    grd.addColorStop(1, "#140818");
   } else {
     grd.addColorStop(0, "#1a2744");
     grd.addColorStop(0.42, "#c45a3a");

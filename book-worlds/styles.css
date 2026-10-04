@@ -121,8 +121,9 @@ body.touch #interact { min-width: 220px; min-height: 72px; font-size: 20px; }
 #tag {
   position: absolute; left: 0; top: 0; z-index: 6; margin: 0;
   pointer-events: none; background: transparent; color: var(--paper);
-  font-family: var(--ui); font-size: 16px; letter-spacing: .14em; text-transform: uppercase;
-  text-shadow: 0 1px 2px #000, 0 0 10px rgba(0, 0, 0, .65);
+  font-family: var(--ui); font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+  text-shadow: 0 1px 2px #000;
+  opacity: .8;
 }
 #tag[hidden] { display: none; }
 #subtitle {
@@ -236,33 +237,51 @@ body.flyby #floats { display: none !important; }
 #abilities {
   display: none;
   position: absolute;
-  left: calc(12px + env(safe-area-inset-left));
-  top: var(--hud-clear, 210px);
+  right: calc(8px + env(safe-area-inset-right));
+  bottom: calc(148px + env(safe-area-inset-bottom));
   z-index: 7;
+  width: 56px;
+  flex-direction: column-reverse;
+  align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
-  max-width: min(28rem, calc(100% - 24px));
-  pointer-events: auto;
+  pointer-events: none;
 }
+body.playing:not(.touch) #abilities { bottom: calc(86px + env(safe-area-inset-bottom)); }
 body.playing #abilities:not([hidden]) { display: flex; }
 #abilities button {
-  min-height: 52px;
-  padding: 0 16px;
-  border-radius: 14px;
-  border: 1px solid rgba(228, 208, 164, .72);
-  background: rgba(16, 12, 8, .66);
+  position: relative;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(228, 208, 164, .75);
+  background: rgba(16, 12, 8, .55);
   color: #f6edd8;
   font-family: var(--ui);
-  font-size: 16px;
-  letter-spacing: .08em;
+  letter-spacing: .04em;
   text-transform: uppercase;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+  pointer-events: auto;
 }
-body.touch #abilities button {
-  min-height: 64px;
-  font-size: 18px;
-  padding: 0 18px;
+#abilities button svg {
+  position: absolute; inset: 3px; width: auto; height: auto; transform: rotate(-90deg);
 }
-#abilities button.is-dry { opacity: .42; }
+#abilities button circle {
+  fill: none; stroke: #ffe2a8; stroke-width: 2.4; stroke-linecap: round;
+}
+#abilities button span { position: relative; font-size: 8px; }
+#abilities button b {
+  display: none;
+  position: relative;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  color: #ffe2a8;
+}
+body:not(.touch) #abilities button b { display: block; }
+#abilities button.is-dry { opacity: .45; }
 #letterbox { display: none; pointer-events: none; }
 body.flyby #letterbox { display: block; }
 #letterbox span {

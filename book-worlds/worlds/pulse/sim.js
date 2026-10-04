@@ -1,10 +1,11 @@
 // The First Pulse. Same Keeper, Trail Key, and command combat as the other stations.
+// The realm is quantum. Companions are the Entity and a friendly native.
 import * as THREE from "three";
 import { clamp, damp, dampAngle, hypot2 } from "../../src/util.js";
-import { heightAt } from "./world.js?v=1";
-import { createFog } from "../../src/rigs.js?v=2";
+import { heightAt } from "./world.js?v=2";
 import { createHuman } from "../../src/actors.js?v=4";
-import { boss as worldBoss } from "../../bosses/first-pulse.js?v=2";
+import { createEntity, createNative } from "./beings.js?v=1";
+import { boss as worldBoss } from "../../bosses/first-pulse.js?v=5";
 import { createAbilities } from "../../src/abilities.js?v=1";
 
 const SAVE_KEY = "book-worlds-first-pulse";
@@ -19,24 +20,27 @@ export function createPulseSim(scene, world, audio) {
     hat: 0x6a5134, hair: 0x3a2a22, skin: 0xd2a07c, coat: 0xb08960,
     key: true, lantern: true, sharp: true, chest: 1.02, height: 1, bulk: 1,
   });
-  const listener = createHuman({
-    cloth: 0x3d4e62, cloth2: 0x2a3038, pants: 0x2c3038, boots: 0x1a1c20,
-    hair: 0x2a241c, skin: 0xc4a07c, coat: 0x4a5c70,
-    goggles: true, gloves: true, ownHair: true, crossBelts: true,
-    height: 1.02, bulk: 0.92, chest: 0.96, shoulder: 0.18,
-  });
-  const pilot = createHuman({
-    cloth: 0x2e3a34, cloth2: 0x243028, pants: 0x24302c, boots: 0x141614,
-    hair: 0x1a120e, skin: 0xc48a6a, hat: 0x243028,
-    sleeves: 0x3a4a40, gloves: true, ownHair: true, coverall: true, toolbelt: true,
-    height: 0.96, bulk: 0.9, chest: 0.94, shoulder: 0.16,
-  });
-  scene.add(keeper.root, listener.root, pilot.root);
+  const entity = createEntity();
+  const native = createNative({ taken: false, seed: 1, scale: 1 });
+  scene.add(keeper.root, entity.root, native.root);
 
   const allies = [
-    { id: "listener", name: "Listener", rig: listener, role: "throw", x: -1.5, z: -7.2, yaw: 0.2, side: -1.15, back: 1.7, cd: 1.4, anim: "idle", animT: 0, hp: 90, hpMax: 90, hurt: 0 },
-    { id: "pilot", name: "Pilot", rig: pilot, role: "melee", x: 1.5, z: -6.8, yaw: -0.2, side: 1.2, back: 1.45, cd: 1.1, anim: "idle", animT: 0, hp: 84, hpMax: 84, hurt: 0 },
+    { id: "entity", name: "Entity", rig: entity, role: "throw", x: -1.5, z: -7.2, yaw: 0.2, side: -1.15, back: 1.7, cd: 1.4, anim: "idle", animT: 0, hp: 90, hpMax: 90, hurt: 0 },
+    { id: "native", name: "Native", rig: native, role: "melee", x: 1.5, z: -6.8, yaw: -0.2, side: 1.2, back: 1.45, cd: 1.1, anim: "idle", animT: 0, hp: 84, hpMax: 84, hurt: 0 },
   ];
+
+  const guides = [
+    { line: "native-hint-hum", x: 3.4, z: 4.8 },
+    { line: "native-hint-answer", x: -3.6, z: 17.2 },
+    { line: "native-hint-foam", x: 4.4, z: 33.2 },
+    { line: "native-hint-wave", x: -3.8, z: 55.2 },
+    { line: "native-hint-invite", x: 4.1, z: 69.2 },
+  ].map((spot, i) => {
+    const rig = createNative({ taken: false, seed: 4 + i, scale: 0.94 });
+    scene.add(rig.root);
+    rig.root.position.set(spot.x, 0, spot.z);
+    return { ...spot, rig, said: false };
+  });
 
   const player = {
     x: 0, y: 0, z: -8, yaw: 0, vx: 0, vz: 0, vy: 0,
@@ -124,7 +128,11 @@ export function createPulseSim(scene, world, audio) {
     return { hp: 58, radius: 0.48, speed: 2.15, tele: 0.48, lunge: 8, reach: 1.75, dmg: 11, xp: 18, flash: 16 };
   }
   function makeEnemy(kind, x, z, tag) {
-    const rig = createFog({ tall: kind === "blanker", scale: kind === "blanker" ? 1.28 : 0.92 });
+    const rig = createNative({
+      taken: true,
+      scale: kind === "blanker" ? 1.24 : 0.98,
+      seed: seq + (kind === "blanker" ? 2 : 0),
+    });
     scene.add(rig.root);
     const prof = profileFor(kind);
     const enemy = {
@@ -165,8 +173,8 @@ export function createPulseSim(scene, world, audio) {
       events.push({ type: "hit", heavy: !!opts.knock });
       if (!flags.fight) {
         flags.fight = true;
-        speak("listener-fight");
-        speak("pilot-fight");
+        speak("entity-fight");
+        speak("native-fight");
       }
     }
     if (opts.knock && e.alive && e.kind !== "boss") {
@@ -179,7 +187,11 @@ export function createPulseSim(scene, world, audio) {
       e.alive = false;
       e.state = "dead";
       e.t = 0;
-      if (e.kind !== "boss") player.coins += 3;
+      if (e.kind !== "boss") {
+        player.coins += 3;
+        if (e.rig.setFree) e.rig.setFree();
+        speak("native-free");
+      }
       grantXp(e.kind === "boss" ? 90 : e.prof.xp);
       if (e.kind === "boss") {
         audio.roar();
@@ -188,8 +200,8 @@ export function createPulseSim(scene, world, audio) {
         audio.setTension(0);
         abilities.unlock("pulse");
         events.push({ type: "ability", id: "pulse" });
-        speak("listener-win");
-        speak("pilot-win");
+        speak("entity-win");
+        speak("native-win");
       }
     }
   }
@@ -205,7 +217,7 @@ export function createPulseSim(scene, world, audio) {
       a.x += (dx / len) * 0.55;
       a.z += (dz / len) * 0.55;
     }
-    if (a.id === "pilot" && !flags.pilotHurt) { flags.pilotHurt = true; speak("pilot-hurt"); }
+    if (a.id === "native" && !flags.nativeHurt) { flags.nativeHurt = true; speak("native-hurt"); }
   }
   function hurtPlayer(amount, sx, sz, attacker) {
     if (player.iframes > 0 || player.hp <= 0) return;
@@ -244,7 +256,7 @@ export function createPulseSim(scene, world, audio) {
     audio.hurt();
     events.push({ type: "hurt" });
     events.push({ type: "dmg", x: player.x, y: 1.7, z: player.z, n: Math.round(amount) });
-    if (player.hp < 36 && !flags.low) { flags.low = true; speak("listener-low"); }
+    if (player.hp < 36 && !flags.low) { flags.low = true; speak("entity-low"); }
     if (player.hp <= 0) {
       player.hp = 0;
       player.action = "dead";
@@ -302,8 +314,8 @@ export function createPulseSim(scene, world, audio) {
     if (!e.alive) {
       e.t += dt;
       e.rig.root.position.set(e.x, 0, e.z);
-      e.rig.root.rotation.z = Math.min(1.1, e.t) * 0.8;
-      e.rig.update(dt, { speed: 0, air: false, action: "death", actionT: Math.min(1, e.t), combo: 0, look: 0, hurt: 0, dodgeSide: 0, hit: 0, tele: false, strike: false });
+      e.rig.root.rotation.z = 0;
+      e.rig.update(dt, { speed: 0, air: false, action: "idle", actionT: 0, combo: 0, look: 0, hurt: 0, dodgeSide: 0, hit: 0, tele: false, strike: false });
       if (e.tell) e.tell.visible = false;
       return;
     }
@@ -422,7 +434,7 @@ export function createPulseSim(scene, world, audio) {
     const phase = bossPhase();
     if (!flags.phase2 && phase >= 2) {
       flags.phase2 = true;
-      speak("listener-half");
+      speak("entity-half");
       audio.roar();
       boss.state = "roarWind";
       boss.t = 0;
@@ -481,7 +493,10 @@ export function createPulseSim(scene, world, audio) {
     boss.z = clamp(solved.z, 76, 92);
     bossRig.root.position.set(boss.x, 0, boss.z);
     bossRig.root.rotation.y = boss.yaw;
-    bossRig.update(dt, { moving, state: boss.state, hit: boss.hit, phase });
+    bossRig.update(dt, {
+      moving, state: boss.state, hit: boss.hit, phase,
+      tell: String(boss.state).endsWith("Wind") ? Math.min(1, boss.t / 0.55) : 0,
+    });
   }
 
   function wakeBossFight() {
@@ -492,8 +507,8 @@ export function createPulseSim(scene, world, audio) {
     bossWall = true;
     audio.roar();
     audio.setTension(1);
-    speak("listener-boss");
-    speak("pilot-boss");
+    speak("entity-boss");
+    speak("native-boss");
     pending.push({ type: "boss" });
     pending.push({ type: "bulletin", id: "boss" });
   }
@@ -589,7 +604,7 @@ export function createPulseSim(scene, world, audio) {
         p.got = true;
         p.mesh.visible = false;
         audio.chest();
-        if (!flags.paged) { flags.paged = true; speak("listener-page"); speak("pilot-page"); }
+        if (!flags.paged) { flags.paged = true; speak("entity-page"); speak("native-page"); }
         return { type: "page", id: p.id, n: pageCount() };
       }
     }
@@ -608,7 +623,7 @@ export function createPulseSim(scene, world, audio) {
     player.coins += 12;
     audio.chest();
     events.push({ type: "dmg", x: chest.x, y: 1.2, z: chest.z, n: 12, coin: true });
-    speak("listener-chest");
+    speak("native-chest");
   }
 
   function updateScenes() {
@@ -616,8 +631,8 @@ export function createPulseSim(scene, world, audio) {
       scenes.light.on = true;
       makeEnemy("fog", -2.4, 8, "light");
       makeEnemy("fog", 2.6, 12, "light");
-      speak("listener-light");
-      speak("pilot-light");
+      speak("entity-light");
+      speak("native-light");
       events.push({ type: "bulletin", id: "scene-light" });
     }
     if (scenes.light.on && !scenes.light.done && !taggedAlive("light")) scenes.light.done = true;
@@ -625,8 +640,8 @@ export function createPulseSim(scene, world, audio) {
       scenes.dish.on = true;
       makeEnemy("fog", -3, 24, "dish");
       makeEnemy("blanker", 2.4, 32, "dish");
-      speak("listener-dish");
-      speak("pilot-dish");
+      speak("entity-foam");
+      speak("native-foam");
       events.push({ type: "bulletin", id: "scene-dish" });
     }
     if (scenes.dish.on && !scenes.dish.done && !taggedAlive("dish")) scenes.dish.done = true;
@@ -634,8 +649,8 @@ export function createPulseSim(scene, world, audio) {
       scenes.bridge.on = true;
       makeEnemy("fog", -2, 46, "bridge");
       makeEnemy("fog", 2.2, 52, "bridge");
-      speak("listener-bridge");
-      speak("pilot-bridge");
+      speak("entity-ripple");
+      speak("native-ripple");
       events.push({ type: "bulletin", id: "scene-bridge" });
     }
     if (scenes.bridge.on && !scenes.bridge.done && !taggedAlive("bridge")) scenes.bridge.done = true;
@@ -643,8 +658,8 @@ export function createPulseSim(scene, world, audio) {
       scenes.wave.on = true;
       makeEnemy("blanker", -2.5, 72, "wave");
       makeEnemy("fog", 2.8, 74, "wave");
-      speak("listener-wave");
-      speak("pilot-wave");
+      speak("entity-wave");
+      speak("native-wave");
       events.push({ type: "bulletin", id: "scene-wave" });
     }
     if (scenes.wave.on && !scenes.wave.done && !taggedAlive("wave")) scenes.wave.done = true;
@@ -667,7 +682,7 @@ export function createPulseSim(scene, world, audio) {
     if (ups) {
       audio.level();
       events.push({ type: "level", n: player.level, x: player.x, y: 2.1, z: player.z });
-      if (!flags.levelTalk) { flags.levelTalk = true; speak("listener-level"); }
+      if (!flags.levelTalk) { flags.levelTalk = true; speak("entity-level"); }
     }
   }
 
@@ -810,7 +825,7 @@ export function createPulseSim(scene, world, audio) {
     player.grounded = false;
     player.jumps = 2;
     audio.swing();
-    speak("pilot-toss");
+    speak("native-toss");
   }
   function drink() {
     if (player.potions <= 0 || player.hp >= player.hpMax) return;
@@ -834,7 +849,7 @@ export function createPulseSim(scene, world, audio) {
     damageEnemy(boss, 40, null, { knock: 0.2 });
     playerHits += 1;
     audio.parry();
-    speak("listener-react");
+    speak("entity-react");
     return true;
   }
   function colorDrain() {
@@ -902,7 +917,7 @@ export function createPulseSim(scene, world, audio) {
     if (world.gate) world.gate.setOpen(true);
     persist(true);
     events.push({ type: "gate" });
-    speak("listener-gate");
+    speak("entity-gate");
   }
   function writeSave() {
     player.hp = player.hpMax;
@@ -911,7 +926,7 @@ export function createPulseSim(scene, world, audio) {
     persist(false);
     audio.heal();
     events.push({ type: "dmg", x: player.x, y: 1.8, z: player.z, n: "Saved" });
-    speak("listener-save");
+    speak("entity-save");
   }
   function applySave(data) {
     player.x = data.x;
@@ -961,6 +976,19 @@ export function createPulseSim(scene, world, audio) {
     flags.g2 = true;
   }
 
+  function updateGuides(dt) {
+    for (const g of guides) {
+      g.rig.root.position.set(g.x, 0, g.z);
+      const face = Math.atan2(player.x - g.x, player.z - g.z);
+      g.rig.root.rotation.y = face;
+      g.rig.update(dt, { speed: 0, action: "idle", actionT: 0 });
+      if (!g.said && hypot2(player.x - g.x, player.z - g.z) < 3.1) {
+        g.said = true;
+        speak(g.line);
+      }
+    }
+  }
+
   function idlePresentation(dt) {
     keeper.root.position.set(player.x, 0, player.z);
     keeper.root.rotation.y = player.yaw;
@@ -972,6 +1000,7 @@ export function createPulseSim(scene, world, audio) {
     }
     bossRig.root.position.set(boss.x, 0, boss.z);
     bossRig.update(dt, { moving: false, state: boss.alive ? "idle" : "dead", hit: 0, phase: 1 });
+    updateGuides(dt);
   }
 
   function snapshot(camYaw, prompt, objective) {
@@ -991,8 +1020,8 @@ export function createPulseSim(scene, world, audio) {
       reaction: reaction ? { id: reaction.id, label: reaction.label } : null,
       heads: {
         keeper: { x: player.x, y: 1.85, z: player.z },
-        listener: { x: allies[0].x, y: 1.9, z: allies[0].z },
-        pilot: { x: allies[1].x, y: 1.75, z: allies[1].z },
+        entity: { x: allies[0].x, y: 1.9, z: allies[0].z },
+        native: { x: allies[1].x, y: 1.85, z: allies[1].z },
       },
       enemies: enemies.filter((e) => e.rig.root.visible).map((e) => ({
         id: e.id, kind: e.kind, hp: e.hp, alive: e.alive, x: e.x, y: 1.4, z: e.z,
@@ -1021,8 +1050,8 @@ export function createPulseSim(scene, world, audio) {
     if (boss.active && boss.alive) return "Break the hum";
     if (!boss.alive) return "Step through";
     if (scenes.light.on && !scenes.light.done) return "Clear the first light";
-    if (player.z > 18 && !scenes.dish.done) return "Hold the dish";
-    if (player.z > 40 && !scenes.bridge.done) return "Clear the bridge";
+    if (player.z > 18 && !scenes.dish.done) return "Cross the foam";
+    if (player.z > 40 && !scenes.bridge.done) return "Quiet the ripples";
     if (player.z > 64 && !scenes.wave.done) return "Cross the wave";
     if (scenes.wave.done && boss.alive) return "The Hum in the wave";
     return `Pages ${pageCount()}/5`;
@@ -1046,8 +1075,8 @@ export function createPulseSim(scene, world, audio) {
     const edge = input.pull();
     const axes = input.axes();
     playTime += dt;
-    if (!flags.g1) { flags.g1 = true; speak("listener-greet"); }
-    if (!flags.g2 && playTime > 3.6) { flags.g2 = true; speak("pilot-greet"); }
+    if (!flags.g1) { flags.g1 = true; speak("entity-greet"); }
+    if (!flags.g2 && playTime > 3.6) { flags.g2 = true; speak("native-greet"); }
     player.flashCd = Math.max(0, player.flashCd - dt);
     player.spellCd = Math.max(0, player.spellCd - dt);
     player.magicLock = Math.max(0, player.magicLock - dt);
@@ -1201,6 +1230,7 @@ export function createPulseSim(scene, world, audio) {
 
     for (const e of enemies) updateEnemy(e, dt);
     updateBoss(dt);
+    updateGuides(dt);
     separate();
     updateAllies(dt);
     updateScenes();
@@ -1226,7 +1256,7 @@ export function createPulseSim(scene, world, audio) {
     const gateNear = !boss.alive && world.gate && hypot2(player.x - world.gate.x, player.z - world.gate.z) < GATE_REACH;
     if (gateNear) {
       prompt = { id: "gate", label: "STEP THROUGH" };
-      if (!flags.gateLine) { flags.gateLine = true; speak("listener-gate"); }
+      if (!flags.gateLine) { flags.gateLine = true; speak("entity-gate"); }
     }
     reaction = pickReaction();
     if (edge.magic) startFlash();
@@ -1327,6 +1357,7 @@ export function createPulseSim(scene, world, audio) {
       if (world.gate.setReady) world.gate.setReady(false);
     }
     posed = null;
+    for (const g of guides) g.said = false;
   }
 
   return {

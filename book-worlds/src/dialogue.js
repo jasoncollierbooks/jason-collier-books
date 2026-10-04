@@ -2,8 +2,8 @@
 // A matching mp3 at audio/voices/<speaker>/<id>.mp3 plays when present.
 // Subtitles stay off unless the player asks, except when the clip is missing.
 // A new bark replaces the one already playing. It waits if the announcer is mid-line.
-const NAMES = { jang: "Jang", tom: "Tom", spacey: "Spacey", mira: "Mira", listener: "Listener", pilot: "Pilot" };
-const VOICE_REV = "3";
+const NAMES = { jang: "Jang", tom: "Tom", spacey: "Spacey", mira: "Mira", entity: "Entity", native: "Native" };
+const VOICE_REV = "4";
 
 export function createDialogue(audio) {
   const rows = new Map();
@@ -14,7 +14,7 @@ export function createDialogue(audio) {
     for (const row of rowsIn) {
       if (!row || !row.id || !row.text || !row.speaker) continue;
       if (row.speaker === "announcer") continue;
-      if (!row.world && (row.speaker === "listener" || row.speaker === "pilot")) row.world = "first-pulse";
+      if (!row.world && (row.speaker === "entity" || row.speaker === "native")) row.world = "first-pulse";
       rows.set(row.id, row);
     }
   }
