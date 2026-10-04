@@ -394,3 +394,91 @@ body.broadcast-lite .visit-count {
   body.broadcast-lite .grain,
   body.broadcast-lite .lab-led { animation: none; }
 }
+
+/* Books for sale */
+body.broadcast-lite .catalog {
+  padding: clamp(7rem, 12vw, 9rem) clamp(1.2rem, 4vw, 3rem) clamp(4rem, 8vw, 6rem);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+body.broadcast-lite .catalog .page-head h1 {
+  font-size: clamp(2.5rem, 10vw, 4.2rem);
+}
+body.broadcast-lite .catalog-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+body.broadcast-lite .catalog-card {
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+  padding: 1rem 1rem 1.25rem;
+  background: rgba(18, 15, 12, .78);
+  border: 1px solid rgba(228, 208, 164, .28);
+}
+body.broadcast-lite .catalog-cover {
+  position: relative;
+  overflow: hidden;
+  background: #100e0c;
+  border: 1px solid rgba(228, 208, 164, .22);
+}
+body.broadcast-lite .catalog-cover img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+body.broadcast-lite .catalog-cover .soon {
+  font-size: 1rem;
+  letter-spacing: .16em;
+  padding: .55rem 3.2rem;
+}
+body.broadcast-lite .catalog-card h2 {
+  font-family: var(--ui);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  font-size: 1.75rem;
+  line-height: 1.15;
+  color: #fbf6ee;
+}
+body.broadcast-lite .catalog-card p {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.125rem;
+  line-height: 1.45;
+  color: #f3eadf;
+}
+body.broadcast-lite .catalog-actions {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  margin-top: auto;
+}
+body.broadcast-lite .catalog-actions .btn,
+body.broadcast-lite .catalog-store .btn {
+  font-size: 1.125rem;
+  letter-spacing: .08em;
+  padding: 1.05rem 1.25rem;
+  min-height: 3.4rem;
+  width: 100%;
+  text-align: center;
+}
+body.broadcast-lite .catalog-store {
+  margin: 2rem 0 0;
+  text-align: center;
+}
+body.broadcast-lite .catalog-store .btn {
+  width: auto;
+  min-width: min(100%, 22rem);
+}
+@media (min-width: 800px) {
+  body.broadcast-lite .catalog-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.75rem;
+  }
+  body.broadcast-lite .catalog-card h2 {
+    font-size: clamp(1.75rem, 2.2vw, 2.15rem);
+  }
+}
