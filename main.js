@@ -243,8 +243,10 @@ document.querySelectorAll('.excerpt').forEach((ex, i) => {
 
 /* One visit count for the whole site. A milestone count may play a one-time intro. */
 (() => {
-  const el = document.querySelector('.visit-count');
+  const els = [...document.querySelectorAll('.visit-count')];
   const SEEN = 'jc-milestone-intro';
+  const LAUNCH = { y: 2026, m: 9, d: 27 };
+  const CHI = 'America/Chicago';
   const milestoneSrc = (document.currentScript && document.currentScript.src)
     ? new URL('assets/video/milestone-intro.mp4', document.currentScript.src).href
     : '/jason-collier-books/assets/video/milestone-intro.mp4';
@@ -346,19 +348,85 @@ document.querySelectorAll('.excerpt').forEach((ex, i) => {
     video.src = milestoneSrc;
   }
 
+  function chicagoYMD(date) {
+    try {
+      const parts = new Intl.DateTimeFormat('en-US', {
+        timeZone: CHI, year: 'numeric', month: '2-digit', day: '2-digit'
+      }).formatToParts(date);
+      const v = t => Number(parts.find(p => p.type === t).value);
+      return { y: v('year'), m: v('month'), d: v('day') };
+    } catch (e) {
+      return { y: date.getFullYear(), m: date.getMonth() + 1, d: date.getDate() };
+    }
+  }
+
+  /* Partial calendar months count as fractions. At least 1 so the first days do not inflate the average. */
+  function monthsSinceLaunch(date) {
+    const cur = chicagoYMD(date);
+    const whole = (cur.y - LAUNCH.y) * 12 + (cur.m - LAUNCH.m);
+    const frac = (cur.d - LAUNCH.d) / new Date(Date.UTC(cur.y, cur.m, 0)).getUTCDate();
+    return Math.max(1, whole + frac);
+  }
+
+  function friendlyCount(n) {
+    if (!Number.isFinite(n) || n <= 0) return 0;
+    if (n < 10) return Math.max(1, Math.round(n));
+    const step = 10 ** (Math.floor(Math.log10(n)) - 1);
+    return Math.round(n / step) * step;
+  }
+
+  function monthKey(date) {
+    const { y, m } = chicagoYMD(date);
+    return 'jasoncollierbooks-site-' + y + '-' + String(m).padStart(2, '0');
+  }
+
+  function countLine(cls, text) {
+    const s = document.createElement('span');
+    s.className = cls;
+    s.textContent = text;
+    return s;
+  }
+
+  let total = null;
+  let month = null;
+
+  function paint() {
+    if (total == null) return;
+    const rounded = friendlyCount(total / monthsSinceLaunch(new Date()));
+    const avg = total >= 1 && rounded < 1 ? 1 : rounded;
+    els.forEach(el => {
+      el.replaceChildren(
+        countLine('visit-total', 'Visitors: ' + total.toLocaleString('en-US')),
+        countLine('visit-avg', 'About ' + avg.toLocaleString('en-US') + ' a month')
+      );
+      if (month != null) el.append(countLine('visit-month', 'This month: ' + month.toLocaleString('en-US')));
+      el.hidden = false;
+    });
+  }
+
+  function hit(key) {
+    return fetch('https://countapi.mileshilliard.com/api/v1/hit/' + key)
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(data => {
+        const n = Math.floor(Number(data && data.value));
+        if (!Number.isFinite(n) || n < 0) return Promise.reject();
+        return n;
+      });
+  }
+
   const preview = testCount();
   if (preview != null) showMilestone(preview, true);
 
-  if (!el || !window.fetch) return;
-  fetch('https://countapi.mileshilliard.com/api/v1/hit/jasoncollierbooks-site')
-    .then(r => r.ok ? r.json() : Promise.reject())
-    .then(data => {
-      const n = Math.floor(Number(data && data.value));
-      if (!Number.isFinite(n) || n < 0) return;
-      el.textContent = 'Visitors: ' + n.toLocaleString('en-US');
-      el.hidden = false;
+  if (!els.length || !window.fetch) return;
+  hit('jasoncollierbooks-site')
+    .then(n => {
+      total = n;
+      paint();
       if (preview == null) showMilestone(n, false);
     })
+    .catch(() => {});
+  hit(monthKey(new Date()))
+    .then(n => { month = n; paint(); })
     .catch(() => {});
 })();
 
