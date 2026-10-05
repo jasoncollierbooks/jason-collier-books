@@ -3,8 +3,8 @@ import { createAudio } from "./audio.js?v=6";
 import { createInput } from "./input.js?v=6";
 import { createSim } from "./sim.js?v=12";
 import { damp, clamp, springAngle, angDelta } from "./util.js";
-import { createNarration } from "./narration.js?v=3";
-import { createDialogue } from "./dialogue.js?v=8";
+import { createNarration } from "./narration.js?v=4";
+import { createDialogue } from "./dialogue.js?v=9";
 import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass, GTAOPass, ShaderPass, FXAAPass } from "three/addons";
 import { buildWorld } from "./world.js?v=9";
 import { buildRustyWorld } from "../worlds/rusty/world.js?v=13";
@@ -324,7 +324,7 @@ const STATIONS = [
   { id: "stack", freq: "67.2", script: "On the air", title: "The Rusty Stack", sub: "Spacey & Mira · Sky Freight", live: true, note: "Recommended after the Trail" },
   { id: "pulse", freq: "103.0", script: "On the air", title: "The First Pulse", sub: "The Entity · Quantum Realm", live: true, note: "Recommended after the Stack" },
   { id: "oldman", freq: "81.4", script: "On the air", title: "Old Man on the Mountain", sub: "Harlan Wade · High Country", live: true, note: "Recommended after the Pulse" },
-  { id: "thorne", freq: "51.4", script: "On the air", title: "Thorne's Lab", sub: "Dr. Elias Thorne · Princeton, 1982", live: true, note: "Recommended after the mountain" },
+  { id: "thorne", freq: "51.4", script: "On the air", title: "Thorne's Lab", sub: "Dr. Thorne · Princeton, 1982", live: true, note: "Recommended after the mountain" },
 ];
 
 const CARDS = {
@@ -524,7 +524,7 @@ const THORNE_CARDS = {
     script: "Please stand by",
     kicker: "Book Worlds  ·  Station 5",
     title: "Thorne's Lab",
-    body: "Nonimaginaires — brain fogs born where imagination dies — are in a 1982 laboratory in Princeton. You are Sphere Nineteen, the subject Dr. Elias Thorne was growing. Five pages are gray on the bench. Free the other subjects. A photon shell waits under the bell jar. The weapon is still the Trail Key.",
+    body: "Nonimaginaires — brain fogs born where imagination dies — are in a 1982 laboratory in Princeton. You are Sphere Nineteen, the subject Dr. Thorne was growing. Five pages are gray on the bench. Free the other subjects. A photon shell waits under the bell jar. The weapon is still the Trail Key.",
     btn: "Step onto the bench",
     hint: true,
   },
@@ -565,7 +565,7 @@ const THORNE_PAGES = {
   "argon-laser": {
     script: "A torn page",
     title: "The argon laser",
-    body: "A torn page. The borrowed argon laser. He fixed it himself.",
+    body: "A torn page. The borrowed argon laser. She fixed it herself.",
   },
   "second-birth": {
     script: "A torn page",

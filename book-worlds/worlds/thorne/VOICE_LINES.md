@@ -15,7 +15,7 @@ Files: `book-worlds/audio/announcer/thorne/<id>.mp3`
 | page-born-twice | A torn page. The shell must be born twice. Once in vacuum. Once in biology. |
 | page-sphere-nineteen | A torn page. Sphere Nineteen answered. The vacuum spoke. |
 | page-trehalose | A torn page. The trehalose film held. The sugar film shattered. |
-| page-argon-laser | A torn page. The borrowed argon laser. He fixed it himself. |
+| page-argon-laser | A torn page. The borrowed argon laser. She fixed it herself. |
 | page-second-birth | A torn page. First the physics. Then the living thing. Two births. |
 | scene-dishes | Petri dishes. The mold stands like timber. |
 | scene-spill | A spill. To you, it is a lake. |
@@ -25,11 +25,11 @@ Files: `book-worlds/audio/announcer/thorne/<id>.mp3`
 | restored | Thorne's lab has its color back. The shell is quiet. It is only listening. |
 | blank-next | The next bench is already forgetting its own experiment. |
 
-## Dr. Elias Thorne
+## Dr. Thorne
 
 Files: `book-worlds/audio/voices/thorne/<id>.mp3`
 
-Thorne is 32. Male. Quiet, precise, short on sleep. He talks down at the bench. He does not shout.
+Dr. Thorne is 32. She/her. Quiet, precise, short on sleep. She talks down at the bench. She does not shout. The clips are a female voice in the same register as the lady who reads the lab log.
 
 | id | line |
 | --- | --- |

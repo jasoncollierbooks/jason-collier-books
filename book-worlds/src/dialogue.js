@@ -2,7 +2,7 @@
 // A matching mp3 at audio/voices/<speaker>/<id>.mp3 plays when present.
 // Subtitles stay off unless the player asks, except when the clip is missing.
 // A new bark replaces the one already playing. It waits if the announcer is mid-line.
-const NAMES = { jang: "Jang", tom: "Tom", spacey: "Spacey", mira: "Mira", entity: "Entity", native: "Native", harlan: "Harlan", thorne: "Thorne" };
+const NAMES = { jang: "Jang", tom: "Tom", spacey: "Spacey", mira: "Mira", entity: "Entity", native: "Native", harlan: "Harlan", thorne: "Dr. Thorne" };
 const VOICE_REV = "6";
 
 export function createDialogue(audio) {
@@ -24,7 +24,7 @@ export function createDialogue(audio) {
     fetch(new URL("../dialogue.json", import.meta.url)).then((res) => (res.ok ? res.json() : [])).catch(() => []),
     fetch(new URL("../worlds/pulse/voices.json", import.meta.url)).then((res) => (res.ok ? res.json() : [])).catch(() => []),
     fetch(new URL("../worlds/oldman/voices.json", import.meta.url)).then((res) => (res.ok ? res.json() : [])).catch(() => []),
-    fetch(new URL("../worlds/thorne/voices.json", import.meta.url)).then((res) => (res.ok ? res.json() : [])).catch(() => []),
+    fetch(new URL("../worlds/thorne/voices.json?v=2", import.meta.url)).then((res) => (res.ok ? res.json() : [])).catch(() => []),
   ]).then(([base, pulse, oldman, thorne]) => {
     take(base);
     take(pulse);
