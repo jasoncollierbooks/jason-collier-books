@@ -380,13 +380,13 @@ body.broadcast-lite .visit-count {
   line-height: 1.25;
 }
 body.broadcast-lite .visit-count .visit-avg {
-  font-size: clamp(1.45rem, 4.8vw, 1.85rem);
-  letter-spacing: .02em;
+  font-size: clamp(1.7rem, 6vw, 2.05rem);
+  letter-spacing: .01em;
   line-height: 1.15;
 }
 body.broadcast-lite .visit-count .visit-month {
-  font-size: clamp(1.05rem, 3.2vw, 1.25rem);
-  letter-spacing: .04em;
+  font-size: clamp(1.15rem, 3.6vw, 1.35rem);
+  letter-spacing: .03em;
   line-height: 1.2;
 }
 

@@ -445,8 +445,8 @@ footer a { text-decoration: none; }
   display: flex; flex-direction: column; align-items: flex-start; gap: .35rem;
   color: var(--brass); font-weight: 700; letter-spacing: .14em; line-height: 1.25; text-transform: none;
 }
-.visit-count .visit-avg { font-size: clamp(1.45rem, 4.8vw, 1.85rem); letter-spacing: .02em; line-height: 1.15; }
-.visit-count .visit-month { font-size: clamp(1.05rem, 3.2vw, 1.25rem); letter-spacing: .04em; line-height: 1.2; }
+.visit-count .visit-avg { font-size: clamp(1.7rem, 6vw, 2.05rem); letter-spacing: .01em; line-height: 1.15; }
+.visit-count .visit-month { font-size: clamp(1.15rem, 3.6vw, 1.35rem); letter-spacing: .03em; line-height: 1.2; }
 .foot-links { display: flex; flex-wrap: wrap; gap: .2rem 1rem; }
 .foot-links a { min-height: 44px; display: inline-flex; align-items: center; }
 footer a:hover, .end-url:hover, .end-nav a:hover { color: var(--ink); }
