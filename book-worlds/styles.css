@@ -290,7 +290,7 @@ body.flyby #floats { display: none !important; }
   right: calc(8px + env(safe-area-inset-right));
   bottom: calc(156px + env(safe-area-inset-bottom));
   z-index: 7;
-  width: 64px;
+  width: 72px;
   flex-direction: column-reverse;
   align-items: center;
   gap: 8px;
@@ -298,10 +298,14 @@ body.flyby #floats { display: none !important; }
 }
 body.playing:not(.touch) #abilities { bottom: calc(86px + env(safe-area-inset-bottom)); }
 body.playing #abilities:not([hidden]) { display: flex; }
+body.touch.playing #abilities {
+  width: 108px;
+  bottom: calc(188px + env(safe-area-inset-bottom));
+}
 #abilities button {
   position: relative;
-  width: 64px;
-  height: 64px;
+  width: 72px;
+  height: 72px;
   padding: 0;
   border-radius: 50%;
   border: 1px solid rgba(228, 208, 164, .75);
@@ -310,29 +314,49 @@ body.playing #abilities:not([hidden]) { display: flex; }
   font-family: var(--ui);
   letter-spacing: .04em;
   text-transform: uppercase;
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
   line-height: 1;
   pointer-events: auto;
 }
+body.touch #abilities button { width: 88px; height: 88px; }
 #abilities button svg {
   position: absolute; inset: 3px; width: auto; height: auto; transform: rotate(-90deg);
 }
 #abilities button circle {
   fill: none; stroke: #ffe2a8; stroke-width: 2.4; stroke-linecap: round;
 }
-#abilities button span { position: relative; font-size: 11px; font-weight: 650; max-width: 52px; text-align: center; line-height: 1.05; }
-#abilities button[data-ability="firelight"] span { font-size: 10px; letter-spacing: 0; }
+#abilities button span { position: relative; font-size: 12px; font-weight: 650; max-width: 64px; text-align: center; line-height: 1.05; }
+#abilities button[data-ability="firelight"] span,
+#abilities button[data-ability="steam"] span { font-size: 11px; letter-spacing: 0; }
+body.touch #abilities button span { font-size: 14px; max-width: 76px; }
+body.touch #abilities button[data-ability="firelight"] span,
+body.touch #abilities button[data-ability="steam"] span { font-size: 12px; }
 #abilities button b {
-  display: none;
+  display: block;
   position: relative;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: .08em;
   color: #ffe2a8;
 }
-body:not(.touch) #abilities button b { display: block; }
+body.touch #abilities button b { font-size: 15px; }
 #abilities button.is-dry { opacity: .45; }
+#abilities.is-wheel { width: 108px; }
+#abilities.is-wheel button.cast { width: 96px; height: 96px; }
+body.touch #abilities.is-wheel button.cast { width: 104px; height: 104px; }
+#abilities button.next {
+  width: 96px;
+  height: 48px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 650;
+  letter-spacing: .14em;
+}
+body.touch #abilities button.next { width: 104px; height: 56px; font-size: 18px; }
 #letterbox { display: none; pointer-events: none; }
 body.flyby #letterbox { display: block; }
 #letterbox span {
@@ -628,6 +652,104 @@ body.touch.playing #subtitle { bottom: calc(168px + env(safe-area-inset-bottom))
   flex: none; width: 100%;
   display: flex; flex-direction: column; align-items: center; gap: 8px;
 }
+#ability-board {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+  padding: 2px 2px 0;
+}
+#ability-board .ab-kicker {
+  margin: 0;
+  font-family: var(--ui);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  font-size: 15px;
+  color: #f7f0e4;
+}
+#ability-board .ab-need {
+  margin: 0;
+  font-family: var(--ui);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: #e4c56a;
+}
+#ability-board ol {
+  list-style: none;
+  display: flex;
+  gap: 4px;
+  width: 100%;
+  margin: 2px 0 0;
+  padding: 0;
+  justify-content: space-between;
+}
+#ability-board li {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+#ability-board i {
+  position: relative;
+  width: 34px;
+  height: 42px;
+}
+#ability-board i::before,
+#ability-board i::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a120c;
+  box-shadow: 0 0 0 1px rgba(240, 221, 180, .28);
+}
+#ability-board i::before {
+  top: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+}
+#ability-board i::after {
+  top: 15px;
+  width: 26px;
+  height: 24px;
+  border-radius: 12px 12px 5px 5px;
+}
+#ability-board li.is-earned i::before,
+#ability-board li.is-earned i::after {
+  background: #f3e6c8;
+  box-shadow: 0 0 10px rgba(243, 230, 200, .75);
+}
+#ability-board b {
+  min-height: 2.15em;
+  font-family: var(--ui);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.05;
+  color: #f7f0e4;
+}
+#ability-board li.is-locked b { color: transparent; }
+#ability-board span {
+  min-height: 1em;
+  font-family: var(--ui);
+  font-size: 13px;
+  letter-spacing: .08em;
+  color: #e4c56a;
+}
+@media (max-width: 640px) {
+  #ability-board .ab-kicker { font-size: 16px; }
+  #ability-board .ab-need { font-size: 13px; }
+  #ability-board i { width: 36px; height: 46px; }
+  #ability-board b { font-size: 12px; }
+}
 #hub .bw-cluster { display: flex; align-items: center; justify-content: center; gap: 8px; }
 #tune-in { width: min(100%, 28rem); }
 #dial-prev, #dial-next, #tune-in {
@@ -886,6 +1008,27 @@ body.touch #actions button[data-act="use"] { display: none; }
 #keys { display: none; }
 body.portrait #rotate-hint:not([hidden]) { display: flex; }
 .story-card.is-spoken .paper { display: none; }
+#card[data-card="award"] { z-index: 14; }
+#card[data-card="award"] .story-card h1 {
+  font-size: clamp(2.8rem, 12vw, 4.6rem);
+  letter-spacing: .06em;
+}
+#card[data-card="award"] .story-card .script { font-size: clamp(2rem, 6vw, 2.8rem); }
+#card[data-card="award"] .story-card .kicker { font-size: 1rem; letter-spacing: .18em; }
+#card[data-card="award"] .paper {
+  font-size: clamp(1.45rem, 5.4vw, 2rem);
+  line-height: 1.3;
+  text-align: center;
+  max-height: none;
+}
+#card[data-card="award"] .card-result { font-size: clamp(1.5rem, 6vw, 2.1rem); }
+#card[data-card="award"] .story-card button { min-height: 72px; font-size: 1.35rem; }
+body.is-award #subtitle {
+  z-index: 15;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.2;
+}
 
 #settings-btn {
   position: absolute; right: calc(58px + env(safe-area-inset-right));

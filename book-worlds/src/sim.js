@@ -305,8 +305,7 @@ export function createSim(scene, world, audio) {
       if (e.kind === "boss") {
         audio.roar();
         flags.won = true;
-        abilities.unlock("lasso");
-        events.push({ type: "ability", id: "lasso" });
+        if (abilities.unlock("lasso")) events.push({ type: "ability", id: "lasso" });
         armExit();
         events.push({ type: "bossDead" });
         speak("jang-win");
@@ -871,8 +870,6 @@ export function createSim(scene, world, audio) {
 
   function armExit() {
     bossWall = false;
-    outroArmed = false;
-    outroT = 0;
     if (world.gate && world.gate.setReady) world.gate.setReady(true);
   }
 
@@ -1013,11 +1010,11 @@ export function createSim(scene, world, audio) {
       events.length = 0;
       while (pending.length) events.push(pending.shift());
     }
-    flushSpeak(dt);
     if (!play) {
       idlePresentation(dt);
       return snapshot(camYaw, null);
     }
+    flushSpeak(dt);
     if (player.hitStop > 0) {
       player.hitStop = Math.max(0, player.hitStop - dt);
       return snapshot(camYaw, lastPrompt, lastObjective);
@@ -1222,7 +1219,7 @@ export function createSim(scene, world, audio) {
     if (!flags.lassoGiven && !tutorialOn && player.z > 52) {
       flags.lassoGiven = true;
       if (abilities.unlock("lasso")) events.push({ type: "ability", id: "lasso" });
-      speak("jang-lasso");
+      else speak("jang-lasso-award");
     }
     if (!flags.rope && player.z > 72 && player.z < 90) {
       flags.rope = true;
@@ -1284,7 +1281,7 @@ export function createSim(scene, world, audio) {
     let objective = tutorialOn ? "Learn the road" : "Follow the trail";
     const here = arenas.find((a) => a.active && !a.cleared);
     if (here && boss.alive && player.z < 58) objective = "Clear the trail";
-    if (!flags.lassoOpen && player.z > 50 && boss.alive) objective = "Lasso the rope gate";
+    if (!flags.lassoOpen && player.z > 50 && boss.alive) objective = abilities.has("lasso") ? "Lasso the rope gate" : "Follow the trail";
     if (flags.lassoOpen && !flags.rout && player.z < 94 && boss.alive) objective = "Lasso the bandits";
     if (!circus && player.z > 90) objective = "Float the wagons";
     if (circus && boss.alive && !boss.active) objective = "Bear at the ford";
@@ -1755,6 +1752,7 @@ export function createSim(scene, world, audio) {
       flags.won = true;
       armExit();
     }
+    if (data.lasso) abilities.unlock("lasso");
     if (data.lasso || player.z > 66) openLasso();
     if (data.complete) flags.cleared = true;
     const cleared = new Set(data.arenas || []);

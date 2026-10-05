@@ -150,7 +150,9 @@ export function createOldmanSim(scene, world, audio) {
     return enemies.some((e) => e.alive && e.tag === tag);
   }
   function awardFire() {
-    if (abilities.unlock("firelight")) pending.push({ type: "ability", id: "firelight" });
+    if (!abilities.unlock("firelight")) return false;
+    pending.push({ type: "ability", id: "firelight" });
+    return true;
   }
 
   function damageEnemy(e, amount, src, opts = {}) {
@@ -779,13 +781,11 @@ export function createOldmanSim(scene, world, audio) {
     if (scenes.park.on && !scenes.park.done && !taggedAlive("park")) scenes.park.done = true;
     if (!flags.fireAward && scenes.park.on && hypot2(player.x - world.camp.x, player.z - world.camp.z) < 5.5) {
       flags.fireAward = true;
-      awardFire();
-      speak("harlan-fire");
+      if (!awardFire()) speak("harlan-fire");
     }
     if (!flags.fireAward && player.z > 54) {
       flags.fireAward = true;
-      awardFire();
-      speak("harlan-fire");
+      if (!awardFire()) speak("harlan-fire");
     }
     if (!scenes.watched.on && player.z > 64) {
       scenes.watched.on = true;
@@ -1001,8 +1001,6 @@ export function createOldmanSim(scene, world, audio) {
   }
   function armExit() {
     bossWall = false;
-    outroArmed = false;
-    outroT = 0;
     if (world.gate && world.gate.setReady) world.gate.setReady(true);
     if (world.setFreed) world.setFreed(true);
     if (bossRig.free) bossRig.free();
@@ -1066,7 +1064,10 @@ export function createOldmanSim(scene, world, audio) {
         if (scenes[key].done) scenes[key].on = true;
       }
     }
-    if (data.fire) flags.fireAward = true;
+    if (data.fire) {
+      flags.fireAward = true;
+      abilities.unlock("firelight");
+    }
     (data.chests || []).forEach((open, i) => {
       if (open && world.chests[i]) world.chests[i].open = true;
     });
@@ -1146,7 +1147,10 @@ export function createOldmanSim(scene, world, audio) {
     if (boss.active && boss.alive && flags.phase2) return "The fog is swinging";
     if (boss.active && boss.alive) return "Free the Old Man";
     if (!boss.alive) return "Back to the truck";
-    if (!flags.fogDriven) return player.z > 48 || scenes.timber.done ? "Firelight the fog" : "Clear the timber";
+    if (!flags.fogDriven) {
+      if (!abilities.has("firelight")) return scenes.park.on ? "Reach the campfire" : "Clear the timber";
+      return "Firelight the fog";
+    }
     if (!scenes.watched.done) return "The treeline";
     if (boss.alive) return "The Old Man";
     return `Pages ${pageCount()}/5`;
@@ -1157,11 +1161,11 @@ export function createOldmanSim(scene, world, audio) {
       events.length = 0;
       while (pending.length) events.push(pending.shift());
     }
-    flushSpeak(dt);
     if (!play) {
       idlePresentation(dt);
       return snapshot(camYaw, null);
     }
+    flushSpeak(dt);
     if (player.hp <= 0) return snapshot(camYaw, lastPrompt, lastObjective);
     if (player.hitStop > 0) {
       player.hitStop = Math.max(0, player.hitStop - dt);

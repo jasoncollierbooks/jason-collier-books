@@ -1,13 +1,34 @@
 // Abilities the Keeper keeps. Each world awards one. They stay unlocked
 // in localStorage and work on every station.
+// Future mixed-up chapters can import hasAbility(id) and listAbilities().
 const STORE = "book-worlds-abilities";
 
 export const ABILITIES = [
-  { id: "lasso", name: "Lasso", key: "V", world: "trail", cool: 6.5 },
-  { id: "steam", name: "Steam", key: "X", world: "stack", cool: 6 },
-  { id: "pulse", name: "Pulse", key: "Z", world: "pulse", cool: 7.5 },
-  { id: "firelight", name: "Firelight", key: "H", world: "oldman", cool: 7 },
-  { id: "argon", name: "Argon", key: "Y", world: "thorne", cool: 6.2 },
+  {
+    id: "lasso", name: "Lasso", short: "Lasso", key: "V", world: "trail", cool: 6.5,
+    say: "jang-lasso-award", kicker: "World I · Jang",
+    line: "Lasso. The rope is yours. The gate ahead will not open for boots.",
+  },
+  {
+    id: "steam", name: "Steam Dash", short: "Steam", key: "X", world: "stack", cool: 6,
+    say: "mira-steam", kicker: "World II · Mira",
+    line: "Steam dash. The gap is wider than a jump. Point at it and go.",
+  },
+  {
+    id: "pulse", name: "Pulse", short: "Pulse", key: "Z", world: "pulse", cool: 7.5,
+    say: "entity-pulse", kicker: "World III · The Entity",
+    line: "Pulse. The dark path answers only that. Use it.",
+  },
+  {
+    id: "firelight", name: "Firelight", short: "Firelight", key: "H", world: "oldman", cool: 7,
+    say: "harlan-fire", kicker: "World IV · Harlan",
+    line: "Firelight. It burns the fog off them. Use it.",
+  },
+  {
+    id: "argon", name: "Argon", short: "Argon", key: "Y", world: "thorne", cool: 6.2,
+    say: "thorne-argon", kicker: "World V · Dr. Thorne",
+    line: "Argon. The green beam. Cut the fog with it.",
+  },
 ];
 
 const CLEAR = {
@@ -65,12 +86,29 @@ export function createAbilities() {
     return has(id) && cd[id] <= 0;
   }
 
+  function row(a) {
+    return {
+      id: a.id,
+      name: a.name,
+      short: a.short || a.name,
+      key: a.key,
+      world: a.world,
+      cool: a.cool,
+      say: a.say,
+      kicker: a.kicker,
+      line: a.line,
+      owned: owned.has(a.id),
+      cd: cd[a.id] || 0,
+      ready: owned.has(a.id) && (cd[a.id] || 0) <= 0,
+    };
+  }
+
   function list() {
-    return ABILITIES.filter((a) => owned.has(a.id)).map((a) => ({
-      ...a,
-      cd: cd[a.id],
-      ready: cd[a.id] <= 0,
-    }));
+    return ABILITIES.filter((a) => owned.has(a.id)).map(row);
+  }
+
+  function catalog() {
+    return ABILITIES.map(row);
   }
 
   function nearest(ctx, max) {
@@ -216,6 +254,14 @@ export function createAbilities() {
   }
 
   load();
-  shared = { unlock, has, tick, ready, list, cast, cool: (id) => cd[id] || 0 };
+  shared = { unlock, has, tick, ready, list, catalog, cast, cool: (id) => cd[id] || 0 };
   return shared;
+}
+
+export function hasAbility(id) {
+  return createAbilities().has(id);
+}
+
+export function listAbilities() {
+  return createAbilities().catalog();
 }
