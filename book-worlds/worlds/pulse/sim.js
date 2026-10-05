@@ -7,7 +7,7 @@ import { createHuman } from "../../src/actors.js?v=12";
 import { armRing, note } from "../../src/vfx.js?v=1";
 import { createEntity, createNative } from "./beings.js?v=2";
 import { boss as worldBoss } from "../../bosses/first-pulse.js?v=7";
-import { createAbilities } from "../../src/abilities.js?v=4";
+import { createAbilities } from "../../src/abilities.js?v=6";
 
 const SAVE_KEY = "book-worlds-first-pulse";
 const CLEAR_KEY = "book-worlds-world3-clear";
@@ -211,8 +211,8 @@ export function createPulseSim(scene, world, audio) {
         flags.won = true;
         bossWall = false;
         audio.setTension(0);
-        abilities.unlock("pulse");
-        events.push({ type: "ability", id: "pulse" });
+        if (abilities.unlock("pulse")) events.push({ type: "ability", id: "pulse" });
+        armExit();
         speak("entity-win");
         speak("native-win");
       }
@@ -923,8 +923,6 @@ export function createPulseSim(scene, world, audio) {
   }
   function armExit() {
     bossWall = false;
-    outroArmed = false;
-    outroT = 0;
     if (world.gate && world.gate.setReady) world.gate.setReady(true);
   }
   function gateEntered() {
@@ -1002,6 +1000,10 @@ export function createPulseSim(scene, world, audio) {
       flags.won = true;
       abilities.unlock("pulse");
       armExit();
+    }
+    if (data.path || (data.scenes && data.scenes.light)) {
+      flags.pulseGiven = true;
+      abilities.unlock("pulse");
     }
     if (data.path || player.z > 42 || (data.scenes && data.scenes.bridge)) lightPath();
     if (data.complete) flags.cleared = true;
@@ -1083,7 +1085,7 @@ export function createPulseSim(scene, world, audio) {
     if (boss.active && boss.alive && flags.phase2) return "The hum is changing";
     if (boss.active && boss.alive) return "Break the hum";
     if (!boss.alive) return "Step through to the mountain";
-    if (!flags.pathLit) return player.z > 28 ? "Pulse the dark path" : "Clear the first light";
+    if (!flags.pathLit) return abilities.has("pulse") && player.z > 28 ? "Pulse the dark path" : "Clear the first light";
     if (!scenes.bridge.done) return "Quiet the ripples";
     if (!scenes.wave.done) return "Cross the wave";
     if (boss.alive) return "The Hum in the wave";
@@ -1095,11 +1097,11 @@ export function createPulseSim(scene, world, audio) {
       events.length = 0;
       while (pending.length) events.push(pending.shift());
     }
-    flushSpeak(dt);
     if (!play) {
       idlePresentation(dt);
       return snapshot(camYaw, null);
     }
+    flushSpeak(dt);
     if (player.hp <= 0) return snapshot(camYaw, lastPrompt, lastObjective);
     if (player.hitStop > 0) {
       player.hitStop = Math.max(0, player.hitStop - dt);

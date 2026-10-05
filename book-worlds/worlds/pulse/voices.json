@@ -16,6 +16,7 @@
   { "id": "entity-greet", "speaker": "entity", "text": "I had no name at first. Names are for things with edges. You may call me the Entity." },
   { "id": "entity-fight", "speaker": "entity", "text": "That one was taken. The color is still in there. The static is only wearing it." },
   { "id": "entity-light", "speaker": "entity", "text": "In the beginning there was only the hum. The light is trying to say it again." },
+  { "id": "entity-pulse", "speaker": "entity", "text": "Pulse. The dark path answers only that. Use it." },
   { "id": "entity-foam", "speaker": "entity", "text": "I drifted through this foam and tasted probabilities. Some of them bit back." },
   { "id": "entity-ripple", "speaker": "entity", "text": "A ripple is a choice that has not finished choosing. Step through the quiet one." },
   { "id": "entity-wave", "speaker": "entity", "text": "A wave needs no medium. I understood that I could become one." },

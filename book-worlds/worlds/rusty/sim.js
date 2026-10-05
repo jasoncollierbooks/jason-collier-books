@@ -6,7 +6,7 @@ import { createFog } from "../../src/rigs.js?v=7";
 import { createHuman } from "../../src/actors.js?v=12";
 import { armRing, note, spawn } from "../../src/vfx.js?v=1";
 import { boss as worldBoss } from "../../bosses/rusty-stack.js?v=10";
-import { createAbilities } from "../../src/abilities.js?v=4";
+import { createAbilities } from "../../src/abilities.js?v=6";
 
 const abilities = createAbilities();
 
@@ -209,8 +209,8 @@ export function createRustySim(scene, world, audio) {
         flags.won = true;
         bossWall = false;
         audio.setTension(0);
-        abilities.unlock("steam");
-        events.push({ type: "ability", id: "steam" });
+        if (abilities.unlock("steam")) events.push({ type: "ability", id: "steam" });
+        armExit();
         speak("spacey-win");
         speak("mira-win");
       }
@@ -821,6 +821,7 @@ export function createRustySim(scene, world, audio) {
       if (!flags.steamGiven) {
         flags.steamGiven = true;
         if (abilities.unlock("steam")) events.push({ type: "ability", id: "steam" });
+        else speak("mira-steam");
       }
       if (audio.clank) audio.clank();
     }
@@ -1137,8 +1138,6 @@ export function createRustySim(scene, world, audio) {
   }
   function armExit() {
     bossWall = false;
-    outroArmed = false;
-    outroT = 0;
     if (world.gate && world.gate.setReady) world.gate.setReady(true);
   }
   function gateEntered() {
@@ -1210,7 +1209,11 @@ export function createRustySim(scene, world, audio) {
       scenes.city.done = !!data.scenes.city;
       scenes.goats.done = !!data.scenes.goats;
       scenes.fort.done = !!data.scenes.fort;
-      if (scenes.brawl.done) scenes.brawl.on = true;
+      if (scenes.brawl.done) {
+        scenes.brawl.on = true;
+        flags.steamGiven = true;
+        abilities.unlock("steam");
+      }
       if (scenes.fort.done) scenes.fort.on = true;
       if (scenes.goats.done) for (const g of world.goats) g.penned = true;
     }
@@ -1304,7 +1307,7 @@ export function createRustySim(scene, world, audio) {
     if (player.x > 23 && !scenes.city.done) return "Seat the crystals";
     if (player.x < -24 && !scenes.goats.done) return "Pen the goats";
     if (!scenes.brawl.done) return "Clear the deck";
-    if (player.z < 38 && Math.abs(player.x) < 10) return "Steam across the gap";
+    if (player.z < 38 && Math.abs(player.x) < 10) return abilities.has("steam") ? "Steam Dash across the gap" : "Clear the deck";
     if (!scenes.fort.done) return "Cross the crag";
     if (boss.alive) return "Baron in the hangar";
     return `Pages ${got}/5`;
@@ -1315,11 +1318,11 @@ export function createRustySim(scene, world, audio) {
       events.length = 0;
       while (pending.length) events.push(pending.shift());
     }
-    flushSpeak(dt);
     if (!play) {
       idlePresentation(dt);
       return snapshot(camYaw, null);
     }
+    flushSpeak(dt);
     if (player.hp <= 0) return snapshot(camYaw, lastPrompt, lastObjective);
     if (player.hitStop > 0) {
       player.hitStop = Math.max(0, player.hitStop - dt);
@@ -1379,10 +1382,10 @@ export function createRustySim(scene, world, audio) {
         player, living, damageEnemy, events, audio,
         resolve: (x, z, r) => world.resolve(x, z, r),
         gapLeap() {
-          if (player.z >= 26 && player.z <= 30.6 && Math.abs(player.x) < 3.4 && Math.cos(player.yaw) > 0.35) {
+          if (player.z >= 24 && player.z <= 30.6 && Math.abs(player.x) < 3.4 && Math.cos(player.yaw) > 0.05) {
             return { x: Math.max(-1.4, Math.min(1.4, player.x)), z: 37.2 };
           }
-          if (player.z >= 36 && player.z <= 40.5 && Math.abs(player.x) < 3.4 && Math.cos(player.yaw) < -0.35) {
+          if (player.z >= 36 && player.z <= 40.5 && Math.abs(player.x) < 3.4 && Math.cos(player.yaw) < -0.05) {
             return { x: Math.max(-1.4, Math.min(1.4, player.x)), z: 29.2 };
           }
           return null;

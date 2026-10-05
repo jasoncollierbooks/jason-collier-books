@@ -7,7 +7,7 @@ import { heightAt } from "./world.js?v=3";
 import { note, spawn } from "../../src/vfx.js?v=1";
 import { createVessel, createSeven, createCrawler, createMold, createShell } from "./beings.js?v=2";
 import { boss as worldBoss } from "../../bosses/photon-shell.js?v=3";
-import { createAbilities } from "../../src/abilities.js?v=4";
+import { createAbilities } from "../../src/abilities.js?v=6";
 
 const SAVE_KEY = "book-worlds-thorne";
 const CLEAR_KEY = "book-worlds-world5-clear";
@@ -138,7 +138,9 @@ export function createThorneSim(scene, world, audio) {
     return enemies.some((e) => e.alive && e.tag === tag);
   }
   function awardArgon() {
-    if (abilities.unlock("argon")) pending.push({ type: "ability", id: "argon" });
+    if (!abilities.unlock("argon")) return false;
+    pending.push({ type: "ability", id: "argon" });
+    return true;
   }
 
   function damageEnemy(e, amount, src, opts = {}) {
@@ -312,7 +314,7 @@ export function createThorneSim(scene, world, audio) {
       onCast(id) {
         if (id === "argon") {
           argonBeam();
-          if (player.z > 52 && player.z < 64) openFog();
+          if (player.z > 49 && player.z < 64) openFog();
         }
       },
     };
@@ -706,10 +708,9 @@ export function createThorneSim(scene, world, audio) {
       events.push({ type: "bulletin", id: "scene-spill" });
     }
     if (scenes.spill.on && !scenes.spill.done && !taggedAlive("spill")) scenes.spill.done = true;
-    if (!flags.argonAward && (player.z > 50 || hypot2(player.x - world.laser.x, player.z - world.laser.z) < 6)) {
+    if (!flags.argonAward && (player.z > 48 || hypot2(player.x - world.laser.x, player.z - world.laser.z) < 6)) {
       flags.argonAward = true;
-      awardArgon();
-      speak("thorne-argon");
+      if (!awardArgon()) speak("thorne-argon");
       events.push({ type: "bulletin", id: "scene-laser" });
     }
     if (!scenes.trays.on && player.z > 66 && flags.fogDriven) {
@@ -921,8 +922,6 @@ export function createThorneSim(scene, world, audio) {
   }
   function armExit() {
     bossWall = false;
-    outroArmed = false;
-    outroT = 0;
     if (world.gate && world.gate.setReady) world.gate.setReady(true);
     if (world.setFreed) world.setFreed(true);
     if (bossRig.free) bossRig.free();
@@ -986,7 +985,10 @@ export function createThorneSim(scene, world, audio) {
         if (scenes[key].done) scenes[key].on = true;
       }
     }
-    if (data.argon) flags.argonAward = true;
+    if (data.argon) {
+      flags.argonAward = true;
+      abilities.unlock("argon");
+    }
     (data.chests || []).forEach((open, i) => {
       if (open && world.chests[i]) world.chests[i].open = true;
     });
@@ -1066,7 +1068,10 @@ export function createThorneSim(scene, world, audio) {
     if (boss.active && boss.alive && flags.phase2) return "The shell is swelling";
     if (boss.active && boss.alive) return "Free the shell";
     if (!boss.alive) return "Back to the log";
-    if (!flags.fogDriven) return player.z > 46 ? "Argon the fog" : "Clear the dishes";
+    if (!flags.fogDriven) {
+      if (!abilities.has("argon")) return player.z > 40 ? "Reach the argon laser" : "Clear the dishes";
+      return "Argon the fog";
+    }
     if (!scenes.trays.done) return "The specimen trays";
     if (boss.alive) return "The photon shell";
     return `Pages ${pageCount()}/5`;
@@ -1077,11 +1082,11 @@ export function createThorneSim(scene, world, audio) {
       events.length = 0;
       while (pending.length) events.push(pending.shift());
     }
-    flushSpeak(dt);
     if (!play) {
       idlePresentation(dt);
       return snapshot(camYaw, null);
     }
+    flushSpeak(dt);
     if (player.hp <= 0) return snapshot(camYaw, lastPrompt, lastObjective);
     if (player.hitStop > 0) {
       player.hitStop = Math.max(0, player.hitStop - dt);

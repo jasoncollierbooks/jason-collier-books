@@ -1,21 +1,21 @@
 import * as THREE from "three";
 import { createAudio } from "./audio.js?v=6";
 import { createInput } from "./input.js?v=6";
-import { createSim } from "./sim.js?v=12";
+import { createSim } from "./sim.js?v=14";
 import { damp, clamp, springAngle, angDelta } from "./util.js";
 import { createNarration } from "./narration.js?v=5";
 import { createDialogue } from "./dialogue.js?v=9";
 import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass, GTAOPass, ShaderPass, FXAAPass } from "three/addons";
 import { buildWorld } from "./world.js?v=9";
 import { buildRustyWorld } from "../worlds/rusty/world.js?v=13";
-import { createRustySim } from "../worlds/rusty/sim.js?v=19";
+import { createRustySim } from "../worlds/rusty/sim.js?v=21";
 import { buildPulseWorld } from "../worlds/pulse/world.js?v=6";
-import { createPulseSim } from "../worlds/pulse/sim.js?v=12";
+import { createPulseSim } from "../worlds/pulse/sim.js?v=14";
 import { buildOldmanWorld } from "../worlds/oldman/world.js?v=2";
-import { createOldmanSim } from "../worlds/oldman/sim.js?v=4";
+import { createOldmanSim } from "../worlds/oldman/sim.js?v=6";
 import { buildThorneWorld } from "../worlds/thorne/world.js?v=3";
-import { createThorneSim } from "../worlds/thorne/sim.js?v=3";
-import { createAbilities } from "./abilities.js?v=4";
+import { createThorneSim } from "../worlds/thorne/sim.js?v=5";
+import { createAbilities, hasAbility, listAbilities } from "./abilities.js?v=6";
 import { whenCastReady } from "./actors.js?v=12";
 import { tick as tickVfx, bind, spawn as spawnVfx, active as vfxActive } from "./vfx.js?v=1";
 import { theBlank } from "../bosses/index.js?v=15";
@@ -163,6 +163,15 @@ const lassoLine = new THREE.Line(
   new THREE.LineBasicMaterial({ color: 0xe4c56a, transparent: true, opacity: 0 }),
 );
 scene.add(lassoLine);
+const argonGeo = new THREE.CylinderGeometry(0.05, 0.16, 8.6, 8, 1, true);
+argonGeo.translate(0, 4.3, 0);
+argonGeo.rotateX(Math.PI / 2);
+const argonMat = new THREE.MeshBasicMaterial({
+  color: 0xc8ffe4, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending,
+});
+const argonBeam = new THREE.Mesh(argonGeo, argonMat);
+argonBeam.visible = false;
+scene.add(argonBeam);
 const fxFocus = new THREE.Vector3();
 let flashPeak = 1;
 const flashFx = bind({
@@ -223,11 +232,23 @@ const lassoFx = bind({
     lassoLine.visible = false;
   },
 });
+const argonFx = bind({
+  tag: "argon-beam",
+  mesh: argonBeam,
+  life: 280,
+  onTick(k) { argonMat.opacity = k * 0.92; },
+  onStop() {
+    argonMat.opacity = 0;
+    argonBeam.visible = false;
+  },
+});
 
 const params = new URLSearchParams(location.search);
 const start = params.get("start");
 const direct = ["ford", "play", "gate", "almost", "rope", "bank"].includes(start);
 let mode = direct ? "play" : "hub";
+const awardQueue = [];
+const deferredSays = [];
 let playing = mode === "play";
 let station = 0;
 const restored = { trail: false, stack: false, pulse: false, oldman: false, thorne: false };
@@ -618,6 +639,41 @@ function pagesFor() {
   return PAGES;
 }
 
+function awardSpec(id) {
+  return abilities.catalog().find((a) => a.id === id) || null;
+}
+
+function showAward(id) {
+  const spec = awardSpec(id);
+  if (!spec) return;
+  if (mode === "dead" || mode === "title" || mode === "page" || mode === "outro" || mode === "award") {
+    if (!awardQueue.includes(id)) awardQueue.push(id);
+    return;
+  }
+  mode = "award";
+  el.script.textContent = "Ability earned";
+  el.kicker.textContent = spec.kicker || "Book Worlds";
+  el.title.textContent = spec.name;
+  el.body.textContent = spec.line || spec.name;
+  el.body.hidden = false;
+  const result = document.getElementById("card-result");
+  if (result) {
+    result.hidden = false;
+    result.textContent = `Key ${spec.key}`;
+  }
+  el.btn.textContent = "Got it";
+  el.hint.hidden = true;
+  el.card.classList.remove("is-spoken");
+  el.card.hidden = false;
+  el.card.dataset.card = "award";
+  el.card.dataset.ability = id;
+  playing = false;
+  input.enabled = false;
+  document.body.classList.remove("playing");
+  document.body.classList.add("is-award");
+  if (spec.say) dialogue.say(spec.say);
+}
+
 function showCard(id) {
   const c = cardsFor()[id];
   mode = id;
@@ -737,11 +793,19 @@ function flyPose(k) {
 function hideCard() {
   el.card.hidden = true;
   el.hub.hidden = true;
+  document.body.classList.remove("is-award");
   playing = true;
   input.enabled = true;
   mode = "play";
   document.body.classList.add("playing");
+  if (awardQueue.length) {
+    const next = awardQueue.shift();
+    showAward(next);
+    return;
+  }
+  const queued = deferredSays.splice(0, deferredSays.length);
   maybeShowHelp();
+  for (const id of queued) dialogue.say(id);
 }
 
 function paintStation() {
@@ -768,6 +832,7 @@ function paintStation() {
   el.knob.style.transform = `rotate(${station * 78 - 36}deg)`;
   for (const pic of el.screen.querySelectorAll(".bw-pic")) pic.hidden = pic.dataset.pic !== st.id;
   el.hub.dataset.station = st.id;
+  paintAbilityBoard();
   el.hub.dataset.closed = closed ? "1" : "0";
 }
 
@@ -959,6 +1024,7 @@ function enterWorld(key) {
   scene.add(flashLight);
   scene.add(shock);
   scene.add(lassoLine);
+  scene.add(argonBeam);
   retargetComposer(scene, camera);
   if (worldKey === "thorne") {
     renderer.toneMappingExposure = low ? 1.16 : 1.24;
@@ -1073,6 +1139,11 @@ window.addEventListener("pointerdown", () => {
 }, true);
 
 window.addEventListener("keydown", (e) => {
+  if (mode === "award" && (e.key === "Enter" || e.key === "Escape" || e.key === " ")) {
+    e.preventDefault();
+    hideCard();
+    return;
+  }
   if (flyby && flyby.arm > 0.35 && !params.get("shot")) {
     endFlyby();
     return;
@@ -1111,7 +1182,7 @@ el.btn.addEventListener("click", () => {
   } else if (mode === "dead") {
     if (!sim.continueFromSave()) sim.revive();
     hideCard();
-  } else if (mode === "outro" || mode === "page") {
+  } else if (mode === "outro" || mode === "page" || mode === "award") {
     hideCard();
   }
 });
@@ -1492,9 +1563,12 @@ function frame(now) {
   world.update(raw, now / 1000, snap.player);
   fxFocus.set(snap.player.x, snap.player.y + 0.05, snap.player.z);
 
+  const earned = [];
+  const says = [];
   for (const ev of snap.events) {
-    if (ev.type === "say") dialogue.say(ev.id);
-    else if (ev.type === "dmg") addFloat(ev.x, ev.y, ev.z, ev.n, ev.coin);
+    if (ev.type === "say") { says.push(ev.id); continue; }
+    if (ev.type === "ability") { earned.push(ev.id); continue; }
+    if (ev.type === "dmg") addFloat(ev.x, ev.y, ev.z, ev.n, ev.coin);
     else if (ev.type === "hurt" && !params.get("shot")) {
       shake = Math.max(shake, 0.55);
       hurtFx.restart(360);
@@ -1517,6 +1591,12 @@ function frame(now) {
       shockFx.restart(fire ? 560 : 450);
       if (ev.type !== "steam") screenFlash.restart(160);
       if (fire) burstEmbers(ev.x, ev.y || 0, ev.z);
+      if (argon) {
+        const yaw = ev.yaw != null ? ev.yaw : snap.player.yaw;
+        argonBeam.position.set(ev.x, (ev.y || snap.player.y) + 0.85, ev.z);
+        argonBeam.rotation.set(0, yaw, 0);
+        argonFx.restart(280);
+      }
     }
     else if (ev.type === "lasso") {
       const attr = lassoLine.geometry.attributes.position;
@@ -1525,16 +1605,21 @@ function frame(now) {
       attr.needsUpdate = true;
       lassoFx.restart(420);
     }
-    else if (ev.type === "ability") {
-      const names = { lasso: "Lasso", steam: "Steam", pulse: "Pulse", firelight: "Firelight", argon: "Argon" };
-      addFloat(snap.player.x, snap.player.y + 1.8, snap.player.z, names[ev.id] || "Ability", true);
-    }
     else if (ev.type === "dead") showCard("dead");
     else if (ev.type === "outro") showCard("outro");
     else if (ev.type === "gate") pullBack();
     else if (ev.type === "page") showPage(ev.id, ev.n);
     else if (ev.type === "bulletin") narrate.say(ev.id);
     else if (ev.type === "boss") shake = 0.2;
+  }
+  const earning = earned.length > 0 && snap.player.hp > 0 && mode !== "dead" && mode !== "title" && mode !== "page" && mode !== "outro";
+  if (mode === "award" || earning) {
+    for (const id of says) if (!deferredSays.includes(id)) deferredSays.push(id);
+  } else {
+    for (const id of says) dialogue.say(id);
+  }
+  for (const id of earned) {
+    if (snap.player.hp > 0) showAward(id);
   }
 
   tickVfx(performance.now());
@@ -1673,7 +1758,9 @@ window.__BOOKWORLDS = {
   },
   worldKey: () => worldKey,
   worldId: () => (worldKey === "stack" ? "rusty-stack" : worldKey === "pulse" ? "first-pulse" : worldKey === "oldman" ? "old-man" : worldKey === "thorne" ? "thorne-lab" : "california-trail"),
-  abilities: () => abilities.list().map((a) => ({ id: a.id, ready: a.ready, cd: a.cd })),
+  hasAbility: (id) => hasAbility(id),
+  abilityList: () => listAbilities(),
+  abilities: () => abilities.list().map((a) => ({ id: a.id, name: a.name, key: a.key, ready: a.ready, cd: a.cd })),
   fx: () => vfxActive(),
   player: () => {
     const p = sim.player;
@@ -1755,7 +1842,22 @@ document.getElementById("interact").addEventListener("pointerup", (e) => {
   if (mode !== "play" || !playing) return;
   input.press("use");
 });
+let wheelId = "";
+let wheelSeen = "";
+
 document.getElementById("abilities")?.addEventListener("pointerup", (e) => {
+  const next = e.target.closest("[data-ability-next]");
+  if (next) {
+    e.preventDefault();
+    e.stopPropagation();
+    const rows = abilities.list();
+    if (rows.length < 2) return;
+    const i = Math.max(0, rows.findIndex((a) => a.id === wheelId));
+    wheelId = rows[(i + 1) % rows.length].id;
+    const box = document.getElementById("abilities");
+    if (box) box.dataset.sig = "";
+    return;
+  }
   const btn = e.target.closest("[data-ability]");
   if (!btn) return;
   e.preventDefault();
@@ -1764,23 +1866,38 @@ document.getElementById("abilities")?.addEventListener("pointerup", (e) => {
   input.press(btn.getAttribute("data-ability"));
 });
 
+function abilityButton(a, extra = "") {
+  return `<button type="button" data-ability="${a.id}" class="${extra}" aria-label="${a.name}, ${a.key}"><svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15"></circle></svg><span>${a.short || a.name}</span><b>${a.key}</b></button>`;
+}
+
 function paintAbilities() {
   const box = document.getElementById("abilities");
   if (!box) return;
   const rows = mode === "play" ? abilities.list() : [];
   box.hidden = rows.length === 0;
   const touch = document.body.classList.contains("touch");
+  const wheel = rows.length > 2;
   const ids = rows.map((a) => a.id).join(",");
-  if (box.dataset.ids !== ids || box.dataset.touch !== (touch ? "1" : "0")) {
-    box.dataset.ids = ids;
-    box.dataset.touch = touch ? "1" : "0";
-    box.innerHTML = rows.map((a) => {
-      const key = touch ? "" : `<b>${a.key}</b>`;
-      return `<button type="button" data-ability="${a.id}"><svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15"></circle></svg><span>${a.name}</span>${key}</button>`;
-    }).join("");
+  if (mode === "play" && ids !== wheelSeen) {
+    const prev = new Set(wheelSeen.split(",").filter(Boolean));
+    const added = [...rows].reverse().find((a) => !prev.has(a.id));
+    if (wheel && added) wheelId = added.id;
+    else if (wheel && !rows.some((a) => a.id === wheelId)) wheelId = rows[rows.length - 1].id;
+    wheelSeen = ids;
+  }
+  const shown = wheel ? (rows.find((a) => a.id === wheelId) || rows[0]) : null;
+  const sig = `${wheel ? "w:" + (shown && shown.id) : "b"}:${rows.map((a) => a.id).join(",")}:${touch ? "t" : "d"}`;
+  if (box.dataset.sig !== sig) {
+    box.dataset.sig = sig;
+    box.classList.toggle("is-wheel", wheel);
+    if (wheel && shown) {
+      box.innerHTML = `${abilityButton(shown, "cast")}<button type="button" class="next" data-ability-next aria-label="Next ability">Next</button>`;
+    } else {
+      box.innerHTML = rows.map((a) => abilityButton(a)).join("");
+    }
   }
   const circ = 2 * Math.PI * 15;
-  for (const btn of box.querySelectorAll("button")) {
+  for (const btn of box.querySelectorAll("button[data-ability]")) {
     const row = rows.find((a) => a.id === btn.dataset.ability);
     if (!row) continue;
     btn.classList.toggle("is-dry", !row.ready);
@@ -1790,6 +1907,20 @@ function paintAbilities() {
     ring.style.strokeDasharray = String(circ);
     ring.style.strokeDashoffset = String(circ * left);
   }
+}
+
+function paintAbilityBoard() {
+  const list = document.getElementById("ability-board-list");
+  if (!list) return;
+  const rows = abilities.catalog();
+  const earned = rows.filter((a) => a.owned).length;
+  const need = document.getElementById("ability-board-need");
+  if (need) need.textContent = earned === rows.length ? "All five earned" : "Earn all five";
+  list.innerHTML = rows.map((a) => {
+    const state = a.owned ? "is-earned" : "is-locked";
+    const label = a.owned ? `${a.name}, earned, ${a.key}` : `${a.name}, locked`;
+    return `<li class="${state}" data-ability="${a.id}" aria-label="${label}"><i aria-hidden="true"></i><b>${a.owned ? a.name : ""}</b><span>${a.owned ? a.key : ""}</span></li>`;
+  }).join("");
 }
 
 function paintParty(snap) {
