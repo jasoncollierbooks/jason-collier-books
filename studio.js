@@ -20,11 +20,14 @@
 export const OILS = [
   { id: "white", name: "White", pigment: "Titanium White", rgb: [244, 240, 230] },
   { id: "yellow", name: "Yellow", pigment: "Cadmium Yellow", rgb: [242, 194, 0] },
+  { id: "ochre", name: "Yellow Ochre", pigment: "Yellow Ochre", rgb: [198, 146, 48] },
   { id: "red", name: "Red", pigment: "Cadmium Red", rgb: [216, 58, 46] },
   { id: "crimson", name: "Crimson", pigment: "Alizarin Crimson", rgb: [142, 28, 58] },
-  { id: "blue", name: "Blue", pigment: "Ultramarine", rgb: [30, 58, 138] },
+  { id: "blue", name: "Blue", pigment: "Ultramarine Blue", rgb: [30, 58, 138] },
+  { id: "cobalt", name: "Cobalt Blue", pigment: "Cobalt Blue", rgb: [62, 118, 186] },
   { id: "green", name: "Green", pigment: "Viridian", rgb: [31, 106, 69] },
-  { id: "umber", name: "Umber", pigment: "Burnt Umber", rgb: [106, 59, 34] }
+  { id: "umber", name: "Umber", pigment: "Burnt Umber", rgb: [106, 59, 34] },
+  { id: "black", name: "Ivory Black", pigment: "Ivory Black", rgb: [48, 44, 40] }
 ];
 
 const TUNE = {
@@ -102,7 +105,7 @@ export function createEngine(w, h, options) {
 
   let kind = "round";
   let radius = 24;
-  let well = OILS[2].rgb.slice();
+  let well = OILS.find(oil => oil.id === "red").rgb.slice();
   let bristles = makeBristles(kind, well);
   const undo = [];
   let useSimple = simple;
@@ -474,7 +477,7 @@ function mount() {
   const ctx = canvas.getContext("2d", { alpha: false, desynchronized: true });
   let engine = null;
   let frameData = null;
-  let oil = OILS[2];
+  let oil = OILS.find(item => item.id === "red");
   let kind = "round";
   let simple = autoSimple();
   let drawing = false;

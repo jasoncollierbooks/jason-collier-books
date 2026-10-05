@@ -10,33 +10,59 @@ html.studio-painting body {
 }
 
 .studio-page {
-  padding: clamp(6.2rem, 10vw, 8rem) clamp(0.7rem, 2vw, 1.4rem) 2.4rem;
+  box-sizing: border-box;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: 5.5rem clamp(0.7rem, 2vw, 1.4rem) .35rem;
+  overflow: hidden;
 }
 .studio-wrap {
   max-width: 1480px;
+  width: 100%;
   margin: 0 auto;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 body.page-studio .page-head {
-  margin-bottom: 1rem;
+  margin-bottom: .3rem;
+  padding: .2rem .6rem .28rem;
 }
+body.page-studio .page-head > .kicker {
+  font-size: 1.05rem;
+}
+body.page-studio .page-head h1 {
+  font-size: clamp(1.55rem, 2.4vw, 2rem);
+  margin: 0;
+}
+body.page-studio .page-head h1::after { margin-top: .2rem; }
 body.page-studio .page-head > p:not(.kicker) {
-  font-size: clamp(1.2rem, 2.1vw, 1.45rem);
-  line-height: 1.45;
+  font-size: 1.08rem;
+  line-height: 1.3;
+  padding: .28rem .6rem;
+  margin-top: .2rem;
 }
 body.page-studio .page-head a {
   color: var(--fire2);
 }
 
 .studio-board {
+  flex: 1;
+  min-height: 0;
   display: grid;
-  grid-template-columns: minmax(158px, 200px) minmax(0, 1fr) minmax(190px, 240px);
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(120px, 1fr) auto auto auto auto;
   grid-template-areas:
-    "brushes easel palette"
-    "brushes actions palette"
-    "note note note";
-  gap: 0.85rem;
-  align-items: start;
-  padding: 0.85rem;
+    "easel"
+    "brushes"
+    "palette"
+    "actions"
+    "note";
+  gap: .5rem;
+  align-items: stretch;
+  padding: .6rem;
   border-radius: 18px;
   border: 1px solid rgba(228, 208, 164, .32);
   background:
@@ -51,21 +77,29 @@ body.page-studio .page-head a {
 .easel h2 {
   font-family: "Josefin Sans", "Gill Sans", "Trebuchet MS", sans-serif;
   font-weight: 600;
-  font-size: 1.35rem;
+  font-size: 1.2rem;
   letter-spacing: .08em;
   text-transform: uppercase;
   color: #f7f0e4;
-  margin: 0 0 .65rem;
+  margin: 0 0 .35rem;
 }
 
 .brush-list,
 .oil-list {
   display: grid;
-  gap: .55rem;
+  gap: .4rem;
 }
 .brush-list {
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(4, minmax(92px, 150px));
+  justify-content: start;
 }
+.brush-col {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) minmax(170px, 220px);
+  align-items: center;
+  gap: .55rem .7rem;
+}
+.brush-col h2 { margin: 0; }
 
 .brush,
 .oil,
@@ -84,8 +118,8 @@ body.page-studio .page-head a {
   align-items: center;
   justify-content: center;
   gap: .35rem;
-  min-height: 84px;
-  padding: .55rem .4rem;
+  min-height: 72px;
+  padding: .4rem .35rem;
   border-radius: 12px;
   border: 2px solid rgba(243, 230, 200, .28);
   background: rgba(16, 10, 6, .35);
@@ -112,8 +146,8 @@ body.page-studio .page-head a {
 
 .studio-size {
   display: grid;
-  gap: .35rem;
-  margin-top: .85rem;
+  gap: .2rem;
+  margin-top: 0;
   font-family: "Josefin Sans", "Gill Sans", "Trebuchet MS", sans-serif;
   font-size: 1.2rem;
   font-weight: 600;
@@ -153,7 +187,13 @@ body.page-studio .page-head a {
 }
 
 .brush-col { grid-area: brushes; }
-.easel { grid-area: easel; min-width: 0; }
+.easel {
+  grid-area: easel;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
 .palette-col { grid-area: palette; }
 .studio-actions { grid-area: actions; }
 .studio-note { grid-area: note; }
@@ -183,9 +223,10 @@ body.page-studio .page-head a {
 }
 
 .stretcher {
-  height: min(70vh, 760px);
-  min-height: 280px;
-  padding: 14px;
+  flex: 1;
+  height: auto;
+  min-height: 120px;
+  padding: 10px;
   background:
     linear-gradient(#c9b48a, #c9b48a) padding-box,
     #5c3d24;
@@ -222,7 +263,7 @@ body.page-studio .page-head a {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: .55rem;
-  margin-top: .7rem;
+  margin-top: 0;
 }
 .studio-btn {
   min-height: 58px;
@@ -249,20 +290,33 @@ body.page-studio .page-head a {
 }
 
 .studio-note {
-  margin: .75rem 0 0;
+  margin: 0;
   font-family: "Cormorant Garamond", Palatino, Georgia, serif;
-  font-size: clamp(1.2rem, 2vw, 1.4rem);
-  line-height: 1.35;
+  font-size: clamp(1.15rem, 1.6vw, 1.35rem);
+  line-height: 1.25;
   color: #f0e4d2;
 }
 
+.palette-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .6rem;
+  margin-bottom: .35rem;
+}
+.palette-bar h2 { margin: 0; }
 .palette-wood {
-  padding: .85rem .7rem .8rem;
-  border-radius: 46% 42% 48% 44%;
+  padding: .45rem .5rem .5rem;
+  border-radius: 18px;
   background:
     radial-gradient(circle at 32% 28%, rgba(255, 220, 170, .28), transparent 36%),
     radial-gradient(circle at 50% 60%, #a56b3c, #6a4122 72%);
   box-shadow: inset 0 0 0 3px #3d2816, 0 10px 20px rgba(0, 0, 0, .35);
+}
+.oil-list {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: .3rem .2rem;
 }
 .oil {
   min-height: 0;
@@ -276,8 +330,8 @@ body.page-studio .page-head a {
   border-color: #f7f0e4;
 }
 .dab {
-  width: 62px;
-  height: 62px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background:
     radial-gradient(circle at 34% 30%, rgba(255, 255, 255, .7), transparent 26%),
@@ -287,77 +341,71 @@ body.page-studio .page-head a {
     inset 0 -8px 10px rgba(0, 0, 0, .28);
 }
 .oil-name {
-  font-size: 1.15rem;
-  line-height: 1.1;
+  font-size: 1.12rem;
+  line-height: 1.12;
+  text-align: center;
+  text-wrap: balance;
   text-shadow: 0 1px 2px rgba(0, 0, 0, .65);
 }
 .studio-wipe {
-  width: 100%;
-  margin-top: .7rem;
+  width: auto;
+  margin: 0;
+  min-height: 46px;
+  padding: .35rem .9rem;
   background: rgba(28, 16, 10, .55);
 }
 
 @media (max-width: 980px) {
-  .studio-page { padding-top: 4.6rem; }
+  .studio-page { padding-top: 4.4rem; padding-bottom: .3rem; }
   body.page-studio .page-head {
-    margin-bottom: .35rem;
-    padding: .35rem .55rem .4rem;
+    margin-bottom: .25rem;
+    padding: .2rem .45rem .25rem;
   }
   body.page-studio .page-head > .kicker,
   body.page-studio .page-head > p:not(.kicker) { display: none; }
-  body.page-studio .page-head h1 { font-size: 1.7rem; }
-  body.page-studio .page-head h1::after { margin-top: .25rem; }
+  body.page-studio .page-head h1 { font-size: 1.55rem; margin: 0; }
+  body.page-studio .page-head h1::after { margin-top: .2rem; }
   .studio-board {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "easel"
-      "brushes"
-      "palette"
-      "actions"
-      "note";
-    padding: .45rem;
-    gap: .55rem;
+    padding: .35rem;
+    gap: .35rem;
   }
-  .studio-col h2 { font-size: 1.15rem; margin-bottom: .3rem; }
-  .studio-status { font-size: 1.15rem; margin-bottom: .35rem; }
-  .studio-chip { width: 36px; height: 36px; }
+  .studio-col h2 { font-size: 1.12rem; margin-bottom: .2rem; }
+  .brush-col {
+    display: block;
+  }
+  .brush-col h2 { margin: 0 0 .25rem; }
+  .studio-status { font-size: 1.12rem; margin-bottom: .25rem; }
+  .studio-chip { width: 32px; height: 32px; }
   .brush-list {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
   .oil-list {
-    display: flex;
-    overflow-x: auto;
-    gap: .4rem;
-    padding-bottom: .15rem;
-    scroll-snap-type: x proximity;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: .25rem .15rem;
   }
-  .oil { flex: 0 0 4.7rem; scroll-snap-align: start; }
   .palette-wood {
     border-radius: 16px;
-    padding: .45rem .4rem .55rem;
+    padding: .35rem .3rem .4rem;
   }
   .stretcher {
-    height: min(32svh, 280px);
-    min-height: 210px;
-    padding: 8px;
-  }
-  .studio-actions {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    margin-top: 0;
+    min-height: 96px;
+    padding: 6px;
   }
   .brush,
   .studio-btn {
-    min-height: 64px;
-    font-size: 1.2rem;
+    min-height: 58px;
+    font-size: 1.05rem;
   }
-  .brush svg { width: 32px; height: 32px; }
-  .dab { width: 48px; height: 48px; }
-  .oil { min-height: 76px; padding: .2rem; }
-  .oil-name { font-size: 1.15rem; }
-  .studio-note { font-size: 1.15rem; margin-top: 0; }
-  .studio-wipe { margin-top: .4rem; min-height: 52px; }
-  .studio-size { margin-top: .4rem; font-size: 1.12rem; gap: .15rem; }
-  .studio-size input { height: 16px; margin: .15rem 0 .1rem; }
-  .studio-size input::-webkit-slider-thumb { width: 30px; height: 30px; }
-  .studio-size input::-moz-range-thumb { width: 30px; height: 30px; }
+  .brush svg { width: 28px; height: 28px; }
+  .dab { width: 44px; height: 44px; }
+  .oil { min-height: 78px; padding: .15rem .05rem .3rem; }
+  .oil-name { font-size: 1.02rem; line-height: 1.05; }
+  .studio-note { font-size: 1.05rem; }
+  .studio-wipe { min-height: 44px; padding: .3rem .7rem; }
+  .palette-bar { margin-bottom: .25rem; }
+  .studio-size { margin-top: .3rem; font-size: 1.05rem; gap: .1rem; }
+  .studio-size strong { font-size: 1.15rem; }
+  .studio-size input { height: 14px; margin: .1rem 0 0; }
+  .studio-size input::-webkit-slider-thumb { width: 28px; height: 28px; }
+  .studio-size input::-moz-range-thumb { width: 28px; height: 28px; }
 }

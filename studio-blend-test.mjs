@@ -94,6 +94,41 @@ if (dist(simpleOverlap, byId.blue.rgb) < 30) {
   throw new Error(`Simpler blend stamped flat blue: ${simpleOverlap}`);
 }
 
+if (OILS.length !== 10) throw new Error(`Expected 10 oils, got ${OILS.length}`);
+for (const id of ["white", "yellow", "ochre", "red", "crimson", "blue", "cobalt", "green", "umber", "black"]) {
+  if (!byId[id]) throw new Error(`Missing tube ${id}`);
+}
+
+function chroma(rgb) {
+  return Math.max(...rgb) - Math.min(...rgb);
+}
+const vivid = mixKM(byId.yellow.rgb, byId.blue.rgb, 0.5);
+const muted = mixKM(byId.ochre.rgb, byId.cobalt.rgb, 0.5);
+if (!(chroma(muted) < chroma(vivid) - 8)) {
+  throw new Error(`Ochre and cobalt should mix quieter than cadmium yellow and ultramarine. muted ${muted} vivid ${vivid}`);
+}
+const blackened = mixKM(byId.ochre.rgb, byId.black.rgb, 0.28);
+const ochreLum = byId.ochre.rgb[0] + byId.ochre.rgb[1] + byId.ochre.rgb[2];
+const darkLum = blackened[0] + blackened[1] + blackened[2];
+const blackLum = byId.black.rgb[0] + byId.black.rgb[1] + byId.black.rgb[2];
+if (!(darkLum < ochreLum - 80)) throw new Error(`Black should darken ochre. ${blackened}`);
+if (!(darkLum > blackLum + 80)) throw new Error(`A short mix of ivory black should not collapse to black. ${blackened}`);
+
+const earth = createEngine(280, 160, { simple: false });
+earth.radius = 18;
+earth.dip(byId.ochre.rgb);
+earth.setKind("round");
+stroke(earth, 24, 80, 250, 80);
+earth.dip(byId.black.rgb);
+stroke(earth, 140, 24, 140, 140);
+const earthMix = earth.pixel(140, 80);
+const earthOchre = earth.pixel(60, 80);
+if (!(earthMix[0] + earthMix[1] + earthMix[2] < earthOchre[0] + earthOchre[1] + earthOchre[2] - 40)) {
+  throw new Error(`Black stroke should darken wet ochre. mix ${earthMix} ochre ${earthOchre}`);
+}
+if (dist(earthMix, byId.black.rgb) < 50) throw new Error(`Black stamped flat over ochre: ${earthMix}`);
+
+console.log("muted", muted, "blackened", blackened, "earth", earthMix);
 console.log("mix", mixed, "linear", linear);
 console.log("simple overlap", simpleOverlap);
 console.log("overlap", overlap, "varR", varR.toFixed(1));
