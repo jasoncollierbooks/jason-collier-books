@@ -362,7 +362,7 @@
     utter.onend = function () { setSpeaking(false); };
     utter.onerror = function () {
       setSpeaking(false);
-      captionOn(text, true);
+      if (!document.querySelector(".novel-sheet.is-open")) captionOn(text, true);
     };
     setSpeaking(true);
     try {
@@ -458,7 +458,10 @@
   }
 
   if (draft) {
-    draft.addEventListener("input", onDraft);
+    draft.addEventListener("input", function () {
+      if (!showWords) captionOn("", false);
+      onDraft();
+    });
     draft.addEventListener("keydown", function (event) {
       if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
         event.preventDefault();
