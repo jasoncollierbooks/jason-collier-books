@@ -3,12 +3,12 @@
 // jumps, swings, and rolls layer on that skeleton.
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons";
-import { createHuman as createCapsule, trailKey, handbillMesh, softDot } from "./rigs.js?v=5";
+import { createHuman as createCapsule, trailKey, handbillMesh, softDot } from "./rigs.js?v=7";
 import { createTrail, swingWeapon } from "./swing.js?v=5";
 import {
   dusterGeometry, collarGeometry, coatTailGeometry, sleeveGeometry,
   coverallGeometry, lapelGeometry, wrenchGroup, spyglassGroup, goggleRig,
-} from "./costume.js?v=1";
+} from "./costume.js?v=3";
 
 const NATIVE = { Walk_Loop: 1.15, Jog_Fwd_Loop: 2.55, Sprint_Loop: 4.35, Crouch_Fwd_Loop: 0.82 };
 const LOCO = ["Walk_Loop", "Jog_Fwd_Loop", "Sprint_Loop"];
@@ -675,7 +675,9 @@ function dress(api, assets) {
       band.scale.z = 1.12;
       hat.add(crownMesh, band);
     }
-    put(model, B("Head"), hat, 0, crown + 0.01, 0.01, spec.hatPitch || 0.06, 0, spec.hatTilt || 0);
+    // The Keeper's hat sits on the skull: brim just above the brows, crown over the hair.
+    const hatY = spec.key ? crown - 0.055 : crown + 0.01;
+    put(model, B("Head"), hat, 0, hatY, 0.01, spec.hatPitch || 0.06, 0, spec.hatTilt || 0);
   }
 
   if (!spec.bandana) {
@@ -712,6 +714,7 @@ function dress(api, assets) {
     const coatMat = clothMat(spec.coat, 0.62, "leather");
     coatMat.side = THREE.DoubleSide;
     bindLeather(coatMat);
+    // Same coat Harlan wears. The Keeper only adds his belt hardware on that shell.
     const coat = new THREE.Mesh(dusterGeometry(), coatMat);
     coat.castShadow = true;
     put(model, B("pelvis"), coat, 0, 0, 0.02);

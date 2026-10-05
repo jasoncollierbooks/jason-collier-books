@@ -1,7 +1,7 @@
 // Deck dressing, riveted stacks, rope rigging, cloud sea, and distant traffic.
 // Static repeats are instanced. Textures are small canvases (512, or 256 on phones).
 import * as THREE from "three";
-import { softDot } from "../../src/rigs.js?v=5";
+import { softDot } from "../../src/rigs.js?v=7";
 
 const dummy = new THREE.Object3D();
 const up = new THREE.Vector3(0, 1, 0);
