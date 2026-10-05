@@ -86,7 +86,7 @@ export function createNarration(audio) {
     },
     thorne: {
       ...loadPack("../worlds/thorne/voices.json?v=2", "announcer"),
-      clip(id) { return `../audio/announcer/thorne/${id}.mp3?v=1`; },
+      clip(id) { return `../audio/announcer/thorne/${id}.mp3?v=2`; },
       kicker: kickerThorne,
     },
   };

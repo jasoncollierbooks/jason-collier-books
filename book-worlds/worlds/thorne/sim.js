@@ -3,10 +3,10 @@
 // The fog takes the other cultures. The photon shell waits under the bell jar.
 import * as THREE from "three";
 import { clamp, damp, dampAngle, hypot2 } from "../../src/util.js";
-import { heightAt } from "./world.js?v=2";
+import { heightAt } from "./world.js?v=3";
 import { note, spawn } from "../../src/vfx.js?v=1";
-import { createVessel, createSeven, createCrawler, createMold, createShell } from "./beings.js?v=1";
-import { boss as worldBoss } from "../../bosses/photon-shell.js?v=2";
+import { createVessel, createSeven, createCrawler, createMold, createShell } from "./beings.js?v=2";
+import { boss as worldBoss } from "../../bosses/photon-shell.js?v=3";
 import { createAbilities } from "../../src/abilities.js?v=4";
 
 const SAVE_KEY = "book-worlds-thorne";
@@ -1400,15 +1400,16 @@ export function createThorneSim(scene, world, audio) {
     },
     showcase() {
       clearEnemies();
-      makeEnemy("crawl", -1.7, 12.2, "show");
-      makeEnemy("mold", 0.15, 13.4, "show");
-      makeEnemy("shell", 1.85, 12.1, "show");
-      player.x = 0;
-      player.z = 8.4;
-      player.y = groundY(0, 8.4);
-      player.yaw = 0;
-      allies[0].x = -1.1;
-      allies[0].z = 8.6;
+      makeEnemy("crawl", -1.15, 12.15, "show");
+      makeEnemy("mold", 0.25, 13.05, "show");
+      makeEnemy("shell", 1.4, 12.05, "show");
+      player.x = -0.15;
+      player.z = 10.05;
+      player.y = groundY(-0.15, 10.05);
+      player.yaw = Math.PI;
+      allies[0].x = -1.55;
+      allies[0].z = 10.55;
+      allies[0].yaw = Math.PI;
     },
     armArgonDemo() {
       awardArgon();

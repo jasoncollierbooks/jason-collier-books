@@ -3,7 +3,7 @@ import { createAudio } from "./audio.js?v=6";
 import { createInput } from "./input.js?v=6";
 import { createSim } from "./sim.js?v=12";
 import { damp, clamp, springAngle, angDelta } from "./util.js";
-import { createNarration } from "./narration.js?v=4";
+import { createNarration } from "./narration.js?v=5";
 import { createDialogue } from "./dialogue.js?v=9";
 import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass, GTAOPass, ShaderPass, FXAAPass } from "three/addons";
 import { buildWorld } from "./world.js?v=9";
@@ -13,12 +13,12 @@ import { buildPulseWorld } from "../worlds/pulse/world.js?v=6";
 import { createPulseSim } from "../worlds/pulse/sim.js?v=12";
 import { buildOldmanWorld } from "../worlds/oldman/world.js?v=2";
 import { createOldmanSim } from "../worlds/oldman/sim.js?v=4";
-import { buildThorneWorld } from "../worlds/thorne/world.js?v=2";
-import { createThorneSim } from "../worlds/thorne/sim.js?v=2";
+import { buildThorneWorld } from "../worlds/thorne/world.js?v=3";
+import { createThorneSim } from "../worlds/thorne/sim.js?v=3";
 import { createAbilities } from "./abilities.js?v=4";
 import { whenCastReady } from "./actors.js?v=12";
 import { tick as tickVfx, bind, spawn as spawnVfx, active as vfxActive } from "./vfx.js?v=1";
-import { theBlank } from "../bosses/index.js?v=14";
+import { theBlank } from "../bosses/index.js?v=15";
 
 const canvas = document.getElementById("view");
 const app = document.getElementById("app");
@@ -124,8 +124,8 @@ function applyGrade(key) {
   const warm = GRADE.uniforms.uWarm;
   const bias = GRADE.uniforms.uBias.value;
   if (key === "thorne") {
-    warm.value = 0.06;
-    bias.set(-0.03, 0.018, 0.012);
+    warm.value = 0;
+    bias.set(0, 0, 0);
   } else if (key === "oldman") {
     warm.value = 0;
     bias.set(-0.04, 0.006, 0.055);
@@ -960,10 +960,15 @@ function enterWorld(key) {
   scene.add(shock);
   scene.add(lassoLine);
   retargetComposer(scene, camera);
-  if (worldKey === "thorne" && composer && composer.bloom) {
-    composer.bloom.strength = low ? 0.18 : 0.36;
-    composer.bloom.threshold = 0.62;
-    composer.bloom.radius = 0.55;
+  if (worldKey === "thorne") {
+    renderer.toneMappingExposure = low ? 1.16 : 1.24;
+    if (composer && composer.bloom) {
+      composer.bloom.strength = 0.05;
+      composer.bloom.threshold = 0.92;
+      composer.bloom.radius = 0.22;
+    }
+  } else {
+    renderer.toneMappingExposure = low ? 1.08 : 1.16;
   }
   camera.aspect = window.innerWidth / Math.max(1, window.innerHeight);
   camera.updateProjectionMatrix();
@@ -1144,7 +1149,7 @@ if (wantThorne && thorneStarts.includes(start)) {
   } else if (start === "gate") sim.skipToGate();
   else if (start === "trays") sim.place(0, 68, 0);
   else if (start === "hero" || start === "overview") {
-    sim.place(0.2, 16, Math.PI);
+    sim.place(0.05, 10.2, Math.PI);
     if (sim.poseCrew) sim.poseCrew();
   } else if (start === "outro") {
     sim.defeatForExit();
@@ -1381,6 +1386,7 @@ function frame(now) {
   const rightX = -Math.cos(camYaw);
   const rightZ = Math.sin(camYaw);
   const shot = params.get("shot");
+  let shotFov = 52;
   shake = Math.max(0, shake - raw);
   if (flyby && !helpOpen()) {
     flyby.arm += raw;
@@ -1424,29 +1430,21 @@ function frame(now) {
     camPos.set(snap.boss.x + 2.4, 2.15, snap.boss.z - 6.4);
     lookAt.set(snap.boss.x, 2.45, snap.boss.z);
   } else if (shot === "overview" && worldKey === "thorne") {
-    camPos.set(-3.2, 1.05, 1.2);
-    lookAt.set(0.6, 3.6, 24);
+    shotFov = 68;
+    camPos.set(0.12, 1.95, -1.1);
+    lookAt.set(0.25, 1.85, 13.5);
   } else if (shot === "enemies" && worldKey === "thorne") {
-    camPos.set(-2.15, 1.05, 9.4);
-    lookAt.set(0.15, 0.72, 12.6);
-    if (!shotLight) {
-      shotLight = new THREE.DirectionalLight(0xd7fff0, 2.4);
-      shotLight.position.set(-4, 4.2, 6);
-      shotLight.target.position.set(0.2, 0.8, 12.6);
-      scene.add(shotLight, shotLight.target);
-    }
+    shotFov = 52;
+    camPos.set(-0.2, 1.78, 6.35);
+    lookAt.set(0.2, 0.78, 12.5);
   } else if (shot === "hero" && worldKey === "thorne" && snap) {
-    camPos.set(snap.player.x + 0.42, snap.player.y + 0.92, snap.player.z - 0.95);
-    lookAt.set(snap.player.x - 0.02, snap.player.y + 0.7, snap.player.z + 0.02);
-    if (!shotLight) {
-      shotLight = new THREE.DirectionalLight(0xe8fff4, 2.8);
-      shotLight.position.set(snap.player.x + 1.4, snap.player.y + 2.2, snap.player.z - 1.6);
-      shotLight.target.position.set(snap.player.x, snap.player.y + 0.7, snap.player.z);
-      scene.add(shotLight, shotLight.target);
-    }
+    shotFov = 50;
+    camPos.set(snap.player.x - 0.25, snap.player.y + 1.42, snap.player.z - 4.15);
+    lookAt.set(snap.player.x + 0.15, snap.player.y + 0.55, snap.player.z + 3.2);
   } else if (shot === "boss" && worldKey === "thorne" && snap.boss) {
-    camPos.set(snap.boss.x + 3.6, 2.35, snap.boss.z - 4.6);
-    lookAt.set(snap.boss.x - 0.1, 1.85, snap.boss.z + 0.2);
+    shotFov = 54;
+    camPos.set(snap.boss.x + 5.2, 2.35, snap.boss.z - 8.4);
+    lookAt.set(snap.boss.x, 1.45, snap.boss.z + 0.2);
   } else if (shot === "boss" && snap.boss) {
     camPos.set(snap.boss.x + 0.15, 2.2, snap.boss.z - 6.5);
     lookAt.set(snap.boss.x, 2.5, snap.boss.z);
@@ -1482,6 +1480,10 @@ function frame(now) {
     camPos.copy(world.pullCamera(focus, camPos));
     lookAt.set(lookX, lookY, lookZ);
   }
+  if (Math.abs(camera.fov - shotFov) > 0.05) {
+    camera.fov = shotFov;
+    camera.updateProjectionMatrix();
+  }
   camera.position.copy(camPos);
   camera.position.x += Math.sin(now / 40) * shake * 0.12;
   camera.position.y += Math.cos(now / 35) * shake * 0.08;
@@ -1493,7 +1495,7 @@ function frame(now) {
   for (const ev of snap.events) {
     if (ev.type === "say") dialogue.say(ev.id);
     else if (ev.type === "dmg") addFloat(ev.x, ev.y, ev.z, ev.n, ev.coin);
-    else if (ev.type === "hurt") {
+    else if (ev.type === "hurt" && !params.get("shot")) {
       shake = Math.max(shake, 0.55);
       hurtFx.restart(360);
       const ring = document.getElementById("hp-ring");

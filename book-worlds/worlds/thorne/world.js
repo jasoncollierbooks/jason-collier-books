@@ -41,11 +41,11 @@ function woodTexture(low) {
   c.width = s;
   c.height = s;
   const g = c.getContext("2d");
-  g.fillStyle = "#3a2416";
+  g.fillStyle = "#c49a6a";
   g.fillRect(0, 0, s, s);
   for (let i = 0; i < (low ? 80 : 160); i++) {
     const x = Math.random() * s;
-    g.strokeStyle = `rgba(${40 + Math.random() * 30}, ${22 + Math.random() * 16}, 12, ${0.15 + Math.random() * 0.35})`;
+    g.strokeStyle = `rgba(${92 + Math.random() * 40}, ${58 + Math.random() * 28}, ${32 + Math.random() * 16}, ${0.18 + Math.random() * 0.28})`;
     g.lineWidth = 1 + Math.random() * 3;
     g.beginPath();
     g.moveTo(x, 0);
@@ -93,10 +93,9 @@ function glassMat() {
         vec3 viewDir = normalize(cameraPosition - vW);
         float fres = pow(1.0 - max(dot(viewDir, normalize(vN)), 0.0), 2.05);
         float glint = pow(max(0.0, sin(vW.y * 2.4 + uTime * 0.7) * sin(vW.x * 1.3 + vW.z * 0.6)), 10.0);
-        vec3 col = mix(uTint * 0.15, uTint, fres);
-        col += vec3(0.85, 1.0, 0.95) * glint * 0.85;
-        col += vec3(0.6, 0.9, 1.0) * pow(fres, 4.0);
-        float alpha = 0.08 + fres * 0.5 + glint * 0.35;
+        vec3 col = mix(uTint * 0.08, uTint * 0.45, fres);
+        col += vec3(0.7, 0.9, 0.88) * glint * 0.22;
+        float alpha = 0.035 + fres * 0.2 + glint * 0.08;
         gl_FragColor = vec4(col, clamp(alpha, 0.0, 0.72));
       }
     `,
@@ -117,7 +116,7 @@ function drawScope(pack, t) {
   const { canvas, ctx, tex } = pack;
   const w = canvas.width;
   const h = canvas.height;
-  ctx.fillStyle = "#04140c";
+  ctx.fillStyle = "#06301c";
   ctx.fillRect(0, 0, w, h);
   ctx.strokeStyle = "rgba(40, 120, 70, 0.35)";
   ctx.lineWidth = 1;
@@ -131,8 +130,8 @@ function drawScope(pack, t) {
     ctx.lineTo(w, (h / 8) * i);
     ctx.stroke();
   }
-  ctx.strokeStyle = "#9dffc0";
-  ctx.lineWidth = 3;
+  ctx.strokeStyle = "#b8ffd4";
+  ctx.lineWidth = 6;
   ctx.shadowColor = "#7dffb0";
   ctx.shadowBlur = 8;
   ctx.beginPath();
@@ -150,12 +149,15 @@ export function buildThorneWorld(scene, low) {
   const block = (x, z, r) => obstacles.push({ x, z, r });
   const glasses = [];
 
-  scene.fog = new THREE.FogExp2(0x070a10, low ? 0.014 : 0.0105);
-  scene.background = new THREE.Color(0x070a10);
+  scene.fog = new THREE.FogExp2(0x121822, low ? 0.0064 : 0.0052);
+  scene.background = new THREE.Color(0x10151e);
 
-  const hemi = new THREE.HemisphereLight(0x8aa0b8, 0x1a120c, low ? 0.46 : 0.55);
+  const hemi = new THREE.HemisphereLight(0xdde8f6, 0xa67a52, low ? 1.45 : 1.65);
   scene.add(hemi);
-  const moon = new THREE.DirectionalLight(0xb9c8e8, low ? 0.35 : 0.5);
+  const lampKey = new THREE.DirectionalLight(0xffd2a6, low ? 0.55 : 0.72);
+  lampKey.position.set(-7, 10, -2);
+  scene.add(lampKey);
+  const moon = new THREE.DirectionalLight(0xc5d6ef, low ? 0.28 : 0.4);
   moon.position.set(-18, 22, -8);
   moon.castShadow = true;
   moon.shadow.mapSize.set(low ? 512 : 2048, low ? 512 : 2048);
@@ -176,16 +178,18 @@ export function buildThorneWorld(scene, low) {
   scene.add(paper);
 
   const pencil = giantPencil();
-  pencil.position.set(-3.6, heightAt(-3.6, 6) + 0.32, 6);
-  pencil.rotation.y = 1.15;
+  pencil.position.set(-1.55, heightAt(-1.55, 4.4) + 0.64, 4.4);
+  pencil.rotation.y = 1.25;
   scene.add(pencil);
-  block(-4.2, 6.2, 0.85);
+  block(-2.35, 4.6, 0.7);
 
   const clip = paperclipArch();
-  clip.position.set(0.2, heightAt(0.2, 22), 22);
+  clip.position.set(0.15, heightAt(0.15, 25.5), 25.5);
   scene.add(clip);
-  block(-2.7, 22, 0.45);
-  block(2.9, 22, 0.45);
+  block(-3.2, 25.5, 0.4);
+  block(3.4, 25.5, 0.4);
+
+  placeVista(scene, block, glasses);
 
   placeTubes(scene, low, block, glasses);
   placeBeakers(scene, low, block, glasses);
@@ -200,9 +204,27 @@ export function buildThorneWorld(scene, low) {
   lamp.position.set(-1.6, heightAt(-1.6, -6.2), -6.2);
   scene.add(lamp);
   block(-1.6, -6.2, 0.45);
-  const lampLight = new THREE.PointLight(0xffc888, 8, 14, 2);
-  lampLight.position.set(-1.2, 3.2, -5.4);
+  const lampLight = new THREE.PointLight(0xffc888, 6, 16, 2);
+  lampLight.position.set(-1.4, 3.1, 1.6);
   scene.add(lampLight);
+  const warmPool = new THREE.PointLight(0xffc898, 2.4, 14, 2);
+  warmPool.position.set(0.2, 3.4, 11);
+  scene.add(warmPool);
+  const coolFill = new THREE.PointLight(0xd7eeff, 2.6, 18, 2);
+  coolFill.position.set(0.4, 4.6, 18);
+  scene.add(coolFill);
+  const benchCool = new THREE.PointLight(0xd4ecff, 3.4, 16, 2);
+  benchCool.position.set(0.1, 3.3, 9.2);
+  scene.add(benchCool);
+  const coolFar = new THREE.PointLight(0xc9e6ff, 1.6, 22, 2);
+  coolFar.position.set(0, 5.2, 46);
+  scene.add(coolFar);
+  const arenaWarm = new THREE.PointLight(0xffe4c0, 2.8, 16, 2);
+  arenaWarm.position.set(0.2, 3.4, 84);
+  scene.add(arenaWarm);
+  const arenaCool = new THREE.PointLight(0xd2eaff, 1.8, 14, 2);
+  arenaCool.position.set(-1.5, 3.8, 93);
+  scene.add(arenaCool);
 
   const geiger = buildGeiger();
   const gx = -2.5;
@@ -216,11 +238,14 @@ export function buildThorneWorld(scene, low) {
 
   const scopePack = scopeTexture();
   const scope = buildScope(scopePack.tex);
-  scope.position.set(0.4, heightAt(0.4, 106), 106);
+  scope.scale.setScalar(1.45);
+  scope.rotation.y = Math.PI;
+  scope.position.set(0.15, heightAt(0.15, 47), 47);
   scene.add(scope);
-  block(0.4, 103.5, 2.4);
-  const scopeLight = new THREE.PointLight(0x7dffb0, 18, 28, 2);
-  scopeLight.position.set(0.4, 4.2, 100);
+  block(-2.4, 47, 1.1);
+  block(2.6, 47, 1.1);
+  const scopeLight = new THREE.PointLight(0x7dffb0, 2.2, 22, 2);
+  scopeLight.position.set(0.15, 4.2, 42);
   scene.add(scopeLight);
 
   const jar = bellJar();
@@ -260,8 +285,6 @@ export function buildThorneWorld(scene, low) {
   const fluors = fluorescentBanks(scene);
 
   let freed = false;
-  const fogA = new THREE.Color(0x10141c);
-  const fogB = new THREE.Color(0x070910);
   const fogC = new THREE.Color();
 
   return {
@@ -271,18 +294,19 @@ export function buildThorneWorld(scene, low) {
     radio,
     gate,
     laser: { x: 6.2, z: 52 },
-    scope: { x: 0.4, z: 100 },
+    scope: { x: 0.15, z: 47 },
     setFreed(v) { freed = !!v; },
     setFogGate(v) { curtain.setOpen(!!v); },
     update(dt, t, player) {
       for (const mat of glasses) if (mat.uniforms) mat.uniforms.uTime.value = t;
       drawScope(scopePack, t);
       const flick = 0.82 + Math.sin(t * 47) * 0.08 + (Math.sin(t * 13) > 0.92 ? -0.25 : 0);
-      for (const fl of fluors) fl.intensity = (low ? 3.2 : 5.4) * flick;
-      scopeLight.intensity = (freed ? 10 : 16) * (0.85 + Math.sin(t * 6) * 0.08);
-      lampLight.intensity = 7 + Math.sin(t * 2) * 0.4;
-      beam.material.opacity = 0.28 + Math.sin(t * 9) * 0.06;
-      laser.core.material.opacity = 0.55 + Math.sin(t * 11) * 0.2;
+      for (const fl of fluors) fl.intensity = (low ? 1.5 : 2.1) * flick;
+      scopeLight.intensity = 2.8 + Math.sin(t * 6) * 0.35;
+      lampLight.intensity = 5.4 + Math.sin(t * 2) * 0.35;
+      warmPool.intensity = 2.2 + Math.sin(t * 1.6) * 0.15;
+      beam.material.opacity = 0.62 + Math.sin(t * 9) * 0.06;
+      laser.core.material.opacity = 0.78 + Math.sin(t * 11) * 0.08;
       lake.userData.mat.uniforms.uTime.value = t;
       curtain.update(t);
       posePages(pages, t);
@@ -291,13 +315,10 @@ export function buildThorneWorld(scene, low) {
       geiger.userData.needle.rotation.z = -0.6 + Math.sin(t * 18) * 0.08 + (freed ? 0 : Math.random() * 0.12);
       if (radio.glow) radio.glow.material.opacity = 0.35 + Math.sin(t * 4) * 0.15;
       mold.rotation.y = Math.sin(t * 0.2) * 0.01;
-      const z = player ? player.z : 0;
-      const dread = freed ? 0.08 : clamp((z - 6) / 84, 0, 1);
-      fogC.copy(fogA).lerp(fogB, dread * 0.65);
-      if (freed) fogC.setHex(0x121820);
+      fogC.setHex(freed ? 0x161c28 : 0x121822);
       scene.fog.color.copy(fogC);
-      scene.background.copy(fogC);
-      scene.fog.density = (low ? 0.015 : 0.011) + (freed ? 0 : dread * 0.004);
+      scene.background.setHex(0x10151e);
+      scene.fog.density = low ? 0.0064 : 0.0052;
       if (gate) {
         const on = gate.ready || gate.open;
         gate.glow.material.opacity = on ? 0.35 + Math.sin(t * 3) * 0.12 : 0.05;
@@ -415,10 +436,10 @@ function buildBench(low) {
   geo.rotateX(-Math.PI / 2);
   const pos = geo.attributes.position;
   const colors = new Float32Array(pos.count * 3);
-  const wood = new THREE.Color(0.28, 0.16, 0.09);
-  const edge = new THREE.Color(0.12, 0.07, 0.04);
-  const lake = new THREE.Color(0.05, 0.12, 0.14);
-  const paper = new THREE.Color(0.72, 0.66, 0.52);
+  const wood = new THREE.Color(0.98, 0.9, 0.78);
+  const edge = new THREE.Color(0.62, 0.46, 0.32);
+  const lake = new THREE.Color(0.22, 0.55, 0.58);
+  const paper = new THREE.Color(0.98, 0.94, 0.86);
   const tmp = new THREE.Color();
   for (let i = 0; i < pos.count; i++) {
     const x = pos.getX(i);
@@ -436,7 +457,7 @@ function buildBench(low) {
   geo.computeVertexNormals();
   geo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
   const skirt = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
-    color: 0xffffff, map: woodTexture(low), vertexColors: true, roughness: 0.72, metalness: 0.04,
+    color: 0xffffff, map: woodTexture(low), vertexColors: true, roughness: 0.78, metalness: 0.02,
   }));
   return skirt;
 }
@@ -478,20 +499,20 @@ function giantPencil() {
   const lead = new THREE.MeshStandardMaterial({ color: 0x1a1a1c, roughness: 0.4, metalness: 0.3 });
   const pink = new THREE.MeshStandardMaterial({ color: 0xd46a78, roughness: 0.7 });
   const band = new THREE.MeshStandardMaterial({ color: 0xc0c6cc, roughness: 0.25, metalness: 0.7 });
-  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 9.2, 8), yellow);
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.64, 0.64, 11.4, 12), yellow);
   body.rotation.z = Math.PI / 2;
-  const tip = new THREE.Mesh(new THREE.ConeGeometry(0.28, 1.1, 8), wood);
+  const tip = new THREE.Mesh(new THREE.ConeGeometry(0.64, 1.55, 12), wood);
   tip.rotation.z = -Math.PI / 2;
-  tip.position.x = 5.1;
-  const graphite = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.42, 6), lead);
+  tip.position.x = 6.4;
+  const graphite = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.55, 8), lead);
   graphite.rotation.z = -Math.PI / 2;
-  graphite.position.x = 5.7;
-  const eraser = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.7, 8), pink);
+  graphite.position.x = 7.15;
+  const eraser = new THREE.Mesh(new THREE.CylinderGeometry(0.66, 0.66, 0.9, 12), pink);
   eraser.rotation.z = Math.PI / 2;
-  eraser.position.x = -4.9;
-  const ferrule = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.35, 8), band);
+  eraser.position.x = -6.15;
+  const ferrule = new THREE.Mesh(new THREE.CylinderGeometry(0.66, 0.66, 0.42, 12), band);
   ferrule.rotation.z = Math.PI / 2;
-  ferrule.position.x = -4.4;
+  ferrule.position.x = -5.5;
   g.add(body, tip, graphite, eraser, ferrule);
   g.traverse((o) => { if (o.isMesh) o.castShadow = true; });
   return g;
@@ -499,12 +520,176 @@ function giantPencil() {
 
 function paperclipArch() {
   const mat = new THREE.MeshStandardMaterial({ color: 0xd5dbe2, roughness: 0.22, metalness: 0.82 });
-  const mesh = new THREE.Mesh(new THREE.TorusGeometry(2.6, 0.11, 10, 28, Math.PI), mat);
+  const mesh = new THREE.Mesh(new THREE.TorusGeometry(3.4, 0.18, 12, 36, Math.PI), mat);
   mesh.rotation.z = Math.PI;
-  mesh.rotation.y = 0.15;
-  mesh.position.y = 2.6;
+  mesh.rotation.y = 0.2;
+  mesh.position.y = 3.4;
   mesh.castShadow = true;
   return mesh;
+}
+
+function placeVista(scene, block, glasses) {
+  const flask = erlenmeyer(glasses, 0x2fbfa8, 0.46);
+  flask.position.set(2.15, heightAt(2.15, 14.6), 14.6);
+  scene.add(flask);
+  block(2.15, 14.6, 1.15);
+
+  const beaker = gradedBeaker(glasses, 0xe09038, 0.58);
+  beaker.position.set(-1.9, heightAt(-1.9, 16.4), 16.4);
+  scene.add(beaker);
+  block(-1.9, 16.4, 0.95);
+
+  const rack = tubeRack(glasses);
+  rack.position.set(1.25, heightAt(1.25, 20.4), 20.4);
+  rack.rotation.y = -0.4;
+  scene.add(rack);
+  block(1.25, 20.4, 0.8);
+
+  const dish = colonyDish(2.15);
+  dish.position.set(-1.45, heightAt(-1.45, 7.5), 7.5);
+  scene.add(dish);
+  block(-1.45, 7.5, 1.05);
+
+  const dish2 = colonyDish(1.7);
+  dish2.position.set(0.35, heightAt(0.35, 18.6), 18.6);
+  scene.add(dish2);
+
+  const tray = specimenGrid();
+  tray.position.set(-2.05, heightAt(-2.05, 22.6), 22.6);
+  scene.add(tray);
+  block(-2.05, 22.6, 1.05);
+}
+
+function erlenmeyer(glasses, liquidColor, fill) {
+  const g = new THREE.Group();
+  const mat = glassMat();
+  mat.uniforms.uTint.value.set(0.82, 0.96, 1);
+  glasses.push(mat);
+  const bowl = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 1.55, 3.5, 18, 1, true), mat);
+  bowl.position.y = 1.85;
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.48, 2.15, 14, 1, true), mat);
+  neck.position.y = 4.55;
+  const lip = new THREE.Mesh(new THREE.TorusGeometry(0.46, 0.07, 8, 16), mat);
+  lip.rotation.x = Math.PI / 2;
+  lip.position.y = 5.6;
+  const liquid = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.7, 1.35, 3.5 * fill, 16),
+    new THREE.MeshStandardMaterial({
+      color: liquidColor, emissive: liquidColor, emissiveIntensity: 0.22,
+      roughness: 0.18, transparent: true, opacity: 0.82,
+    }),
+  );
+  liquid.position.y = 3.5 * fill * 0.5 + 0.12;
+  g.add(bowl, neck, lip, liquid);
+  g.traverse((o) => { if (o.isMesh) o.castShadow = true; });
+  return g;
+}
+
+function gradedBeaker(glasses, liquidColor, fill) {
+  const g = new THREE.Group();
+  const mat = glassMat();
+  glasses.push(mat);
+  const h = 4.4;
+  const cup = new THREE.Mesh(new THREE.CylinderGeometry(1.15, 1.0, h, 18, 1, true), mat);
+  cup.position.y = h * 0.5;
+  const lip = new THREE.Mesh(new THREE.TorusGeometry(1.15, 0.07, 8, 18), mat);
+  lip.rotation.x = Math.PI / 2;
+  lip.position.y = h;
+  const liquid = new THREE.Mesh(
+    new THREE.CylinderGeometry(1.02, 0.92, h * fill, 16),
+    new THREE.MeshStandardMaterial({
+      color: liquidColor, emissive: liquidColor, emissiveIntensity: 0.18,
+      roughness: 0.2, transparent: true, opacity: 0.8,
+    }),
+  );
+  liquid.position.y = h * fill * 0.5 + 0.08;
+  const ink = new THREE.MeshStandardMaterial({ color: 0xf4f7fb, roughness: 0.4 });
+  for (let i = 1; i <= 5; i++) {
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(1.08, 0.025, 6, 20), ink);
+    ring.rotation.x = Math.PI / 2;
+    ring.position.y = 0.55 + i * 0.62;
+    const tick = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.03, 0.04), ink);
+    tick.position.set(1.08, ring.position.y, 0);
+    g.add(ring, tick);
+  }
+  g.add(cup, lip, liquid);
+  g.traverse((o) => { if (o.isMesh) o.castShadow = true; });
+  return g;
+}
+
+function tubeRack(glasses) {
+  const g = new THREE.Group();
+  const wood = new THREE.MeshStandardMaterial({ color: 0x8a5a32, roughness: 0.75 });
+  const base = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.16, 0.7), wood);
+  base.position.y = 0.1;
+  const back = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.9, 0.08), wood);
+  back.position.set(0, 0.55, -0.28);
+  g.add(base, back);
+  const colors = [0xff5a6a, 0x7dffc4, 0xf0c060, 0x7ec8ff, 0xd6e060];
+  colors.forEach((color, i) => {
+    const tube = testTube(2.7, color, 0.45 + (i % 3) * 0.12, glasses);
+    tube.scale.setScalar(0.72);
+    tube.position.set(-0.9 + i * 0.45, 0.16, 0);
+    tube.rotation.z = (i - 2) * 0.04;
+    g.add(tube);
+  });
+  g.traverse((o) => { if (o.isMesh) o.castShadow = true; });
+  return g;
+}
+
+function colonyDish(radius) {
+  const g = new THREE.Group();
+  const glass = new THREE.MeshStandardMaterial({
+    color: 0xe7f3f6, roughness: 0.12, metalness: 0.04, transparent: true, opacity: 0.62,
+  });
+  const dish = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, 0.16, 24), glass);
+  dish.position.y = 0.1;
+  const lid = new THREE.Mesh(new THREE.CylinderGeometry(radius * 1.02, radius * 1.02, 0.06, 24), glass);
+  lid.position.y = 0.42;
+  const agar = new THREE.Mesh(
+    new THREE.CylinderGeometry(radius * 0.9, radius * 0.9, 0.06, 20),
+    new THREE.MeshStandardMaterial({ color: 0xf0e2c4, roughness: 0.65 }),
+  );
+  agar.position.y = 0.16;
+  const greens = [0x7fbf62, 0xdff5d4, 0x3e6a32, 0xf7fff4, 0x9ccc78];
+  for (let i = 0; i < 9; i++) {
+    const puff = new THREE.Mesh(
+      new THREE.SphereGeometry(radius * (0.12 + (i % 3) * 0.05), 8, 6),
+      new THREE.MeshStandardMaterial({ color: greens[i % greens.length], roughness: 1 }),
+    );
+    const a = (i / 9) * Math.PI * 2;
+    const rad = radius * (0.15 + (i % 4) * 0.16);
+    puff.position.set(Math.cos(a) * rad, 0.28 + (i % 2) * 0.08, Math.sin(a) * rad);
+    puff.scale.y = 0.7;
+    g.add(puff);
+  }
+  g.add(dish, lid, agar);
+  g.traverse((o) => { if (o.isMesh) o.castShadow = true; });
+  return g;
+}
+
+function specimenGrid() {
+  const g = new THREE.Group();
+  const metal = new THREE.MeshStandardMaterial({ color: 0xd5dbe2, roughness: 0.35, metalness: 0.55 });
+  const tray = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.14, 2.15), metal);
+  tray.position.y = 0.1;
+  g.add(tray);
+  const colors = [0x7dffc0, 0xf0c060, 0xff6a78, 0x88c0ff, 0xd0e060, 0xc090ff, 0xf4f0e4, 0x6ad0a0];
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 4; col++) {
+      const i = row * 4 + col;
+      const well = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.16, 0.16, 0.08, 8),
+        new THREE.MeshStandardMaterial({
+          color: colors[i % colors.length], emissive: colors[i % colors.length], emissiveIntensity: 0.25,
+        }),
+      );
+      well.position.set(-1.15 + col * 0.76, 0.2, -0.62 + row * 0.62);
+      g.add(well);
+    }
+  }
+  g.traverse((o) => { if (o.isMesh) o.castShadow = true; });
+  return g;
 }
 
 function placeTubes(scene, low, block, glasses) {
@@ -553,7 +738,7 @@ function testTube(h, color, fill, glasses) {
     new THREE.MeshStandardMaterial({ color: 0x1c1e22, roughness: 0.5 }),
   );
   cap.position.y = h + 0.12;
-  const glow = new THREE.PointLight(color, 1.6, 6, 2);
+  const glow = new THREE.PointLight(color, 0.42, 4.5, 2);
   glow.position.y = h * fill * 0.5;
   g.add(wall, lip, liquid, cap, glow);
   return g;
@@ -621,25 +806,47 @@ function placeDishes(scene, low, block) {
 
 function moldForest(scene, low, block) {
   const g = new THREE.Group();
-  const mat = new THREE.MeshStandardMaterial({ color: 0x1a2414, roughness: 1, emissive: 0x0c1408, emissiveIntensity: 0.2 });
-  const n = low ? 28 : 60;
-  const geo = new THREE.ConeGeometry(0.16, 1, 5);
-  const mesh = new THREE.InstancedMesh(geo, mat, n);
+  const green = new THREE.MeshStandardMaterial({ color: 0x8ecf72, roughness: 1, emissive: 0x244018, emissiveIntensity: 0.12 });
+  const white = new THREE.MeshStandardMaterial({ color: 0xf4f7f0, roughness: 1, emissive: 0x6a7460, emissiveIntensity: 0.05 });
+  const olive = new THREE.MeshStandardMaterial({ color: 0x3f6a34, roughness: 1 });
+  const n = low ? 48 : 90;
+  const geo = new THREE.SphereGeometry(0.34, 8, 6);
+  const meshG = new THREE.InstancedMesh(geo, green, n);
+  const meshW = new THREE.InstancedMesh(geo, white, Math.ceil(n * 0.55));
+  const stalks = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.05, 0.09, 1.1, 5), olive, Math.ceil(n / 3));
   const dummy = new THREE.Object3D();
+  let wi = 0;
+  let si = 0;
   for (let i = 0; i < n; i++) {
     const side = i % 2 === 0 ? -1 : 1;
-    const x = side * (3.2 + (i % 5) * 0.7);
-    const z = 12 + (i % 10) * 1.7 + (i % 3) * 0.2;
-    const s = 0.7 + (i % 4) * 0.35;
-    dummy.position.set(x, heightAt(x, z) + s * 0.45, z);
-    dummy.scale.set(s, s * (1.2 + (i % 3) * 0.3), s);
-    dummy.rotation.y = i;
+    const x = side * (1.85 + (i % 4) * 0.7);
+    const z = 21 + (i % 8) * 1.55;
+    const s = 0.85 + (i % 5) * 0.45;
+    dummy.position.set(x, heightAt(x, z) + 0.35 * s, z);
+    dummy.scale.set(s, s * 0.75, s);
+    dummy.rotation.set(0, i, 0);
     dummy.updateMatrix();
-    mesh.setMatrixAt(i, dummy.matrix);
-    if (i % 7 === 0) block(x, z, 0.35);
+    meshG.setMatrixAt(i, dummy.matrix);
+    if (i % 2 === 0) {
+      dummy.position.y += 0.28 * s;
+      dummy.position.x += 0.18 * side;
+      dummy.scale.setScalar(s * 0.62);
+      dummy.updateMatrix();
+      meshW.setMatrixAt(wi++, dummy.matrix);
+    }
+    if (i % 3 === 0) {
+      dummy.position.set(x, heightAt(x, z) + 0.55, z);
+      dummy.scale.set(1, 1.4 + (i % 3) * 0.4, 1);
+      dummy.rotation.set(0, 0, side * 0.08);
+      dummy.updateMatrix();
+      stalks.setMatrixAt(si++, dummy.matrix);
+      block(x, z, 0.4);
+    }
   }
-  mesh.castShadow = !low;
-  g.add(mesh);
+  meshG.count = n;
+  meshW.count = wi;
+  stalks.count = si;
+  g.add(meshG, meshW, stalks);
   scene.add(g);
   return g;
 }
@@ -776,19 +983,32 @@ function buildLaser(scene, glasses) {
   g.position.set(6.4, heightAt(6.4, 52), 52);
   g.rotation.y = Math.PI / 2;
   scene.add(g);
-  const core = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.045, 0.045, 13.5, 8),
-    new THREE.MeshBasicMaterial({
-      color: 0xc8ffe4, transparent: true, opacity: 0.7, depthWrite: false, blending: THREE.AdditiveBlending,
-    }),
-  );
-  core.rotation.z = Math.PI / 2;
-  core.position.set(-1.2, heightAt(0, 52) + 3.15, 52);
-  scene.add(core);
-  const halo = new THREE.PointLight(0x9dffc8, 10, 18, 2);
-  halo.position.set(0, 3.2, 52);
+  const beamMat = new THREE.MeshStandardMaterial({
+    color: 0xb8ffe4, emissive: 0x3dffb0, emissiveIntensity: 0.85,
+    transparent: true, opacity: 0.66, depthWrite: false, roughness: 0.25,
+  });
+  const coreMat = new THREE.MeshStandardMaterial({
+    color: 0xf4fff8, emissive: 0xc8ffe8, emissiveIntensity: 0.55,
+    transparent: true, opacity: 0.8, depthWrite: false, roughness: 0.2,
+  });
+  const from = new THREE.Vector3(6.1, heightAt(6.1, 52) + 2.55, 51.2);
+  const to = new THREE.Vector3(1.35, heightAt(1.35, 16) + 2.15, 16.2);
+  const beam = beamBetween(from, to, 0.42, beamMat);
+  const core = beamBetween(from, to, 0.1, coreMat);
+  scene.add(beam, core);
+  const halo = new THREE.PointLight(0x9dffc8, 1.3, 14, 2);
+  halo.position.set(3.6, 2.6, 34);
   scene.add(halo);
-  return { beam: core, core, group: g };
+  return { beam, core, group: g };
+}
+
+function beamBetween(a, b, radius, mat) {
+  const dir = new THREE.Vector3().subVectors(b, a);
+  const len = Math.max(0.2, dir.length());
+  const mesh = new THREE.Mesh(new THREE.CylinderGeometry(radius * 0.72, radius, len, 12), mat);
+  mesh.position.copy(a).add(b).multiplyScalar(0.5);
+  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize());
+  return mesh;
 }
 
 function buildScope(tex) {
@@ -798,12 +1018,12 @@ function buildScope(tex) {
   box.position.y = 2.8;
   box.castShadow = true;
   const bezel = new THREE.Mesh(
-    new THREE.BoxGeometry(4.4, 3.4, 0.2),
+    new THREE.BoxGeometry(6.2, 4.6, 0.2),
     new THREE.MeshStandardMaterial({ color: 0x101418, roughness: 0.4 }),
   );
   bezel.position.set(0, 3.1, 2.15);
   const crt = new THREE.Mesh(
-    new THREE.PlaneGeometry(3.6, 2.7),
+    new THREE.PlaneGeometry(5.4, 3.8),
     new THREE.MeshBasicMaterial({ map: tex }),
   );
   crt.position.set(0, 3.1, 2.28);
@@ -821,11 +1041,11 @@ function buildScope(tex) {
 function bellJar() {
   const mat = glassMat();
   mat.uniforms.uTint.value.set(0.7, 0.9, 1);
-  const mesh = new THREE.Mesh(new THREE.SphereGeometry(6.2, 24, 16, 0, Math.PI * 2, 0, Math.PI / 2), mat);
-  mesh.position.y = 0.15;
+  const mesh = new THREE.Mesh(new THREE.SphereGeometry(2.65, 28, 18, 0, Math.PI * 2, 0, Math.PI / 2), mat);
+  mesh.position.y = 0.12;
   mesh.userData.mat = mat;
   const base = new THREE.Mesh(
-    new THREE.CylinderGeometry(6.3, 6.3, 0.18, 20),
+    new THREE.CylinderGeometry(2.8, 2.8, 0.16, 24),
     new THREE.MeshStandardMaterial({ color: 0x1c2026, metalness: 0.5, roughness: 0.4 }),
   );
   base.position.y = 0.08;
@@ -999,8 +1219,8 @@ function fluorescentBanks(scene) {
     tube.rotation.z = Math.PI / 2;
     tube.position.set(0, 16.2, z);
     scene.add(tube);
-    const light = new THREE.PointLight(0xd8f0e8, 5, 22, 2);
-    light.position.set(0, 15.2, z);
+    const light = new THREE.PointLight(0xd7eeff, 1.7, 26, 2);
+    light.position.set(0, 6.4, z);
     scene.add(light);
     lights.push(light);
   }

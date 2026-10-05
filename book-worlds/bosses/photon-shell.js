@@ -22,135 +22,112 @@ export const boss = {
   create,
 };
 
-function shellMat() {
-  return new THREE.ShaderMaterial({
-    uniforms: {
-      uTime: { value: 0 },
-      uHit: { value: 0 },
-      uFog: { value: 1 },
-      uPhase: { value: 1 },
-    },
-    transparent: true,
-    depthWrite: false,
-    side: THREE.DoubleSide,
-    vertexShader: `
-      varying vec3 vP;
-      varying vec3 vN;
-      varying vec3 vW;
-      void main() {
-        vP = position;
-        vN = normalize(normalMatrix * normal);
-        vec4 w = modelMatrix * vec4(position, 1.0);
-        vW = w.xyz;
-        gl_Position = projectionMatrix * viewMatrix * w;
-      }
-    `,
-    fragmentShader: `
-      uniform float uTime;
-      uniform float uHit;
-      uniform float uFog;
-      uniform float uPhase;
-      varying vec3 vP;
-      varying vec3 vN;
-      varying vec3 vW;
-      void main() {
-        vec3 viewDir = normalize(cameraPosition - vW);
-        float fres = pow(1.0 - max(dot(viewDir, normalize(vN)), 0.0), 1.7);
-        float scan = sin(vP.y * 28.0 + uTime * (4.0 + uPhase) + vP.x * 6.0) * 0.5 + 0.5;
-        float band = smoothstep(0.35, 0.85, scan);
-        vec3 cool = vec3(0.55, 1.0, 0.82);
-        vec3 hot = vec3(1.0, 0.45, 0.85);
-        vec3 gold = vec3(1.0, 0.78, 0.35);
-        vec3 base = mix(cool, hot, clamp(uPhase - 1.0, 0.0, 1.0) * 0.55);
-        base = mix(base, gold, 1.0 - uFog);
-        vec3 mist = vec3(0.55, 0.6, 0.66);
-        vec3 col = mix(base, mist, uFog * (0.18 + scan * 0.22));
-        col += base * fres * (0.55 + (1.0 - uFog) * 0.4);
-        col += base * band * fres * 0.22;
-        col = mix(col, vec3(1.0, 0.95, 0.8), uHit * 0.45);
-        float alpha = (0.22 + fres * 0.48 + band * 0.1) * (0.62 + (1.0 - uFog) * 0.25);
-        gl_FragColor = vec4(col, clamp(alpha, 0.0, 0.92));
-      }
-    `,
-  });
-}
-
 function create() {
   const root = new THREE.Group();
   const rig = new THREE.Group();
-  rig.position.y = 1.75;
+  rig.position.y = 1.65;
   root.add(rig);
 
-  const mat = shellMat();
-  const shell = new THREE.Mesh(new THREE.SphereGeometry(1.55, 28, 20), mat);
-  shell.scale.set(1, 0.92, 1);
-  const innerMat = new THREE.MeshBasicMaterial({ color: 0x143028 });
-  const inner = new THREE.Mesh(new THREE.SphereGeometry(0.62, 16, 12), innerMat);
-  const rings = [];
-  const ringMat = new THREE.MeshBasicMaterial({
-    color: 0xc8ffe8, transparent: true, opacity: 0.55, side: THREE.DoubleSide, depthWrite: false,
+  const glass = new THREE.MeshStandardMaterial({
+    color: 0x16382e, emissive: 0x0c241c, emissiveIntensity: 0.2,
+    transparent: true, opacity: 0.2, roughness: 0.12, metalness: 0.04,
+    depthWrite: false, side: THREE.DoubleSide,
   });
-  [0.4, 1.1, 2.0].forEach((tilt, i) => {
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(1.15 + i * 0.18, 0.025, 8, 40), ringMat);
-    ring.rotation.x = tilt;
-    ring.rotation.y = i;
-    rig.add(ring);
-    rings.push(ring);
-  });
-  const motePivot = new THREE.Group();
-  const moteMat = new THREE.MeshBasicMaterial({ color: 0xe8fff4 });
-  const motes = [];
-  for (let i = 0; i < 8; i++) {
-    const mote = new THREE.Mesh(new THREE.SphereGeometry(0.07, 6, 5), moteMat);
-    const a = (i / 8) * Math.PI * 2;
-    mote.position.set(Math.cos(a) * 1.35, Math.sin(a * 2) * 0.35, Math.sin(a) * 1.35);
-    motePivot.add(mote);
-    motes.push(mote);
+  const shell = new THREE.Mesh(new THREE.SphereGeometry(1.28, 22, 16), glass);
+  const wireGreen = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(1.62, 0),
+    new THREE.MeshBasicMaterial({ color: 0x1f8f62, wireframe: true, transparent: true, opacity: 0.8 }),
+  );
+  const wireGold = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(1.95, 0),
+    new THREE.MeshBasicMaterial({ color: 0xb8883e, wireframe: true, transparent: true, opacity: 0.55 }),
+  );
+  const hexMat = new THREE.MeshBasicMaterial({ color: 0x2f9a68, transparent: true, opacity: 0.8 });
+  const hexes = [];
+  for (let i = 0; i < 4; i++) {
+    const hex = new THREE.Mesh(new THREE.TorusGeometry(0.62 + i * 0.32, 0.045, 5, 6), hexMat);
+    hex.rotation.x = Math.PI / 2;
+    hex.position.y = -0.62 + i * 0.42;
+    rig.add(hex);
+    hexes.push(hex);
   }
-  const fog = new THREE.Mesh(new THREE.SphereGeometry(1.72, 16, 12), new THREE.MeshBasicMaterial({
-    color: 0x9aa4b0, transparent: true, opacity: 0.18, depthWrite: false, side: THREE.DoubleSide,
-  }));
-  rig.add(shell, inner, motePivot, fog);
-  const light = new THREE.PointLight(0xb8ffd8, 6, 16, 2);
+  const coreMat = new THREE.MeshStandardMaterial({
+    color: 0x1a4034, emissive: 0x3dcc88, emissiveIntensity: 0.4, roughness: 0.32,
+  });
+  const core = new THREE.Mesh(new THREE.SphereGeometry(0.36, 16, 12), coreMat);
+  const motePivot = new THREE.Group();
+  const moteMat = new THREE.MeshStandardMaterial({
+    color: 0xe7fff4, emissive: 0x6ad8a4, emissiveIntensity: 0.7, roughness: 0.3,
+  });
+  const motes = [];
+  for (let i = 0; i < 6; i++) {
+    const mote = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 6), moteMat);
+    const a = (i / 6) * Math.PI * 2;
+    mote.position.set(Math.cos(a) * 1.15, Math.sin(a * 2) * 0.28, Math.sin(a) * 1.15);
+    motePivot.add(mote);
+    motes.push({ mesh: mote, a, y: (i % 2 ? 0.35 : -0.2) });
+  }
+  const wispMat = new THREE.MeshBasicMaterial({
+    color: 0x1c2228, transparent: true, opacity: 0.35, depthWrite: false, side: THREE.DoubleSide,
+  });
+  const wisps = [];
+  for (let i = 0; i < 5; i++) {
+    const w = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.28), wispMat);
+    const a = (i / 5) * Math.PI * 2;
+    w.position.set(Math.cos(a) * 1.05, 0.15 + (i % 3) * 0.25, Math.sin(a) * 1.05);
+    w.lookAt(0, 0.2, 0);
+    rig.add(w);
+    wisps.push(w);
+  }
+  rig.add(shell, wireGreen, wireGold, core, motePivot);
+  const light = new THREE.PointLight(0x88ffc0, 0.4, 7, 2);
   rig.add(light);
 
   let time = 0;
   let freed = false;
+  let fogAmt = 1;
+  const hexGroup = { hexes };
   function free() { freed = true; }
   function update(dt, anim = {}) {
     time += dt;
     const phase = anim.phase || 1;
-    mat.uniforms.uTime.value = time;
-    mat.uniforms.uHit.value = anim.hit || 0;
-    mat.uniforms.uPhase.value = phase;
-    const fogAmt = freed || anim.freed ? Math.max(0, mat.uniforms.uFog.value - dt * 0.7) : 1;
-    mat.uniforms.uFog.value = fogAmt;
-    fog.material.opacity = 0.2 * fogAmt;
-    const spin = (freed ? 0.35 : 0.8 + phase * 0.45) * (anim.state === "sweep" ? 2.4 : 1);
-    shell.rotation.y += dt * spin;
-    shell.rotation.z = Math.sin(time * (phase === 3 ? 3 : 1.2)) * 0.08;
-    motePivot.rotation.y += dt * (1.4 + phase * 0.4);
-    rings.forEach((ring, i) => {
-      ring.rotation.z += dt * (0.4 + i * 0.25) * (phase === 3 ? 1.8 : 1);
-      ringMat.opacity = freed ? 0.35 : 0.45 + Math.sin(time * 3 + i) * 0.15;
+    if (freed || anim.freed) fogAmt = Math.max(0, fogAmt - dt * 0.7);
+    wispMat.opacity = 0.34 * fogAmt;
+    const spin = (freed ? 0.28 : 0.45 + phase * 0.18) * (anim.state === "sweep" ? 1.8 : 1);
+    wireGreen.rotation.y += dt * spin;
+    wireGreen.rotation.x += dt * spin * 0.35;
+    wireGold.rotation.y -= dt * spin * 0.72;
+    wireGold.rotation.z += dt * 0.2;
+    hexGroup.hexes.forEach((hex, i) => {
+      hex.rotation.z += dt * (0.25 + i * 0.08) * (i % 2 ? -1 : 1);
     });
-    const swell = anim.state === "collapse" || anim.state === "collapseWind" ? 1.12 : 1;
-    const s = (freed ? 0.96 + Math.sin(time * 1.6) * 0.03 : 1) * swell;
-    shell.scale.set(s, s * 0.92, s);
+    motePivot.rotation.y += dt * (0.7 + phase * 0.15);
+    motes.forEach((mote, i) => {
+      const a = mote.a + time * (0.8 + i * 0.05);
+      mote.mesh.position.set(Math.cos(a) * 1.15, mote.y + Math.sin(time * 2 + i) * 0.12, Math.sin(a) * 1.15);
+    });
+    const swell = anim.state === "collapse" || anim.state === "collapseWind" ? 1.08 : 1;
+    const s = (freed ? 0.98 + Math.sin(time * 1.4) * 0.02 : 1) * swell;
+    shell.scale.setScalar(s);
+    wireGreen.scale.setScalar(s);
+    const hit = anim.hit || 0;
     if (freed) {
-      innerMat.color.setHex(0xffd27a);
-      light.color.setHex(0xffd27a);
-      light.intensity = 4.5 + Math.sin(time * 2) * 0.4;
-      moteMat.color.setHex(0xffe2a8);
+      coreMat.emissive.setHex(0xe0a050);
+      coreMat.emissiveIntensity = 0.55;
+      light.color.setHex(0xffd7a0);
+      light.intensity = 0.7;
+      moteMat.emissive.setHex(0xe8c080);
+      wireGreen.material.color.setHex(0xc4924a);
+      wireGold.material.color.setHex(0xe0b86a);
+      hexMat.color.setHex(0xd7a85a);
     } else {
-      const hot = phase >= 3 ? 0xff7ad0 : phase >= 2 ? 0xffe0a0 : 0xc8ffe4;
-      light.color.setHex(hot);
-      light.intensity = 2.4 + phase * 0.7 + (anim.hit || 0) * 2;
-      innerMat.color.setHex(phase >= 3 ? 0x6a1848 : phase >= 2 ? 0xc4a050 : 0x1f6a48);
+      const hot = phase >= 3 ? 0xc45a88 : phase >= 2 ? 0xd7a85a : 0x2fa872;
+      coreMat.emissive.setHex(hot);
+      coreMat.emissiveIntensity = 0.35 + hit * 0.15;
+      light.color.setHex(phase >= 3 ? 0xff9ec8 : phase >= 2 ? 0xffe0a8 : 0x88ffc0);
+      light.intensity = 0.32 + phase * 0.06 + hit * 0.1;
     }
-    if (anim.state === "dead") {
-      rig.position.y = 1.75 + Math.sin(time) * 0.05;
-    }
+    if (anim.state === "dead") rig.position.y = 1.65 + Math.sin(time) * 0.04;
   }
   return { root, update, free };
 }

@@ -4,92 +4,96 @@
 import * as THREE from "three";
 import { trailKey } from "../../src/rigs.js?v=7";
 
-function grayMat() {
-  return new THREE.ShaderMaterial({
-    uniforms: { uTime: { value: 0 } },
-    vertexShader: `
-      varying vec3 vP;
-      varying vec3 vN;
-      void main() {
-        vP = position;
-        vN = normalize(normalMatrix * normal);
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      }
-    `,
-    fragmentShader: `
-      uniform float uTime;
-      varying vec3 vP;
-      varying vec3 vN;
-      void main() {
-        float scan = sin(vP.y * 46.0 - uTime * 14.0) * 0.5 + 0.5;
-        float edge = pow(1.0 - abs(vN.y), 1.15);
-        vec3 col = mix(vec3(0.16, 0.18, 0.2), vec3(0.62, 0.66, 0.68), scan);
-        col = mix(col, vec3(0.08, 0.09, 0.1), edge * 0.4);
-        gl_FragColor = vec4(col, 1.0);
-      }
-    `,
+function membraneMat(color, emissive, opacity) {
+  return new THREE.MeshStandardMaterial({
+    color, emissive, emissiveIntensity: 0.35,
+    roughness: 0.18, metalness: 0.02,
+    transparent: true, opacity, depthWrite: false, side: THREE.DoubleSide,
   });
 }
 
-function tickMats(list, time) {
-  for (const mat of list) if (mat.uniforms) mat.uniforms.uTime.value = time;
+function eyePair(parent, y, z, spread, scale) {
+  const sclera = new THREE.MeshStandardMaterial({ color: 0xf7faf6, roughness: 0.32 });
+  const pupil = new THREE.MeshStandardMaterial({ color: 0x140e0c, roughness: 0.35, emissive: 0x9dffc0, emissiveIntensity: 0.85 });
+  const glow = new THREE.MeshBasicMaterial({ color: 0xf4fff8 });
+  const eyes = [];
+  for (const s of [-1, 1]) {
+    const g = new THREE.Group();
+    const white = new THREE.Mesh(new THREE.SphereGeometry(0.055 * scale, 10, 8), sclera);
+    const dark = new THREE.Mesh(new THREE.SphereGeometry(0.028 * scale, 8, 6), pupil);
+    dark.position.z = 0.04 * scale;
+    const catchlight = new THREE.Mesh(new THREE.SphereGeometry(0.012 * scale, 6, 4), glow);
+    catchlight.position.set(0.015 * scale, 0.016 * scale, 0.05 * scale);
+    g.add(white, dark, catchlight);
+    g.position.set(s * spread, y, z);
+    parent.add(g);
+    eyes.push(g);
+  }
+  return eyes;
+}
+
+function cilia(parent, n, y, r, len, mat) {
+  const list = [];
+  const geo = new THREE.ConeGeometry(0.018, len, 5);
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * Math.PI * 2;
+    const tip = new THREE.Mesh(geo, mat);
+    tip.position.set(Math.cos(a) * r, y + Math.sin(i) * 0.02, Math.sin(a) * r);
+    tip.lookAt(Math.cos(a) * (r + 0.4), y, Math.sin(a) * (r + 0.4));
+    parent.add(tip);
+    list.push(tip);
+  }
+  return list;
+}
+
+function fogWisps(parent, n) {
+  const mat = new THREE.MeshBasicMaterial({
+    color: 0x14181e, transparent: true, opacity: 0.5, depthWrite: false, side: THREE.DoubleSide,
+  });
+  const wisps = [];
+  for (let i = 0; i < n; i++) {
+    const w = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 0.22), mat);
+    const a = (i / n) * Math.PI * 2;
+    w.position.set(Math.cos(a) * 0.22, 0.45 + (i % 3) * 0.12, Math.sin(a) * 0.22);
+    w.lookAt(0, 0.5, 0);
+    parent.add(w);
+    wisps.push(w);
+  }
+  return { mat, wisps };
 }
 
 export function createVessel() {
   const root = new THREE.Group();
   const bob = new THREE.Group();
   root.add(bob);
-  const hull = new THREE.MeshStandardMaterial({
-    color: 0x1a140e, roughness: 0.42, metalness: 0.18,
-    emissive: 0x102818, emissiveIntensity: 0.35,
+  const glass = membraneMat(0xd7fff4, 0x1a8870, 0.48);
+  const body = new THREE.Mesh(new THREE.SphereGeometry(0.32, 22, 16), glass);
+  body.position.y = 0.5;
+  body.scale.set(1, 1.08, 0.94);
+  const inner = new THREE.Mesh(
+    new THREE.SphereGeometry(0.2, 14, 10),
+    membraneMat(0xb8ffe8, 0x2a9a78, 0.28),
+  );
+  inner.position.y = 0.5;
+  const coreMat = new THREE.MeshStandardMaterial({
+    color: 0xfff1c2, emissive: 0xf0b050, emissiveIntensity: 0.7, roughness: 0.25,
   });
-  const glass = new THREE.MeshStandardMaterial({
-    color: 0xd8fff4, roughness: 0.12, metalness: 0.08,
-    emissive: 0x0c4030, emissiveIntensity: 0.55,
-    transparent: true, opacity: 0.82,
+  const core = new THREE.Mesh(new THREE.SphereGeometry(0.1, 14, 10), coreMat);
+  core.position.y = 0.5;
+  const ciliaMat = new THREE.MeshStandardMaterial({
+    color: 0xb7f0dc, emissive: 0x0c4034, emissiveIntensity: 0.3,
+    roughness: 0.4, side: THREE.DoubleSide,
   });
-  const coreMat = new THREE.MeshBasicMaterial({ color: 0xb8ffd8 });
-  const finMat = new THREE.MeshStandardMaterial({
-    color: 0x204838, roughness: 0.35, metalness: 0.08,
-    emissive: 0x0c3024, emissiveIntensity: 0.5,
-    transparent: true, opacity: 0.82, side: THREE.DoubleSide,
-  });
-  const core = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 12), coreMat);
-  core.position.y = 0.72;
-  const shell = new THREE.Mesh(new THREE.SphereGeometry(0.34, 20, 16), glass);
-  shell.position.y = 0.74;
-  shell.castShadow = true;
-  const plates = [];
-  for (let i = 0; i < 5; i++) {
-    const plate = new THREE.Mesh(new THREE.SphereGeometry(0.16, 10, 8), hull);
-    const a = (i / 5) * Math.PI * 2;
-    plate.scale.set(1.15, 0.42, 0.72);
-    plate.position.set(Math.cos(a) * 0.28, 0.7, Math.sin(a) * 0.28);
-    plate.lookAt(0, 0.7, 0);
-    plate.castShadow = true;
-    bob.add(plate);
-    plates.push(plate);
-  }
-  const skirt = new THREE.Mesh(new THREE.SphereGeometry(0.22, 12, 8), finMat);
-  skirt.scale.set(1.35, 0.28, 1.35);
-  skirt.position.y = 0.42;
-  const fins = [-1, 1].map((s) => {
-    const fin = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 0.22), finMat);
-    fin.position.set(s * 0.42, 0.78, -0.02);
-    fin.rotation.z = s * -0.4;
-    bob.add(fin);
-    return fin;
-  });
-  const tail = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.36, 7), finMat);
-  tail.position.set(0, 0.7, -0.42);
-  tail.rotation.x = Math.PI / 2;
+  const hairs = cilia(bob, 18, 0.5, 0.34, 0.22, ciliaMat);
+  const eyes = eyePair(bob, 0.6, 0.24, 0.1, 1.35);
   const key = trailKey();
-  key.scale.setScalar(0.42);
-  key.position.set(0.34, 0.55, 0.12);
-  key.rotation.z = -0.6;
-  bob.add(core, shell, skirt, tail, key);
-  const glow = new THREE.PointLight(0x9dffc8, 1.4, 4.5, 2);
-  glow.position.y = 0.74;
+  key.scale.setScalar(0.22);
+  key.position.set(0.22, 0.28, 0.08);
+  key.rotation.z = -0.9;
+  key.rotation.y = 0.4;
+  bob.add(body, inner, core, key);
+  const glow = new THREE.PointLight(0xffe2a8, 0.28, 2.2, 2);
+  glow.position.y = 0.46;
   bob.add(glow);
   let time = 0;
   let stepped = 0;
@@ -98,19 +102,19 @@ export function createVessel() {
     const speed = anim.speed || 0;
     const attack = anim.action === "attack";
     const hurt = anim.hurt || 0;
-    bob.position.y = Math.sin(time * (speed > 0.4 ? 9 : 2.2)) * (speed > 0.4 ? 0.06 : 0.035);
-    bob.rotation.z = Math.sin(time * 2.4) * 0.04 + (anim.dodgeSide || 0) * 0.15;
-    const pulse = 0.85 + Math.sin(time * 5.5) * 0.15;
+    bob.position.y = Math.sin(time * (speed > 0.4 ? 8 : 2.1)) * 0.045;
+    bob.rotation.z = Math.sin(time * 1.8) * 0.05 + (anim.dodgeSide || 0) * 0.12;
+    const pulse = 0.86 + Math.sin(time * 4.2) * 0.14;
     core.scale.setScalar(pulse);
-    coreMat.color.setHex(attack ? 0xf4ffd0 : hurt > 0.2 ? 0xff8866 : 0xb8ffd8);
-    glow.intensity = attack ? 3.2 : 1.15 + Math.sin(time * 5.5) * 0.35;
-    fins.forEach((fin, i) => {
-      fin.rotation.y = Math.sin(time * 7 + i) * (speed > 0.3 ? 0.45 : 0.12);
+    coreMat.emissive.setHex(attack ? 0xfff0c0 : hurt > 0.2 ? 0xff6040 : 0xe0a040);
+    hairs.forEach((hair, i) => {
+      hair.rotation.z = Math.sin(time * 6 + i) * (speed > 0.3 ? 0.45 : 0.18);
     });
-    tail.rotation.z = Math.sin(time * 4) * 0.25;
-    shell.rotation.y = time * 0.35;
-    if (attack) bob.rotation.x = -0.35 * Math.sin(Math.min(1, anim.actionT || 0) * Math.PI);
-    else bob.rotation.x = speed > 0.4 ? 0.12 : 0;
+    eyes.forEach((eye, i) => {
+      eye.scale.setScalar(1 + Math.sin(time * 1.3 + i) * 0.04);
+    });
+    if (attack) bob.rotation.x = -0.28 * Math.sin(Math.min(1, anim.actionT || 0) * Math.PI);
+    else bob.rotation.x = speed > 0.4 ? 0.08 : 0;
     const n = Math.floor(time * (speed > 2 ? 4.2 : 2.4));
     const step = speed > 0.55 && n !== stepped;
     stepped = n;
@@ -183,10 +187,10 @@ export function createCrawler() {
   const root = new THREE.Group();
   const bob = new THREE.Group();
   root.add(bob);
-  const taken = grayMat();
-  const freedMat = new THREE.MeshStandardMaterial({
-    color: 0xc48448, roughness: 0.55, transparent: true, opacity: 0.92,
+  const taken = new THREE.MeshStandardMaterial({
+    color: 0xa07848, roughness: 0.62, emissive: 0x3a2814, emissiveIntensity: 0.12,
   });
+  const freedMat = new THREE.MeshStandardMaterial({ color: 0xd4924c, roughness: 0.5, emissive: 0x6a4018, emissiveIntensity: 0.15 });
   const meshes = [];
   const add = (geo, x, y, z, sx, sy, sz) => {
     const mesh = new THREE.Mesh(geo, taken);
@@ -197,33 +201,31 @@ export function createCrawler() {
     meshes.push(mesh);
     return mesh;
   };
-  add(new THREE.SphereGeometry(0.28, 12, 10), 0, 0.42, 0, 1.15, 0.72, 1.55);
-  add(new THREE.SphereGeometry(0.12, 8, 7), 0, 0.48, 0.42, 0.8, 0.7, 1);
-  const legs = legsOn(bob, taken, 0.32, 6, 0.22);
-  const eyeMat = new THREE.MeshBasicMaterial({ color: 0x7dffc0 });
-  [-1, 1].forEach((s) => {
-    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.035, 6, 5), eyeMat);
-    eye.position.set(s * 0.08, 0.52, 0.5);
-    bob.add(eye);
-  });
+  add(new THREE.SphereGeometry(0.32, 14, 10), 0, 0.42, 0, 1.25, 0.78, 1.85);
+  add(new THREE.SphereGeometry(0.16, 10, 8), 0, 0.48, 0.42, 0.95, 0.8, 1.05);
+  const legs = legsOn(bob, taken, 0.32, 8, 0.28);
+  const eyes = eyePair(bob, 0.56, 0.58, 0.09, 1.05);
+  const fog = fogWisps(bob, 4);
   let time = 0;
   let freed = false;
   function setFree() {
     if (freed) return;
     freed = true;
     for (const mesh of meshes) mesh.material = freedMat;
-    for (const pivot of legs) {
-      pivot.traverse((o) => { if (o.isMesh) o.material = freedMat; });
-    }
-    eyeMat.color.setHex(0x2a140c);
+    for (const pivot of legs) pivot.traverse((o) => { if (o.isMesh) o.material = freedMat; });
+    fog.mat.opacity = 0;
   }
   function update(dt, anim = {}) {
     time += dt;
-    tickMats([taken], time);
     const speed = anim.speed || 0;
-    const swing = speed > 0.2 ? Math.sin(time * 11) : Math.sin(time * 1.6) * 0.1;
+    const swing = speed > 0.2 ? Math.sin(time * 10) : Math.sin(time * 1.6) * 0.12;
     legs.forEach((leg, i) => { leg.rotation.x = swing * (i % 2 ? 1 : -1); });
     bob.position.y = Math.abs(swing) * 0.03;
+    fog.wisps.forEach((w, i) => {
+      w.position.y = 0.42 + Math.sin(time * 2 + i) * 0.06;
+      w.material.opacity = freed ? 0 : 0.22 + Math.sin(time * 3 + i) * 0.06;
+    });
+    eyes.forEach((eye) => { eye.scale.y = 0.92 + Math.sin(time * 1.7) * 0.08; });
     bob.rotation.x = anim.action === "attack" ? -0.28 : 0;
   }
   return { root, update, setFree };
@@ -233,43 +235,48 @@ export function createMold() {
   const root = new THREE.Group();
   const bob = new THREE.Group();
   root.add(bob);
-  const taken = grayMat();
-  const freedMat = new THREE.MeshStandardMaterial({ color: 0x24301a, roughness: 0.95, emissive: 0x102008, emissiveIntensity: 0.25 });
-  const stalks = [];
-  for (let i = 0; i < 5; i++) {
-    const h = 0.7 + (i % 3) * 0.28;
-    const stalk = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.1, h, 6), taken);
-    const cap = new THREE.Mesh(new THREE.SphereGeometry(0.16, 8, 6), taken);
-    const a = (i / 5) * Math.PI * 2;
-    const rad = i === 0 ? 0 : 0.22;
+  const taken = new THREE.MeshStandardMaterial({ color: 0x3d5a32, roughness: 0.85, emissive: 0x1a3014, emissiveIntensity: 0.15 });
+  const fuzzTaken = new THREE.MeshStandardMaterial({ color: 0xd7efc8, roughness: 1, emissive: 0x4a6840, emissiveIntensity: 0.08 });
+  const fuzzWhite = new THREE.MeshStandardMaterial({ color: 0xf4f7f0, roughness: 1 });
+  const freedStalk = new THREE.MeshStandardMaterial({ color: 0x2a4020, roughness: 0.85, emissive: 0x143010, emissiveIntensity: 0.25 });
+  const freedFuzz = new THREE.MeshStandardMaterial({ color: 0xd8f0c8, roughness: 1, emissive: 0x6a8848, emissiveIntensity: 0.15 });
+  const parts = [];
+  const fuzz = [];
+  for (let i = 0; i < 4; i++) {
+    const h = 0.72 + (i % 3) * 0.28;
+    const a = (i / 4) * Math.PI * 2;
+    const rad = i === 0 ? 0 : 0.2;
+    const stalk = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.09, h, 6), taken);
     stalk.position.set(Math.cos(a) * rad, h * 0.5, Math.sin(a) * rad);
-    cap.position.set(Math.cos(a) * rad, h + 0.08, Math.sin(a) * rad);
-    cap.scale.set(1, 0.55, 1);
     stalk.castShadow = true;
-    bob.add(stalk, cap);
-    stalks.push(stalk, cap);
+    bob.add(stalk);
+    parts.push(stalk);
+    for (let k = 0; k < 7; k++) {
+      const puff = new THREE.Mesh(new THREE.SphereGeometry(0.11, 7, 5), k % 2 ? fuzzWhite : fuzzTaken);
+      const pa = (k / 7) * Math.PI * 2;
+      puff.position.set(Math.cos(a) * rad + Math.cos(pa) * 0.14, h + 0.04 + (k % 2) * 0.08, Math.sin(a) * rad + Math.sin(pa) * 0.14);
+      bob.add(puff);
+      fuzz.push(puff);
+    }
   }
-  const eyeMat = new THREE.MeshBasicMaterial({ color: 0x9dffc0 });
-  const eye = new THREE.Mesh(new THREE.SphereGeometry(0.05, 6, 5), eyeMat);
-  eye.position.set(0, 1.15, 0.12);
-  bob.add(eye);
+  const eyes = eyePair(bob, 1.05, 0.16, 0.08, 0.9);
+  const fog = fogWisps(bob, 3);
   let time = 0;
   let freed = false;
   function setFree() {
     if (freed) return;
     freed = true;
-    for (const mesh of stalks) mesh.material = freedMat;
-    eyeMat.color.setHex(0xc8f060);
+    for (const mesh of parts) mesh.material = freedStalk;
+    for (const mesh of fuzz) mesh.material = freedFuzz;
+    fog.mat.opacity = 0;
   }
   function update(dt, anim = {}) {
     time += dt;
-    tickMats([taken], time);
     const speed = anim.speed || 0;
-    bob.position.y = Math.sin(time * (speed > 0.2 ? 8 : 1.8)) * 0.04;
-    bob.rotation.z = Math.sin(time * 2) * 0.06;
-    stalks.forEach((mesh, i) => {
-      if (i % 2 === 0) mesh.rotation.z = Math.sin(time * 3 + i) * 0.08;
-    });
+    bob.position.y = Math.sin(time * (speed > 0.2 ? 7 : 1.6)) * 0.035;
+    bob.rotation.z = Math.sin(time * 1.8) * 0.05;
+    parts.forEach((mesh, i) => { mesh.rotation.z = Math.sin(time * 2.4 + i) * 0.08; });
+    fog.wisps.forEach((w, i) => { w.material.opacity = freed ? 0 : 0.2 + Math.sin(time * 2 + i) * 0.05; });
     bob.rotation.x = anim.action === "attack" ? -0.2 : 0;
   }
   return { root, update, setFree };
@@ -279,40 +286,52 @@ export function createShell() {
   const root = new THREE.Group();
   const bob = new THREE.Group();
   root.add(bob);
-  const taken = grayMat();
-  const glass = new THREE.MeshStandardMaterial({
-    color: 0xe8fff8, roughness: 0.08, metalness: 0.12,
-    emissive: 0xf0e2b0, emissiveIntensity: 0.35,
-    transparent: true, opacity: 0.62,
+  const goo = new THREE.MeshStandardMaterial({
+    color: 0x9ecf55, roughness: 0.18, emissive: 0x4a6818, emissiveIntensity: 0.16,
+    transparent: true, opacity: 0.82,
   });
-  const body = new THREE.Mesh(new THREE.SphereGeometry(0.32, 16, 12), taken);
-  body.position.y = 0.5;
-  body.castShadow = true;
-  const inner = new THREE.Mesh(new THREE.SphereGeometry(0.16, 10, 8), new THREE.MeshBasicMaterial({ color: 0x1a1814 }));
-  inner.position.y = 0.5;
-  const legs = legsOn(bob, taken, 0.28, 4, 0.18);
-  const eyeMat = new THREE.MeshBasicMaterial({ color: 0xd8ffe8 });
-  const eye = new THREE.Mesh(new THREE.SphereGeometry(0.05, 6, 5), eyeMat);
-  eye.position.set(0, 0.58, 0.26);
-  bob.add(body, inner, eye);
+  const freedGoo = new THREE.MeshStandardMaterial({
+    color: 0xc8e878, roughness: 0.18, emissive: 0x6a7020, emissiveIntensity: 0.2,
+    transparent: true, opacity: 0.78,
+  });
+  const blobs = [];
+  const spots = [[0, 0.48, 0, 0.38], [0.2, 0.4, 0.1, 0.2], [-0.18, 0.38, 0.08, 0.18], [0.06, 0.32, -0.12, 0.15]];
+  for (const [x, y, z, r] of spots) {
+    const blob = new THREE.Mesh(new THREE.SphereGeometry(r, 12, 10), goo);
+    blob.position.set(x, y, z);
+    blob.castShadow = true;
+    bob.add(blob);
+    blobs.push(blob);
+  }
+  const drips = [];
+  for (let i = 0; i < 3; i++) {
+    const drip = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.16, 5), goo);
+    drip.position.set(-0.12 + i * 0.12, 0.16, 0.12);
+    drip.rotation.x = Math.PI;
+    bob.add(drip);
+    drips.push(drip);
+  }
+  const eyes = eyePair(bob, 0.62, 0.28, 0.1, 1.05);
+  const fog = fogWisps(bob, 3);
   let time = 0;
   let freed = false;
   function setFree() {
     if (freed) return;
     freed = true;
-    body.material = glass;
-    inner.material = new THREE.MeshBasicMaterial({ color: 0xf0e2b0 });
-    for (const pivot of legs) pivot.traverse((o) => { if (o.isMesh) o.material = glass; });
-    eyeMat.color.setHex(0x2a2010);
+    for (const mesh of blobs.concat(drips)) mesh.material = freedGoo;
+    fog.mat.opacity = 0;
   }
   function update(dt, anim = {}) {
     time += dt;
-    tickMats([taken], time);
     const speed = anim.speed || 0;
-    bob.position.y = Math.sin(time * 3) * 0.05;
-    body.rotation.y = time * 0.8;
-    legs.forEach((leg, i) => { leg.rotation.x = Math.sin(time * 9 + i) * (speed > 0.2 ? 0.55 : 0.08); });
-    bob.rotation.x = anim.action === "attack" ? -0.3 : 0;
+    bob.position.y = Math.sin(time * (speed > 0.2 ? 6 : 2)) * 0.04;
+    blobs.forEach((blob, i) => {
+      const s = 1 + Math.sin(time * 3 + i) * 0.06;
+      blob.scale.setScalar(s);
+    });
+    fog.wisps.forEach((w, i) => { w.material.opacity = freed ? 0 : 0.22; });
+    eyes.forEach((eye, i) => { eye.position.y = 0.5 + Math.sin(time * 2 + i) * 0.015; });
+    bob.rotation.x = anim.action === "attack" ? -0.25 : 0;
   }
   return { root, update, setFree };
 }
