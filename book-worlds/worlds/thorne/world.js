@@ -153,7 +153,7 @@ export function buildThorneWorld(scene, low) {
   scene.fog = new THREE.FogExp2(0x070a10, low ? 0.014 : 0.0105);
   scene.background = new THREE.Color(0x070a10);
 
-  const hemi = new THREE.HemisphereLight(0x8aa0b8, 0x1a120c, low ? 0.28 : 0.38);
+  const hemi = new THREE.HemisphereLight(0x8aa0b8, 0x1a120c, low ? 0.46 : 0.55);
   scene.add(hemi);
   const moon = new THREE.DirectionalLight(0xb9c8e8, low ? 0.35 : 0.5);
   moon.position.set(-18, 22, -8);
@@ -520,7 +520,7 @@ function placeTubes(scene, low, block, glasses) {
     [-6.3, 80, 9.2, 0x7dffc0, 0.44],
     [6.4, 92, 12.6, 0xf2d090, 0.6],
   ];
-  const count = low ? 6 : spots.length;
+  const count = spots.length;
   for (let i = 0; i < count; i++) {
     const [x, z, h, color, fill] = spots[i];
     const tube = testTube(h, color, fill, glasses);

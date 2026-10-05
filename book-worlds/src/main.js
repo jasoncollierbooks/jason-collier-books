@@ -13,12 +13,12 @@ import { buildPulseWorld } from "../worlds/pulse/world.js?v=6";
 import { createPulseSim } from "../worlds/pulse/sim.js?v=12";
 import { buildOldmanWorld } from "../worlds/oldman/world.js?v=2";
 import { createOldmanSim } from "../worlds/oldman/sim.js?v=4";
-import { buildThorneWorld } from "../worlds/thorne/world.js?v=1";
-import { createThorneSim } from "../worlds/thorne/sim.js?v=1";
+import { buildThorneWorld } from "../worlds/thorne/world.js?v=2";
+import { createThorneSim } from "../worlds/thorne/sim.js?v=2";
 import { createAbilities } from "./abilities.js?v=4";
 import { whenCastReady } from "./actors.js?v=12";
 import { tick as tickVfx, bind, spawn as spawnVfx, active as vfxActive } from "./vfx.js?v=1";
-import { theBlank } from "../bosses/index.js?v=13";
+import { theBlank } from "../bosses/index.js?v=14";
 
 const canvas = document.getElementById("view");
 const app = document.getElementById("app");
@@ -1424,17 +1424,29 @@ function frame(now) {
     camPos.set(snap.boss.x + 2.4, 2.15, snap.boss.z - 6.4);
     lookAt.set(snap.boss.x, 2.45, snap.boss.z);
   } else if (shot === "overview" && worldKey === "thorne") {
-    camPos.set(-9.5, 6.8, -1.5);
-    lookAt.set(1.2, 1.6, 28);
+    camPos.set(-3.2, 1.05, 1.2);
+    lookAt.set(0.6, 3.6, 24);
   } else if (shot === "enemies" && worldKey === "thorne") {
-    camPos.set(-0.2, 1.85, 7.2);
-    lookAt.set(0.15, 0.85, 13.2);
+    camPos.set(-2.15, 1.05, 9.4);
+    lookAt.set(0.15, 0.72, 12.6);
+    if (!shotLight) {
+      shotLight = new THREE.DirectionalLight(0xd7fff0, 2.4);
+      shotLight.position.set(-4, 4.2, 6);
+      shotLight.target.position.set(0.2, 0.8, 12.6);
+      scene.add(shotLight, shotLight.target);
+    }
   } else if (shot === "hero" && worldKey === "thorne" && snap) {
-    camPos.set(snap.player.x + 0.15, snap.player.y + 1.15, snap.player.z - 2.15);
-    lookAt.set(snap.player.x, snap.player.y + 0.72, snap.player.z + 0.15);
+    camPos.set(snap.player.x + 0.42, snap.player.y + 0.92, snap.player.z - 0.95);
+    lookAt.set(snap.player.x - 0.02, snap.player.y + 0.7, snap.player.z + 0.02);
+    if (!shotLight) {
+      shotLight = new THREE.DirectionalLight(0xe8fff4, 2.8);
+      shotLight.position.set(snap.player.x + 1.4, snap.player.y + 2.2, snap.player.z - 1.6);
+      shotLight.target.position.set(snap.player.x, snap.player.y + 0.7, snap.player.z);
+      scene.add(shotLight, shotLight.target);
+    }
   } else if (shot === "boss" && worldKey === "thorne" && snap.boss) {
-    camPos.set(snap.boss.x + 5.4, 3.5, snap.boss.z - 6.8);
-    lookAt.set(snap.boss.x, 1.9, snap.boss.z + 0.6);
+    camPos.set(snap.boss.x + 3.6, 2.35, snap.boss.z - 4.6);
+    lookAt.set(snap.boss.x - 0.1, 1.85, snap.boss.z + 0.2);
   } else if (shot === "boss" && snap.boss) {
     camPos.set(snap.boss.x + 0.15, 2.2, snap.boss.z - 6.5);
     lookAt.set(snap.boss.x, 2.5, snap.boss.z);

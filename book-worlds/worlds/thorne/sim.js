@@ -3,10 +3,10 @@
 // The fog takes the other cultures. The photon shell waits under the bell jar.
 import * as THREE from "three";
 import { clamp, damp, dampAngle, hypot2 } from "../../src/util.js";
-import { heightAt } from "./world.js?v=1";
+import { heightAt } from "./world.js?v=2";
 import { note, spawn } from "../../src/vfx.js?v=1";
 import { createVessel, createSeven, createCrawler, createMold, createShell } from "./beings.js?v=1";
-import { boss as worldBoss } from "../../bosses/photon-shell.js?v=1";
+import { boss as worldBoss } from "../../bosses/photon-shell.js?v=2";
 import { createAbilities } from "../../src/abilities.js?v=4";
 
 const SAVE_KEY = "book-worlds-thorne";

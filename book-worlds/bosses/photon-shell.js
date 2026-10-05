@@ -64,11 +64,11 @@ function shellMat() {
         vec3 base = mix(cool, hot, clamp(uPhase - 1.0, 0.0, 1.0) * 0.55);
         base = mix(base, gold, 1.0 - uFog);
         vec3 mist = vec3(0.55, 0.6, 0.66);
-        vec3 col = mix(base, mist, uFog * (0.25 + scan * 0.35));
-        col += base * fres * (0.85 + (1.0 - uFog));
-        col += vec3(1.0) * band * fres * 0.35;
-        col = mix(col, vec3(1.0, 0.95, 0.8), uHit * 0.7);
-        float alpha = (0.18 + fres * 0.62 + band * 0.12) * (0.55 + (1.0 - uFog) * 0.35);
+        vec3 col = mix(base, mist, uFog * (0.18 + scan * 0.22));
+        col += base * fres * (0.55 + (1.0 - uFog) * 0.4);
+        col += base * band * fres * 0.22;
+        col = mix(col, vec3(1.0, 0.95, 0.8), uHit * 0.45);
+        float alpha = (0.22 + fres * 0.48 + band * 0.1) * (0.62 + (1.0 - uFog) * 0.25);
         gl_FragColor = vec4(col, clamp(alpha, 0.0, 0.92));
       }
     `,
@@ -84,8 +84,8 @@ function create() {
   const mat = shellMat();
   const shell = new THREE.Mesh(new THREE.SphereGeometry(1.55, 28, 20), mat);
   shell.scale.set(1, 0.92, 1);
-  const innerMat = new THREE.MeshBasicMaterial({ color: 0x07080c });
-  const inner = new THREE.Mesh(new THREE.SphereGeometry(0.72, 16, 12), innerMat);
+  const innerMat = new THREE.MeshBasicMaterial({ color: 0x143028 });
+  const inner = new THREE.Mesh(new THREE.SphereGeometry(0.62, 16, 12), innerMat);
   const rings = [];
   const ringMat = new THREE.MeshBasicMaterial({
     color: 0xc8ffe8, transparent: true, opacity: 0.55, side: THREE.DoubleSide, depthWrite: false,
@@ -145,8 +145,8 @@ function create() {
     } else {
       const hot = phase >= 3 ? 0xff7ad0 : phase >= 2 ? 0xffe0a0 : 0xc8ffe4;
       light.color.setHex(hot);
-      light.intensity = 5 + phase * 1.4 + (anim.hit || 0) * 4;
-      innerMat.color.setHex(phase >= 3 ? 0x1a0814 : 0x07080c);
+      light.intensity = 2.4 + phase * 0.7 + (anim.hit || 0) * 2;
+      innerMat.color.setHex(phase >= 3 ? 0x6a1848 : phase >= 2 ? 0xc4a050 : 0x1f6a48);
     }
     if (anim.state === "dead") {
       rig.position.y = 1.75 + Math.sin(time) * 0.05;

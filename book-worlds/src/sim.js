@@ -4,7 +4,7 @@ import { halfWidth, heightAt } from "./world.js?v=9";
 import { createFog, handbillMesh } from "./rigs.js?v=7";
 import { createHuman } from "./actors.js?v=12";
 import { armRing, note, spawn } from "./vfx.js?v=1";
-import { bossFor } from "../bosses/index.js?v=13";
+import { bossFor } from "../bosses/index.js?v=14";
 import { createAbilities } from "./abilities.js?v=4";
 
 const abilities = createAbilities();

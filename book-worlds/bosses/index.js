@@ -7,7 +7,7 @@ import { boss as californiaTrail } from "./california-trail.js?v=7";
 import { boss as rustyStack } from "./rusty-stack.js?v=10";
 import { boss as firstPulse } from "./first-pulse.js?v=7";
 import { boss as oldMan } from "./old-man.js?v=2";
-import { boss as photonShell } from "./photon-shell.js?v=1";
+import { boss as photonShell } from "./photon-shell.js?v=2";
 export { theBlank } from "./the-blank.js";
 
 const bosses = {
