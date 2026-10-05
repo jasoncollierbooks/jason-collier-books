@@ -144,10 +144,16 @@
   var phase = "";
   var overlay = null;
   var timers = [];
-  var clips = [];
   var returnFocus = null;
   var noiseTimer = 0;
   var spotWatch = 0;
+  var currentSpot = null;
+  var held = false;
+  var unlocked = false;
+  var pool = [];
+  var POOL_SIZE = 2;
+  /* Short silent clip so the first gesture can bless an element without a noise. */
+  var SILENT_SRC = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
 
   function sessionGet(key) {
     try { return sessionStorage.getItem(key); } catch (e) { return null; }
@@ -234,6 +240,8 @@
     return false;
   }
 
+  /* The home-page Sound button (typewriter clack) is the site-wide quiet switch.
+     localStorage "jc-type-sound" and #type-sound aria-pressed drive both. */
   function siteMuted() {
     try {
       if (localStorage.getItem(SOUND_KEY) === "0") return true;
@@ -298,34 +306,168 @@
     spotWatch = 0;
   }
 
-  function stopClips() {
-    clips.forEach(function (audio) {
-      try { audio.pause(); } catch (e) {}
-      audio.removeAttribute("src");
-      try { audio.load(); } catch (e) {}
-      if (audio.parentNode) audio.parentNode.removeChild(audio);
-    });
-    clips = [];
-  }
-
   function later(fn, ms) {
     timers.push(setTimeout(fn, ms));
   }
 
-  function playClip(name, loop) {
-    if (siteMuted()) return null;
+  /* Phones only allow play() on an element that already played inside a user
+     gesture. One pair is primed on the first tap and reused (src swapped). */
+  function createPlayer() {
     var audio = document.createElement("audio");
     audio.setAttribute("data-jc-break", "1");
+    audio.setAttribute("playsinline", "");
+    audio.playsInline = true;
     audio.preload = "auto";
+    audio._jcBusy = false;
+    audio._jcGen = 0;
+    if (document.body) document.body.appendChild(audio);
+    return audio;
+  }
+
+  function ensurePool() {
+    while (pool.length < POOL_SIZE) pool.push(createPlayer());
+  }
+
+  function primeElement(audio) {
+    if (!audio || audio._jcBusy) return;
+    var gen = audio._jcGen || 0;
+    audio.muted = false;
+    audio.volume = 1;
+    audio.loop = false;
+    audio.src = SILENT_SRC;
+    var pending;
+    try { pending = audio.play(); } catch (e) { return; }
+    var settle = function () {
+      if (audio._jcBusy) return;
+      if ((audio._jcGen || 0) !== gen) return;
+      if ((audio.currentSrc || audio.src || "").indexOf("data:audio/wav") === -1) return;
+      try { audio.pause(); } catch (e) {}
+    };
+    if (pending && typeof pending.then === "function") pending.then(settle, settle);
+  }
+
+  function unlockFromGesture() {
+    if (!document.body) return;
+    if (!unlocked) {
+      unlocked = true;
+      ensurePool();
+    }
+    var i;
+    for (i = 0; i < pool.length; i++) primeElement(pool[i]);
+  }
+
+  function removeGestureListeners() {
+    window.removeEventListener("pointerdown", onFirstGesture, true);
+    window.removeEventListener("touchend", onFirstGesture, true);
+    window.removeEventListener("keydown", onFirstGesture, true);
+  }
+
+  function onFirstGesture(event) {
+    if (!document.body) return;
+    unlockFromGesture();
+    var type = event && event.type;
+    var touch = false;
+    try { touch = ("ontouchstart" in window) || navigator.maxTouchPoints > 0; }
+    catch (e) { touch = false; }
+    /* pointerdown alone does not unlock iOS; touchend does. A mouse has no touchend. */
+    if (type === "touchend" || type === "keydown" || (type === "pointerdown" && !touch)) {
+      removeGestureListeners();
+    }
+  }
+
+  function takePlayer() {
+    ensurePool();
+    var i, audio = null;
+    for (i = 0; i < pool.length; i++) {
+      if (!pool[i]._jcBusy) { audio = pool[i]; break; }
+    }
+    if (!audio) audio = pool[0];
+    audio._jcGen = (audio._jcGen || 0) + 1;
+    audio._jcBusy = true;
+    audio.muted = false;
+    audio.volume = 1;
+    return audio;
+  }
+
+  function stopClips() {
+    var i, audio;
+    for (i = 0; i < pool.length; i++) {
+      audio = pool[i];
+      audio._jcGen = (audio._jcGen || 0) + 1;
+      audio._jcBusy = false;
+      audio.loop = false;
+      try { audio.pause(); } catch (e) {}
+      audio.removeAttribute("src");
+      try { audio.load(); } catch (e) {}
+    }
+  }
+
+  function playClip(name, loop) {
+    if (siteMuted()) return null;
+    var audio = takePlayer();
+    var gen = audio._jcGen;
+    audio.loop = !!loop;
     audio.src = asset("audio/commercials/" + name + ".mp3");
-    if (loop) audio.loop = true;
-    clips.push(audio);
-    document.body.appendChild(audio);
-    var pending = audio.play();
-    if (pending && typeof pending.catch === "function") {
-      pending.catch(function () { /* autoplay blocked: the picture still runs */ });
+    var pending;
+    try { pending = audio.play(); }
+    catch (e) {
+      noteBlocked(gen, audio, e);
+      return audio;
+    }
+    if (pending && typeof pending.then === "function") {
+      pending.then(function () {}).catch(function (err) {
+        noteBlocked(gen, audio, err);
+      });
     }
     return audio;
+  }
+
+  function noteBlocked(gen, audio, err) {
+    if (!audio || audio._jcGen !== gen) return;
+    if (!active || held || phase === "back") return;
+    if (err && err.name && err.name !== "NotAllowedError") return;
+    holdForTune();
+  }
+
+  function holdForTune() {
+    if (!active || !overlay || held || phase === "back") return;
+    held = true;
+    clearTimers();
+    if (noiseTimer) cancelAnimationFrame(noiseTimer);
+    noiseTimer = 0;
+    stopClips();
+    overlay.classList.add("is-held");
+    if (overlay.querySelector(".jc-break-tune")) return;
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "jc-break-tune";
+    btn.textContent = "TAP TO TUNE IN";
+    btn.addEventListener("click", function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      tuneIn();
+    });
+    overlay.appendChild(btn);
+    try { btn.focus(); } catch (e) {}
+  }
+
+  function tuneIn() {
+    if (!active || !overlay || !currentSpot || !held) return;
+    var spot = currentSpot;
+    held = false;
+    overlay.classList.remove("is-held");
+    var btn = overlay.querySelector(".jc-break-tune");
+    if (btn && btn.parentNode) btn.parentNode.removeChild(btn);
+    clearTimers();
+    stopClips();
+    if (!unlocked) unlocked = true;
+    ensurePool();
+    phase = "spot";
+    showSpot(spot, false);
+    var i;
+    for (i = 0; i < pool.length; i++) {
+      if (!pool[i]._jcBusy) primeElement(pool[i]);
+    }
   }
 
   function buttonLink(spec) {
@@ -452,7 +594,7 @@
         data[i + 3] = 255;
       }
       ctx.putImageData(frame, 0, 0);
-      if (!reduce && overlay && !overlay.classList.contains("is-still")) {
+      if (!reduce && overlay && !overlay.classList.contains("is-still") && !overlay.classList.contains("is-held")) {
         noiseTimer = requestAnimationFrame(draw);
       }
     }
@@ -463,6 +605,8 @@
     if (!active && !overlay) return;
     active = false;
     phase = "";
+    held = false;
+    currentSpot = null;
     clearTimers();
     stopClips();
     if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
@@ -483,6 +627,13 @@
     later(closeBreak, BACK_MS);
   }
 
+  function bindClip(audio, type, fn) {
+    var key = "_jcon" + type;
+    if (audio[key]) audio.removeEventListener(type, audio[key]);
+    audio[key] = fn;
+    audio.addEventListener(type, fn);
+  }
+
   function showSpot(spot, hold) {
     fillStage("spot", spot);
     if (hold) return;
@@ -491,25 +642,33 @@
       later(finishToProgram, FALLBACK_SPOT_MS);
       return;
     }
+    var gen = voice._jcGen;
     var started = false;
+    function alive() {
+      return active && !held && voice._jcGen === gen;
+    }
     function arm(ms) {
-      if (started) return;
+      if (!alive() || started) return;
       started = true;
       var wait = Math.max(8000, Math.min(ms + 700, 22000));
       later(finishToProgram, wait);
     }
-    voice.addEventListener("loadedmetadata", function () {
+    bindClip(voice, "loadedmetadata", function () {
+      if (!alive()) return;
       if (voice.duration && isFinite(voice.duration)) arm(voice.duration * 1000);
     });
-    voice.addEventListener("ended", function () {
+    bindClip(voice, "ended", function () {
+      if (!alive()) return;
       clearTimers();
       finishToProgram();
     });
-    voice.addEventListener("error", function () {
+    bindClip(voice, "error", function () {
+      if (!alive()) return;
       if (!started) arm(FALLBACK_SPOT_MS);
     });
     later(function () {
-      if (!started) arm(voice.duration && isFinite(voice.duration) ? voice.duration * 1000 : FALLBACK_SPOT_MS);
+      if (!alive() || started) return;
+      arm(voice.duration && isFinite(voice.duration) ? voice.duration * 1000 : FALLBACK_SPOT_MS);
     }, 1200);
   }
 
@@ -524,6 +683,8 @@
     options = options || {};
     var spot = SPOTS[id] || SPOTS.oldman;
     if (active) closeBreak();
+    currentSpot = spot;
+    held = false;
     css();
     active = true;
     returnFocus = document.activeElement;
@@ -549,6 +710,11 @@
       if (event.target.closest(".jc-break-skip")) {
         event.preventDefault();
         closeBreak();
+        return;
+      }
+      if (event.target.closest(".jc-break-tune")) {
+        event.preventDefault();
+        tuneIn();
         return;
       }
       if (event.target.closest(".jc-break-cta")) {
@@ -580,14 +746,14 @@
     fillStage("static");
     playClip("static");
     later(function () {
-      if (!active) return;
+      if (!active || held) return;
       stopClips();
       playClip("click");
       phase = "card";
       fillStage("card");
       playClip("chime");
       later(function () {
-        if (!active) return;
+        if (!active || held) return;
         stopClips();
         phase = "spot";
         showSpot(spot, false);
@@ -643,6 +809,10 @@
   function markInteract() {
     lastInteract = Date.now();
   }
+
+  window.addEventListener("pointerdown", onFirstGesture, true);
+  window.addEventListener("touchend", onFirstGesture, true);
+  window.addEventListener("keydown", onFirstGesture, true);
 
   ["pointerdown", "keydown", "touchstart", "wheel", "scroll", "input"].forEach(function (type) {
     window.addEventListener(type, markInteract, { passive: true, capture: true });
