@@ -500,10 +500,10 @@ body.broadcast-lite .catalog-store .btn {
   width: auto;
   min-width: min(100%, 22rem);
 }
-body.broadcast-lite .contact .guestbook-invite {
+body.broadcast-lite .contact .novel-invite {
   margin: 1.1rem 0 1.25rem;
 }
-body.broadcast-lite .contact .guestbook-invite .btn {
+body.broadcast-lite .contact .novel-invite .btn {
   font-size: 1.2rem;
   letter-spacing: .06em;
   padding: 1.05rem 1.35rem;
