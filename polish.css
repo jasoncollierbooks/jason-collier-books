@@ -118,6 +118,7 @@ body:not(.page-audio) .btn:not(.audiobook *):active{transform:translateY(0) scal
 
 /* ---------- 6. About / contact ---------- */
 .about p{line-height:1.75}
+.about-text a{color:var(--fire2)}
 .contact .email{word-break:break-word;padding-bottom:.2rem;transition:color .2s,border-color .2s}
 .contact .email:hover{color:#fff;border-color:#fff}
 
