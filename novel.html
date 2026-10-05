@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="theme-color" content="#16130f">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Novel | Jason Collier</title>
+<meta name="description" content="Help write the next page of the multi-mind novel. One shared manuscript. Keep it clean — no curses.">
+<meta property="og:title" content="The Novel | Jason Collier">
+<meta property="og:description" content="Help write the next page of the multi-mind novel. One shared manuscript. Keep it clean — no curses.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://jasoncollierbooks.github.io/jason-collier-books/assets/broadcast-theme/og-broadcast.jpg">
+<meta property="og:url" content="https://jasoncollierbooks.github.io/jason-collier-books/novel.html">
+<meta property="og:site_name" content="Jason Collier Books">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Novel | Jason Collier">
+<meta name="twitter:description" content="Help write the next page of the multi-mind novel. One shared manuscript. Keep it clean — no curses.">
+<meta name="twitter:image" content="https://jasoncollierbooks.github.io/jason-collier-books/assets/broadcast-theme/og-broadcast.jpg">
+<link rel="canonical" href="https://jasoncollierbooks.github.io/jason-collier-books/novel.html">
+<link rel="icon" href="icons/pages/novel-32.png?v=tv2" sizes="32x32" type="image/png">
+<link rel="icon" href="icons/pages/novel-48.png?v=tv2" sizes="48x48" type="image/png">
+<link rel="apple-touch-icon" href="icons/pages/novel-apple-touch.png?v=tv2" sizes="180x180">
+<link rel="manifest" href="manifest.json?v=tv1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Rye&family=Orbitron:wght@500;700;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&family=IM+Fell+English+SC&family=Special+Elite&family=Josefin+Sans:wght@400;600&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="polish.css">
+<link rel="stylesheet" href="assets/broadcast-theme/site.css">
+<link rel="stylesheet" href="novel.css">
+<link rel="stylesheet" href="season.css">
+<script src="season.js"></script>
+</head>
+<body class="broadcast-lite page-novel">
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="index.html" aria-label="Jason Collier, home">J<span>·</span>C</a>
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><span></span><span></span><span></span></button>
+  <nav id="site-nav" aria-label="Main">
+    <a class="nav-link" href="index.html">Home</a>
+    <div class="nav-group">
+      <button type="button" class="nav-label" aria-expanded="false" aria-haspopup="true" aria-controls="menu-books">Books</button>
+      <div class="nav-menu" id="menu-books" role="group" aria-label="Books">
+        <a href="books.html">All Books</a>
+        <a href="jang-and-tom.html">Jang &amp; Tom</a>
+        <a href="first-pulse.html">First Pulse</a>
+        <a href="old-man-on-the-mountain.html">Old Man</a>
+        <a href="rusty-stack.html">Rusty Stack</a>
+      </div>
+    </div>
+    <a class="nav-link" href="audiobooks.html">Listen</a>
+    <a class="nav-link" href="past-inspirations.html">Past Inspirations</a>
+    <div class="nav-group">
+      <button type="button" class="nav-label on" aria-expanded="false" aria-haspopup="true" aria-controls="menu-extra">Extra</button>
+      <div class="nav-menu" id="menu-extra" role="group" aria-label="Extra">
+        <a href="art.html">Art</a>
+        <a href="thorne-lab.html">Thorne’s Lab</a>
+        <a href="play.html">Play</a>
+        <a href="novel.html" class="on" aria-current="page">The Novel</a>
+      </div>
+    </div>
+    <a class="nav-link" href="about.html">About</a>
+  </nav>
+</header>
+
+<main id="top">
+<section class="ab-page">
+  <div class="ab-page-inner novel-wrap">
+    <header class="page-head">
+      <p class="kicker">Shared manuscript</p>
+      <h1>The multi-mind novel</h1>
+      <p>Help write the next page.</p>
+    </header>
+
+    <!-- SHARED MANUSCRIPT HOOK
+         Finished pages are meant to be one book for every visitor.
+         novel.js keeps extra pages in localStorage on this browser only.
+         That is not the shared shelf. Replace JCNovelStorage.loadSharedPages
+         and JCNovelStorage.saveSharedPage when a host is connected.
+         There is no approval queue. A clean page stacks immediately. -->
+    <div class="novel-desk">
+      <div class="novel-machine">
+        <div class="novel-platen" aria-hidden="true">
+          <span class="novel-knob"></span>
+          <span class="novel-scale"></span>
+          <span class="novel-lever"></span>
+          <span class="novel-knob"></span>
+        </div>
+        <div class="novel-paper">
+          <p class="novel-kicker-ink" id="novel-page-no">Open page</p>
+          <h2 class="novel-open-title">The page in the machine</h2>
+          <p class="novel-rule">Keep it clean. No curses.</p>
+          <label class="novel-field-label" for="novel-draft">Help write the next page</label>
+          <textarea id="novel-draft" class="novel-draft" rows="7" maxlength="760" placeholder="The next line of the story…" autocomplete="off" spellcheck="true"></textarea>
+          <p class="novel-meter" id="novel-meter" aria-live="polite">Write a little more, then finish the page.</p>
+        </div>
+      </div>
+
+      <div class="novel-actions">
+        <button type="button" class="btn btn-fire" id="novel-finish" disabled>Finish this page</button>
+        <button type="button" class="btn btn-line" id="novel-hear">Hear the story so far</button>
+        <button type="button" class="btn btn-line" id="novel-stop" hidden>Stop</button>
+        <button type="button" class="btn btn-line" id="novel-words" aria-pressed="false">Show the words</button>
+      </div>
+      <p class="novel-block" id="novel-block" role="alert" hidden>Keep it clean — no curses.</p>
+      <p class="novel-caption" id="novel-caption" hidden></p>
+
+      <section class="novel-stack-wrap" aria-labelledby="novel-stack-title">
+        <h2 class="novel-stack-title" id="novel-stack-title">The novel stack</h2>
+        <p class="novel-stack-lead">When a page is finished, it lands on the stack. Tap a page and a narrator catches you up.</p>
+        <div class="novel-pile" id="novel-stack"></div>
+      </section>
+    </div>
+
+    <p class="novel-honest">This is one shared manuscript. The opening pages are the same for every reader. Pages you finish stay in this browser for now. They are not sent to other readers yet. A shared shelf can be connected later. There is no approval wait: a clean page stacks as soon as you finish it.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <span>© <span id="y">2026</span> Jason Collier</span>
+  <span class="visit-count" hidden></span>
+  <span class="foot-links"><a href="https://x.com/jascol235175" target="_blank" rel="noopener">X @jascol235175</a><a href="https://www.amazon.com/stores/author/B0GDW74Y5S" target="_blank" rel="noopener">Amazon Author Page</a><a href="mailto:outdoorsolution@bellsouth.net">Email</a><a href="https://venmo.com/u/Jason-Collier-40" target="_blank" rel="noopener noreferrer">Tip the trail boss</a></span>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script src="main.js" defer></script>
+<script src="novel.js" defer></script>
+</body>
+</html>

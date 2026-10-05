@@ -500,6 +500,15 @@ body.broadcast-lite .catalog-store .btn {
   width: auto;
   min-width: min(100%, 22rem);
 }
+body.broadcast-lite .contact .novel-invite {
+  margin: 1.1rem 0 1.25rem;
+}
+body.broadcast-lite .contact .novel-invite .btn {
+  font-size: 1.2rem;
+  letter-spacing: .06em;
+  padding: 1.05rem 1.35rem;
+  min-height: 3.4rem;
+}
 @media (min-width: 800px) {
   body.broadcast-lite .catalog-grid {
     grid-template-columns: 1fr 1fr;
