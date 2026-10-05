@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#100e0c">
 <title>Book Worlds | Jason Collier</title>
-<meta name="description" content="Book Worlds. Nonimaginaires are leaking through the broadcast. Tune the parlor cabinet to the California Trail, the Rusty Stack, The First Pulse, or Old Man on the Mountain.">
+<meta name="description" content="Book Worlds. Nonimaginaires are leaking through the broadcast. Tune the parlor cabinet to the California Trail, the Rusty Stack, The First Pulse, Old Man on the Mountain, or Thorne's Lab.">
 <link rel="canonical" href="https://jasoncollierbooks.github.io/jason-collier-books/book-worlds/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Jason Collier Books">
 <meta property="og:title" content="Book Worlds | Jason Collier">
-<meta property="og:description" content="Tune the cabinet. Brain fogs are eating the stories. The California Trail, the Rusty Stack, The First Pulse, and Old Man on the Mountain are on the air.">
+<meta property="og:description" content="Tune the cabinet. Brain fogs are eating the stories. The California Trail, the Rusty Stack, The First Pulse, Old Man on the Mountain, and Thorne's Lab are on the air.">
 <meta property="og:url" content="https://jasoncollierbooks.github.io/jason-collier-books/book-worlds/">
 <meta property="og:image" content="https://jasoncollierbooks.github.io/jason-collier-books/assets/broadcast-theme/og-broadcast.jpg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23100e0c'/%3E%3Ccircle cx='8' cy='8' r='3.2' fill='none' stroke='%23e4d0a4' stroke-width='1.2'/%3E%3C/svg%3E">
@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Josefin+Sans:wght@400;600&family=Pinyon+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./styles.css?v=15">
+<link rel="stylesheet" href="./styles.css?v=16">
 <script type="importmap">{ "imports": { "three": "../old-man-game/vendor/three.min.js", "three/addons": "../old-man-game/vendor/three-addons.min.js" } }</script>
 </head>
 <body>
@@ -106,9 +106,9 @@
     <p>Drag the right side to look.</p>
     <p>ATTACK, MAGIC, JUMP, DODGE, GUARD.</p>
     <p>COMMANDS menu.</p>
-    <p>LASSO, STEAM, PULSE, and FIRELIGHT when you have them.</p>
+    <p>LASSO, STEAM, PULSE, FIRELIGHT, and ARGON when you have them.</p>
     </div>
-    <p id="help-keys">Move with WASD or the left stick. Attack swings the Trail Key. Space jumps. Shift dodges. G guards. Q casts magic. F is the lantern, or the reaction when it flashes. E or Enter uses what is in front of you. 1 is a tonic. 2 dust devil. 3 trail mend. 4 wagon toss. L locks on. V is lasso. X is steam. Z is pulse. H is firelight.</p>
+    <p id="help-keys">Move with WASD or the left stick. Attack swings the Trail Key. Space jumps. Shift dodges. G guards. Q casts magic. F is the lantern, or the reaction when it flashes. E or Enter uses what is in front of you. 1 is a tonic. 2 dust devil. 3 trail mend. 4 wagon toss. L locks on. V is lasso. X is steam. Z is pulse. H is firelight. Y is argon.</p>
     <button type="button" id="help-dismiss">Got it</button>
   </div>
   <div id="floats"></div>
@@ -130,7 +130,7 @@
     <button type="button" data-act="potion">Potion</button>
     <button type="button" data-act="use">Use</button>
   </div>
-  <p id="keys" hidden>WASD move · J attack · Space jump · Shift dodge · G guard · C camera behind · Q magic · F lantern or reaction · E or Enter use · 1 tonic · 2 dust devil · 3 trail mend · 4 wagon toss · L lock · V lasso · X steam · Z pulse · H firelight · [ ] menu · M confirm</p>
+  <p id="keys" hidden>WASD move · J attack · Space jump · Shift dodge · G guard · C camera behind · Q magic · F lantern or reaction · E or Enter use · 1 tonic · 2 dust devil · 3 trail mend · 4 wagon toss · L lock · V lasso · X steam · Z pulse · H firelight · Y argon · [ ] menu · M confirm</p>
 
   <div id="hub">
     <div class="bw-parlor" aria-hidden="true"></div>
@@ -172,6 +172,37 @@
                     <source srcset="./assets/stations/oldman.webp" type="image/webp">
                     <img src="./assets/stations/oldman.jpg" alt="A snowy high-country dusk, a wall tent and campfire, dark spruce, and a truck on the forest road">
                   </picture>
+                </div>
+                <div class="bw-pic is-painted" data-pic="thorne" hidden>
+                  <svg viewBox="0 0 1024 576" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="thorne-night" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#070a12"/>
+                        <stop offset=".55" stop-color="#10241e"/>
+                        <stop offset="1" stop-color="#1a140e"/>
+                      </linearGradient>
+                      <linearGradient id="thorne-beam" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0" stop-color="#9dffc8" stop-opacity="0"/>
+                        <stop offset=".15" stop-color="#b8ffe0" stop-opacity=".85"/>
+                        <stop offset="1" stop-color="#7dffd0" stop-opacity=".15"/>
+                      </linearGradient>
+                    </defs>
+                    <rect width="1024" height="576" fill="url(#thorne-night)"/>
+                    <rect x="0" y="390" width="1024" height="186" fill="#3a2416"/>
+                    <rect x="40" y="48" width="280" height="16" fill="#d7ffe8" opacity=".35"/>
+                    <rect x="520" y="48" width="280" height="16" fill="#d7ffe8" opacity=".28"/>
+                    <rect x="70" y="210" width="36" height="210" rx="16" fill="#8fd0ff" opacity=".35" stroke="#e8fff4" stroke-width="3"/>
+                    <rect x="78" y="300" width="20" height="110" fill="#3ecf7a" opacity=".7"/>
+                    <rect x="130" y="160" width="44" height="260" rx="18" fill="#c8e8ff" opacity=".28" stroke="#f4fff8" stroke-width="3"/>
+                    <rect x="140" y="280" width="24" height="130" fill="#e07040" opacity=".65"/>
+                    <ellipse cx="210" cy="430" rx="90" ry="22" fill="#1a4030" opacity=".8"/>
+                    <ellipse cx="210" cy="418" rx="70" ry="16" fill="#2a6a48"/>
+                    <rect x="620" y="250" width="70" height="150" rx="8" fill="#163028" stroke="#9dffc8" stroke-width="3"/>
+                    <rect x="690" y="300" width="280" height="10" fill="url(#thorne-beam)"/>
+                    <rect x="780" y="120" width="180" height="120" rx="8" fill="#06140f" stroke="#3dffa0" stroke-width="4"/>
+                    <polyline points="800,210 830,160 860,190 900,140 940,180" fill="none" stroke="#7dffb0" stroke-width="3"/>
+                    <ellipse cx="512" cy="470" rx="160" ry="28" fill="#0a1814" opacity=".55"/>
+                  </svg>
                 </div>
                 <div class="bw-pic is-painted" data-pic="pulse" hidden>
                   <picture class="bw-wash">
@@ -269,6 +300,6 @@
   </div>
   <div id="boot">Warming the tubes…</div>
 </div>
-<script type="module" src="./src/main.js?v=38"></script>
+<script type="module" src="./src/main.js?v=42"></script>
 </body>
 </html>

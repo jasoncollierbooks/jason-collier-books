@@ -1,10 +1,10 @@
 import * as THREE from "three";
-import { createAudio } from "./audio.js?v=5";
-import { createInput } from "./input.js?v=5";
+import { createAudio } from "./audio.js?v=6";
+import { createInput } from "./input.js?v=6";
 import { createSim } from "./sim.js?v=12";
 import { damp, clamp, springAngle, angDelta } from "./util.js";
-import { createNarration } from "./narration.js?v=2";
-import { createDialogue } from "./dialogue.js?v=7";
+import { createNarration } from "./narration.js?v=5";
+import { createDialogue } from "./dialogue.js?v=9";
 import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass, GTAOPass, ShaderPass, FXAAPass } from "three/addons";
 import { buildWorld } from "./world.js?v=9";
 import { buildRustyWorld } from "../worlds/rusty/world.js?v=13";
@@ -13,10 +13,12 @@ import { buildPulseWorld } from "../worlds/pulse/world.js?v=6";
 import { createPulseSim } from "../worlds/pulse/sim.js?v=12";
 import { buildOldmanWorld } from "../worlds/oldman/world.js?v=2";
 import { createOldmanSim } from "../worlds/oldman/sim.js?v=4";
-import { createAbilities } from "./abilities.js?v=3";
+import { buildThorneWorld } from "../worlds/thorne/world.js?v=3";
+import { createThorneSim } from "../worlds/thorne/sim.js?v=3";
+import { createAbilities } from "./abilities.js?v=4";
 import { whenCastReady } from "./actors.js?v=12";
 import { tick as tickVfx, bind, spawn as spawnVfx, active as vfxActive } from "./vfx.js?v=1";
-import { theBlank } from "../bosses/index.js?v=12";
+import { theBlank } from "../bosses/index.js?v=15";
 
 const canvas = document.getElementById("view");
 const app = document.getElementById("app");
@@ -53,10 +55,15 @@ let oldmanScene = null;
 let oldmanCamera = null;
 let oldmanWorld = null;
 let oldmanSim = null;
+let thorneScene = null;
+let thorneCamera = null;
+let thorneWorld = null;
+let thorneSim = null;
 const input = createInput(app);
 try {
   const grant = new URLSearchParams(location.search).get("grant");
   if (grant === "firelight") localStorage.setItem("book-worlds-world4-clear", "1");
+  if (grant === "argon") localStorage.setItem("book-worlds-world5-clear", "1");
 } catch { /* private mode */ }
 const abilities = createAbilities();
 const narrate = createNarration(audio);
@@ -116,7 +123,10 @@ const GRADE = {
 function applyGrade(key) {
   const warm = GRADE.uniforms.uWarm;
   const bias = GRADE.uniforms.uBias.value;
-  if (key === "oldman") {
+  if (key === "thorne") {
+    warm.value = 0;
+    bias.set(0, 0, 0);
+  } else if (key === "oldman") {
     warm.value = 0;
     bias.set(-0.04, 0.006, 0.055);
   } else if (key === "pulse") {
@@ -220,12 +230,13 @@ const direct = ["ford", "play", "gate", "almost", "rope", "bank"].includes(start
 let mode = direct ? "play" : "hub";
 let playing = mode === "play";
 let station = 0;
-const restored = { trail: false, stack: false, pulse: false, oldman: false };
+const restored = { trail: false, stack: false, pulse: false, oldman: false, thorne: false };
 try {
   restored.trail = localStorage.getItem("book-worlds-world1-clear") === "1";
   restored.stack = localStorage.getItem("book-worlds-world2-clear") === "1";
   restored.pulse = localStorage.getItem("book-worlds-world3-clear") === "1";
   restored.oldman = localStorage.getItem("book-worlds-world4-clear") === "1";
+  restored.thorne = localStorage.getItem("book-worlds-world5-clear") === "1";
 } catch { /* private mode */ }
 let transitioning = false;
 let pullTimer = 0;
@@ -313,6 +324,7 @@ const STATIONS = [
   { id: "stack", freq: "67.2", script: "On the air", title: "The Rusty Stack", sub: "Spacey & Mira · Sky Freight", live: true, note: "Recommended after the Trail" },
   { id: "pulse", freq: "103.0", script: "On the air", title: "The First Pulse", sub: "The Entity · Quantum Realm", live: true, note: "Recommended after the Stack" },
   { id: "oldman", freq: "81.4", script: "On the air", title: "Old Man on the Mountain", sub: "Harlan Wade · High Country", live: true, note: "Recommended after the Pulse" },
+  { id: "thorne", freq: "51.4", script: "On the air", title: "Thorne's Lab", sub: "Dr. Thorne · Princeton, 1982", live: true, note: "Recommended after the mountain" },
 ];
 
 const CARDS = {
@@ -507,6 +519,61 @@ const OLDMAN_PAGES = {
   },
 };
 
+const THORNE_CARDS = {
+  title: {
+    script: "Please stand by",
+    kicker: "Book Worlds  ·  Station 5",
+    title: "Thorne's Lab",
+    body: "Nonimaginaires — brain fogs born where imagination dies — are in a 1982 laboratory in Princeton. You are Sphere Nineteen, the subject Dr. Thorne was growing. Five pages are gray on the bench. Free the other subjects. A photon shell waits under the bell jar. The weapon is still the Trail Key.",
+    btn: "Step onto the bench",
+    hint: true,
+  },
+  outro: {
+    script: "End of the bulletin",
+    kicker: "World V",
+    title: "Born twice",
+    body: "The fog lifts off the photon shell. The light settles and stays. It is born twice. Sphere Nineteen is still growing. The screen home stays shut until every torn page is back in the book.",
+    btn: "Back to the cabinet",
+    hint: false,
+  },
+  dead: {
+    script: "The lamp stays on",
+    kicker: "The bench keeps you",
+    title: "Not yet",
+    body: "Sphere Nineteen hits the wood. Dr. Thorne keeps the lamp on and waits.",
+    btn: "Retry",
+    hint: false,
+  },
+};
+
+const THORNE_PAGES = {
+  "born-twice": {
+    script: "A torn page",
+    title: "Born twice",
+    body: "A torn page. The shell must be born twice. Once in vacuum. Once in biology.",
+  },
+  "sphere-nineteen": {
+    script: "A torn page",
+    title: "Sphere Nineteen",
+    body: "A torn page. Sphere Nineteen answered. The vacuum spoke.",
+  },
+  trehalose: {
+    script: "A torn page",
+    title: "Trehalose",
+    body: "A torn page. The trehalose film held. The sugar film shattered.",
+  },
+  "argon-laser": {
+    script: "A torn page",
+    title: "The argon laser",
+    body: "A torn page. The borrowed argon laser. She fixed it herself.",
+  },
+  "second-birth": {
+    script: "A torn page",
+    title: "The second birth",
+    body: "A torn page. First the physics. Then the living thing. Two births.",
+  },
+};
+
 const PAGES = {
   handbills: {
     script: "A torn page",
@@ -539,6 +606,7 @@ function cardsFor() {
   if (worldKey === "stack") return STACK_CARDS;
   if (worldKey === "pulse") return PULSE_CARDS;
   if (worldKey === "oldman") return OLDMAN_CARDS;
+  if (worldKey === "thorne") return THORNE_CARDS;
   return CARDS;
 }
 
@@ -546,6 +614,7 @@ function pagesFor() {
   if (worldKey === "stack") return STACK_PAGES;
   if (worldKey === "pulse") return PULSE_PAGES;
   if (worldKey === "oldman") return OLDMAN_PAGES;
+  if (worldKey === "thorne") return THORNE_PAGES;
   return PAGES;
 }
 
@@ -608,7 +677,7 @@ function helpOpen() {
 }
 
 function beginFlyby() {
-  if (worldKey !== "stack") return;
+  if (worldKey !== "stack" && worldKey !== "thorne") return;
   if (params.get("shot")) return;
   flyby = { t: 0, dur: 7.4, arm: 0 };
   input.enabled = false;
@@ -620,7 +689,30 @@ function endFlyby() {
   if (mode === "play") input.enabled = true;
 }
 
+function thorneFly(k) {
+  const smooth = (x) => x * x * (3 - 2 * x);
+  const u = smooth(Math.max(0, Math.min(1, k)));
+  const pts = [
+    { x: -11, y: 8.2, z: -2, lx: 1.2, ly: 1.6, lz: 22 },
+    { x: 5.5, y: 4.6, z: 16, lx: 0, ly: 1.4, lz: 34 },
+    { x: -3.2, y: 3.4, z: 46, lx: 1, ly: 2.2, lz: 64 },
+    { x: -2.2, y: 2.2, z: -1.5, lx: 0.2, ly: 0.8, lz: 8 },
+  ];
+  const span = pts.length - 1;
+  const x = u * span;
+  const i = Math.min(span - 1, Math.floor(x));
+  const f = smooth(x - i);
+  const a = pts[i];
+  const b = pts[i + 1];
+  const mix = (p, q) => p + (q - p) * f;
+  return {
+    x: mix(a.x, b.x), y: mix(a.y, b.y), z: mix(a.z, b.z),
+    lx: mix(a.lx, b.lx), ly: mix(a.ly, b.ly), lz: mix(a.lz, b.lz),
+  };
+}
+
 function flyPose(k) {
+  if (worldKey === "thorne") return thorneFly(k);
   const smooth = (x) => x * x * (3 - 2 * x);
   const u = smooth(Math.max(0, Math.min(1, k)));
   const pts = [
@@ -720,14 +812,16 @@ function glimpseBlank() {
 }
 
 function flickerBlank(exitKey) {
-  const pack = exitKey === "stack" ? "stack" : exitKey === "pulse" ? "pulse" : exitKey === "oldman" ? "oldman" : "trail";
+  const pack = exitKey === "stack" ? "stack" : exitKey === "pulse" ? "pulse" : exitKey === "oldman" ? "oldman" : exitKey === "thorne" ? "thorne" : "trail";
   el.blankVoice.textContent = exitKey === "stack"
     ? "The next sky is already forgetting its name."
     : exitKey === "pulse"
       ? "The next dark is already forgetting the name of its star."
       : exitKey === "oldman"
         ? "The next ridge is already forgetting its own weather."
-        : theBlank.voice;
+        : exitKey === "thorne"
+          ? "The next bench is already forgetting its own experiment."
+          : theBlank.voice;
   el.blankFace.hidden = false;
   el.blankFace.classList.remove("is-on");
   void el.blankFace.offsetWidth;
@@ -781,6 +875,16 @@ function retargetComposer(nextScene, nextCam) {
   composer = makeComposer(renderer, nextScene, nextCam, low);
 }
 
+function ensureThorne() {
+  if (thorneScene) return;
+  thorneScene = new THREE.Scene();
+  thorneCamera = new THREE.PerspectiveCamera(52, 1, 0.12, 900);
+  thorneScene.add(thorneCamera);
+  installEnvironment(renderer, thorneScene, low, "thorne");
+  thorneWorld = buildThorneWorld(thorneScene, low);
+  thorneSim = createThorneSim(thorneScene, thorneWorld, audio);
+}
+
 function bindStation(key) {
   const kicker = document.getElementById("tutor-kicker");
   if (key === "stack") {
@@ -798,6 +902,11 @@ function bindStation(key) {
     narrate.use("oldman");
     audio.setBed("oldman");
     if (kicker) kicker.textContent = "On the mountain";
+  } else if (key === "thorne") {
+    dialogue.setWorld("thorne-lab");
+    narrate.use("thorne");
+    audio.setBed("thorne");
+    if (kicker) kicker.textContent = "On the bench";
   } else {
     dialogue.setWorld("california-trail");
     narrate.use("trail");
@@ -830,6 +939,13 @@ function enterWorld(key) {
     world = oldmanWorld;
     sim = oldmanSim;
     worldKey = "oldman";
+  } else if (key === "thorne") {
+    ensureThorne();
+    scene = thorneScene;
+    camera = thorneCamera;
+    world = thorneWorld;
+    sim = thorneSim;
+    worldKey = "thorne";
   } else {
     scene = trailScene;
     camera = trailCamera;
@@ -844,6 +960,16 @@ function enterWorld(key) {
   scene.add(shock);
   scene.add(lassoLine);
   retargetComposer(scene, camera);
+  if (worldKey === "thorne") {
+    renderer.toneMappingExposure = low ? 1.16 : 1.24;
+    if (composer && composer.bloom) {
+      composer.bloom.strength = 0.05;
+      composer.bloom.threshold = 0.92;
+      composer.bloom.radius = 0.22;
+    }
+  } else {
+    renderer.toneMappingExposure = low ? 1.08 : 1.16;
+  }
   camera.aspect = window.innerWidth / Math.max(1, window.innerHeight);
   camera.updateProjectionMatrix();
   if (composer) composer.setSize(window.innerWidth, window.innerHeight);
@@ -857,7 +983,7 @@ function finishThrough() {
   hideBlankShade();
   transitioning = false;
   const key = STATIONS[station].id;
-  const liveKey = key === "stack" || key === "pulse" || key === "oldman" ? key : "trail";
+  const liveKey = key === "stack" || key === "pulse" || key === "oldman" || key === "thorne" ? key : "trail";
   if (key !== worldKey) enterWorld(liveKey);
   else bindStation(liveKey);
   sim.resetTrail();
@@ -899,7 +1025,7 @@ function pullBack() {
   transitioning = true;
   const exitKey = worldKey;
   restored[exitKey] = true;
-  const nextStation = { trail: 1, stack: 2, pulse: 3 };
+  const nextStation = { trail: 1, stack: 2, pulse: 3, oldman: 4 };
   if (nextStation[exitKey] != null) station = nextStation[exitKey];
   playing = false;
   input.enabled = false;
@@ -996,13 +1122,44 @@ const worldParam = params.get("world");
 const wantStack = worldParam === "stack" || worldParam === "rusty";
 const wantPulse = worldParam === "pulse" || worldParam === "first-pulse";
 const wantOldman = worldParam === "oldman" || worldParam === "old-man";
+const wantThorne = worldParam === "thorne" || worldParam === "thorne-lab" || worldParam === "lab";
 const stackStarts = ["play", "deck", "boss", "city", "goats", "brawl", "fort"];
 const pulseStarts = ["play", "boss", "dish", "bridge", "light", "gate", "wave"];
 const oldmanStarts = ["play", "boss", "camp", "timber", "park", "gate", "freed", "fire"];
+const thorneStarts = ["play", "boss", "dishes", "enemies", "spill", "laser", "gate", "trays", "hero", "freed", "overview", "outro", "argon"];
 if (wantStack) station = 1;
 if (wantPulse) station = 2;
 if (wantOldman) station = 3;
-if (wantOldman && oldmanStarts.includes(start)) {
+if (wantThorne) station = 4;
+if (wantThorne && thorneStarts.includes(start)) {
+  enterWorld("thorne");
+  if (start === "boss") {
+    sim.place(-3.2, 80, 0);
+    sim.wakeBoss();
+    if (sim.poseBoss) sim.poseBoss();
+  } else if (start === "freed") {
+    sim.place(-1.2, 82, 0.2);
+    sim.defeatForExit();
+  } else if (start === "enemies" || start === "dishes") {
+    if (sim.showcase) sim.showcase();
+  } else if (start === "spill") sim.place(0, 34, 0);
+  else if (start === "laser" || start === "argon") {
+    sim.place(0, 54, 0);
+    if (sim.armArgonDemo) sim.armArgonDemo();
+  } else if (start === "gate") sim.skipToGate();
+  else if (start === "trays") sim.place(0, 68, 0);
+  else if (start === "hero" || start === "overview") {
+    sim.place(0.05, 10.2, Math.PI);
+    if (sim.poseCrew) sim.poseCrew();
+  } else if (start === "outro") {
+    sim.defeatForExit();
+  }
+  hideCard();
+  audio.unlock();
+  if (start === "outro") showCard("outro");
+} else if (wantThorne) {
+  showHub();
+} else if (wantOldman && oldmanStarts.includes(start)) {
   enterWorld("oldman");
   if (start === "boss") {
     sim.place(-1.7, 83.2, 0.35);
@@ -1229,6 +1386,7 @@ function frame(now) {
   const rightX = -Math.cos(camYaw);
   const rightZ = Math.sin(camYaw);
   const shot = params.get("shot");
+  let shotFov = 52;
   shake = Math.max(0, shake - raw);
   if (flyby && !helpOpen()) {
     flyby.arm += raw;
@@ -1271,6 +1429,22 @@ function frame(now) {
   } else if (shot === "freed" && snap.boss) {
     camPos.set(snap.boss.x + 2.4, 2.15, snap.boss.z - 6.4);
     lookAt.set(snap.boss.x, 2.45, snap.boss.z);
+  } else if (shot === "overview" && worldKey === "thorne") {
+    shotFov = 68;
+    camPos.set(0.12, 1.95, -1.1);
+    lookAt.set(0.25, 1.85, 13.5);
+  } else if (shot === "enemies" && worldKey === "thorne") {
+    shotFov = 52;
+    camPos.set(-0.2, 1.78, 6.35);
+    lookAt.set(0.2, 0.78, 12.5);
+  } else if (shot === "hero" && worldKey === "thorne" && snap) {
+    shotFov = 50;
+    camPos.set(snap.player.x - 0.25, snap.player.y + 1.42, snap.player.z - 4.15);
+    lookAt.set(snap.player.x + 0.15, snap.player.y + 0.55, snap.player.z + 3.2);
+  } else if (shot === "boss" && worldKey === "thorne" && snap.boss) {
+    shotFov = 54;
+    camPos.set(snap.boss.x + 5.2, 2.35, snap.boss.z - 8.4);
+    lookAt.set(snap.boss.x, 1.45, snap.boss.z + 0.2);
   } else if (shot === "boss" && snap.boss) {
     camPos.set(snap.boss.x + 0.15, 2.2, snap.boss.z - 6.5);
     lookAt.set(snap.boss.x, 2.5, snap.boss.z);
@@ -1306,6 +1480,10 @@ function frame(now) {
     camPos.copy(world.pullCamera(focus, camPos));
     lookAt.set(lookX, lookY, lookZ);
   }
+  if (Math.abs(camera.fov - shotFov) > 0.05) {
+    camera.fov = shotFov;
+    camera.updateProjectionMatrix();
+  }
   camera.position.copy(camPos);
   camera.position.x += Math.sin(now / 40) * shake * 0.12;
   camera.position.y += Math.cos(now / 35) * shake * 0.08;
@@ -1317,7 +1495,7 @@ function frame(now) {
   for (const ev of snap.events) {
     if (ev.type === "say") dialogue.say(ev.id);
     else if (ev.type === "dmg") addFloat(ev.x, ev.y, ev.z, ev.n, ev.coin);
-    else if (ev.type === "hurt") {
+    else if (ev.type === "hurt" && !params.get("shot")) {
       shake = Math.max(shake, 0.55);
       hurtFx.restart(360);
       const ring = document.getElementById("hp-ring");
@@ -1329,12 +1507,13 @@ function frame(now) {
     }
     else if (ev.type === "hit") shake = Math.max(shake, ev.heavy ? 0.55 : 0.26);
     else if (ev.type === "level") addFloat(ev.x, ev.y, ev.z, "Lv " + ev.n, true);
-    else if (ev.type === "flash" || ev.type === "steam" || ev.type === "pulse" || ev.type === "firelight") {
+    else if (ev.type === "flash" || ev.type === "steam" || ev.type === "pulse" || ev.type === "firelight" || ev.type === "argon") {
       const fire = ev.type === "firelight";
-      flashPeak = ev.type === "steam" ? 0.45 : fire ? 0.9 : 1;
-      flashLight.color.setHex(fire ? 0xff7a32 : ev.type === "pulse" ? 0xd7ecff : ev.type === "steam" ? 0xe7d2b4 : 0xffe6b8);
+      const argon = ev.type === "argon";
+      flashPeak = ev.type === "steam" ? 0.45 : fire ? 0.9 : argon ? 0.7 : 1;
+      flashLight.color.setHex(argon ? 0x9dffc8 : fire ? 0xff7a32 : ev.type === "pulse" ? 0xd7ecff : ev.type === "steam" ? 0xe7d2b4 : 0xffe6b8);
       flashFx.restart(fire ? 520 : ev.type === "steam" ? 205 : 455);
-      shock.material.color.setHex(fire ? 0xff8a3a : ev.type === "pulse" ? 0xd7ecff : ev.type === "steam" ? 0xe7d2b4 : 0xfff0c8);
+      shock.material.color.setHex(argon ? 0xb8ffe0 : fire ? 0xff8a3a : ev.type === "pulse" ? 0xd7ecff : ev.type === "steam" ? 0xe7d2b4 : 0xfff0c8);
       shockFx.restart(fire ? 560 : 450);
       if (ev.type !== "steam") screenFlash.restart(160);
       if (fire) burstEmbers(ev.x, ev.y || 0, ev.z);
@@ -1347,7 +1526,7 @@ function frame(now) {
       lassoFx.restart(420);
     }
     else if (ev.type === "ability") {
-      const names = { lasso: "Lasso", steam: "Steam", pulse: "Pulse", firelight: "Firelight" };
+      const names = { lasso: "Lasso", steam: "Steam", pulse: "Pulse", firelight: "Firelight", argon: "Argon" };
       addFloat(snap.player.x, snap.player.y + 1.8, snap.player.z, names[ev.id] || "Ability", true);
     }
     else if (ev.type === "dead") showCard("dead");
@@ -1389,6 +1568,9 @@ function frame(now) {
 
 function paintHud(snap) {
   const p = snap.player;
+  const hudNames = document.querySelectorAll("#hud .bar-label > span:first-child");
+  if (hudNames[0]) hudNames[0].textContent = worldKey === "thorne" ? "Sphere 19" : "Keeper";
+  if (hudNames[1]) hudNames[1].textContent = worldKey === "thorne" ? "Core" : "Lantern";
   el.hud.classList.toggle("on", mode === "play");
   el.hp.style.width = `${clamp(p.hp / p.hpMax, 0, 1) * 100}%`;
   el.hpNum.textContent = String(Math.ceil(p.hp));
@@ -1490,7 +1672,7 @@ window.__BOOKWORLDS = {
     return !!restored[key];
   },
   worldKey: () => worldKey,
-  worldId: () => (worldKey === "stack" ? "rusty-stack" : worldKey === "pulse" ? "first-pulse" : worldKey === "oldman" ? "old-man" : "california-trail"),
+  worldId: () => (worldKey === "stack" ? "rusty-stack" : worldKey === "pulse" ? "first-pulse" : worldKey === "oldman" ? "old-man" : worldKey === "thorne" ? "thorne-lab" : "california-trail"),
   abilities: () => abilities.list().map((a) => ({ id: a.id, ready: a.ready, cd: a.cd })),
   fx: () => vfxActive(),
   player: () => {
@@ -1502,7 +1684,8 @@ window.__BOOKWORLDS = {
   pages: () => sim.pageCount(),
   circus: () => sim.circusDone(),
   floats: () => sim.floats(),
-  boss: () => ({ hp: sim.boss.hp, alive: sim.boss.alive, active: sim.boss.active, x: sim.boss.x, z: sim.boss.z }),
+  boss: () => ({ hp: sim.boss.hp, alive: sim.boss.alive, active: sim.boss.active, x: sim.boss.x, z: sim.boss.z, state: sim.boss.state }),
+  chipBoss: (n) => (sim.chipBoss ? sim.chipBoss(n) : null),
   hits: () => sim.hits(),
   mp: () => sim.mp(),
   level: () => sim.level(),
@@ -1895,6 +2078,11 @@ function installEnvironment(gl, rootScene, lowQ, kind) {
     grd.addColorStop(0.42, "#243456");
     grd.addColorStop(0.72, "#3a4c6c");
     grd.addColorStop(1, "#1a2438");
+  } else if (kind === "thorne") {
+    grd.addColorStop(0, "#070a12");
+    grd.addColorStop(0.35, "#143028");
+    grd.addColorStop(0.62, "#1a4038");
+    grd.addColorStop(1, "#100c08");
   } else if (kind === "pulse") {
     grd.addColorStop(0, "#2a1458");
     grd.addColorStop(0.28, "#6a3a28");

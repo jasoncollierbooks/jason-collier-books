@@ -350,6 +350,8 @@ export function createAudio() {
   let oldmanGain = null;
   let oldmanWindFilter = null;
   let oldmanTimer = null;
+  let thorneGain = null;
+  let thorneTimer = null;
   let moodDread = 0;
   let moodFire = 0;
 
@@ -540,6 +542,75 @@ export function createAudio() {
     tick();
   }
 
+  function ensureThorneBed() {
+    const audio = context();
+    if (!audio || !started || audio.state !== "running") return;
+    muteMusic();
+    if (windGain) windGain.gain.value = 0;
+    if (stackGain) stackGain.gain.value = 0;
+    if (pulseGain) pulseGain.gain.value = 0;
+    if (oldmanGain) oldmanGain.gain.value = 0;
+    if (!thorneGain) {
+      thorneGain = audio.createGain();
+      thorneGain.connect(bedGain || master);
+      const hum = audio.createOscillator();
+      hum.type = "sine";
+      hum.frequency.value = 120;
+      const humG = audio.createGain();
+      humG.gain.value = 0.018;
+      hum.connect(humG);
+      humG.connect(thorneGain);
+      hum.start();
+      const src = audio.createBufferSource();
+      src.buffer = noise(3);
+      src.loop = true;
+      const filter = audio.createBiquadFilter();
+      filter.type = "bandpass";
+      filter.frequency.value = 180;
+      filter.Q.value = 0.7;
+      const buzz = audio.createGain();
+      buzz.gain.value = 0.012;
+      src.connect(filter);
+      filter.connect(buzz);
+      buzz.connect(thorneGain);
+      src.start();
+    }
+    thorneGain.gain.value = 1;
+    if (thorneTimer) return;
+    const tick = () => {
+      if (!ctx || !thorneGain) {
+        thorneTimer = null;
+        return;
+      }
+      if (bedName === "thorne" && soundOn && ctx.state === "running") {
+        const clicks = 1 + Math.floor(moodDread * 3 + moodFire * 2);
+        for (let i = 0; i < clicks; i++) {
+          burst({ dur: 0.02, freq: 2800, type: "highpass", gain: 0.035 + moodFire * 0.02, q: 1.2 });
+        }
+        if (Math.random() < 0.55) {
+          burst({ dur: 0.09, freq: 480, type: "bandpass", gain: 0.04, q: 3.2, from: 620, to: 180 });
+        }
+        if (Math.random() < 0.4) {
+          burst({ dur: 0.16, freq: 1600, type: "highpass", gain: 0.03, q: 0.8, from: 1800, to: 700 });
+        }
+        if (moodFire > 0.25 && Math.random() < 0.45) {
+          burst({ dur: 0.45, freq: 2400, type: "bandpass", gain: 0.02 * moodFire, q: 8, from: 1900, to: 2600 });
+        }
+        if (Math.random() < 0.18) {
+          burst({ dur: 0.08, freq: 3200, type: "highpass", gain: 0.025, q: 0.5 });
+        }
+        if (moodDread > 0.2 && Math.random() < 0.22) {
+          burst({ dur: 0.4, freq: 55, type: "lowpass", gain: 0.1, from: 70, to: 28 });
+        }
+        if (Math.random() < 0.12) {
+          burst({ dur: 0.45, freq: 200, type: "bandpass", gain: 0.05, q: 1.6, from: 240, to: 80 });
+        }
+      }
+      thorneTimer = window.setTimeout(tick, 700 + Math.random() * 900);
+    };
+    tick();
+  }
+
   function applyBed() {
     if (!started) return;
     const audio = ctx;
@@ -547,20 +618,30 @@ export function createAudio() {
     if (bedName === "stack") {
       if (pulseGain) pulseGain.gain.value = 0;
       if (oldmanGain) oldmanGain.gain.value = 0;
+      if (thorneGain) thorneGain.gain.value = 0;
       ensureStackBed();
     } else if (bedName === "pulse") {
       if (stackGain) stackGain.gain.value = 0;
       if (oldmanGain) oldmanGain.gain.value = 0;
+      if (thorneGain) thorneGain.gain.value = 0;
       ensurePulseBed();
     } else if (bedName === "oldman") {
       if (stackGain) stackGain.gain.value = 0;
       if (pulseGain) pulseGain.gain.value = 0;
       if (windGain) windGain.gain.value = 0;
+      if (thorneGain) thorneGain.gain.value = 0;
       ensureOldmanBed();
+    } else if (bedName === "thorne") {
+      if (stackGain) stackGain.gain.value = 0;
+      if (pulseGain) pulseGain.gain.value = 0;
+      if (oldmanGain) oldmanGain.gain.value = 0;
+      if (windGain) windGain.gain.value = 0;
+      ensureThorneBed();
     } else {
       if (stackGain) stackGain.gain.value = 0;
       if (pulseGain) pulseGain.gain.value = 0;
       if (oldmanGain) oldmanGain.gain.value = 0;
+      if (thorneGain) thorneGain.gain.value = 0;
       if (windGain) windGain.gain.value = 0.045;
       ensureWind();
       ensureMusic();
@@ -870,7 +951,7 @@ export function createAudio() {
     },
     setTension(v) { tension = v; },
     setBed(name) {
-      bedName = name === "stack" ? "stack" : name === "pulse" ? "pulse" : name === "oldman" ? "oldman" : "trail";
+      bedName = name === "stack" ? "stack" : name === "pulse" ? "pulse" : name === "oldman" ? "oldman" : name === "thorne" ? "thorne" : "trail";
       applyBed();
     },
     setMood(dread, fire) {
@@ -887,6 +968,7 @@ export function createAudio() {
     hiss() { burst({ dur: 0.28, freq: 2200, type: "highpass", gain: 0.1, q: 0.5 }); },
     pulse() { burst({ dur: 0.42, freq: 90, type: "lowpass", gain: 0.28, from: 140, to: 40 }); },
     firelight() { burst({ dur: 0.36, freq: 1600, type: "bandpass", gain: 0.16, q: 0.65, from: 240, to: 80 }); },
+    argon() { burst({ dur: 0.24, freq: 1900, type: "bandpass", gain: 0.16, q: 7, from: 880, to: 2600 }); },
     rifle() { burst({ dur: 0.11, freq: 1500, type: "highpass", gain: 0.15, q: 1.1, from: 190, to: 70 }); },
     bugle() { bugle(); },
     howl() { howl(); },
@@ -907,6 +989,10 @@ export function createAudio() {
         burst({ dur: 0.06, freq: 1400, type: "highpass", gain: 0.04, q: 0.7, from: 160, to: 70 });
         return;
       }
+      if (bedName === "thorne") {
+        burst({ dur: 0.04, freq: 900, type: "highpass", gain: 0.035, q: 0.8 });
+        return;
+      }
       burst({ dur: 0.05, freq: 160, type: "lowpass", gain: 0.05 });
     },
     jump() { burst({ dur: 0.08, freq: 420, type: "bandpass", gain: 0.08, q: 0.7, from: 280, to: 520 }); },
@@ -922,6 +1008,7 @@ export function createAudio() {
       if (stackTimer) clearTimeout(stackTimer);
       if (pulseTimer) clearTimeout(pulseTimer);
       if (oldmanTimer) clearTimeout(oldmanTimer);
+      if (thorneTimer) clearTimeout(thorneTimer);
       try { ctx && ctx.close(); } catch { /* ignore */ }
     },
   };

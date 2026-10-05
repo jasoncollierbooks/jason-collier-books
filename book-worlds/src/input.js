@@ -4,7 +4,7 @@ export function createInput(root) {
   const pressed = {
     attack: false, dodge: false, jump: false, flash: false, magic: false, lock: false, use: false, potion: false,
     guard: false, devil: false, mend: false, special: false, cycle: false, recenter: false,
-    lasso: false, steam: false, pulse: false, firelight: false,
+    lasso: false, steam: false, pulse: false, firelight: false, argon: false,
   };
   let guardPointer = false;
   const st = {
@@ -124,6 +124,7 @@ export function createInput(root) {
     if (k === "x") return "steam";
     if (k === "z") return "pulse";
     if (k === "h") return "firelight";
+    if (k === "y") return "argon";
     return null;
   };
   window.addEventListener("keydown", (e) => {

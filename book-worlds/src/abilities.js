@@ -7,6 +7,7 @@ export const ABILITIES = [
   { id: "steam", name: "Steam", key: "X", world: "stack", cool: 6 },
   { id: "pulse", name: "Pulse", key: "Z", world: "pulse", cool: 7.5 },
   { id: "firelight", name: "Firelight", key: "H", world: "oldman", cool: 7 },
+  { id: "argon", name: "Argon", key: "Y", world: "thorne", cool: 6.2 },
 ];
 
 const CLEAR = {
@@ -14,6 +15,7 @@ const CLEAR = {
   steam: "book-worlds-world2-clear",
   pulse: "book-worlds-world3-clear",
   firelight: "book-worlds-world4-clear",
+  argon: "book-worlds-world5-clear",
 };
 
 let shared = null;
@@ -21,7 +23,7 @@ let shared = null;
 export function createAbilities() {
   if (shared) return shared;
   const owned = new Set();
-  const cd = { lasso: 0, steam: 0, pulse: 0, firelight: 0 };
+  const cd = { lasso: 0, steam: 0, pulse: 0, firelight: 0, argon: 0 };
 
   function save() {
     try { localStorage.setItem(STORE, JSON.stringify([...owned])); } catch { /* private mode */ }
@@ -188,6 +190,25 @@ export function createAbilities() {
       ctx.player.iframes = Math.max(ctx.player.iframes || 0, 0.22);
       ctx.events.push({ type: "firelight", x: ctx.player.x, y: ctx.player.y || 0, z: ctx.player.z });
       if (ctx.audio && ctx.audio.firelight) ctx.audio.firelight();
+      if (ctx.onCast) ctx.onCast(id);
+      return true;
+    }
+    if (id === "argon") {
+      cd.argon = spec.cool;
+      const yaw = ctx.player.yaw;
+      const range = 9.2;
+      for (const e of ctx.living()) {
+        const dx = e.x - ctx.player.x;
+        const dz = e.z - ctx.player.z;
+        const along = Math.sin(yaw) * dx + Math.cos(yaw) * dz;
+        const side = Math.cos(yaw) * dx - Math.sin(yaw) * dz;
+        if (along > 0.35 && along < range && Math.abs(side) < 1.15) {
+          ctx.damageEnemy(e, e.kind === "boss" ? 16 : 18, null, { knock: 0.45 });
+        }
+      }
+      ctx.player.iframes = Math.max(ctx.player.iframes || 0, 0.12);
+      ctx.events.push({ type: "argon", x: ctx.player.x, y: ctx.player.y || 0, z: ctx.player.z, yaw });
+      if (ctx.audio && ctx.audio.argon) ctx.audio.argon();
       if (ctx.onCast) ctx.onCast(id);
       return true;
     }

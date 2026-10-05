@@ -6,7 +6,7 @@ import { createFog } from "../../src/rigs.js?v=7";
 import { createHuman } from "../../src/actors.js?v=12";
 import { armRing, note, spawn } from "../../src/vfx.js?v=1";
 import { boss as worldBoss } from "../../bosses/rusty-stack.js?v=10";
-import { createAbilities } from "../../src/abilities.js?v=3";
+import { createAbilities } from "../../src/abilities.js?v=4";
 
 const abilities = createAbilities();
 
@@ -1373,8 +1373,8 @@ export function createRustySim(scene, world, audio) {
     if (edge.devil) startDevil();
     if (edge.mend) startMend();
     if (edge.special) startTeam();
-    if (edge.lasso || edge.steam || edge.pulse || edge.firelight) {
-      const id = edge.firelight ? "firelight" : edge.pulse ? "pulse" : edge.steam ? "steam" : "lasso";
+    if (edge.lasso || edge.steam || edge.pulse || edge.firelight || edge.argon) {
+      const id = edge.argon ? "argon" : edge.firelight ? "firelight" : edge.pulse ? "pulse" : edge.steam ? "steam" : "lasso";
       abilities.cast(id, {
         player, living, damageEnemy, events, audio,
         resolve: (x, z, r) => world.resolve(x, z, r),
