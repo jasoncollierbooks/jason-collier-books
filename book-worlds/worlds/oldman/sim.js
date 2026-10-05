@@ -7,7 +7,7 @@ import { createHuman } from "../../src/actors.js?v=12";
 import { armRing, note, spawn } from "../../src/vfx.js?v=1";
 import { createWolf, createShade } from "./beings.js?v=2";
 import { boss as worldBoss } from "../../bosses/old-man.js?v=2";
-import { createAbilities } from "../../src/abilities.js?v=4";
+import { createAbilities } from "../../src/abilities.js?v=6";
 
 const SAVE_KEY = "book-worlds-old-man";
 const CLEAR_KEY = "book-worlds-world4-clear";

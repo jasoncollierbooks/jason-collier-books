@@ -7,7 +7,7 @@ import { heightAt } from "./world.js?v=3";
 import { note, spawn } from "../../src/vfx.js?v=1";
 import { createVessel, createSeven, createCrawler, createMold, createShell } from "./beings.js?v=2";
 import { boss as worldBoss } from "../../bosses/photon-shell.js?v=3";
-import { createAbilities } from "../../src/abilities.js?v=4";
+import { createAbilities } from "../../src/abilities.js?v=6";
 
 const SAVE_KEY = "book-worlds-thorne";
 const CLEAR_KEY = "book-worlds-world5-clear";

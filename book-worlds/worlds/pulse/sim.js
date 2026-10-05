@@ -7,7 +7,7 @@ import { createHuman } from "../../src/actors.js?v=12";
 import { armRing, note } from "../../src/vfx.js?v=1";
 import { createEntity, createNative } from "./beings.js?v=2";
 import { boss as worldBoss } from "../../bosses/first-pulse.js?v=7";
-import { createAbilities } from "../../src/abilities.js?v=4";
+import { createAbilities } from "../../src/abilities.js?v=6";
 
 const SAVE_KEY = "book-worlds-first-pulse";
 const CLEAR_KEY = "book-worlds-world3-clear";
@@ -212,6 +212,7 @@ export function createPulseSim(scene, world, audio) {
         bossWall = false;
         audio.setTension(0);
         if (abilities.unlock("pulse")) events.push({ type: "ability", id: "pulse" });
+        armExit();
         speak("entity-win");
         speak("native-win");
       }

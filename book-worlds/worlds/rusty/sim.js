@@ -6,7 +6,7 @@ import { createFog } from "../../src/rigs.js?v=7";
 import { createHuman } from "../../src/actors.js?v=12";
 import { armRing, note, spawn } from "../../src/vfx.js?v=1";
 import { boss as worldBoss } from "../../bosses/rusty-stack.js?v=10";
-import { createAbilities } from "../../src/abilities.js?v=4";
+import { createAbilities } from "../../src/abilities.js?v=6";
 
 const abilities = createAbilities();
 
@@ -210,6 +210,7 @@ export function createRustySim(scene, world, audio) {
         bossWall = false;
         audio.setTension(0);
         if (abilities.unlock("steam")) events.push({ type: "ability", id: "steam" });
+        armExit();
         speak("spacey-win");
         speak("mira-win");
       }
