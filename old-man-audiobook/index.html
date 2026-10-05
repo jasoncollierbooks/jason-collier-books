@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Old Man On The Mountain: Audiobook | Jason Collier</title>
-<meta name="description" content="The full-cast illustrated audiobook of Old Man On The Mountain by Jason Collier: the complete, unabridged story in six parts (83 minutes), with sound design and a horror score.">
+<meta name="description" content="Part 1 of the full-cast illustrated audiobook of Old Man On The Mountain by Jason Collier, free: about 12 minutes, with sound design and a horror score. The rest of the story is in the book.">
 <meta property="og:title" content="Old Man On The Mountain: Audiobook | Jason Collier">
-<meta property="og:description" content="A scary campfire story in six parts. Best with headphones, in the dark.">
+<meta property="og:description" content="Part 1 of the full-cast illustrated audiobook, free: about 12 minutes, with sound design and a horror score. The rest of the story is in the book.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://jasoncollierbooks.github.io/jason-collier-books/old-man-audiobook/img/social-card.jpg">
 <meta property="og:image:width" content="1200">
@@ -39,24 +39,37 @@
 .om-cap{position:absolute;left:0;right:0;bottom:0;padding:1.4rem 1rem .7rem;background:linear-gradient(transparent,rgba(0,0,0,.75));font-size:.82rem;color:#dbe8f2;pointer-events:none;transition:opacity .6s}
 .om-stage.playing.idle .om-cap{opacity:0}
 .om-controls{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem .8rem;margin-top:.8rem}
-.om-controls button{font:inherit;font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);background:rgba(188,217,238,.07);border:1px solid rgba(188,217,238,.3);border-radius:4px;padding:.6rem .9rem;cursor:pointer;touch-action:manipulation}
+.om-controls button{font:inherit;font-size:1.05rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);background:rgba(188,217,238,.07);border:1px solid rgba(188,217,238,.3);border-radius:4px;padding:.75rem 1rem;min-height:3.1rem;cursor:pointer;touch-action:manipulation}
 .om-controls button:hover,.om-controls button:focus-visible{border-color:var(--ice);outline:none}
 .om-controls #om-play{min-width:6.5rem;background:linear-gradient(135deg,#ff9b3d,#e2531a);color:#140803;border-color:transparent}
 .om-seek{flex:1 1 14rem;accent-color:#bcd9ee;min-width:10rem}
-.om-time{font-variant-numeric:tabular-nums;font-size:.85rem;color:#b8c6d2;min-width:7.5rem;text-align:right}
+.om-time{font-variant-numeric:tabular-nums;font-size:1.05rem;color:#b8c6d2;min-width:7.5rem;text-align:right}
+.om-end{margin-top:.95rem;padding:1.35rem 1.15rem 1.45rem;border:1px solid rgba(188,217,238,.5);border-radius:8px;background:radial-gradient(ellipse at 50% 0%,rgba(188,217,238,.18),transparent 68%),rgba(6,11,16,.94);text-align:center;box-shadow:0 18px 48px -28px rgba(0,0,0,.85)}
+.om-end[hidden]{display:none}
+.om-end-title{font-family:"Cinzel",serif;font-weight:900;font-size:clamp(1.9rem,7.4vw,2.85rem);line-height:1.15;color:#f2f7fb;text-wrap:balance;margin:0 0 1.15rem}
+.om-end-actions,.om-buy{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center}
+.om-buy{margin-top:1.05rem}
+.om-ab .om-end-actions a.btn,.om-ab .om-buy a.btn{flex:1 1 auto;justify-content:center;min-width:11rem;min-height:4.6rem;padding:1.05rem 1.25rem;font-size:1.5rem;font-weight:800;letter-spacing:.06em;line-height:1.15}
 .om-eps{list-style:none;margin:clamp(2rem,4vw,2.8rem) 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(17rem,1fr));gap:.9rem}
-.om-ep{width:100%;height:100%;text-align:left;font:inherit;color:#d7e2ea;background:rgba(188,217,238,.05);border:1px solid rgba(188,217,238,.22);border-radius:6px;padding:0;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:.25s var(--ease)}
+.om-ep{position:relative;width:100%;height:100%;text-align:left;font:inherit;color:#d7e2ea;background:rgba(188,217,238,.05);border:1px solid rgba(188,217,238,.22);border-radius:6px;padding:0;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:.25s var(--ease)}
 .om-ep img{width:100%;aspect-ratio:16/9;object-fit:cover;filter:saturate(.85)}
 .om-ep:hover,.om-ep:focus-visible{border-color:var(--ice);outline:none;transform:translateY(-2px)}
 .om-ep.on{border-color:var(--ice);background:rgba(188,217,238,.12)}
-.om-ep-text{display:grid;grid-template-columns:1fr auto;gap:.15rem .6rem;padding:.8rem .95rem 1rem}
-.om-ep-n{font-family:"Cinzel",serif;font-weight:700;font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ice)}
+.om-ep-text{display:grid;grid-template-columns:1fr auto;gap:.2rem .6rem;padding:1rem 1.05rem 1.15rem}
+.om-ep-n{font-family:"Cinzel",serif;font-weight:700;font-size:1rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ice)}
 .om-ep.on .om-ep-n::before{content:"▶ "}
-.om-ep-len{grid-row:1;grid-column:2;font-variant-numeric:tabular-nums;font-size:.82rem;opacity:.75}
-.om-ep-t{grid-column:1/-1;font-family:"Cinzel",serif;font-weight:700;font-size:1.08rem;color:#fff;line-height:1.25}
-.om-ep-d{grid-column:1/-1;font-size:.88rem;line-height:1.45;color:#aebdca;margin-top:.25rem}
-.om-credits{margin-top:clamp(2.6rem,5vw,3.6rem);padding-top:1.4rem;border-top:1px solid var(--line);color:#aebdca;font-size:.88rem;max-width:52rem}
-.om-credits h2{font-family:"Cinzel",serif;font-size:1rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ice);margin-bottom:.6rem}
+.om-ep-len{grid-row:1;grid-column:2;font-variant-numeric:tabular-nums;font-size:1.05rem;opacity:.75}
+.om-ep-t{grid-column:1/-1;font-family:"Cinzel",serif;font-weight:700;font-size:1.35rem;color:#fff;line-height:1.25}
+.om-ep-d{grid-column:1/-1;font-size:1.08rem;line-height:1.45;color:#c5d3de;margin-top:.3rem}
+.om-ep.om-locked{cursor:default;border-color:rgba(188,217,238,.34)}
+.om-ep.om-locked img{filter:saturate(.25) brightness(.42)}
+.om-ep.om-locked:hover,.om-ep.om-locked:focus-visible{transform:none;border-color:rgba(188,217,238,.7)}
+.om-lock{position:absolute;left:0;right:0;top:0;aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.35rem;background:rgba(6,11,16,.42);pointer-events:none}
+.om-lock svg{width:4.6rem;height:4.6rem;filter:drop-shadow(0 6px 16px rgba(0,0,0,.65))}
+.om-lock span{font-family:"Cinzel",serif;font-weight:900;font-size:1.7rem;letter-spacing:.18em;text-transform:uppercase;color:#f2f7fb;text-shadow:0 2px 14px rgba(0,0,0,.85)}
+.om-ep-lock{grid-row:1;grid-column:2;font-family:"Cinzel",serif;font-weight:900;font-size:1.15rem;letter-spacing:.12em;text-transform:uppercase;color:#f2f7fb}
+.om-credits{margin-top:clamp(2.6rem,5vw,3.6rem);padding-top:1.4rem;border-top:1px solid var(--line);color:#c5d3de;font-size:1.05rem;max-width:52rem}
+.om-credits h2{font-family:"Cinzel",serif;font-size:1.15rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ice);margin-bottom:.6rem}
 .om-credits p{margin-bottom:.6rem}
 .om-credits a{color:var(--ice)}
 .om-back{margin-top:1.6rem;display:flex;flex-wrap:wrap;gap:.7rem}
@@ -65,16 +78,22 @@
 .om-ab .page-head h1{font-size:clamp(2.3rem,5.4vw,4rem);margin:.5rem 0 .4rem}
 .om-ab .om-note{margin-top:.6rem}
 .om-player{max-width:min(100%,max(40rem,calc((100svh - 26rem)*1.7778)),1100px);margin-left:auto;margin-right:auto}
-.om-about{color:var(--muted);font-size:1rem;margin-top:1.2rem;max-width:48rem}
+.om-about{color:#d5e2ec;font-size:1.28rem;line-height:1.5;margin-top:1.2rem;max-width:48rem}
 @media (max-width:640px){
  .om-eps{grid-template-columns:1fr}
- .om-ep{flex-direction:row;align-items:stretch}
- .om-ep img{width:38%;flex:0 0 38%;aspect-ratio:auto;height:auto;object-fit:cover}
- .om-ep-text{padding:.6rem .75rem .75rem}
- .om-ep-t{font-size:.95rem}
- .om-ep-d{font-size:.8rem;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+ .om-ep:not(.om-locked){flex-direction:row;align-items:stretch}
+ .om-ep:not(.om-locked) img{width:38%;flex:0 0 38%;aspect-ratio:auto;height:auto;object-fit:cover}
+ .om-ep.om-locked{flex-direction:column}
+ .om-ep.om-locked img{width:100%;flex:none;aspect-ratio:16/9;height:auto}
+ .om-ep-text{padding:.85rem .95rem 1.05rem}
+ .om-ep-t{font-size:1.35rem}
+ .om-ep-d{font-size:1.08rem}
  .om-player{max-width:100%}
- .om-ab .om-note{font-size:.78rem;padding:.45rem .8rem}
+ .om-ab .om-note{font-size:1.05rem;padding:.6rem .9rem}
+ .om-end-actions,.om-buy{flex-direction:column}
+ .om-ab .om-end-actions a.btn,.om-ab .om-buy a.btn{width:100%;font-size:1.55rem;min-height:4.75rem}
+ .om-about{font-size:1.32rem}
+ .om-credits{font-size:1.05rem}
 }
 </style>
 <link rel="stylesheet" href="../assets/broadcast-theme/site.css">
@@ -128,7 +147,14 @@
         <span class="om-big" aria-hidden="true"></span>
         <p class="om-cap" id="om-cap" aria-live="polite">Part 1: Into the High Country</p>
       </div>
-      <!-- One audio element for the whole page; each part is one continuous pre-mixed file. -->
+      <div class="om-end" id="om-end" hidden>
+        <p class="om-end-title">The story continues in the book</p>
+        <div class="om-end-actions">
+          <a class="btn btn-fire" href="https://www.amazon.com/dp/B0HDJWYNNJ" target="_blank" rel="noopener">Kindle</a>
+          <a class="btn btn-line" href="https://www.amazon.com/dp/B0GT1DJCWX" target="_blank" rel="noopener">Paperback</a>
+        </div>
+      </div>
+      <!-- One audio element. Only Part 1 (audio/om01.m4a) is on this page. -->
       <audio id="om-audio" preload="metadata" playsinline src="audio/om01.m4a"></audio>
       <div class="om-controls">
         <button type="button" id="om-play" aria-label="Play">Play</button>
@@ -137,7 +163,11 @@
         <input type="range" class="om-seek" id="om-seek" min="0" max="1000" step="1" value="0" aria-label="Position in this part">
         <span class="om-time" id="om-time">0:00 / 12:21</span>
       </div>
-      <p class="om-about">The complete, unabridged story by Jason Collier, performed by a full cast of voices with sound design and a horror score, in six parts (66 minutes in all). Harlan Wade walks into the winter high country alone for one more elk hunt, and the mountain is not empty.</p>
+      <div class="om-buy">
+        <a class="btn btn-fire" href="https://www.amazon.com/dp/B0HDJWYNNJ" target="_blank" rel="noopener">Kindle</a>
+        <a class="btn btn-line" href="https://www.amazon.com/dp/B0GT1DJCWX" target="_blank" rel="noopener">Paperback</a>
+      </div>
+      <p class="om-about">Part 1 of the full-cast illustrated audiobook, free: about 12 minutes, with sound design and a horror score. The rest of the story is in the book. Harlan Wade walks into the winter high country alone for one more elk hunt, and the mountain is not empty.</p>
     </section>
 
     <ol class="om-eps" id="om-eps" aria-label="Old Man On The Mountain: audiobook parts">
@@ -145,31 +175,36 @@
             <img src="img/posters/ep1.jpg" alt="" width="640" height="360" loading="lazy">
             <span class="om-ep-text"><span class="om-ep-n">Part 1</span><span class="om-ep-t">Into the High Country</span><span class="om-ep-len">12:21</span>
             <span class="om-ep-d">Harlan Wade, sixty-eight, walks alone into the winter high country with his father&#x27;s rifle for a seven-day elk hunt, and on the first night something screams up canyon.</span></span></button></li>
-          <li><button type="button" class="om-ep" data-ep="2">
+          <li><button type="button" class="om-ep om-locked" data-ep="2" data-locked="true" aria-disabled="true" aria-label="Part 2, Shadow Walkers. Locked. The story continues in the book.">
             <img src="img/posters/ep2.jpg" alt="" width="640" height="360" loading="lazy">
-            <span class="om-ep-text"><span class="om-ep-n">Part 2</span><span class="om-ep-t">Shadow Walkers</span><span class="om-ep-len">10:51</span>
+            <span class="om-lock" aria-hidden="true"><svg viewBox="0 0 64 64" focusable="false"><rect x="10" y="28" width="44" height="28" rx="5" fill="none" stroke="#bcd9ee" stroke-width="4"/><path d="M20 28v-7a12 12 0 0 1 24 0v7" fill="none" stroke="#f2f7fb" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="42" r="3.2" fill="#f2f7fb"/></svg><span>Locked</span></span>
+            <span class="om-ep-text"><span class="om-ep-n">Part 2</span><span class="om-ep-t">Shadow Walkers</span><span class="om-ep-lock">Locked</span>
             <span class="om-ep-d">Scouting the high benches, Harlan finds tracks that follow him and never cross, remembers his father&#x27;s warning about &#x27;shadow walkers&#x27;, and at dusk sees something walk upright on the far ridge.</span></span></button></li>
-          <li><button type="button" class="om-ep" data-ep="3">
+          <li><button type="button" class="om-ep om-locked" data-ep="3" data-locked="true" aria-disabled="true" aria-label="Part 3, What the Cameras Saw. Locked. The story continues in the book.">
             <img src="img/posters/ep3.jpg" alt="" width="640" height="360" loading="lazy">
-            <span class="om-ep-text"><span class="om-ep-n">Part 3</span><span class="om-ep-t">What the Cameras Saw</span><span class="om-ep-len">9:30</span>
+            <span class="om-lock" aria-hidden="true"><svg viewBox="0 0 64 64" focusable="false"><rect x="10" y="28" width="44" height="28" rx="5" fill="none" stroke="#bcd9ee" stroke-width="4"/><path d="M20 28v-7a12 12 0 0 1 24 0v7" fill="none" stroke="#f2f7fb" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="42" r="3.2" fill="#f2f7fb"/></svg><span>Locked</span></span>
+            <span class="om-ep-text"><span class="om-ep-n">Part 3</span><span class="om-ep-t">What the Cameras Saw</span><span class="om-ep-lock">Locked</span>
             <span class="om-ep-d">The trail cameras show a man-high shadow standing in an empty park, something circles the camp in the dead-calm night, and Harlan decides: not yet, one more day.</span></span></button></li>
-          <li><button type="button" class="om-ep" data-ep="4">
+          <li><button type="button" class="om-ep om-locked" data-ep="4" data-locked="true" aria-disabled="true" aria-label="Part 4, The Old Warrior. Locked. The story continues in the book.">
             <img src="img/posters/ep4.jpg" alt="" width="640" height="360" loading="lazy">
-            <span class="om-ep-text"><span class="om-ep-n">Part 4</span><span class="om-ep-t">The Old Warrior</span><span class="om-ep-len">13:25</span>
+            <span class="om-lock" aria-hidden="true"><svg viewBox="0 0 64 64" focusable="false"><rect x="10" y="28" width="44" height="28" rx="5" fill="none" stroke="#bcd9ee" stroke-width="4"/><path d="M20 28v-7a12 12 0 0 1 24 0v7" fill="none" stroke="#f2f7fb" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="42" r="3.2" fill="#f2f7fb"/></svg><span>Locked</span></span>
+            <span class="om-ep-text"><span class="om-ep-n">Part 4</span><span class="om-ep-t">The Old Warrior</span><span class="om-ep-lock">Locked</span>
             <span class="om-ep-d">His father&#x27;s lessons in stillness bring the great bull; a long blood trail ends at a cliff-top bench, and in the moonlight the thing finally shows itself and takes the rifle.</span></span></button></li>
-          <li><button type="button" class="om-ep" data-ep="5">
+          <li><button type="button" class="om-ep om-locked" data-ep="5" data-locked="true" aria-disabled="true" aria-label="Part 5, Older Than Wolves. Locked. The story continues in the book.">
             <img src="img/posters/ep5.jpg" alt="" width="640" height="360" loading="lazy">
-            <span class="om-ep-text"><span class="om-ep-n">Part 5</span><span class="om-ep-t">Older Than Wolves</span><span class="om-ep-len">8:01</span>
+            <span class="om-lock" aria-hidden="true"><svg viewBox="0 0 64 64" focusable="false"><rect x="10" y="28" width="44" height="28" rx="5" fill="none" stroke="#bcd9ee" stroke-width="4"/><path d="M20 28v-7a12 12 0 0 1 24 0v7" fill="none" stroke="#f2f7fb" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="42" r="3.2" fill="#f2f7fb"/></svg><span>Locked</span></span>
+            <span class="om-ep-text"><span class="om-ep-n">Part 5</span><span class="om-ep-t">Older Than Wolves</span><span class="om-ep-lock">Locked</span>
             <span class="om-ep-d">With the fire roaring and his father&#x27;s Colt on his hip, Harlan sits watch and remembers the Brooks Range storm when the wolves never left him and his son.</span></span></button></li>
-          <li><button type="button" class="om-ep" data-ep="6">
+          <li><button type="button" class="om-ep om-locked" data-ep="6" data-locked="true" aria-disabled="true" aria-label="Part 6, The Chorus. Locked. The story continues in the book.">
             <img src="img/posters/ep6.jpg" alt="" width="640" height="360" loading="lazy">
-            <span class="om-ep-text"><span class="om-ep-n">Part 6</span><span class="om-ep-t">The Chorus</span><span class="om-ep-len">11:34</span>
+            <span class="om-lock" aria-hidden="true"><svg viewBox="0 0 64 64" focusable="false"><rect x="10" y="28" width="44" height="28" rx="5" fill="none" stroke="#bcd9ee" stroke-width="4"/><path d="M20 28v-7a12 12 0 0 1 24 0v7" fill="none" stroke="#f2f7fb" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="42" r="3.2" fill="#f2f7fb"/></svg><span>Locked</span></span>
+            <span class="om-ep-text"><span class="om-ep-n">Part 6</span><span class="om-ep-t">The Chorus</span><span class="om-ep-lock">Locked</span>
             <span class="om-ep-d">The walk out becomes a gauntlet of deliberate deadfalls; Harlan fortifies a knoll, sets a trap, and meets the old man of the mountain in the firelight before the ridges answer.</span></span></button></li>
     </ol>
 
     <section class="om-credits" aria-labelledby="om-cred-h">
       <h2 id="om-cred-h">Credits</h2>
-      <p><strong>Story:</strong> <em>Old Man On The Mountain</em> by Jason Collier, read unabridged. The narrator reads the narration and the characters speak their own lines.</p>
+      <p><strong>Story:</strong> <em>Old Man On The Mountain</em> by Jason Collier. Part 1 is free. The rest of the story is in the book. The narrator reads the narration and the characters speak their own lines.</p>
       <p><strong>Voices:</strong> the narrator and Harlan's voice with Chatterbox TTS by Resemble AI (MIT); the other characters generated with the Kokoro-82M text-to-speech model (Apache-2.0) via kokoro-onnx (MIT). <strong>Pictures:</strong> AI-generated illustrations made for this audiobook.</p>
       <p><strong>Field recordings:</strong> National Park Service, Yellowstone Sound Library (public domain; recordings by NPS &amp; the MSU Acoustic Atlas), including elk, wolves, coyotes, ravens, fire, wind and axe work; and a wolf-howl recording by the U.S. Fish and Wildlife Service (public domain, via Wikimedia Commons). All music, the score, the creature and the other sound effects were synthesized for this production.</p>
       <div class="om-back">
