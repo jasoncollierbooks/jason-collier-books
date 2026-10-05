@@ -47,6 +47,9 @@ body[data-world="oldman"] #vignette {
 body[data-world="pulse"] #vignette {
   background: radial-gradient(ellipse at center, transparent 46%, rgba(10, 16, 36, .3) 78%, rgba(4, 6, 14, .58) 100%);
 }
+body[data-world="thorne"] #vignette {
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(6, 18, 16, .38) 74%, rgba(2, 6, 8, .68) 100%);
+}
 #flash, #hurt { position: absolute; inset: 0; pointer-events: none; z-index: 4; opacity: 0; }
 #flash { background: rgba(255, 236, 200, .55); transition: opacity .12s linear; }
 #flash.on { opacity: .75; }
@@ -245,6 +248,29 @@ body.shot #bulletin,
 body.shot #subtitle,
 body.shot #rotate-hint,
 body.shot #tutor { display: none !important; }
+body[data-world="thorne"].shot #hud,
+body[data-world="thorne"].shot #cmd,
+body[data-world="thorne"].shot #abilities,
+body[data-world="thorne"].shot #stick,
+body[data-world="thorne"].shot #actions,
+body[data-world="thorne"].shot #party,
+body[data-world="thorne"].shot #gauges,
+body[data-world="thorne"].shot #prompt,
+body[data-world="thorne"].shot #interact,
+body[data-world="thorne"].shot #settings-btn { display: none !important; }
+body[data-world="thorne"] #bulletin-line,
+body[data-world="thorne"] #subtitle {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+body[data-world="thorne"] #tag { font-size: 18px; }
+body[data-world="thorne"].playing #obj { font-size: 26px; }
+body[data-world="thorne"] .story-card h1 { font-size: clamp(2rem, 7vw, 3.2rem); }
+body[data-world="thorne"] .story-card .paper { font-size: 1.35rem; line-height: 1.35; }
+body[data-world="thorne"] .story-card button { min-height: 64px; font-size: 1.2rem; }
+body[data-world="thorne"] .story-card .kicker { font-size: .95rem; }
+body[data-world="thorne"] #bossbar span { font-size: 22px; }
 body.flyby #hud,
 body.flyby #cmd,
 body.flyby #party,

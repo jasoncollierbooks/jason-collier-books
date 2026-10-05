@@ -7,7 +7,7 @@ import { createHuman } from "../../src/actors.js?v=12";
 import { armRing, note, spawn } from "../../src/vfx.js?v=1";
 import { createWolf, createShade } from "./beings.js?v=2";
 import { boss as worldBoss } from "../../bosses/old-man.js?v=2";
-import { createAbilities } from "../../src/abilities.js?v=3";
+import { createAbilities } from "../../src/abilities.js?v=4";
 
 const SAVE_KEY = "book-worlds-old-man";
 const CLEAR_KEY = "book-worlds-world4-clear";
@@ -1218,6 +1218,7 @@ export function createOldmanSim(scene, world, audio) {
     if (edge.steam) abilities.cast("steam", abilityCtx());
     if (edge.pulse) abilities.cast("pulse", abilityCtx());
     if (edge.firelight) abilities.cast("firelight", abilityCtx());
+    if (edge.argon) abilities.cast("argon", abilityCtx());
     if (demoFire && playTime > 0.35 && abilities.ready("firelight")) {
       abilities.cast("firelight", abilityCtx());
     }
