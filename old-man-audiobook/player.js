@@ -4,7 +4,9 @@
      so seeking, lock/unlock and background tabs can't drift or repeat.
    - The next 1-2 pictures are fetched and decoded ahead; 2.5 s crossfades; slow Ken Burns via Web Animations.
    - A tap only toggles play/pause (debounced); nothing ever re-creates the element or reloads the file.
-   - Media Session lock-screen controls + artwork; resume position in localStorage; auto-advance. No video. */
+   - Media Session lock-screen controls + artwork; resume position in localStorage.
+   - Only Part 1 is playable. Parts 2-6 are locked (no audio on the server). When Part 1
+     ends, show the end card. Never set the audio src to a missing part. No video. */
 (() => {
   "use strict";
   const $ = id => document.getElementById(id);
@@ -20,6 +22,19 @@
     set(o) { try { localStorage.setItem(KEY, JSON.stringify(Object.assign(store.get(), o))); } catch (e) {} }
   };
   const savePos = () => { if (ep && au.currentTime > 0) { const p = store.get().pos || {}; p[epN] = au.ended ? 0 : +au.currentTime.toFixed(1); store.set({ ep: epN, pos: p }); } };
+  // Parts 2-6 stay in the list for the lock cards, but their files are not on the server.
+  const isPlayable = e => !!(e && !e.locked && e.audio && !/om0[2-6]\.m4a/.test(e.audio));
+  function showSampleEnd(scroll) {
+    const card = $("om-end");
+    if (!card) return;
+    card.hidden = false;
+    ui();
+    if (scroll) {
+      const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      card.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+    }
+  }
+  function hideSampleEnd() { const card = $("om-end"); if (card) card.hidden = true; }
 
   function cueIndex(t) {
     const c = ep.cues; let lo = 0, hi = c.length - 1;
@@ -74,7 +89,9 @@
     try { navigator.mediaSession.setPositionState({ duration: au.duration, playbackRate: au.playbackRate, position: Math.min(au.currentTime, au.duration) }); } catch (e) {}
   }
   function loadEpisode(n, { play = false, resume = true } = {}) {
-    const next = SB.episodes.find(e => e.n === n); if (!next) return;
+    const next = SB && SB.episodes.find(e => e.n === n);
+    if (!isPlayable(next)) { showSampleEnd(false); return; }
+    hideSampleEnd();
     savePos();
     ep = next; epN = n; cur = -1; cache.clear();
     epBtns.forEach(b => { const on = +b.dataset.ep === n; b.classList.toggle("on", on); if (on) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current"); });
@@ -114,7 +131,7 @@
     if (pendingSeek != null) { au.currentTime = pendingSeek; pendingSeek = null; }
     positionState(); sync(true); ui();
   });
-  au.addEventListener("play", ui);
+  au.addEventListener("play", () => { hideSampleEnd(); ui(); });
   au.addEventListener("pause", () => { ui(); savePos(); });
   au.addEventListener("timeupdate", () => {
     if (!ep) return;
@@ -125,8 +142,9 @@
   au.addEventListener("seeked", () => { sync(true); positionState(); });
   au.addEventListener("ended", () => {
     const p = store.get().pos || {}; p[epN] = 0; store.set({ pos: p });
-    const nxt = SB.episodes.find(e => e.n === epN + 1);
-    if (nxt) loadEpisode(nxt.n, { play: true, resume: false }); else ui();
+    const nxt = SB && SB.episodes.find(e => e.n === epN + 1);
+    if (isPlayable(nxt)) loadEpisode(nxt.n, { play: true, resume: false });
+    else showSampleEnd(true);
   });
   au.addEventListener("error", () => { cap.textContent = `Part ${epN}: this part could not be loaded. Please try again.`; });
 
@@ -138,7 +156,10 @@
   seek.addEventListener("input", () => { seeking = true; timeEl.textContent = `${fmt(seek.value / 1000 * (au.duration || ep.duration))} / ${fmt(au.duration || ep.duration)}`; });
   seek.addEventListener("change", () => { seeking = false; const t = seek.value / 1000 * (au.duration || ep.duration); if (au.readyState >= 1) au.currentTime = t; else pendingSeek = t; });
   epBtns.forEach(b => b.addEventListener("click", () => {
+    if (b.classList.contains("om-locked") || b.dataset.locked === "true") { showSampleEnd(true); return; }
     const n = +b.dataset.ep;
+    const target = SB && SB.episodes.find(e => e.n === n);
+    if (!isPlayable(target)) { showSampleEnd(true); return; }
     if (n === epN) { if (au.paused) start(); return; }
     loadEpisode(n, { play: true, resume: true });
     stage.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -159,13 +180,24 @@
     set("seekbackward", d => { au.currentTime = Math.max(0, au.currentTime - (d.seekOffset || 15)); });
     set("seekforward", d => { au.currentTime = Math.min(au.duration - 0.5, au.currentTime + (d.seekOffset || 30)); });
     set("seekto", d => { if (d.seekTime != null) au.currentTime = d.seekTime; });
-    set("previoustrack", () => { if (au.currentTime > 5 || epN === 1) au.currentTime = 0; else loadEpisode(epN - 1, { play: true, resume: false }); });
-    set("nexttrack", () => { if (epN < SB.episodes.length) loadEpisode(epN + 1, { play: true, resume: false }); });
+    set("previoustrack", () => {
+      if (au.currentTime > 5 || epN === 1 || !SB) { au.currentTime = 0; return; }
+      const prev = SB.episodes.find(e => e.n === epN - 1);
+      if (isPlayable(prev)) loadEpisode(prev.n, { play: true, resume: false });
+      else au.currentTime = 0;
+    });
+    set("nexttrack", () => {
+      const nxt = SB && SB.episodes.find(e => e.n === epN + 1);
+      if (isPlayable(nxt)) loadEpisode(nxt.n, { play: true, resume: false });
+      else showSampleEnd(true);
+    });
   }
 
   fetch("storyboard.json").then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(j => {
     SB = j;
-    const st = store.get(); const n = SB.episodes.some(e => e.n === st.ep) ? st.ep : 1;
+    const st = store.get();
+    const saved = SB.episodes.find(e => e.n === st.ep);
+    const n = isPlayable(saved) ? saved.n : 1;
     loadEpisode(n, { play: false, resume: true }); ui();
   }).catch(() => { cap.textContent = "The audiobook could not be loaded. Please refresh the page."; });
 
