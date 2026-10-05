@@ -131,7 +131,8 @@
     "old-man-audiobook",
     "past-inspirations.html",
     "book-worlds",
-    "old-man-game"
+    "old-man-game",
+    "studio.html"
   ];
 
   var ids = Object.keys(SPOTS);
