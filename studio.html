@@ -5,9 +5,9 @@
 <meta name="theme-color" content="#16130f">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Oil Studio | Jason Collier</title>
-<meta name="description" content="Paint with oils in the browser. A linen canvas, a classic palette, and brushes that smear and mix like wet paint.">
+<meta name="description" content="Paint with oils in the browser. A linen canvas on a studio easel, a wooden palette, and brushes that smear and mix like wet paint.">
 <meta property="og:title" content="Oil Studio | Jason Collier">
-<meta property="og:description" content="Paint with oils in the browser. A linen canvas, a classic palette, and brushes that smear and mix like wet paint.">
+<meta property="og:description" content="Paint with oils in the browser. A linen canvas on a studio easel, a wooden palette, and brushes that smear and mix like wet paint.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://jasoncollierbooks.github.io/jason-collier-books/images/jason-art/painting-lighthouse-at-dusk.jpg">
 <meta property="og:image:width" content="720">
@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="Jason Collier Books">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Oil Studio | Jason Collier">
-<meta name="twitter:description" content="Paint with oils in the browser. A linen canvas, a classic palette, and brushes that smear and mix like wet paint.">
+<meta name="twitter:description" content="Paint with oils in the browser. A linen canvas on a studio easel, a wooden palette, and brushes that smear and mix like wet paint.">
 <meta name="twitter:image" content="https://jasoncollierbooks.github.io/jason-collier-books/images/jason-art/painting-lighthouse-at-dusk.jpg">
 <link rel="canonical" href="https://jasoncollierbooks.github.io/jason-collier-books/studio.html">
 <link rel="icon" href="icons/pages/studio-32.png?v=tv2" sizes="32x32" type="image/png">
@@ -74,61 +74,87 @@
     <header class="page-head">
       <p class="kicker">The studio</p>
       <h1>Oil Studio</h1>
-      <p>The paintings on the <a href="art.html">Art page</a> are oils. Dip a brush and drag on the canvas. Wet color smears and mixes under the stroke.</p>
+      <p>The paintings on the <a href="art.html">Art page</a> are oils. The canvas sits on an easel, like a television painting studio. Dip a brush and drag. Wet color smears and mixes.</p>
     </header>
 
-    <div class="studio-board">
-      <aside class="studio-col brush-col" aria-label="Brushes">
-        <h2>Brushes</h2>
-        <div class="brush-list" id="studio-brushes" role="radiogroup" aria-label="Brushes">
-          <button type="button" class="brush" data-kind="round" role="radio" aria-checked="true">
-            <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="currentColor" d="M24 4c6 8 8 14 8 18a8 8 0 1 1-16 0c0-4 2-10 8-18z"/><rect x="21" y="28" width="6" height="16" rx="2" fill="currentColor"/></svg>
-            <span>Round</span>
-          </button>
-          <button type="button" class="brush" data-kind="flat" role="radio" aria-checked="false" tabindex="-1">
-            <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="8" y="8" width="32" height="14" rx="2" fill="currentColor"/><rect x="21" y="22" width="6" height="20" rx="2" fill="currentColor"/></svg>
-            <span>Flat</span>
-          </button>
-          <button type="button" class="brush" data-kind="filbert" role="radio" aria-checked="false" tabindex="-1">
-            <svg viewBox="0 0 48 48" aria-hidden="true"><ellipse cx="24" cy="16" rx="16" ry="10" fill="currentColor"/><rect x="21" y="24" width="6" height="18" rx="2" fill="currentColor"/></svg>
-            <span>Filbert</span>
-          </button>
-          <button type="button" class="brush" data-kind="knife" role="radio" aria-checked="false" tabindex="-1">
-            <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="currentColor" d="M6 18h26l8 6-8 6H6z"/><rect x="34" y="22" width="10" height="4" rx="1" fill="currentColor"/></svg>
-            <span>Knife</span>
-          </button>
-        </div>
-        <label class="studio-size">Brush size <strong id="studio-size-read">28</strong>
-          <input id="studio-size" type="range" min="12" max="64" value="28" aria-valuemin="12" aria-valuemax="64" aria-valuenow="28">
-        </label>
-      </aside>
+    <div class="studio-set">
+      <div class="set-backdrop" aria-hidden="true"></div>
 
-      <div class="easel">
-        <p class="studio-status"><span id="studio-status" aria-live="polite">Round brush. Cadmium Red.</span><span id="studio-chip" class="studio-chip" role="img" aria-label="Paint on the brush"></span></p>
-        <div class="stretcher">
-          <div class="canvas-box" id="studio-frame">
-            <canvas id="studio-canvas" aria-label="Oil canvas. Drag with a finger, mouse, or stylus to paint."></canvas>
-            <div id="studio-ring" class="brush-ring" hidden></div>
+      <div class="studio-stage">
+        <div class="easel">
+          <p class="studio-status"><span id="studio-status" aria-live="polite">Round brush. Cadmium Red.</span><span id="studio-chip" class="studio-chip" role="img" aria-label="Paint on the brush"></span></p>
+          <div class="easel-stand">
+            <div class="stretcher">
+              <div class="canvas-box" id="studio-frame">
+                <canvas id="studio-canvas" aria-label="Oil canvas. Drag with a finger, mouse, or stylus to paint."></canvas>
+                <div id="studio-ring" class="brush-ring" hidden></div>
+              </div>
+            </div>
+            <div class="easel-ledge" aria-hidden="true"></div>
+            <div class="easel-legs" aria-hidden="true">
+              <span class="leg leg-l"></span>
+              <span class="leg leg-r"></span>
+              <span class="crossbar"></span>
+            </div>
+            <div class="studio-stool" aria-hidden="true"></div>
           </div>
         </div>
-      </div>
-      <div class="studio-actions">
-        <button type="button" id="studio-undo" class="studio-btn" disabled>Undo</button>
-        <button type="button" id="studio-clear" class="studio-btn">Clear</button>
-        <button type="button" id="studio-save" class="studio-btn">Save</button>
-        <button type="button" id="studio-quality" class="studio-btn" aria-pressed="false" aria-label="Simpler blend">Simpler</button>
-      </div>
-      <p id="studio-note" class="studio-note"></p>
 
-      <aside class="studio-col palette-col" aria-label="Oil palette">
-        <div class="palette-wood">
+        <aside class="palette-col" aria-label="Oil palette">
           <div class="palette-bar">
             <h2>Palette</h2>
             <button type="button" id="studio-wipe" class="studio-btn studio-wipe">Wipe brush</button>
           </div>
-          <div class="oil-list" id="studio-palette" role="radiogroup" aria-label="Oil colors"></div>
+          <div class="kidney">
+            <svg class="kidney-shape" viewBox="0 0 360 500" aria-hidden="true">
+              <defs>
+                <radialGradient id="studio-wood" cx="42%" cy="38%" r="72%">
+                  <stop offset="0%" stop-color="#e0aa68"/>
+                  <stop offset="46%" stop-color="#a86434"/>
+                  <stop offset="100%" stop-color="#6a3c1c"/>
+                </radialGradient>
+              </defs>
+              <path id="studio-palette-wood" fill="url(#studio-wood)" fill-rule="evenodd" stroke="#3d2614" stroke-width="7" d="M10 250A170 230 0 1 1 350 250A170 230 0 1 1 10 250ZM54 258m-32 0a32 32 0 1 0 64 0a32 32 0 1 0-64 0Z"/>
+              <circle cx="54" cy="258" r="26" fill="none" stroke="#2a180e" stroke-width="5"/>
+            </svg>
+            <div class="oil-list" id="studio-palette" role="radiogroup" aria-label="Oil colors"></div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="brush-tray">
+        <aside class="brush-col" aria-label="Brushes">
+          <h2>Brushes</h2>
+          <div class="brush-list" id="studio-brushes" role="radiogroup" aria-label="Brushes">
+            <button type="button" class="brush" data-kind="round" role="radio" aria-checked="true">
+              <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="currentColor" d="M24 4c6 8 8 14 8 18a8 8 0 1 1-16 0c0-4 2-10 8-18z"/><rect x="21" y="28" width="6" height="16" rx="2" fill="currentColor"/></svg>
+              <span>Round</span>
+            </button>
+            <button type="button" class="brush" data-kind="flat" role="radio" aria-checked="false" tabindex="-1">
+              <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="8" y="8" width="32" height="14" rx="2" fill="currentColor"/><rect x="21" y="22" width="6" height="20" rx="2" fill="currentColor"/></svg>
+              <span>Flat</span>
+            </button>
+            <button type="button" class="brush" data-kind="filbert" role="radio" aria-checked="false" tabindex="-1">
+              <svg viewBox="0 0 48 48" aria-hidden="true"><ellipse cx="24" cy="16" rx="16" ry="10" fill="currentColor"/><rect x="21" y="24" width="6" height="18" rx="2" fill="currentColor"/></svg>
+              <span>Filbert</span>
+            </button>
+            <button type="button" class="brush" data-kind="knife" role="radio" aria-checked="false" tabindex="-1">
+              <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="currentColor" d="M6 18h26l8 6-8 6H6z"/><rect x="34" y="22" width="10" height="4" rx="1" fill="currentColor"/></svg>
+              <span>Knife</span>
+            </button>
+          </div>
+          <label class="studio-size">Brush size <strong id="studio-size-read">28</strong>
+            <input id="studio-size" type="range" min="12" max="64" value="28" aria-valuemin="12" aria-valuemax="64" aria-valuenow="28">
+          </label>
+        </aside>
+        <div class="studio-actions">
+          <button type="button" id="studio-undo" class="studio-btn" disabled>Undo</button>
+          <button type="button" id="studio-clear" class="studio-btn">Clear</button>
+          <button type="button" id="studio-save" class="studio-btn">Save</button>
+          <button type="button" id="studio-quality" class="studio-btn" aria-pressed="false" aria-label="Simpler blend">Simpler</button>
         </div>
-      </aside>
+      </div>
+      <p id="studio-note" class="studio-note"></p>
     </div>
   </div>
 </section>
