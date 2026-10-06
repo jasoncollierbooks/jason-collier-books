@@ -87,7 +87,41 @@
             <div class="stretcher">
               <div class="canvas-box" id="studio-frame">
                 <canvas id="studio-canvas" aria-label="Oil canvas. Drag with a finger, mouse, or stylus to paint."></canvas>
-                <div id="studio-ring" class="brush-ring" hidden></div>
+                <div id="studio-cursor" class="tool-cursor" data-kind="round" hidden aria-hidden="true">
+                  <svg viewBox="0 0 88 128">
+                    <g class="tool-glyph tool-round">
+                      <rect x="38" y="0" width="12" height="48" rx="3" fill="#8a552c"/>
+                      <rect x="40" y="2" width="3" height="44" rx="1" fill="#e0b078" opacity=".8"/>
+                      <rect x="32" y="46" width="24" height="14" fill="#f4f0e8"/>
+                      <rect x="32" y="46" width="24" height="3" fill="#b7b1a6"/>
+                      <rect class="tool-tip" x="36" y="58" width="16" height="22"/>
+                      <ellipse class="tool-tip" cx="44" cy="96" rx="28" ry="22"/>
+                      <path d="M44 70v36M34 74v24M54 74v24" stroke="#2a120c" stroke-width="1.3" opacity=".35" fill="none"/>
+                    </g>
+                    <g class="tool-glyph tool-flat">
+                      <rect x="39" y="0" width="10" height="58" rx="2" fill="#8a552c"/>
+                      <rect x="41" y="2" width="3" height="52" fill="#e0b078" opacity=".75"/>
+                      <rect x="32" y="54" width="24" height="12" fill="#f4f0e8"/>
+                      <path class="tool-tip" d="M14 66h60l6 18H8z"/>
+                      <rect class="tool-tip" x="6" y="96" width="76" height="22" rx="2"/>
+                      <path d="M16 100h56M16 108h56M16 114h56" stroke="#2a120c" stroke-width="1" opacity=".28" fill="none"/>
+                    </g>
+                    <g class="tool-glyph tool-filbert">
+                      <rect x="39" y="0" width="10" height="52" rx="2" fill="#8a552c"/>
+                      <rect x="41" y="2" width="3" height="46" fill="#e0b078" opacity=".75"/>
+                      <rect x="33" y="48" width="22" height="12" fill="#f4f0e8"/>
+                      <path class="tool-tip" d="M33 58h22l8 16c0 22-8 40-19 44-11-4-19-22-19-44z"/>
+                      <path d="M44 66v40M36 70v28M52 70v28" stroke="#2a120c" stroke-width="1.2" opacity=".32" fill="none"/>
+                    </g>
+                    <g class="tool-glyph tool-knife">
+                      <rect x="50" y="2" width="9" height="52" rx="3" fill="#6b3e22" transform="rotate(16 54 28)"/>
+                      <rect x="52" y="4" width="3" height="46" fill="#e0b078" opacity=".7" transform="rotate(16 54 28)"/>
+                      <path d="M16 74 L74 100 L44 118 L8 96 Z" fill="#d7dbe2"/>
+                      <path d="M28 86 L60 102" stroke="#ffffff" stroke-width="2" opacity=".45" fill="none"/>
+                      <path class="tool-tip" d="M26 98 L44 118 L14 104 Z"/>
+                    </g>
+                  </svg>
+                </div>
               </div>
             </div>
             <div class="easel-ledge" aria-hidden="true"></div>
@@ -147,11 +181,14 @@
             <input id="studio-size" type="range" min="12" max="64" value="28" aria-valuemin="12" aria-valuemax="64" aria-valuenow="28">
           </label>
         </aside>
-        <div class="studio-actions">
-          <button type="button" id="studio-undo" class="studio-btn" disabled>Undo</button>
-          <button type="button" id="studio-clear" class="studio-btn">Clear</button>
-          <button type="button" id="studio-save" class="studio-btn">Save</button>
-          <button type="button" id="studio-quality" class="studio-btn" aria-pressed="false" aria-label="Simpler blend">Simpler</button>
+        <div class="studio-side">
+          <div class="studio-actions">
+            <button type="button" id="studio-undo" class="studio-btn" disabled>Undo</button>
+            <button type="button" id="studio-clear" class="studio-btn">Clear</button>
+            <button type="button" id="studio-save" class="studio-btn" aria-label="Save PNG">Save</button>
+            <button type="button" id="studio-quality" class="studio-btn" aria-pressed="false" aria-label="Simpler blend">Simpler</button>
+          </div>
+          <button type="button" id="studio-print" class="studio-btn studio-print-btn">Print</button>
         </div>
       </div>
       <p id="studio-note" class="studio-note"></p>
@@ -165,6 +202,23 @@
   <span class="visit-count" hidden></span>
   <span class="foot-links"><a href="https://x.com/jascol235175" target="_blank" rel="noopener">X @jascol235175</a><a href="https://www.amazon.com/stores/author/B0GDW74Y5S" target="_blank" rel="noopener">Amazon Author Page</a><a href="mailto:outdoorsolution@bellsouth.net">Email</a><a href="https://venmo.com/u/Jason-Collier-40" target="_blank" rel="noopener noreferrer">Tip the trail boss</a></span>
 </footer>
+<dialog id="studio-print-dialog" class="studio-print-dialog" aria-labelledby="studio-print-title">
+  <form id="studio-print-form">
+    <h2 id="studio-print-title">Print this painting</h2>
+    <label for="studio-title">Title
+      <input id="studio-title" name="title" maxlength="80" autocomplete="off" placeholder="Optional">
+    </label>
+    <label for="studio-painter">Name
+      <input id="studio-painter" name="painter" maxlength="80" autocomplete="name" placeholder="Optional">
+    </label>
+    <p class="studio-print-help">Both are optional. The printed page is the painting, plus a title or name if you add one.</p>
+    <p id="studio-print-note" class="studio-print-note" role="status"></p>
+    <div class="studio-print-actions">
+      <button type="submit" class="studio-btn studio-print-btn">Print</button>
+      <button type="button" id="studio-print-cancel" class="studio-btn">Keep painting</button>
+    </div>
+  </form>
+</dialog>
 <script src="main.js" defer></script>
 <script type="module" src="studio.js"></script>
 </body>

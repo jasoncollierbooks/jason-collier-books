@@ -470,7 +470,14 @@ function mount() {
   const saveBtn = document.getElementById("studio-save");
   const wipeBtn = document.getElementById("studio-wipe");
   const qualityBtn = document.getElementById("studio-quality");
-  const ring = document.getElementById("studio-ring");
+  const cursor = document.getElementById("studio-cursor");
+  const printDialog = document.getElementById("studio-print-dialog");
+  const printForm = document.getElementById("studio-print-form");
+  const printBtn = document.getElementById("studio-print");
+  const printCancel = document.getElementById("studio-print-cancel");
+  const printNote = document.getElementById("studio-print-note");
+  const titleInput = document.getElementById("studio-title");
+  const painterInput = document.getElementById("studio-painter");
   const palette = document.getElementById("studio-palette");
   const brushes = document.getElementById("studio-brushes");
 
@@ -487,6 +494,9 @@ function mount() {
   let leftover = 0;
   let lastTime = 0;
   let dirty = null;
+  let pointerOver = false;
+  let cursorTimer = 0;
+  let lastClient = null;
 
   const KIND_LABEL = { round: "Round brush", flat: "Flat brush", filbert: "Filbert brush", knife: "Palette knife" };
 
@@ -557,7 +567,11 @@ function mount() {
       : "Wet paint smears and mixes as you drag. This is a studio sketch of oils, not a full physics model.";
     sizeRead.textContent = String(cssSize());
     sizeInput.setAttribute("aria-valuenow", String(cssSize()));
-    if (ring) ring.dataset.kind = kind;
+    if (cursor) {
+      cursor.dataset.kind = kind;
+      cursor.classList.toggle("is-simple", simple);
+      cursor.style.setProperty("--paint", `rgb(${carry[0]}, ${carry[1]}, ${carry[2]})`);
+    }
   }
 
   function rebuild(keepPaint) {
@@ -674,21 +688,69 @@ function mount() {
     leftover = dist - traveled;
   }
 
-  function placeRing(clientX, clientY) {
-    if (!ring) return;
+  function placeCursor(clientX, clientY, drawingNow) {
+    if (!cursor) return;
+    lastClient = { x: clientX, y: clientY, drawing: !!drawingNow };
     const rect = frame.getBoundingClientRect();
-    const canvasRect = canvas.getBoundingClientRect();
-    const x = clientX - canvasRect.left;
-    const y = clientY - canvasRect.top;
-    const size = cssSize();
-    const wide = kind === "flat" || kind === "knife" ? size * 1.65 : kind === "filbert" ? size * 1.15 : size;
-    const tall = kind === "flat" || kind === "knife" ? size * 0.5 : kind === "filbert" ? size * 0.68 : size;
-    const offsetX = canvasRect.left - rect.left;
-    const offsetY = canvasRect.top - rect.top;
-    ring.hidden = false;
-    ring.style.width = `${wide * 2}px`;
-    ring.style.height = `${tall * 2}px`;
-    ring.style.transform = `translate(${offsetX + x - wide}px, ${offsetY + y - tall}px)`;
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    const scale = Math.max(0.45, Math.min(2.3, cssSize() / 28));
+    let angle = -38;
+    if (drawingNow) angle = Math.atan2(lastDir.x, lastDir.y) * (180 / Math.PI);
+    const carry = engine.carry();
+    cursor.hidden = false;
+    cursor.dataset.kind = kind;
+    cursor.classList.toggle("is-simple", simple);
+    cursor.style.setProperty("--paint", `rgb(${carry[0]}, ${carry[1]}, ${carry[2]})`);
+    cursor.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg) scale(${scale})`;
+    cursor.classList.add("is-on");
+    clearTimeout(cursorTimer);
+  }
+
+  function fadeCursor() {
+    if (!cursor) return;
+    cursor.classList.remove("is-on");
+    lastClient = null;
+    clearTimeout(cursorTimer);
+    const wait = simple ? 0 : 300;
+    cursorTimer = setTimeout(() => {
+      if (!cursor.classList.contains("is-on")) cursor.hidden = true;
+    }, wait);
+  }
+
+  function openPrint(dataUrl, title, painter) {
+    const popup = window.open("", "_blank", "noopener,width=900,height=1100");
+    if (!popup) {
+      if (printNote) printNote.textContent = "The browser blocked the print window. Allow pop-ups for this page, then try Print again.";
+      return false;
+    }
+    const doc = popup.document;
+    doc.open();
+    doc.write("<!DOCTYPE html><html><head><meta charset='utf-8'><title></title></head><body></body></html>");
+    doc.close();
+    doc.title = title || "Oil Studio";
+    const style = doc.createElement("style");
+    style.textContent = "body{margin:1rem;text-align:center;font-family:Georgia,serif;color:#1a120c;background:#fff}img{max-width:100%;height:auto}h1{font-size:1.8rem;margin:.7rem 0 .15rem}p{font-size:1.35rem;margin:.1rem 0}@media print{body{margin:.4in}h1,p{color:#000}}";
+    doc.head.appendChild(style);
+    const img = doc.createElement("img");
+    img.src = dataUrl;
+    img.alt = title || "Oil painting";
+    doc.body.appendChild(img);
+    if (title) {
+      const heading = doc.createElement("h1");
+      heading.textContent = title;
+      doc.body.appendChild(heading);
+    }
+    if (painter) {
+      const who = doc.createElement("p");
+      who.textContent = painter;
+      doc.body.appendChild(who);
+    }
+    img.addEventListener("load", () => {
+      popup.focus();
+      popup.print();
+    });
+    return true;
   }
 
   function selectOil(next) {
@@ -735,6 +797,7 @@ function mount() {
   sizeInput.addEventListener("input", () => {
     applyRadius();
     syncChrome();
+    if (lastClient) placeCursor(lastClient.x, lastClient.y, lastClient.drawing);
   });
 
   undoBtn.addEventListener("click", () => {
@@ -768,6 +831,28 @@ function mount() {
     link.click();
   });
 
+  if (printBtn && printDialog) {
+    printBtn.addEventListener("click", () => {
+      fadeCursor();
+      if (printNote) printNote.textContent = "";
+      if (typeof printDialog.showModal === "function") printDialog.showModal();
+      if (titleInput) titleInput.focus();
+    });
+  }
+  if (printCancel && printDialog) {
+    printCancel.addEventListener("click", () => printDialog.close());
+  }
+  if (printForm) {
+    printForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      flush(true);
+      const title = (titleInput && titleInput.value.trim()) || "";
+      const painter = (painterInput && painterInput.value.trim()) || "";
+      const opened = openPrint(canvas.toDataURL("image/png"), title, painter);
+      if (opened && printDialog.open) printDialog.close();
+    });
+  }
+
   function down(e) {
     if (pointerId !== null) return;
     if (e.pointerType === "mouse" && e.button !== 0) return;
@@ -784,12 +869,12 @@ function mount() {
     markDirty(engine.stamp(last.x, last.y, 1, 0, pressureFrom(e, 1), "dab"));
     flush(false);
     syncChrome();
-    placeRing(e.clientX, e.clientY);
+    placeCursor(e.clientX, e.clientY, true);
   }
 
   function move(e) {
     if (e.pointerId !== pointerId || !drawing || !last) {
-      if (e.pointerType !== "touch") placeRing(e.clientX, e.clientY);
+      if (e.pointerType === "mouse") placeCursor(e.clientX, e.clientY, false);
       return;
     }
     e.preventDefault();
@@ -816,7 +901,7 @@ function mount() {
     lastTime = e.timeStamp;
     flush(false);
     syncChrome();
-    placeRing(e.clientX, e.clientY);
+    placeCursor(e.clientX, e.clientY, true);
   }
 
   function up(e) {
@@ -827,6 +912,8 @@ function mount() {
     document.documentElement.classList.remove("studio-painting");
     flush(false);
     syncChrome();
+    if (e.pointerType === "mouse" && pointerOver) placeCursor(e.clientX, e.clientY, false);
+    else fadeCursor();
   }
 
   canvas.addEventListener("pointerdown", down, { passive: false });
@@ -834,15 +921,16 @@ function mount() {
   canvas.addEventListener("pointerup", up);
   canvas.addEventListener("pointercancel", up);
   canvas.addEventListener("pointerleave", e => {
-    if (!drawing && ring) ring.hidden = true;
     if (e.pointerId === pointerId && drawing) up(e);
   });
   canvas.addEventListener("contextmenu", e => e.preventDefault());
+  frame.addEventListener("pointerenter", () => { pointerOver = true; });
   frame.addEventListener("pointermove", e => {
-    if (!drawing && e.pointerType !== "touch") placeRing(e.clientX, e.clientY);
+    if (!drawing && e.pointerType === "mouse") placeCursor(e.clientX, e.clientY, false);
   });
   frame.addEventListener("pointerleave", () => {
-    if (!drawing && ring) ring.hidden = true;
+    pointerOver = false;
+    if (!drawing) fadeCursor();
   });
 
   document.addEventListener("touchmove", e => {

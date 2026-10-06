@@ -154,7 +154,7 @@ body.page-studio .page-head a {
     repeating-linear-gradient(0deg, rgba(90, 60, 30, .05) 0 1px, transparent 1px 5px),
     #e6d9c4;
   touch-action: none;
-  cursor: crosshair;
+  cursor: none;
 }
 .canvas-box canvas {
   width: 100%;
@@ -162,16 +162,39 @@ body.page-studio .page-head a {
   display: block;
   touch-action: none;
 }
-.brush-ring {
+.tool-cursor {
   position: absolute;
   left: 0;
   top: 0;
-  border: 2px solid rgba(42, 24, 12, .75);
-  border-radius: 50%;
-  box-shadow: inset 0 0 0 1px rgba(255, 248, 236, .45);
+  width: 88px;
+  height: 128px;
+  margin-left: -44px;
+  margin-top: -118px;
+  transform-origin: 44px 118px;
   pointer-events: none;
-  z-index: 2;
+  z-index: 4;
+  opacity: 0;
+  transition: opacity .28s ease;
+  filter: drop-shadow(1px 2px 1px rgba(0, 0, 0, .35));
 }
+.tool-cursor.is-on { opacity: 1; }
+.tool-cursor.is-simple {
+  transition: none;
+  filter: none;
+}
+.tool-cursor[hidden] { display: none; }
+.tool-cursor svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+.tool-glyph { display: none; }
+.tool-cursor[data-kind="round"] .tool-round,
+.tool-cursor[data-kind="flat"] .tool-flat,
+.tool-cursor[data-kind="filbert"] .tool-filbert,
+.tool-cursor[data-kind="knife"] .tool-knife { display: block; }
+.tool-tip { fill: var(--paint, #d83a2e); }
 .easel-ledge {
   position: relative;
   z-index: 3;
@@ -470,10 +493,72 @@ body.page-studio .page-head a {
   background: #f3e6c8;
   border: 3px solid #6a4324;
 }
+.studio-side {
+  display: grid;
+  gap: .5rem;
+  align-content: end;
+}
 .studio-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: .45rem;
+}
+.studio-print-btn {
+  min-height: 64px;
+  font-size: 1.4rem;
+  background: linear-gradient(180deg, #fff6e4, #e4c98a);
+  color: #24180f;
+  border-color: #f3e6c8;
+}
+.studio-print-dialog {
+  width: min(34rem, calc(100vw - 1.25rem));
+  padding: 1.15rem 1.15rem 1.2rem;
+  border: 3px solid #e4c98a;
+  border-radius: 16px;
+  background: #24160f;
+  color: #fbf6ee;
+}
+.studio-print-dialog::backdrop {
+  background: rgba(12, 8, 6, .72);
+}
+.studio-print-dialog h2 {
+  font-family: "Cinzel", Palatino, serif;
+  font-size: clamp(1.7rem, 4vw, 2.1rem);
+  margin: 0 0 .75rem;
+  color: #fff6e4;
+}
+.studio-print-dialog label {
+  display: grid;
+  gap: .28rem;
+  margin-bottom: .7rem;
+  font-family: "Josefin Sans", "Gill Sans", "Trebuchet MS", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+.studio-print-dialog input {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1.35rem;
+  min-height: 58px;
+  padding: .4rem .7rem;
+  border-radius: 10px;
+  border: 2px solid #e4c98a;
+  background: #fff8ee;
+  color: #24160f;
+}
+.studio-print-help,
+.studio-print-note {
+  margin: 0 0 .55rem;
+  font-family: "Cormorant Garamond", Palatino, Georgia, serif;
+  font-size: 1.25rem;
+  line-height: 1.3;
+  color: #f3e0c4;
+}
+.studio-print-note:empty { display: none; }
+.studio-print-actions {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: .5rem;
 }
 .studio-btn {
   min-height: 52px;
@@ -561,6 +646,8 @@ body.page-studio footer {
   }
   .brush svg { width: 30px; height: 30px; }
   .studio-actions { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .studio-print-btn { min-height: 68px; font-size: 1.45rem; }
+  .studio-print-actions { grid-template-columns: 1fr; }
   .studio-note {
     font-size: 1.2rem;
     padding-bottom: 1.8rem;
