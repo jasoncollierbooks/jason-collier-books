@@ -265,13 +265,13 @@ body.page-studio .page-head a {
 .kidney {
   position: relative;
   width: 100%;
-  aspect-ratio: 3 / 4.2;
+  aspect-ratio: 360 / 500;
 }
 .kidney-shape {
   position: absolute;
-  inset: 6% 4% 8%;
-  width: 92%;
-  height: 86%;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   overflow: visible;
   filter: drop-shadow(0 14px 16px rgba(0, 0, 0, .4));
 }
@@ -281,51 +281,82 @@ body.page-studio .page-head a {
 }
 .oil {
   position: absolute;
-  width: 92px;
+  width: 54px;
+  height: 50px;
+  min-width: 48px;
   min-height: 48px;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: .15rem;
+  display: block;
   border: 0;
   background: transparent;
   box-shadow: none;
-  transform: translate(-50%, -18%);
+  transform: translate(-50%, -50%);
   color: #fbf6ee;
 }
-.oil:nth-child(1) { left: 24%; top: 8%; }
-.oil:nth-child(2) { left: 50%; top: 3%; }
-.oil:nth-child(3) { left: 76%; top: 8%; }
-.oil:nth-child(4) { left: 88%; top: 30%; }
-.oil:nth-child(5) { left: 84%; top: 50%; }
-.oil:nth-child(6) { left: 68%; top: 72%; }
-.oil:nth-child(7) { left: 44%; top: 84%; }
-.oil:nth-child(8) { left: 20%; top: 72%; }
-.oil:nth-child(9) { left: 12%; top: 48%; }
-.oil:nth-child(10) { left: 14%; top: 26%; }
+/* Light to dark around the rim: white, yellow, ochre, red, crimson, blue, cobalt, green, umber, black. */
+.oil:nth-child(1) { left: 33.3%; top: 17.6%; }
+.oil:nth-child(2) { left: 51.4%; top: 10%; }
+.oil:nth-child(3) { left: 70.8%; top: 17.6%; }
+.oil:nth-child(4) { left: 84%; top: 40%; }
+.oil:nth-child(5) { left: 83.9%; top: 53.6%; }
+.oil:nth-child(6) { left: 74.4%; top: 75%; }
+.oil:nth-child(7) { left: 51.4%; top: 87.6%; }
+.oil:nth-child(8) { left: 30%; top: 80%; }
+.oil:nth-child(9) { left: 21.7%; top: 65%; }
+.oil:nth-child(10) { left: 22.8%; top: 35%; }
 .dab {
-  width: 56px;
-  height: 52px;
+  display: block;
+  width: 52px;
+  height: 48px;
+  margin: 0 auto;
   border-radius: 48% 52% 46% 54% / 42% 46% 58% 54%;
   background:
     radial-gradient(circle at 32% 26%, rgba(255, 255, 255, .78), transparent 24%),
     radial-gradient(circle at 68% 74%, rgba(0, 0, 0, .28), transparent 48%),
     radial-gradient(circle at 50% 55%, var(--oil), #140c08 145%);
   box-shadow:
-    0 4px 0 rgba(0, 0, 0, .32),
-    inset 0 -7px 8px rgba(0, 0, 0, .28),
+    0 3px 0 rgba(0, 0, 0, .28),
+    inset 0 -6px 8px rgba(0, 0, 0, .28),
     inset 0 2px 2px rgba(255, 255, 255, .35);
 }
 .oil-name {
-  font-size: 1.15rem;
+  position: absolute;
+  width: max-content;
+  max-width: 5.5rem;
+  font-size: 1.14rem;
   line-height: 1.05;
   text-align: center;
   text-wrap: balance;
-  max-width: 92px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, .85), 0 0 6px rgba(0, 0, 0, .55);
+  text-shadow: 0 1px 1px rgba(28, 12, 6, .95), 0 0 2px rgba(28, 12, 6, .8);
+}
+.oil:nth-child(-n+3) .oil-name {
+  top: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+.oil:nth-child(3) .oil-name,
+.oil:nth-child(7) .oil-name,
+.oil:nth-child(10) .oil-name {
+  max-width: 4.5rem;
+}
+.oil:nth-child(4) .oil-name,
+.oil:nth-child(5) .oil-name {
+  right: calc(100% + 4px);
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: right;
+}
+.oil:nth-child(n+6):nth-child(-n+8) .oil-name {
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+.oil:nth-child(n+9) .oil-name {
+  left: calc(100% + 4px);
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: left;
 }
 .oil[aria-checked="true"] .dab {
   box-shadow:
@@ -518,10 +549,7 @@ body.page-studio footer {
   .easel-legs { height: 64px; }
   .studio-status { font-size: 1.2rem; margin-bottom: .3rem; }
   .studio-chip { width: 36px; height: 36px; }
-  .kidney { aspect-ratio: 3 / 5; }
-  .oil { width: 86px; }
-  .oil-name { font-size: 1.12rem; max-width: 86px; }
-  .dab { width: 52px; height: 48px; }
+  .oil-name { font-size: 1.12rem; }
   .brush-tray {
     grid-template-columns: 1fr;
     margin-top: .15rem;
