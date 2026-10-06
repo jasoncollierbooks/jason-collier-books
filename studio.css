@@ -503,7 +503,7 @@ body.page-studio .page-head a {
   grid-template-columns: 1fr 1fr;
   gap: .45rem;
 }
-.studio-print-btn {
+.studio-btn.studio-print-btn {
   min-height: 64px;
   font-size: 1.4rem;
   background: linear-gradient(180deg, #fff6e4, #e4c98a);
@@ -646,7 +646,7 @@ body.page-studio footer {
   }
   .brush svg { width: 30px; height: 30px; }
   .studio-actions { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .studio-print-btn { min-height: 68px; font-size: 1.45rem; }
+  .studio-btn.studio-print-btn { min-height: 68px; font-size: 1.45rem; }
   .studio-print-actions { grid-template-columns: 1fr; }
   .studio-note {
     font-size: 1.2rem;
