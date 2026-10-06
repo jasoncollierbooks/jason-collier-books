@@ -564,7 +564,7 @@ function mount() {
     const rect = frame.getBoundingClientRect();
     const cssW = Math.max(2, rect.width);
     const cssH = Math.max(2, rect.height);
-    const dpr = Math.min(window.devicePixelRatio || 1, simple ? 1 : 1.35);
+    const dpr = Math.min(window.devicePixelRatio || 1, simple ? 1 : 2);
     let bw = Math.max(2, Math.round(cssW * dpr));
     let bh = Math.max(2, Math.round(cssH * dpr));
     const cap = simple ? 640000 : 1100000;
