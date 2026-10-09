@@ -18,6 +18,7 @@
    - No drying time, solvent, or real impasto height.
    - Not a spectral mix, so some tube pairs will not match real paint.
 */
+import { PIGMENTS, FAMILIES } from "./studio-colors.js?v=1";
 export const OILS = [
   { id: "white", name: "White", pigment: "Titanium White", rgb: [244, 240, 230] },
   { id: "yellow", name: "Yellow", pigment: "Cadmium Yellow", rgb: [242, 194, 0] },
@@ -30,6 +31,13 @@ export const OILS = [
   { id: "umber", name: "Umber", pigment: "Burnt Umber", rgb: [106, 59, 34] },
   { id: "black", name: "Ivory Black", pigment: "Ivory Black", rgb: [48, 44, 40] }
 ];
+const OIL_DEFAULTS = OILS.map(o => ({ ...o, rgb: o.rgb.slice() }));
+function setSlot(o, pig) { o.name = pig.name; o.pigment = pig.name; o.rgb = pig.rgb.slice(); }
+try {
+  const saved = JSON.parse(localStorage.getItem("studioPalette") || "null");
+  if (Array.isArray(saved)) saved.forEach((n, i) => { const p = n && PIGMENTS.find(x => x.name === n); if (p && OILS[i]) setSlot(OILS[i], p); });
+} catch (e) {}
+
 
 const TUNE = {
   round: { bristles: 9, rx: 1, ry: 1, spread: 0.9, smear: 0.42, deposit: 0.74, pickup: 0.18, use: 0.003 },
@@ -1531,6 +1539,77 @@ function mount() {
     requestAnimationFrame(frameStep);
   }
 
+  function paintTube(btn, item) {
+    btn.setAttribute("aria-label", item.pigment);
+    btn.innerHTML = `<span class="dab" style="--oil:rgb(${item.rgb[0]},${item.rgb[1]},${item.rgb[2]})"></span><span class="oil-name">${item.name}</span>`;
+  }
+  /* Color picker: swap any tube for a historical pigment. The palette keeps its 10 slots. */
+  const colorsDlg = document.getElementById("studio-colors");
+  const colorsBtn = document.getElementById("studio-colors-open");
+  let pickSlot = 0;
+  function savePalette() {
+    try {
+      const changed = OILS.some((o, i) => o.name !== OIL_DEFAULTS[i].name);
+      if (changed) localStorage.setItem("studioPalette", JSON.stringify(OILS.map(o => o.name)));
+      else localStorage.removeItem("studioPalette");
+    } catch (e) {}
+  }
+  function refreshTube(i) {
+    const btn = palette.children[i];
+    if (btn) paintTube(btn, OILS[i]);
+  }
+  function renderSlots() {
+    const row = colorsDlg.querySelector(".cp-slots");
+    row.innerHTML = "";
+    OILS.forEach((o, i) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "cp-slot"; b.setAttribute("aria-pressed", i === pickSlot ? "true" : "false");
+      b.innerHTML = `<span class="cp-sw" style="background:rgb(${o.rgb})"></span><span>${o.name}</span>`;
+      b.addEventListener("click", () => { pickSlot = i; renderSlots(); });
+      row.appendChild(b);
+    });
+    const cur = colorsDlg.querySelector(".cp-cur");
+    if (cur) cur.textContent = `Tube ${pickSlot + 1}: ${OILS[pickSlot].name}. Pick a color to replace it.`;
+  }
+  function renderList() {
+    const q = colorsDlg.querySelector(".cp-search").value.trim().toLowerCase();
+    const list = colorsDlg.querySelector(".cp-list");
+    list.innerHTML = "";
+    FAMILIES.forEach(fam => {
+      const items = PIGMENTS.filter(p => p.family === fam && (!q || (p.name + " " + p.note + " " + fam).toLowerCase().includes(q)));
+      if (!items.length) return;
+      const h = document.createElement("h3"); h.textContent = fam; list.appendChild(h);
+      items.forEach(p => {
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "cp-item"; b.dataset.pigment = p.name;
+        b.innerHTML = `<span class="cp-sw" style="background:${p.hex}"></span><span class="cp-txt"><b>${p.name}</b><small>${p.note}</small></span>`;
+        b.addEventListener("click", () => {
+          const slot = OILS[pickSlot];
+          setSlot(slot, p); refreshTube(pickSlot); savePalette();
+          selectOil(slot);
+          pickSlot = (pickSlot + 1) % OILS.length;
+          renderSlots();
+        });
+        list.appendChild(b);
+      });
+    });
+    if (!list.children.length) list.innerHTML = "<p class=\"cp-none\">No colors match.</p>";
+  }
+  if (colorsDlg && colorsBtn) {
+    colorsBtn.addEventListener("click", () => {
+      pickSlot = Math.max(0, OILS.indexOf(oil));
+      renderSlots(); renderList();
+      colorsDlg.showModal ? colorsDlg.showModal() : colorsDlg.setAttribute("open", "");
+    });
+    colorsDlg.querySelector(".cp-search").addEventListener("input", renderList);
+    colorsDlg.querySelector(".cp-done").addEventListener("click", () => colorsDlg.close());
+    colorsDlg.querySelector(".cp-reset").addEventListener("click", () => {
+      OILS.forEach((o, i) => { Object.assign(o, { name: OIL_DEFAULTS[i].name, pigment: OIL_DEFAULTS[i].pigment, rgb: OIL_DEFAULTS[i].rgb.slice() }); refreshTube(i); });
+      savePalette(); selectOil(oil); renderSlots();
+    });
+    colorsDlg.addEventListener("click", e => { if (e.target === colorsDlg) colorsDlg.close(); });
+  }
+
   OILS.forEach((item, index) => {
     const btn = document.createElement("button");
     btn.type = "button";
@@ -1539,8 +1618,7 @@ function mount() {
     btn.setAttribute("role", "radio");
     btn.setAttribute("aria-checked", item.id === oil.id ? "true" : "false");
     btn.tabIndex = item.id === oil.id ? 0 : -1;
-    btn.setAttribute("aria-label", item.pigment);
-    btn.innerHTML = `<span class="dab" style="--oil:rgb(${item.rgb[0]},${item.rgb[1]},${item.rgb[2]})"></span><span class="oil-name">${item.name}</span>`;
+    paintTube(btn, item);
     btn.addEventListener("click", () => selectOil(item));
     palette.appendChild(btn);
     if (index === OILS.length - 1) btn.classList.add("oil-last");
@@ -1886,7 +1964,7 @@ function mount() {
   squeeze(OILS.find(o => o.id === "blue"));
   squeeze(oil);
   syncChrome();
-  window.__studio = { get engine() { return engine; }, get mixEngine() { return mixEngine; }, selectTech, selectOil: id => selectOil(OILS.find(o => o.id === id)), prep, hand, zoomAt, flush: () => { flush(true); flushMix(); } };
+  window.__studio = { pickColor: (slot, name) => { pickSlot = slot; colorsDlg.querySelector(`[data-pigment="${name}"]`).click(); }, get engine() { return engine; }, get mixEngine() { return mixEngine; }, selectTech, selectOil: id => selectOil(OILS.find(o => o.id === id)), prep, hand, zoomAt, flush: () => { flush(true); flushMix(); } };
 }
 
 if (typeof document !== "undefined") mount();

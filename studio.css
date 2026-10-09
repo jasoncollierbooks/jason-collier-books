@@ -804,3 +804,25 @@ body.page-studio footer {
 .hbtn:focus-visible { outline: 3px solid #fff6e4; outline-offset: 2px; }
 .zoom-read { min-width: 2.4rem; text-align: center; font-variant-numeric: tabular-nums; }
 .palette-tools { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+/* Historical color picker */
+.colors-btn { display: block; margin: 10px auto 0; min-height: 44px; }
+.cp { width: min(560px, 94vw); max-height: 88vh; max-height: 88dvh; padding: 0; border: 2px solid #e4c98a; border-radius: 14px; background: #1c130d; color: #fbf6ee; display: none; flex-direction: column; overflow: hidden; }
+.cp[open] { display: flex; }
+.cp::backdrop { background: rgba(0,0,0,.6); }
+.cp-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px 4px; }
+.cp-head h2 { margin: 0; font-size: 1.25rem; }
+.cp-cur { margin: 2px 14px 8px; font-size: .95rem; color: #e4c98a; }
+.cp-slots { display: flex; gap: 6px; overflow-x: auto; padding: 0 14px 10px; -webkit-overflow-scrolling: touch; flex: none; }
+.cp-slot { flex: none; display: flex; flex-direction: column; align-items: center; gap: 3px; width: 64px; min-height: 64px; padding: 6px 2px; border: 2px solid transparent; border-radius: 10px; background: #2a1e15; color: #fbf6ee; font-size: .68rem; line-height: 1.1; text-align: center; }
+.cp-slot[aria-pressed="true"] { border-color: #e4c98a; background: #3a2a1d; }
+.cp-sw { display: inline-block; flex: none; width: 30px; height: 30px; border-radius: 50%; border: 2px solid rgba(255,255,255,.55); }
+.cp-search { margin: 0 14px 8px; padding: 10px 12px; font-size: 16px; border-radius: 10px; border: 1px solid #6a5440; background: #fbf6ee; color: #1c130d; flex: none; }
+.cp-list { overflow-y: auto; padding: 0 14px 8px; -webkit-overflow-scrolling: touch; flex: 1 1 auto; min-height: 120px; }
+.cp-list h3 { margin: 12px 0 6px; font-size: .9rem; letter-spacing: .06em; text-transform: uppercase; color: #e4c98a; }
+.cp-item { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 48px; padding: 6px 8px; margin: 0 0 4px; border: 0; border-radius: 10px; background: #2a1e15; color: #fbf6ee; text-align: left; }
+.cp-item:hover, .cp-item:focus-visible { background: #3a2a1d; }
+.cp-txt { display: flex; flex-direction: column; }
+.cp-txt small { color: #cdbfa8; font-size: .78rem; line-height: 1.25; }
+.cp-reset { margin: 6px 14px 12px; flex: none; }
+.cp-none { color: #cdbfa8; }

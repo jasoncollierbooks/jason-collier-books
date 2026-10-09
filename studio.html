@@ -30,7 +30,7 @@
 <link rel="stylesheet" href="polish.css">
 <link rel="stylesheet" href="assets/broadcast-theme/site.css">
 <link rel="stylesheet" href="assets/broadcast-theme/site.css">
-<link rel="stylesheet" href="studio.css?v=4">
+<link rel="stylesheet" href="studio.css?v=5">
 <link rel="stylesheet" href="studio-howto.css?v=1">
 <link rel="stylesheet" href="season.css">
 <script src="season.js"></script>
@@ -200,6 +200,7 @@
             </div>
             <div class="oil-list" id="studio-palette" role="radiogroup" aria-label="Oil colors"></div>
           </div>
+          <button type="button" id="studio-colors-open" class="studio-btn colors-btn">Change colors</button>
         </aside>
       </div>
 
@@ -266,6 +267,14 @@
     </div>
   </form>
 </dialog>
+<dialog id="studio-colors" class="cp" aria-labelledby="studio-colors-title">
+  <div class="cp-head"><h2 id="studio-colors-title">Choose your colors</h2><button type="button" class="cp-done studio-btn">Done</button></div>
+  <p class="cp-cur"></p>
+  <div class="cp-slots" role="group" aria-label="Your 10 tubes"></div>
+  <input type="search" class="cp-search" placeholder="Search colors, like sienna or blue" aria-label="Search historical oil colors">
+  <div class="cp-list"></div>
+  <button type="button" class="cp-reset studio-btn">Reset palette</button>
+</dialog>
 <dialog id="studio-howto" class="howto" aria-labelledby="studio-howto-title">
   <div class="howto-bar">
     <h2 id="studio-howto-title">How to paint</h2>
@@ -282,6 +291,6 @@
 </dialog>
 <script src="main.js" defer></script>
 <script src="studio-howto.js?v=2" defer></script>
-<script type="module" src="studio.js?v=4"></script>
+<script type="module" src="studio.js?v=5"></script>
 </body>
 </html>
