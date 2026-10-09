@@ -8,6 +8,39 @@
   var IDLE_MS = 2500;
   var FALLBACK_SPOT_MS = 13000;
 
+  /* Test mode (?breaks=test, kept in localStorage so it follows the visitor
+     across pages and into the games). Turn off with ?breaks=off.
+     ?breaks=test&breakms=20000 fixes the gap for quick checks. Live
+     behaviour without the flag is unchanged. */
+  var TEST_KEY = "jc-breaks-test";
+  var TEST_MS_KEY = "jc-breaks-ms";
+  var TEST = (function () {
+    try {
+      var p = new URLSearchParams(location.search);
+      var b = p.get("breaks");
+      if (b === "test") {
+        localStorage.setItem(TEST_KEY, "1");
+        var fixed = parseInt(p.get("breakms"), 10);
+        if (fixed > 0) localStorage.setItem(TEST_MS_KEY, String(fixed));
+        else localStorage.removeItem(TEST_MS_KEY);
+        sessionStorage.removeItem("jc-break-elapsed");
+        sessionStorage.removeItem("jc-break-target");
+        sessionStorage.removeItem("jc-break-scrolled");
+      } else if (b === "off") {
+        localStorage.removeItem(TEST_KEY);
+        localStorage.removeItem(TEST_MS_KEY);
+      }
+      return localStorage.getItem(TEST_KEY) === "1";
+    } catch (e) { return false; }
+  })();
+  var TEST_MIN_MS = 2 * 60 * 1000;
+  var TEST_MAX_MS = 3 * 60 * 1000;
+  var SKIP_AFTER_MS = 5000;
+  var TEST_CAP_MS = 40000;
+  var SCROLL_DELAY_MS = 2500;
+  var KEY_TARGET = "jc-break-target";
+  var KEY_SCROLLED = "jc-break-scrolled";
+
   var KEY_ELAPSED = "jc-break-elapsed";
   var KEY_DUE = "jc-break-due";
   var KEY_QUEUE = "jc-break-queue";
@@ -25,6 +58,24 @@
   function asset(path) {
     try { return new URL(path, rootUrl || document.baseURI).href; }
     catch (e) { return path; }
+  }
+
+  /* Remember every Web Audio context the page makes so a break can hush it. */
+  var audioContexts = window.__jcAudioContexts || [];
+  window.__jcAudioContexts = audioContexts;
+  if (TEST) {
+    ["AudioContext", "webkitAudioContext"].forEach(function (name) {
+      var Native = window[name];
+      if (!Native || Native.__jcTracked) return;
+      var Tracked = function (opts) {
+        var ctx = opts === undefined ? new Native() : new Native(opts);
+        audioContexts.push(ctx);
+        return ctx;
+      };
+      Tracked.prototype = Native.prototype;
+      Tracked.__jcTracked = true;
+      try { window[name] = Tracked; } catch (e) {}
+    });
   }
 
   /* Copy stays inside what the site already says. On-screen text is the
@@ -136,8 +187,18 @@
   ];
 
   var ids = Object.keys(SPOTS);
+
+  function newTarget() {
+    if (!TEST) return BREAK_INTERVAL_MS;
+    var fixed = 0;
+    try { fixed = parseInt(localStorage.getItem(TEST_MS_KEY), 10) || 0; } catch (e) {}
+    if (fixed > 0) return fixed;
+    return Math.round(TEST_MIN_MS + Math.random() * (TEST_MAX_MS - TEST_MIN_MS));
+  }
   var elapsed = readNum(KEY_ELAPSED);
   var due = sessionGet(KEY_DUE) === "1";
+  var target = parseFloat(sessionGet(KEY_TARGET) || "0");
+  if (!(target > 0) || !TEST) target = newTarget();
   var queue = readQueue();
   var lastTick = Date.now();
   var lastInteract = Date.now();
@@ -177,6 +238,7 @@
     sessionSet(KEY_ELAPSED, String(Math.round(elapsed)));
     sessionSet(KEY_DUE, due ? "1" : "0");
     sessionSet(KEY_QUEUE, JSON.stringify(queue));
+    sessionSet(KEY_TARGET, String(target));
   }
 
   function shuffle(list) {
@@ -256,9 +318,17 @@
     return !typing() && (Date.now() - lastInteract) >= IDLE_MS;
   }
 
+  /* A film playing inside a cross-origin player (the Archive embed) cannot be
+     paused from here. Focus inside it means it is probably playing. */
+  function framePlaying() {
+    var el = document.activeElement;
+    return !!(el && (el.tagName || "").toLowerCase() === "iframe");
+  }
+
   function canStart() {
     if (active) return false;
     if (document.visibilityState === "hidden") return false;
+    if (TEST) return !typing() && !framePlaying();
     if (onBlockedPage()) return false;
     if (mediaPlaying()) return false;
     if (!idle()) return false;
@@ -572,6 +642,100 @@
     stage.appendChild(copy);
   }
 
+  function reducedMotion() {
+    if (document.documentElement.classList.contains("reduce-motion")) return true;
+    try { return window.matchMedia("(prefers-reduced-motion: reduce)").matches; }
+    catch (e) { return false; }
+  }
+
+  /* Test mode: freeze the program under the break, then bring it back. */
+  var heldMedia = [];
+  var heldContexts = [];
+  var heldSpeech = false;
+  var heldGame = false;
+  var hushTimer = 0;
+
+  function hushContexts() {
+    for (var i = 0; i < audioContexts.length; i++) {
+      var ctx = audioContexts[i];
+      if (ctx && ctx.state === "running") {
+        if (heldContexts.indexOf(ctx) === -1) heldContexts.push(ctx);
+        try { ctx.suspend(); } catch (e) {}
+      }
+    }
+  }
+
+  function holdProgram() {
+    heldMedia = [];
+    heldContexts = [];
+    var seen = [];
+    var nodes = Array.prototype.slice.call(document.querySelectorAll("audio, video")).concat(looseMedia);
+    for (var i = 0; i < nodes.length; i++) {
+      var m = nodes[i];
+      if (!m || seen.indexOf(m) !== -1 || m.getAttribute("data-jc-break") === "1") continue;
+      seen.push(m);
+      if (!m.paused && !m.ended) {
+        heldMedia.push(m);
+        try { m.pause(); } catch (e) {}
+      }
+    }
+    hushContexts();
+    if (hushTimer) clearInterval(hushTimer);
+    hushTimer = setInterval(hushContexts, 400);
+    heldSpeech = false;
+    try {
+      if (window.speechSynthesis && window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+        window.speechSynthesis.pause();
+        heldSpeech = true;
+      }
+    } catch (e) {}
+    window.__jcBreakHold = true;
+    heldGame = false;
+    var om = window.__oldman;
+    if (om && typeof om.holdSim === "function") {
+      try { om.holdSim(true); heldGame = true; } catch (e) {}
+      try { if (om.keys && om.keys.clear) om.keys.clear(); } catch (e) {}
+    }
+    try { window.dispatchEvent(new Event("blur")); } catch (e) {}
+  }
+
+  function releaseProgram() {
+    if (hushTimer) clearInterval(hushTimer);
+    hushTimer = 0;
+    window.__jcBreakHold = false;
+    if (heldGame && window.__oldman) {
+      try { window.__oldman.holdSim(false); } catch (e) {}
+    }
+    heldGame = false;
+    var media = heldMedia, ctxs = heldContexts, speech = heldSpeech;
+    heldMedia = [];
+    heldContexts = [];
+    heldSpeech = false;
+    function go() {
+      var i;
+      for (i = 0; i < ctxs.length; i++) {
+        try { if (ctxs[i].state === "suspended") ctxs[i].resume(); } catch (e) {}
+      }
+      for (i = 0; i < media.length; i++) {
+        try {
+          var p = media[i].play();
+          if (p && p.catch) p.catch(function () {});
+        } catch (e) {}
+      }
+      if (speech) { try { window.speechSynthesis.resume(); } catch (e) {} }
+    }
+    if (document.visibilityState === "hidden") {
+      var onBack = function () {
+        if (document.visibilityState !== "visible") return;
+        document.removeEventListener("visibilitychange", onBack);
+        go();
+      };
+      document.addEventListener("visibilitychange", onBack);
+    } else {
+      go();
+    }
+  }
+
   function scan() {
     var el = document.createElement("div");
     el.className = "jc-break-scan";
@@ -586,7 +750,7 @@
     canvas.width = w;
     canvas.height = h;
     var frame = ctx.createImageData(w, h);
-    var reduce = document.documentElement.classList.contains("reduce-motion");
+    var reduce = reducedMotion();
     function draw() {
       var data = frame.data;
       for (var i = 0; i < data.length; i += 4) {
@@ -612,7 +776,15 @@
     stopClips();
     if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
     overlay = null;
+    if (skipTimer) clearInterval(skipTimer);
+    skipTimer = 0;
+    if (capTimer) clearTimeout(capTimer);
+    capTimer = 0;
     document.documentElement.classList.remove("jc-break-open");
+    if (programHeld) {
+      programHeld = false;
+      releaseProgram();
+    }
     if (returnFocus && typeof returnFocus.focus === "function") {
       try { returnFocus.focus(); } catch (e) {}
     }
@@ -680,8 +852,14 @@
     return "oldman";
   }
 
+  var skipTimer = 0;
+  var capTimer = 0;
+  var programHeld = false;
+  var skipReadyAt = 0;
+
   function openBreak(id, options) {
     options = options || {};
+    var testBreak = TEST && !options.frame;
     var spot = SPOTS[id] || SPOTS.oldman;
     if (active) closeBreak();
     currentSpot = spot;
@@ -700,6 +878,30 @@
     skip.className = "jc-break-skip";
     skip.textContent = "Skip";
     overlay.appendChild(skip);
+    skipReadyAt = 0;
+    if (testBreak) {
+      overlay.classList.add("is-test");
+      if (!programHeld) { holdProgram(); programHeld = true; }
+      skipReadyAt = Date.now() + SKIP_AFTER_MS;
+      skip.classList.add("is-waiting");
+      skip.setAttribute("aria-disabled", "true");
+      var paintSkip = function () {
+        var left = Math.ceil((skipReadyAt - Date.now()) / 1000);
+        if (left > 0) {
+          skip.textContent = "Skip in " + left;
+          return;
+        }
+        skip.textContent = "Skip";
+        skip.classList.remove("is-waiting");
+        skip.removeAttribute("aria-disabled");
+        if (skipTimer) clearInterval(skipTimer);
+        skipTimer = 0;
+      };
+      paintSkip();
+      skipTimer = setInterval(paintSkip, 250);
+      /* Never trap anyone: the break always ends on its own. */
+      capTimer = setTimeout(closeBreak, TEST_CAP_MS);
+    }
     var stage = document.createElement("div");
     stage.className = "jc-break-stage";
     overlay.appendChild(stage);
@@ -708,8 +910,10 @@
     skip.focus();
 
     overlay.addEventListener("click", function (event) {
+      var waiting = skipReadyAt && Date.now() < skipReadyAt;
       if (event.target.closest(".jc-break-skip")) {
         event.preventDefault();
+        if (waiting) return;
         closeBreak();
         return;
       }
@@ -722,6 +926,7 @@
         setTimeout(closeBreak, 0);
         return;
       }
+      if (waiting) return;
       closeBreak();
     });
 
@@ -743,9 +948,13 @@
       return;
     }
 
+    var staticMs = STATIC_MS;
+    if (testBreak && reducedMotion()) staticMs = 0;
     phase = "static";
-    fillStage("static");
-    playClip("static");
+    if (staticMs) {
+      fillStage("static");
+      playClip("static");
+    }
     later(function () {
       if (!active || held) return;
       stopClips();
@@ -759,7 +968,7 @@
         phase = "spot";
         showSpot(spot, false);
       }, CARD_MS);
-    }, STATIC_MS);
+    }, staticMs);
   }
 
   function beginScheduled() {
@@ -785,8 +994,9 @@
       return;
     }
     elapsed += dt;
-    if (elapsed >= BREAK_INTERVAL_MS) {
+    if (elapsed >= target) {
       elapsed = 0;
+      target = newTarget();
       due = true;
       saveClock();
       beginScheduled();
@@ -836,12 +1046,46 @@
 
   window.addEventListener("pagehide", saveClock);
 
+  /* Test mode, home page: one break soon after the first scroll. */
+  function onHome() {
+    var path = location.pathname || "/";
+    return /\/$/.test(path) || /\/index\.html$/.test(path);
+  }
+  if (TEST && onHome() && sessionGet(KEY_SCROLLED) !== "1") {
+    var scrollArmed = false;
+    var onScroll = function () {
+      if (scrollArmed || (window.scrollY || window.pageYOffset || 0) < 40) return;
+      scrollArmed = true;
+      window.removeEventListener("scroll", onScroll);
+      setTimeout(function tryScrollBreak() {
+        if (!canStart()) { setTimeout(tryScrollBreak, 1000); return; }
+        var id = takeSpot();
+        if (!id) return;
+        sessionSet(KEY_SCROLLED, "1");
+        elapsed = 0;
+        due = false;
+        target = newTarget();
+        saveClock();
+        openBreak(id);
+      }, SCROLL_DELAY_MS);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+  }
+
+  /* Leaving the tab mid-break ends it; the program resumes when the tab returns. */
+  document.addEventListener("visibilitychange", function () {
+    if (TEST && active && document.visibilityState === "hidden") closeBreak();
+  });
+
   css();
   previewFromUrl();
   setInterval(tick, 500);
 
   window.JCBreaks = {
     interval: BREAK_INTERVAL_MS,
+    test: TEST,
+    get target() { return target; },
+    get elapsed() { return elapsed; },
     spots: SPOTS,
     open: openBreak
   };

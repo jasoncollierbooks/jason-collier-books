@@ -27,6 +27,17 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="stylesheet" href="./vendor/fonts/fonts.css">
 <link rel="stylesheet" href="./styles.css">
+<script>
+/* Station breaks test mode (?breaks=test) also runs inside the game. Live visitors get nothing new. */
+(function () {
+  try {
+    if (localStorage.getItem("jc-breaks-test") !== "1" && !/[?&]breaks=test/.test(location.search)) return;
+    var s = document.createElement("script");
+    s.src = "../commercials.js";
+    document.head.appendChild(s);
+  } catch (e) {}
+})();
+</script>
 <script type="importmap">{ "imports": { "three": "./vendor/three.min.js", "three/addons": "./vendor/three-addons.min.js" } }</script>
 </head>
 <body>

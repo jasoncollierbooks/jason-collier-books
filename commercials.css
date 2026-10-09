@@ -349,3 +349,12 @@ html.jc-break-open body {
     animation: none;
   }
 }
+
+/* Test-mode breaks sit above game screens too. */
+.jc-break.is-test { z-index: 2147483000; }
+.jc-break-skip.is-waiting,
+.jc-break-skip.is-waiting:hover {
+  background: #cbbd9f;
+  color: #4a3b2b;
+  cursor: default;
+}

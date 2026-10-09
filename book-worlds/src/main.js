@@ -1379,6 +1379,8 @@ function addFloat(x, y, z, text, coin) {
 
 let last = performance.now();
 function frame(now) {
+  // A station break (commercials.js) holds the world still until it ends.
+  if (window.__jcBreakHold) { last = now; requestAnimationFrame(frame); return; }
   const raw = Math.min(0.3, Math.max(0.001, (now - last) / 1000));
   last = now;
   abilities.tick(raw);
