@@ -498,3 +498,21 @@ html.reduce-motion .season-fog::before { animation: none; }
 html.reduce-motion.season-christmas .season-nav-trim,
 html.reduce-motion.season-christmas .season-nav-trim i { opacity: 1; }
 html.reduce-motion.season-halloween .season-ledge { filter: drop-shadow(0 0 4px rgba(255, 150, 40, .8)); }
+
+/* Homepage: toned-down Halloween (body[data-season-lite]) */
+html.season-halloween body[data-season-lite] .season-nav-trim,
+html.season-halloween body[data-season-lite] .season-nav-trim i {
+  height: 9px; bottom: -7px; background-size: 11px 9px; opacity: .45;
+}
+html.season-halloween body[data-season-lite] .season-nav-trim i { display: none; }
+html.season-halloween body[data-season-lite] .season-spider,
+html.season-halloween body[data-season-lite] .season-web.r,
+html.season-halloween body[data-season-lite] .season-corners,
+html.season-halloween body[data-season-lite] .season-ribbon,
+html.season-halloween body[data-season-lite] .season-cutout,
+html.season-halloween body[data-season-lite] .season-foot { display: none; }
+html.season-halloween body[data-season-lite] .season-web.l { width: 1.5rem; height: 1.5rem; opacity: .35; }
+html.season-halloween body[data-season-lite] .season-accent { width: 3rem; height: 3rem; opacity: .4; filter: none; }
+html.season-halloween body[data-season-lite] .season-ledge { justify-content: flex-end; animation: none; opacity: .7; }
+html.season-halloween body[data-season-lite] .season-ledge svg { width: .8rem; height: .8rem; }
+html.season-halloween body[data-season-lite] .season-ledge svg:nth-child(n+2) { display: none; }
