@@ -781,3 +781,26 @@ body.page-studio footer {
   .tech-bar .tech { font-size: .98rem; }
 }
 .oil-name { pointer-events: none; }
+
+/* v4: more techniques, the hand drawer, straight-edge guide, zoom, wide canvas */
+.tech-bar .tech-x { display: none; }
+.tech-bar.open .tech-x { display: flex; }
+.more-btn { width: 100%; min-height: 40px; margin-top: .4rem; font-size: .95rem; }
+.canvas-box { overflow: hidden; }
+.canvas-box.is-landscape { aspect-ratio: 4 / 3 !important; max-height: none !important; }
+.canvas-box canvas { will-change: transform; }
+.rule-guide { position: absolute; left: 0; top: 0; height: 0; border-top: 2px dashed rgba(255, 246, 228, .9); box-shadow: 0 0 0 1px rgba(0, 0, 0, .35); transform-origin: 0 0; pointer-events: none; z-index: 3; }
+.hand { margin-top: .55rem; border: 1px solid rgba(255, 236, 200, .25); border-radius: 10px; background: rgba(20, 12, 6, .55); color: #f6e9d2; }
+.hand summary { cursor: pointer; padding: .55rem .75rem; min-height: 44px; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; list-style: none; font-weight: 700; }
+.hand summary::-webkit-details-marker { display: none; }
+.hand summary::before { content: "\25B8"; transition: transform .15s; }
+.hand[open] summary::before { transform: rotate(90deg); }
+.hand-sum { font-weight: 400; font-size: .88rem; opacity: .8; }
+.hand-note { margin: .1rem .75rem .45rem; font-size: .85rem; opacity: .8; }
+.hand-row { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; padding: .2rem .6rem .45rem; }
+.hand-label { flex: 0 0 4.4rem; font-size: .85rem; opacity: .85; }
+.hbtn { min-height: 40px; min-width: 44px; padding: .3rem .6rem; border-radius: 8px; border: 1px solid rgba(255, 236, 200, .35); background: #3a281a; color: #f6e9d2; font: inherit; font-size: .92rem; cursor: pointer; touch-action: manipulation; }
+.hbtn[aria-pressed="true"] { background: #f0c879; color: #24160f; border-color: #f0c879; font-weight: 700; }
+.hbtn:focus-visible { outline: 3px solid #fff6e4; outline-offset: 2px; }
+.zoom-read { min-width: 2.4rem; text-align: center; font-variant-numeric: tabular-nums; }
+.palette-tools { grid-template-columns: repeat(2, minmax(0, 1fr)); }

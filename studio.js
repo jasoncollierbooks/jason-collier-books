@@ -1,4 +1,4 @@
-/* Oil Studio (test build)
+/* Oil Studio
    Alla-prima sketch of wet oil paint. It is not a physics simulation.
 
    What it does:
@@ -167,6 +167,10 @@ export function createEngine(w, h, options) {
   let style = "normal";
   let touch = "normal";
   let scale = 1;
+  let cover = 0;
+  let dryBrush = false;
+  let fixedAngle = null;
+  let streaky = false;
   const undo = [];
   let useSimple = simple;
 
@@ -251,7 +255,7 @@ export function createEngine(w, h, options) {
   }
   function applyPickup(pressure) {
     const list = brush.bristles;
-    const take = TUNE[brush.kind].pickup * (0.7 + 0.3 * pressure) * pickBoost;
+    const take = TUNE[brush.kind].pickup * (0.7 + 0.3 * pressure) * pickBoost * (streaky ? 0.2 : 1);
     const cap = pickBoost > 1 ? 0.8 : 0.55;
     for (let i = 0; i < list.length; i++) {
       const b = list[i];
@@ -356,26 +360,26 @@ export function createEngine(w, h, options) {
           mixed = mixKM(under, behind.rgb, Math.min(0.7, k));
           lay *= 0.9;
         } else {
-          if (b.load < 0.4) {
-            // Running dry: paint only catches on the high points of the weave.
-            const need = (0.4 - b.load) * 2.2 + (1 - pressure) * 0.2;
+          if (b.load < 0.4 || dryBrush) {
+            // Running dry (or dry-brush on purpose): paint only catches on the high points of the weave.
+            const need = dryBrush ? 0.42 + (1 - pressure) * 0.3 + Math.max(0, 0.4 - b.load) : (0.4 - b.load) * 2.2 + (1 - pressure) * 0.2;
             const t = tooth[py * w + px] / 255;
             if (t < need) continue;
             lay *= Math.min(1, (t - need) * 3 + 0.2);
           }
           const deposit = tune.deposit * Math.pow(b.load, 0.7) * pressure * (0.85 + 0.3 * fib);
-          const push = (light ? 0.14 : 0.72) * underWet;
+          const push = (light ? 0.14 : 0.72) * underWet * (1 - cover * 0.85);
           const tNew = deposit / (deposit + push + 1e-4);
           mixed = mixKM(under, b.rgb, Math.max(0, Math.min(1, tNew)));
-          if (behind.wet > 0.12 && mode !== "dab" && !light) {
-            mixed = mixKM(mixed, behind.rgb, (0.34 + 0.14 * fib2) * behind.wet);
+          if (behind.wet > 0.12 && mode !== "dab" && !light && !dryBrush) {
+            mixed = mixKM(mixed, behind.rgb, (0.34 + 0.14 * fib2) * behind.wet * (1 - cover * 0.8) * (streaky ? 0.45 : 1));
           }
         }
         const shine = 1 + (fib - 0.5) * 0.05;
         mixed = [clampByte(mixed[0] * shine), clampByte(mixed[1] * shine), clampByte(mixed[2] * shine)];
         writePixel(px, py, mixed, lay);
         if (underWet > 0.08) {
-          const m = lay * (light ? 0.35 : 1);
+          const m = lay * (light ? 0.35 : 1) * (1 - cover * 0.8);
           b.sr += under[0] * m;
           b.sg += under[1] * m;
           b.sb += under[2] * m;
@@ -475,7 +479,7 @@ export function createEngine(w, h, options) {
         const catchAmt = Math.min(1, (t - need) * 5 + 0.35);
         const under = preStamp(px, py);
         const underWet = wetAt(px, py);
-        const tNew = light ? 0.94 : 0.82 / (0.82 + 0.45 * underWet);
+        const tNew = light ? 0.94 : 0.82 / (0.82 + 0.45 * underWet * (1 - cover * 0.9));
         const mixed = mixKM(under, b.rgb, tNew);
         writePixel(px, py, mixed, edge * catchAmt * (0.75 + 0.25 * pressure));
         used++;
@@ -566,7 +570,101 @@ export function createEngine(w, h, options) {
     return box(cx, cy, reach);
   }
 
+  function midColor() {
+    const list = brush.bristles;
+    return list[Math.floor(list.length / 2)].rgb;
+  }
+  /* Liner / rigger: thin, inky paint that rides on top of wet color. */
+  function stampLiner(cx, cy, rad, pressure) {
+    region.w = 0; region.h = 0;
+    const r = Math.max(0.7, rad);
+    const reach = Math.ceil(r + 2);
+    const col = midColor();
+    const b0 = brush.bristles[0];
+    const load = Math.max(0.25, b0.load);
+    for (let py = Math.floor(cy - reach); py <= cy + reach; py++) {
+      if (py < 0 || py >= h) continue;
+      for (let px = Math.floor(cx - reach); px <= cx + reach; px++) {
+        if (px < 0 || px >= w) continue;
+        const d = Math.hypot(px - cx, py - cy);
+        const a = Math.max(0, Math.min(1, r + 0.5 - d));
+        if (a <= 0) continue;
+        if (dryBrush && tooth[py * w + px] / 255 < 0.5) continue;
+        const i = (py * w + px) * 4;
+        const out = mixKM([image[i], image[i + 1], image[i + 2]], col, Math.min(1, (0.55 + 0.4 * pressure) * load));
+        writePixel(px, py, out, a);
+      }
+    }
+    deplete(pressure, 0.0012);
+    return box(cx, cy, reach);
+  }
+  /* Light: glow brightens like light (screen), glaze tints like a thin transparent layer. */
+  function stampLight(cx, cy, rad, pressure, glaze) {
+    region.w = 0; region.h = 0;
+    const r = rad * (glaze ? 1.1 : 2);
+    const reach = Math.ceil(r + 1);
+    const col = midColor();
+    const k = glaze ? 0.16 : 0.1;
+    for (let py = Math.floor(cy - reach); py <= cy + reach; py++) {
+      if (py < 0 || py >= h) continue;
+      for (let px = Math.floor(cx - reach); px <= cx + reach; px++) {
+        if (px < 0 || px >= w) continue;
+        const d = Math.hypot(px - cx, py - cy) / r;
+        if (d >= 1) continue;
+        const a = (glaze ? 1 - smoothstep(0.5, 1, d) : Math.exp(-d * d * 3.2) * (1 - d)) * k * pressure;
+        const i = (py * w + px) * 4;
+        if (glaze) {
+          const out = mixKM([image[i], image[i + 1], image[i + 2]], col, a);
+          image[i] = out[0]; image[i + 1] = out[1]; image[i + 2] = out[2];
+        } else {
+          for (let c = 0; c < 3; c++) {
+            const u = image[i + c];
+            const scr = 255 - (255 - u) * (255 - col[c]) / 255;
+            image[i + c] = clampByte(u + (scr + 18 - u) * a * 1.6);
+          }
+        }
+      }
+    }
+    return box(cx, cy, reach);
+  }
+  /* Waves and foam: broken flicks of opaque paint that sit on top. */
+  function stampFoam(cx, cy, dirX, dirY, perpX, perpY, rad, pressure) {
+    region.w = 0; region.h = 0;
+    const light = touch === "light";
+    const count = light ? 3 : 7;
+    const col = midColor();
+    let x0 = cx, y0 = cy, x1 = cx, y1 = cy;
+    for (let k = 0; k < count; k++) {
+      const oa = (rand() - 0.5) * 2 * rad;
+      const ob = (rand() - 0.5) * rad * 0.8;
+      const len = (light ? 1 : 2) + rand() * rad * (light ? 0.25 : 0.7);
+      const th = light ? 0.8 : 0.8 + rand() * 1.4 * pressure;
+      const sx = cx + perpX * oa + dirX * ob;
+      const sy = cy + perpY * oa + dirY * ob;
+      for (let t = -len; t <= len; t += 0.7) {
+        const fx = sx + dirX * t;
+        const fy = sy + dirY * t;
+        const taper = 1 - Math.abs(t) / (len + 0.01);
+        const rr = th * (0.4 + 0.6 * taper);
+        for (let py = Math.floor(fy - rr - 1); py <= fy + rr + 1; py++) {
+          for (let px = Math.floor(fx - rr - 1); px <= fx + rr + 1; px++) {
+            if (px < 0 || py < 0 || px >= w || py >= h) continue;
+            const a = Math.max(0, Math.min(1, rr + 0.5 - Math.hypot(px - fx, py - fy)));
+            if (a <= 0 || tooth[py * w + px] < 60) continue;
+            const i = (py * w + px) * 4;
+            writePixel(px, py, mixKM([image[i], image[i + 1], image[i + 2]], col, 0.9), a * 0.9);
+          }
+        }
+        x0 = Math.min(x0, fx); y0 = Math.min(y0, fy); x1 = Math.max(x1, fx); y1 = Math.max(y1, fy);
+      }
+    }
+    deplete(pressure, 0.002);
+    const pad = 4;
+    return { x0: Math.max(0, Math.floor(x0 - pad)), y0: Math.max(0, Math.floor(y0 - pad)), x1: Math.min(w - 1, Math.ceil(x1 + pad)), y1: Math.min(h - 1, Math.ceil(y1 + pad)) };
+  }
+
   function stamp(x, y, dirX, dirY, pressure, mode) {
+    if (fixedAngle != null) { dirX = Math.cos(fixedAngle); dirY = Math.sin(fixedAngle); }
     const len = Math.hypot(dirX, dirY) || 1;
     const dx = dirX / len;
     const dy = dirY / len;
@@ -574,6 +672,9 @@ export function createEngine(w, h, options) {
     const perpY = dx;
     const p = Math.max(0.25, Math.min(1, pressure || 0.85));
     const rad = Math.max(2, radius * scale * (0.76 + 0.24 * p));
+    if (style === "liner") return stampLiner(x, y, Math.max(0.6, radius * scale * (0.6 + 0.4 * p)), p);
+    if (style === "glow" || style === "glaze") return stampLight(x, y, rad, p, style === "glaze");
+    if (style === "foam") return stampFoam(x, y, dx, dy, -dy, dx, rad, p);
     if (style === "fan") return stampFan(x, y, rad, p);
     if (style === "stipple") return stampStipple(x, y, rad, p);
     if (style === "knifeLay") return stampKnifeLay(x, y, dx, dy, perpX, perpY, rad, p);
@@ -606,7 +707,23 @@ export function createEngine(w, h, options) {
     get touch() { return touch; },
     set touch(v) { touch = v === "light" ? "light" : "normal"; },
     get scale() { return scale; },
-    set scale(v) { scale = Math.max(0.2, Math.min(2, v || 1)); },
+    set scale(v) { scale = Math.max(0.03, Math.min(2, v || 1)); },
+    get cover() { return cover; },
+    set cover(v) { cover = Math.max(0, Math.min(1, v || 0)); },
+    get dryBrush() { return dryBrush; },
+    set dryBrush(v) { dryBrush = !!v; },
+    get angle() { return fixedAngle; },
+    set angle(v) { fixedAngle = v == null ? null : Number(v); },
+    /** Let the painting dry: new paint sits on top instead of mixing in. */
+    dryAll() { wet.fill(0); },
+    /** A thin, wet base coat over the whole canvas, so the next paint blends softly into it. */
+    baseCoat(rgb) {
+      for (let i = 0, j = 0; j < w * h; i += 4, j++) {
+        const out = mixKM([image[i], image[i + 1], image[i + 2]], rgb, 0.88);
+        image[i] = out[0]; image[i + 1] = out[1]; image[i + 2] = out[2];
+        wet[j] = 210;
+      }
+    },
     get well() { return well; },
     get brush() { return brush; },
     set brush(v) { if (v && v.bristles) brush = v; },
@@ -615,9 +732,28 @@ export function createEngine(w, h, options) {
     dip(rgb) {
       well = [rgb[0], rgb[1], rgb[2]];
       brush.bristles = makeBristles(brush.kind, well);
+      streaky = false;
+    },
+    get streaky() { return streaky; },
+    /** Half-mixed load: two or three colors marbled across the brush in bands that stay separate. */
+    halfMix(colors) {
+      const n = TUNE[brush.kind].bristles;
+      const list = [];
+      const k = colors.length;
+      const shift = rand() * k;
+      for (let i = 0; i < n; i++) {
+        const u = (i / n) * k * 1.6 + shift + Math.sin(i * 1.7 + shift) * 0.45;
+        const a = Math.floor(u) % k;
+        const b = (a + 1) % k;
+        const f = u - Math.floor(u);
+        const t = f > 0.75 ? (f - 0.75) * 1.6 : 0;
+        list.push({ rgb: mixKM(colors[a], colors[b], t + rand() * 0.08), load: 1, sr: 0, sg: 0, sb: 0, n: 0 });
+      }
+      brush.bristles = list;
+      streaky = true;
     },
     setWell(rgb) { well = [rgb[0], rgb[1], rgb[2]]; },
-    wipe() { brush.bristles = makeBristles(brush.kind, well); },
+    wipe() { brush.bristles = makeBristles(brush.kind, well); streaky = false; },
     /** Load several colors: "double" splits the brush side to side, "streak" scatters them. */
     loadColors(colors, how) {
       const n = TUNE[brush.kind].bristles;
@@ -745,6 +881,31 @@ export const TECHNIQUES = {
     label: "Water", kind: "big", size: 44, touches: ["Pull across", "Blend down"],
     hint: "Pull straight across, then Blend down to pull reflections from the shore.",
     prep: "Loading the 2-inch brush with long, flat pulls."
+  },
+  structures: {
+    label: "Structures", kind: "flat", size: 18, touches: ["Straight edge", "Freehand"], more: true,
+    hint: "Lighthouses, cabins, docks. Straight edge: drag from one end to the other and the line lands when you let go. Paint is firm so it covers the sky.",
+    prep: "Squaring the flat brush on the palette for clean edges."
+  },
+  rocks: {
+    label: "Rocks", kind: "knife", size: 26, touches: ["Block in", "Highlight"], more: true,
+    hint: "Block in dark rock with the knife, then Highlight: barely touch and the light color catches only on the edges.",
+    prep: "Cutting a thin roll of paint on the knife."
+  },
+  waves: {
+    label: "Waves & foam", kind: "fan", size: 20, touches: ["Foam", "Spray"], more: true,
+    hint: "Drag along the wave crest for broken foam. Spray is finer, for sparkle on the water.",
+    prep: "Loading the tips of the fan brush with thick white."
+  },
+  light: {
+    label: "Light & glow", kind: "round", size: 30, touches: ["Glow", "Mist / glaze"], more: true,
+    hint: "Glow brightens like real light: build a sun, a lamp, a beam with soft passes. Glaze lays a thin see-through tint over dry paint.",
+    prep: "Thinning the paint with medium for a soft glaze."
+  },
+  liner: {
+    label: "Liner", kind: "round", size: 20, touches: ["Thin line", "Hairline"], more: true,
+    hint: "The rigger brush: birds, rigging, railings, grass and sparkles. Thin paint rides on top of wet color.",
+    prep: "Rolling the liner in thinned paint to a fine point."
   }
 };
 
@@ -809,6 +970,14 @@ function mount() {
   let mixPointer = null;
   let mixLast = null;
   let prepRun = 0;
+  // Hand controls: what a finger on glass can't do by itself.
+  const hand = { pressure: "auto", tip: "flat", angle: "follow", dry: false, ruler: false, zoom: 1, panX: 0, panY: 0 };
+  let ruleFrom = null;
+  const touches = new Map();
+  let pinch = null;
+  const guide = document.getElementById("studio-guide");
+  const moreBtn = document.getElementById("studio-more");
+  const handBox = document.getElementById("studio-hand");
   const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const KIND_LABEL = { round: "Round brush", flat: "Flat brush", filbert: "Filbert brush", knife: "Palette knife", fan: "Fan brush", one: "1-inch brush", big: "2-inch brush" };
@@ -873,13 +1042,88 @@ function mount() {
     else if (tech === "trees") style = "fan";
     else if (tech === "bushes") style = "stipple";
     else if ((tech === "sky" || tech === "water") && light) style = "blend";
+    if (tech === "light") style = light ? "glaze" : "glow";
+    else if (tech === "liner") style = "liner";
+    else if (tech === "waves") style = "foam";
+    else if (tech === "rocks") style = "knifeLay";
     engine.style = style;
     engine.touch = (tech === "sky" || tech === "water") ? "normal" : (light ? "light" : "normal");
-    engine.scale = 1;
+    engine.scale = baseScale();
+    const P = hand.pressure;
+    let cover = P === "firm" ? 0.8 : P === "medium" ? 0.4 : 0;
+    if (tech === "structures" || tech === "rocks" || tech === "liner") cover = Math.max(cover, 0.6);
+    engine.cover = cover;
+    engine.dryBrush = hand.dry || (tech === "rocks" && light);
+    engine.angle = hand.angle === "follow" ? null : Number(hand.angle) * Math.PI / 180;
     if (mixEngine) {
       mixEngine.style = "normal";
       mixEngine.touch = "normal";
     }
+  }
+
+  function baseScale() {
+    let k = tech === "liner" ? (touchIdx === 1 ? 0.05 : 0.1) : 1;
+    if (tech !== "liner" && tech !== "trees" && tech !== "bushes") k *= hand.tip === "edge" ? 0.28 : hand.tip === "corner" ? 0.55 : 1;
+    return k;
+  }
+  function rulerOn() {
+    return hand.ruler || (tech === "structures" && touchIdx === 0);
+  }
+  function syncHand() {
+    if (!handBox) return;
+    handBox.querySelectorAll("[data-hand]").forEach(btn => {
+      const [key, val] = btn.dataset.hand.split(":");
+      let on;
+      if (val === undefined) on = key === "ruler" ? rulerOn() : !!hand[key];
+      else on = String(hand[key]) === val;
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    const zr = document.getElementById("studio-zoom-read");
+    if (zr) zr.textContent = `${Math.round(hand.zoom * 10) / 10}x`;
+    const sum = document.getElementById("studio-hand-sum");
+    if (sum) {
+      const bits = [];
+      bits.push(hand.pressure === "auto" ? "Auto pressure" : `${hand.pressure[0].toUpperCase()}${hand.pressure.slice(1)} pressure`);
+      if (hand.tip !== "flat") bits.push(hand.tip === "edge" ? "Edge" : "Corner");
+      if (hand.angle !== "follow") bits.push(`${hand.angle}°`);
+      if (hand.dry) bits.push("Dry brush");
+      if (rulerOn()) bits.push("Straight");
+      sum.textContent = bits.join(" · ");
+    }
+  }
+  function applyZoom() {
+    const rect = frame.getBoundingClientRect();
+    const z = hand.zoom;
+    hand.panX = Math.min(0, Math.max(rect.width * (1 - z), hand.panX));
+    hand.panY = Math.min(0, Math.max(rect.height * (1 - z), hand.panY));
+    canvas.style.transformOrigin = "0 0";
+    canvas.style.transform = z === 1 ? "" : `translate(${hand.panX}px, ${hand.panY}px) scale(${z})`;
+    frame.classList.toggle("is-zoomed", z > 1);
+    syncHand();
+  }
+  function zoomAt(z, cx, cy) {
+    const rect = frame.getBoundingClientRect();
+    const nz = Math.max(1, Math.min(4, z));
+    const lx = cx - rect.left;
+    const ly = cy - rect.top;
+    const px = (lx - hand.panX) / hand.zoom;
+    const py = (ly - hand.panY) / hand.zoom;
+    hand.zoom = nz;
+    hand.panX = lx - px * nz;
+    hand.panY = ly - py * nz;
+    applyZoom();
+  }
+  function showGuide(a, b) {
+    if (!guide) return;
+    if (!a) { guide.hidden = true; return; }
+    const rect = frame.getBoundingClientRect();
+    const cr = canvas.getBoundingClientRect();
+    const k = cr.width / canvas.width;
+    const x0 = cr.left - rect.left + a.x * k, y0 = cr.top - rect.top + a.y * k;
+    const x1 = cr.left - rect.left + b.x * k, y1 = cr.top - rect.top + b.y * k;
+    guide.hidden = false;
+    guide.style.width = `${Math.hypot(x1 - x0, y1 - y0)}px`;
+    guide.style.transform = `translate(${x0}px, ${y0}px) rotate(${Math.atan2(y1 - y0, x1 - x0)}rad)`;
   }
 
   function syncChrome() {
@@ -918,6 +1162,7 @@ function mount() {
         btn.tabIndex = i === touchIdx ? 0 : -1;
       });
     }
+    syncHand();
     placeRing();
   }
 
@@ -999,6 +1244,10 @@ function mount() {
   /* Real pressure when the device reports it (Apple Pencil, pen, force touch).
      Otherwise speed stands in: slow and deliberate is a firm stroke, quick is light. */
   function pressureFrom(e, speedScale) {
+    if (hand.pressure !== "auto") {
+      const fixed = hand.pressure === "firm" ? 1 : hand.pressure === "medium" ? 0.72 : 0.42;
+      return touchIdx === 1 && tech !== "sky" && tech !== "water" ? Math.max(0.25, fixed * 0.8) : fixed;
+    }
     const real = e.pressure > 0 && (e.pointerType === "pen" || (e.pointerType === "touch" && e.pressure !== 0.5 && e.pressure !== 1));
     let p;
     if (real) p = (0.25 + e.pressure * 0.75) * (0.85 + 0.15 * speedScale);
@@ -1044,7 +1293,7 @@ function mount() {
       return;
     }
     const rect = frame.getBoundingClientRect();
-    const d = Math.max(6, (engine.radius / bufferScale()) * 2 * (tech === "mountain" ? 1.25 : tech === "trees" ? 1.3 : 1));
+    const d = Math.max(4, (engine.radius * engine.scale / bufferScale()) * 2 * (tech === "mountain" ? 1.25 : tech === "trees" ? 1.3 : 1));
     cursor.hidden = false;
     cursor.style.width = `${d}px`;
     cursor.style.height = `${tech === "mountain" ? Math.max(6, d * 0.3) : d}px`;
@@ -1115,7 +1364,12 @@ function mount() {
     flushMix();
   }
 
+  const recent = [];
   function selectOil(next) {
+    const at = recent.indexOf(next);
+    if (at >= 0) recent.splice(at, 1);
+    recent.push(next);
+    if (recent.length > 3) recent.shift();
     if (next.id !== oil.id) prevOil = oil;
     oil = next;
     engine.dip(oil.rgb);
@@ -1146,6 +1400,7 @@ function mount() {
     touchIdx = 0;
     if (techBar) techBar.querySelectorAll("[data-tech]").forEach(btn => {
       const on = btn.dataset.tech === tech;
+      if (on && btn.classList.contains("tech-x")) techBar.classList.add("open");
       btn.setAttribute("aria-checked", on ? "true" : "false");
       btn.tabIndex = on ? 0 : -1;
     });
@@ -1178,7 +1433,7 @@ function mount() {
         for (let i = 10; i >= 0; i--) add(W * 0.2 + W * 0.6 * i / 10, H * 0.58 + k * 4, "draw");
       }
       for (let i = 0; i <= 8; i++) add(W * 0.25 + W * 0.5 * i / 8, H * 0.62, "draw");
-    } else if (tech === "trees" || tech === "bushes") {
+    } else if (tech === "trees" || tech === "bushes" || tech === "waves") {
       const cx = (s.x + W / 2) / 2;
       const cy = (s.y + H / 2) / 2;
       for (let k = 0; k < 6; k++) {
@@ -1304,11 +1559,70 @@ function mount() {
     if (prepNote) prepNote.textContent = `Double-loaded: ${oil.name} on one side, ${prevOil.name} on the other.`;
     syncChrome();
   });
+  const halfBtn = document.getElementById("studio-half");
+  if (halfBtn) halfBtn.addEventListener("click", () => {
+    const list = recent.length > 1 ? recent.slice() : [oil, prevOil];
+    engine.halfMix(list.map(o => o.rgb));
+    if (prepNote) prepNote.textContent = `Half-mixed: ${list.map(o => o.name).join(", ")} marbled on the brush. Each stroke streaks them without blending to mud.`;
+    syncChrome();
+  });
   if (cleanBtn) cleanBtn.addEventListener("click", () => {
+    recent.length = 0;
     if (!mixEngine) return;
     mixEngine.clear();
     flushMix();
   });
+
+  if (moreBtn && techBar) moreBtn.addEventListener("click", () => {
+    const open = !techBar.classList.contains("open");
+    techBar.classList.toggle("open", open);
+    moreBtn.setAttribute("aria-expanded", open ? "true" : "false");
+    moreBtn.textContent = open ? "Fewer techniques" : "More: Structures, Rocks, Waves, Light, Liner";
+  });
+  if (handBox) handBox.querySelectorAll("[data-hand]").forEach(btn => btn.addEventListener("click", () => {
+    const [key, val] = btn.dataset.hand.split(":");
+    if (val === undefined) {
+      if (key === "ruler") hand.ruler = !rulerOn();
+      else hand[key] = !hand[key];
+    } else hand[key] = val;
+    applyTechnique();
+    syncChrome();
+  }));
+  const baseBtn = document.getElementById("studio-base");
+  if (baseBtn) baseBtn.addEventListener("click", () => {
+    engine.pushUndo();
+    engine.baseCoat([246, 243, 236]);
+    flush(true);
+    if (prepNote) prepNote.textContent = "Wet white base coat on. Sky and water colors now melt softly into it. Tap Let it dry before details.";
+    syncChrome();
+  });
+  const dryBtn = document.getElementById("studio-dry");
+  if (dryBtn) dryBtn.addEventListener("click", () => {
+    engine.pushUndo();
+    engine.dryAll();
+    if (prepNote) prepNote.textContent = "The canvas is dry. New paint now sits on top and covers.";
+    syncChrome();
+  });
+  const zin = document.getElementById("studio-zoom-in");
+  const zout = document.getElementById("studio-zoom-out");
+  const zcenter = () => { const r = frame.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+  if (zin) zin.addEventListener("click", () => zoomAt(hand.zoom + 0.5, ...zcenter()));
+  if (zout) zout.addEventListener("click", () => zoomAt(hand.zoom <= 1.5 ? 1 : hand.zoom - 0.5, ...zcenter()));
+  const landBtn = document.getElementById("studio-landscape");
+  if (landBtn) landBtn.addEventListener("click", () => {
+    const on = !frame.classList.contains("is-landscape");
+    frame.classList.toggle("is-landscape", on);
+    landBtn.setAttribute("aria-pressed", on ? "true" : "false");
+    hand.zoom = 1; hand.panX = 0; hand.panY = 0; applyZoom();
+    rebuild(true);
+  });
+  // Two-finger pan when zoomed, on desktop: wheel / trackpad.
+  frame.addEventListener("wheel", e => {
+    if (!e.ctrlKey && hand.zoom === 1) return;
+    e.preventDefault();
+    if (e.ctrlKey) zoomAt(hand.zoom * (e.deltaY < 0 ? 1.15 : 0.87), e.clientX, e.clientY);
+    else { hand.panX -= e.deltaX; hand.panY -= e.deltaY; applyZoom(); }
+  }, { passive: false });
 
   sizeInput.addEventListener("input", () => {
     applyRadius();
@@ -1366,7 +1680,29 @@ function mount() {
     return { x: start.x + (pos.x - start.x) * 0.08, y: Math.max(start.y, pos.y) };
   }
 
+  function startPinch() {
+    const pts = [...touches.values()];
+    const cx = (pts[0].x + pts[1].x) / 2, cy = (pts[0].y + pts[1].y) / 2;
+    pinch = { d: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) || 1, z: hand.zoom, cx, cy, panX: hand.panX, panY: hand.panY };
+  }
   function down(e) {
+    if (e.pointerType === "touch") {
+      touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (touches.size >= 2) {
+        // Second finger: this is a pinch or pan, not paint. Take back the stroke.
+        if (drawing) {
+          if (engine.undo()) flush(true);
+          drawing = false;
+          pointerId = null;
+          ruleFrom = null;
+          showGuide(null);
+          document.documentElement.classList.remove("studio-painting");
+        }
+        startPinch();
+        e.preventDefault();
+        return;
+      }
+    }
     if (pointerId !== null || mixPointer !== null) return;
     if (e.pointerType === "mouse" && e.button !== 0) return;
     e.preventDefault();
@@ -1384,6 +1720,12 @@ function mount() {
     start = { x: last.x, y: last.y };
     lastDir = tech === "water" && touchIdx === 1 ? { x: 0, y: 1 } : { x: 1, y: 0 };
     if (tech === "trees") engine.scale = treeScale(last.y);
+    if (rulerOn()) {
+      ruleFrom = { x: last.x, y: last.y, p: pressureFrom(e, 1) };
+      showGuide(ruleFrom, ruleFrom);
+      syncChrome();
+      return;
+    }
     markDirty(engine.stamp(last.x, last.y, lastDir.x, lastDir.y, pressureFrom(e, 1), "dab"));
     flush(false);
     syncChrome();
@@ -1391,6 +1733,24 @@ function mount() {
   }
 
   function move(e) {
+    if (e.pointerType === "touch" && touches.has(e.pointerId)) {
+      touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pinch && touches.size >= 2) {
+        e.preventDefault();
+        const pts = [...touches.values()];
+        const d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) || 1;
+        const cx = (pts[0].x + pts[1].x) / 2, cy = (pts[0].y + pts[1].y) / 2;
+        hand.zoom = pinch.z; hand.panX = pinch.panX + (cx - pinch.cx); hand.panY = pinch.panY + (cy - pinch.cy);
+        zoomAt(pinch.z * d / pinch.d, cx, cy);
+        return;
+      }
+    }
+    if (ruleFrom && e.pointerId === pointerId) {
+      e.preventDefault();
+      last = eventPos(e, canvas);
+      showGuide(ruleFrom, last);
+      return;
+    }
     if (e.pointerId !== pointerId || !drawing || !last) {
       if (e.pointerType !== "touch") placeRing(e.clientX, e.clientY, e.pointerType);
       return;
@@ -1430,11 +1790,30 @@ function mount() {
   }
 
   function up(e) {
+    if (e.pointerType === "touch") {
+      touches.delete(e.pointerId);
+      if (pinch) {
+        if (touches.size < 2) pinch = null;
+        return;
+      }
+    }
     if (e.pointerId !== pointerId) return;
+    if (ruleFrom) {
+      // Straight edge: lay the whole line in one even pull.
+      const end = last || ruleFrom;
+      const len = Math.hypot(end.x - ruleFrom.x, end.y - ruleFrom.y);
+      const ux = len ? (end.x - ruleFrom.x) / len : 1;
+      const uy = len ? (end.y - ruleFrom.y) / len : 0;
+      leftover = 0;
+      markDirty(engine.stamp(ruleFrom.x, ruleFrom.y, ux, uy, ruleFrom.p, "dab"));
+      if (len > 0.5) paintSegment(engine, ruleFrom, end, ruleFrom.p, "draw", null).forEach(markDirty);
+      ruleFrom = null;
+      showGuide(null);
+    }
     drawing = false;
     pointerId = null;
     leftover = 0;
-    engine.scale = 1;
+    engine.scale = baseScale();
     document.documentElement.classList.remove("studio-painting");
     flush(false);
     syncChrome();
@@ -1444,7 +1823,7 @@ function mount() {
   canvas.addEventListener("pointerdown", down, { passive: false });
   canvas.addEventListener("pointermove", move, { passive: false });
   canvas.addEventListener("pointerup", up);
-  canvas.addEventListener("pointercancel", up);
+  canvas.addEventListener("pointercancel", e => { touches.delete(e.pointerId); if (touches.size < 2) pinch = null; up(e); });
   canvas.addEventListener("contextmenu", e => e.preventDefault());
   frame.addEventListener("pointerleave", () => { if (!drawing) hideRing(); });
 
@@ -1488,7 +1867,7 @@ function mount() {
   }
 
   document.addEventListener("touchmove", e => {
-    if (drawing || mixPointer !== null) e.preventDefault();
+    if (drawing || mixPointer !== null || pinch) e.preventDefault();
   }, { passive: false });
 
   let resizeTimer = 0;
@@ -1507,7 +1886,7 @@ function mount() {
   squeeze(OILS.find(o => o.id === "blue"));
   squeeze(oil);
   syncChrome();
-  window.__studio = { get engine() { return engine; }, get mixEngine() { return mixEngine; }, selectTech, selectOil: id => selectOil(OILS.find(o => o.id === id)), prep, flush: () => { flush(true); flushMix(); } };
+  window.__studio = { get engine() { return engine; }, get mixEngine() { return mixEngine; }, selectTech, selectOil: id => selectOil(OILS.find(o => o.id === id)), prep, hand, zoomAt, flush: () => { flush(true); flushMix(); } };
 }
 
 if (typeof document !== "undefined") mount();
