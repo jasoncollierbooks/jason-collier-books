@@ -48,12 +48,20 @@
       video.src = SRC[k].mp4;
     }
     try { video.currentTime = 0; } catch (e) { /* not loaded yet */ }
-    video.muted = true;
-    show("muted");
+    video.muted = false;
+    show("playing");
     if (hasModal) { if (!dlg.open) dlg.showModal(); } else dlg.setAttribute("open", "");
     try { localStorage.setItem(KEY, "1"); } catch (e) { /* private mode */ }
     closeBtn.focus();
-    play(false);
+    var pr;
+    try { pr = video.play(); } catch (e) { pr = null; }
+    if (pr && typeof pr.then === "function") {
+      pr.then(function () { show(video.muted ? "muted" : "playing"); }, function () {
+        // Browser blocked autoplay with sound: fall back to muted + "Tap for sound".
+        video.muted = true;
+        play(false);
+      });
+    }
   }
   function close() {
     try { video.pause(); } catch (e) { /* ignore */ }
@@ -64,7 +72,7 @@
     openBtn.focus({ preventScroll: true });
   }
 
-  openBtn.addEventListener("click", open);
+  openBtn.addEventListener("click", function () { open(); });
   closeBtn.addEventListener("click", close);
   dlg.addEventListener("close", onClosed);
   dlg.addEventListener("click", function (e) { if (e.target === dlg) close(); });
