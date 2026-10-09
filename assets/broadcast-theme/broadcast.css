@@ -428,6 +428,7 @@ button, input { font: inherit; }
 .end-nav a[aria-current="page"] { color: var(--brass); }
 .end-name { font-size: clamp(2.2rem, 7vw, 4rem); }
 .end-name span { display: inline; }
+@media (max-width: 600px) { .end-name { font-size: min(2.2rem, calc((100vw - 110px) / 10.2)); letter-spacing: .06em; } }
 .end-rule { width: min(14rem, 60%); height: 1px; margin: .75rem auto .65rem; border: 0; background: rgba(244, 236, 223, .75); }
 .end-url {
   display: inline-block; max-width: 100%; overflow-wrap: anywhere;
