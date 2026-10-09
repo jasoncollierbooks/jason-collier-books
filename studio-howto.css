@@ -1,0 +1,131 @@
+/* Oil Studio how-to video: first-visit modal + replay button. */
+.howto-open {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  margin: .35rem 0 .1rem;
+  min-height: 44px;
+  padding: .4rem 1rem .4rem .8rem;
+  border-radius: 999px;
+  border: 2px solid #e4c98a;
+  background: rgba(20, 12, 8, .72);
+  color: #fff6e4;
+  font-family: "Josefin Sans", "Gill Sans", "Trebuchet MS", sans-serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: .02em;
+  cursor: pointer;
+}
+.howto-open svg { width: 18px; height: 18px; flex: none; }
+.howto-open:hover { background: rgba(228, 201, 138, .2); }
+.howto-open:focus-visible { outline: 3px solid #fff6e4; outline-offset: 3px; }
+
+.howto {
+  box-sizing: border-box;
+  width: 100vw;
+  max-width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0;
+  padding: max(.6rem, env(safe-area-inset-top)) .6rem max(.6rem, env(safe-area-inset-bottom));
+  border: 0;
+  background: transparent;
+  color: #fff6e4;
+}
+.howto[open] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+}
+.howto::backdrop { background: rgba(10, 6, 4, .86); }
+.howto.howto-fallback[open] {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(10, 6, 4, .9);
+}
+.howto-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .6rem;
+  width: var(--howto-w);
+}
+.howto-bar h2 {
+  margin: 0;
+  font-family: "Josefin Sans", "Gill Sans", "Trebuchet MS", sans-serif;
+  font-weight: 600;
+  font-size: 1.25rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.howto-btn {
+  min-height: 48px;
+  padding: .45rem 1.1rem;
+  border-radius: 999px;
+  border: 2px solid #e4c98a;
+  background: #24160f;
+  color: #fff6e4;
+  font-family: "Josefin Sans", "Gill Sans", "Trebuchet MS", sans-serif;
+  font-weight: 600;
+  font-size: 1.15rem;
+  cursor: pointer;
+}
+.howto-btn.howto-primary { background: linear-gradient(180deg, #fff6e4, #e4c98a); color: #24160f; }
+.howto-btn:focus-visible { outline: 3px solid #fff6e4; outline-offset: 3px; }
+.howto-btn[hidden] { display: none; }
+.howto {
+  --howto-w: min(94vw, calc((100dvh - 9.5rem) * 9 / 16));
+}
+.howto[data-shape="l"] {
+  --howto-w: min(94vw, 1100px, calc((100dvh - 9.5rem) * 16 / 9));
+}
+.howto-frame {
+  position: relative;
+  width: var(--howto-w);
+  aspect-ratio: 9 / 16;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #140c08;
+  box-shadow: 0 0 0 2px rgba(228, 201, 138, .6), 0 18px 40px rgba(0, 0, 0, .6);
+}
+.howto[data-shape="l"] .howto-frame { aspect-ratio: 16 / 9; }
+.howto-frame video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #140c08;
+}
+.howto-play {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: rgba(10, 6, 4, .35);
+  cursor: pointer;
+}
+.howto-play[hidden] { display: none; }
+.howto-play span {
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: rgba(255, 246, 228, .94);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .5);
+}
+.howto-play svg { width: 40px; height: 40px; margin-left: 6px; }
+.howto-foot {
+  display: flex;
+  justify-content: center;
+  gap: .6rem;
+  min-height: 48px;
+  width: var(--howto-w);
+}

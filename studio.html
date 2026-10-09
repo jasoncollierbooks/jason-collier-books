@@ -30,6 +30,7 @@
 <link rel="stylesheet" href="polish.css">
 <link rel="stylesheet" href="assets/broadcast-theme/site.css">
 <link rel="stylesheet" href="studio.css?v=3">
+<link rel="stylesheet" href="studio-howto.css?v=1">
 <link rel="stylesheet" href="season.css">
 <script src="season.js"></script>
 </head>
@@ -74,6 +75,7 @@
     <header class="page-head">
       <p class="kicker">The studio</p>
       <h1>Oil Studio</h1>
+      <button type="button" id="studio-howto-open" class="howto-open" aria-haspopup="dialog" aria-controls="studio-howto"><svg viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M5 3l12 7-12 7z"/></svg>How to paint</button>
       <p>The paintings on the <a href="art.html">Art page</a> are oils. Squeeze color onto the palette, mix it with the brush, then pick a technique: mountains, trees, bushes, sky, or water. Test version.</p>
     </header>
 
@@ -216,7 +218,22 @@
     </div>
   </form>
 </dialog>
+<dialog id="studio-howto" class="howto" aria-labelledby="studio-howto-title">
+  <div class="howto-bar">
+    <h2 id="studio-howto-title">How to paint</h2>
+    <button type="button" id="studio-howto-close" class="howto-btn">Skip</button>
+  </div>
+  <div class="howto-frame">
+    <video playsinline webkit-playsinline muted preload="metadata" aria-label="How to paint in the Oil Studio: tap a tube, mix on the palette, load the brush, then paint sky, mountains, water, trees and bushes. Captions are in the video."></video>
+    <button type="button" id="studio-howto-play" class="howto-play" aria-label="Play the how-to video with sound" hidden><span><svg viewBox="0 0 20 20" aria-hidden="true"><path fill="#24160f" d="M5 3l12 7-12 7z"/></svg></span></button>
+  </div>
+  <div class="howto-foot">
+    <button type="button" id="studio-howto-sound" class="howto-btn" hidden>Tap for sound</button>
+    <button type="button" id="studio-howto-again" class="howto-btn" hidden>Watch again</button>
+  </div>
+</dialog>
 <script src="main.js" defer></script>
+<script src="studio-howto.js?v=1" defer></script>
 <script type="module" src="studio.js?v=3"></script>
 </body>
 </html>
