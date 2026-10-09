@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="theme-color" content="#16130f">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Oil Studio (test) | Jason Collier</title>
+<meta name="description" content="Paint with oils in the browser. A linen canvas on a studio easel, a wooden palette, and brushes that smear and mix like wet paint.">
+<meta property="og:title" content="Oil Studio | Jason Collier">
+<meta property="og:description" content="Paint with oils in the browser. A linen canvas on a studio easel, a wooden palette, and brushes that smear and mix like wet paint.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://jasoncollierbooks.github.io/jason-collier-books/images/jason-art/painting-lighthouse-at-dusk.jpg">
+<meta property="og:image:width" content="720">
+<meta property="og:image:height" content="550">
+<meta property="og:url" content="https://jasoncollierbooks.github.io/jason-collier-books/studio.html">
+<meta property="og:site_name" content="Jason Collier Books">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Oil Studio | Jason Collier">
+<meta name="twitter:description" content="Paint with oils in the browser. A linen canvas on a studio easel, a wooden palette, and brushes that smear and mix like wet paint.">
+<meta name="twitter:image" content="https://jasoncollierbooks.github.io/jason-collier-books/images/jason-art/painting-lighthouse-at-dusk.jpg">
+<link rel="canonical" href="https://jasoncollierbooks.github.io/jason-collier-books/studio.html">
+<link rel="icon" href="icons/pages/studio-32.png?v=tv2" sizes="32x32" type="image/png">
+<link rel="icon" href="icons/pages/studio-48.png?v=tv2" sizes="48x48" type="image/png">
+<link rel="apple-touch-icon" href="icons/pages/studio-apple-touch.png?v=tv2" sizes="180x180">
+<link rel="manifest" href="manifest.json?v=tv1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Rye&family=Orbitron:wght@500;700;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&family=IM+Fell+English+SC&family=Special+Elite&family=Josefin+Sans:wght@400;600&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="polish.css">
+<link rel="stylesheet" href="assets/broadcast-theme/site.css">
+<link rel="stylesheet" href="studio-test.css?v=2">
+<link rel="stylesheet" href="season.css">
+<script src="season.js"></script>
+</head>
+<body class="broadcast-lite page-studio">
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="index.html" aria-label="Jason Collier, home">J<span>·</span>C</a>
+  <a class="pwa-home" href="index.html" aria-label="Home"><svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18"><path fill="currentColor" d="M12 3.2 3 11h2v9h5v-6h4v6h5v-9h2L12 3.2z"/></svg></a>
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><span></span><span></span><span></span></button>
+  <nav id="site-nav" aria-label="Main">
+    <a class="nav-link" href="index.html">Home</a>
+    <div class="nav-group">
+      <button type="button" class="nav-label" aria-expanded="false" aria-haspopup="true" aria-controls="menu-books">Books</button>
+      <div class="nav-menu" id="menu-books" role="group" aria-label="Books">
+        <a href="books.html">All Books</a>
+        <a href="jang-and-tom.html">Jang &amp; Tom</a>
+        <a href="first-pulse.html">First Pulse</a>
+        <a href="old-man-on-the-mountain.html">Old Man</a>
+        <a href="rusty-stack.html">Rusty Stack</a>
+      </div>
+    </div>
+    <a class="nav-link" href="audiobooks.html">Listen</a>
+    <a class="nav-link" href="past-inspirations.html">Past Inspirations</a>
+    <div class="nav-group">
+      <button type="button" class="nav-label on" aria-expanded="false" aria-haspopup="true" aria-controls="menu-extra">Extra</button>
+      <div class="nav-menu" id="menu-extra" role="group" aria-label="Extra">
+        <a href="art.html">Art</a>
+        <a href="studio.html" class="on" aria-current="page">Studio</a>
+        <a href="thorne-lab.html">Thorne’s Lab</a>
+        <a href="play.html">Play</a>
+        <a href="novel.html">The Novel</a>
+      </div>
+    </div>
+    <a class="nav-link" href="about.html">About</a>
+  </nav>
+</header>
+
+<main id="top">
+<section class="studio-page">
+  <div class="studio-wrap">
+    <header class="page-head">
+      <p class="kicker">The studio</p>
+      <h1>Oil Studio</h1>
+      <p>The paintings on the <a href="art.html">Art page</a> are oils. Squeeze color onto the palette, mix it with the brush, then pick a technique: mountains, trees, bushes, sky, or water. Test version.</p>
+    </header>
+
+    <div class="studio-set">
+      <div class="set-backdrop" aria-hidden="true"></div>
+
+      <div class="studio-stage">
+        <div class="easel">
+          <p class="studio-status"><span id="studio-status" aria-live="polite">Round brush. Cadmium Red.</span><span id="studio-meter" class="studio-meter" role="meter" aria-label="Paint left on the brush" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><span id="studio-chip" class="studio-chip" role="img" aria-label="Paint on the brush"></span></span></p>
+          <div class="easel-stand">
+            <div class="stretcher">
+              <div class="canvas-box" id="studio-frame">
+                <canvas id="studio-canvas" aria-label="Oil canvas. Drag with a finger, mouse, or stylus to paint."></canvas>
+                <div id="studio-cursor" class="tool-ring" hidden aria-hidden="true"></div>
+              </div>
+            </div>
+            <div class="easel-ledge" aria-hidden="true"></div>
+            <div class="easel-legs" aria-hidden="true">
+              <span class="leg leg-l"></span>
+              <span class="leg leg-r"></span>
+              <span class="crossbar"></span>
+            </div>
+            <div class="studio-stool" aria-hidden="true"></div>
+          </div>
+          <div class="tech-panel">
+            <div class="tech-bar" id="studio-tech" role="radiogroup" aria-label="Technique">
+              <button type="button" class="tech" data-tech="free" role="radio" aria-checked="true"><svg viewBox="0 0 40 40" aria-hidden="true"><path fill="currentColor" d="M27 5l8 8-15 15-9 2 2-9z"/></svg><span>Free</span></button>
+              <button type="button" class="tech" data-tech="mountain" role="radio" aria-checked="false" tabindex="-1"><svg viewBox="0 0 40 40" aria-hidden="true"><path fill="currentColor" d="M2 34 15 10l6 9 4-5 13 20z"/><path fill="#fff" d="M15 10l-4 7 4-2 2 3 3-2z"/></svg><span>Mountains</span></button>
+              <button type="button" class="tech" data-tech="trees" role="radio" aria-checked="false" tabindex="-1"><svg viewBox="0 0 40 40" aria-hidden="true"><path fill="currentColor" d="M20 3l6 10h-3l7 10h-4l7 10H7l7-10h-4l7-10h-3z"/><rect x="18" y="33" width="4" height="5" fill="currentColor"/></svg><span>Trees</span></button>
+              <button type="button" class="tech" data-tech="bushes" role="radio" aria-checked="false" tabindex="-1"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="13" cy="25" r="9" fill="currentColor"/><circle cx="24" cy="20" r="10" fill="currentColor"/><circle cx="31" cy="28" r="7" fill="currentColor"/></svg><span>Bushes</span></button>
+              <button type="button" class="tech" data-tech="sky" role="radio" aria-checked="false" tabindex="-1"><svg viewBox="0 0 40 40" aria-hidden="true"><path fill="currentColor" d="M10 28a7 7 0 0 1 1-14 9 9 0 0 1 17 2 6 6 0 0 1 2 12z"/></svg><span>Sky</span></button>
+              <button type="button" class="tech" data-tech="water" role="radio" aria-checked="false" tabindex="-1"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M3 14c6-4 11 4 17 0s11 4 17 0M3 22c6-4 11 4 17 0s11 4 17 0M3 30c6-4 11 4 17 0s11 4 17 0" stroke="currentColor" stroke-width="3" fill="none"/></svg><span>Water</span></button>
+            </div>
+            <div class="touch-bar" id="studio-touch" role="radiogroup" aria-label="Touch">
+              <button type="button" class="studio-btn touch" data-touch="0" role="radio" aria-checked="true">Firm</button>
+              <button type="button" class="studio-btn touch" data-touch="1" role="radio" aria-checked="false" tabindex="-1">Light touch</button>
+            </div>
+            <p class="tech-hint" id="studio-tech-hint"></p>
+          </div>
+        </div>
+
+        <aside class="palette-col" aria-label="Oil palette">
+          <div class="palette-bar">
+            <h2>Palette</h2>
+            <button type="button" id="studio-wipe" class="studio-btn studio-wipe">Wipe brush</button>
+          </div>
+          <div class="palette-tools">
+            <button type="button" id="studio-reload" class="studio-btn">Load brush</button>
+            <button type="button" id="studio-double" class="studio-btn">Double-load</button>
+            <button type="button" id="studio-clean" class="studio-btn">Scrape palette</button>
+          </div>
+          <p class="prep-note" id="studio-prep-note" aria-live="polite"></p>
+          <div class="kidney" id="studio-mixbox">
+            <svg class="kidney-shape" viewBox="0 0 360 500" aria-hidden="true">
+              <defs>
+                <radialGradient id="studio-wood" cx="42%" cy="38%" r="72%">
+                  <stop offset="0%" stop-color="#e0aa68"/>
+                  <stop offset="46%" stop-color="#a86434"/>
+                  <stop offset="100%" stop-color="#6a3c1c"/>
+                </radialGradient>
+              </defs>
+              <path id="studio-palette-wood" fill="url(#studio-wood)" fill-rule="evenodd" stroke="#3d2614" stroke-width="7" d="M10 250A170 230 0 1 1 350 250A170 230 0 1 1 10 250ZM54 258m-32 0a32 32 0 1 0 64 0a32 32 0 1 0-64 0Z"/>
+              <circle cx="54" cy="258" r="26" fill="none" stroke="#2a180e" stroke-width="5"/>
+            </svg>
+            <canvas id="studio-mix" class="mix-area" aria-label="Mixing area. Tap a tube to put paint here, then drag the brush to mix and pick it up."></canvas>
+            <div id="studio-prep" class="prep-tool" hidden aria-hidden="true">
+              <svg viewBox="0 0 60 90">
+                <g class="pt pt-knife"><path d="M8 60 L52 44 L50 54 L10 66 Z" fill="#d7dbe2" stroke="#6d7480"/><rect x="40" y="10" width="7" height="38" rx="3" fill="#6b3e22" transform="rotate(20 44 30)"/></g>
+                <g class="pt pt-fan"><path d="M8 62 Q30 40 52 62 L36 74 H24 Z" fill="#2a2018"/><path d="M12 60 L24 72 M20 54 L27 72 M30 50 V72 M40 54 L33 72 M48 60 L36 72" stroke="#5a4a38" stroke-width="1.5"/><rect x="24" y="74" width="12" height="8" fill="#c9ccd2"/><rect x="27" y="10" width="6" height="64" rx="3" fill="#7a4a26"/></g>
+                <g class="pt pt-one"><rect x="17" y="54" width="26" height="22" rx="3" fill="#2a2018"/><rect x="16" y="46" width="28" height="10" fill="#c9ccd2"/><rect x="26" y="4" width="8" height="44" rx="3" fill="#7a4a26"/></g>
+                <g class="pt pt-big"><rect x="8" y="56" width="44" height="22" rx="3" fill="#2a2018"/><rect x="7" y="46" width="46" height="11" fill="#c9ccd2"/><rect x="25" y="2" width="10" height="46" rx="3" fill="#7a4a26"/></g>
+                <g class="pt pt-round"><path d="M22 54h16l-3 20q-5 8-10 0z" fill="#2a2018"/><rect x="21" y="44" width="18" height="11" fill="#c9ccd2"/><rect x="26" y="2" width="8" height="44" rx="3" fill="#7a4a26"/></g>
+              </svg>
+            </div>
+            <div class="oil-list" id="studio-palette" role="radiogroup" aria-label="Oil colors"></div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="brush-tray">
+        <aside class="brush-col" aria-label="Brushes">
+          <h2>Brushes</h2>
+          <div class="brush-list" id="studio-brushes" role="radiogroup" aria-label="Brushes">
+            <button type="button" class="brush" data-kind="round" role="radio" aria-checked="true">
+              <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="currentColor" d="M24 4c6 8 8 14 8 18a8 8 0 1 1-16 0c0-4 2-10 8-18z"/><rect x="21" y="28" width="6" height="16" rx="2" fill="currentColor"/></svg>
+              <span>Round</span>
+            </button>
+            <button type="button" class="brush" data-kind="flat" role="radio" aria-checked="false" tabindex="-1">
+              <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="8" y="8" width="32" height="14" rx="2" fill="currentColor"/><rect x="21" y="22" width="6" height="20" rx="2" fill="currentColor"/></svg>
+              <span>Flat</span>
+            </button>
+            <button type="button" class="brush" data-kind="filbert" role="radio" aria-checked="false" tabindex="-1">
+              <svg viewBox="0 0 48 48" aria-hidden="true"><ellipse cx="24" cy="16" rx="16" ry="10" fill="currentColor"/><rect x="21" y="24" width="6" height="18" rx="2" fill="currentColor"/></svg>
+              <span>Filbert</span>
+            </button>
+            <button type="button" class="brush" data-kind="knife" role="radio" aria-checked="false" tabindex="-1">
+              <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="currentColor" d="M6 18h26l8 6-8 6H6z"/><rect x="34" y="22" width="10" height="4" rx="1" fill="currentColor"/></svg>
+              <span>Knife</span>
+            </button>
+          </div>
+          <label class="studio-size">Brush size <strong id="studio-size-read">28</strong>
+            <input id="studio-size" type="range" min="12" max="64" value="28" aria-valuemin="12" aria-valuemax="64" aria-valuenow="28">
+          </label>
+        </aside>
+        <div class="studio-side">
+          <div class="studio-actions">
+            <button type="button" id="studio-undo" class="studio-btn" disabled>Undo</button>
+            <button type="button" id="studio-clear" class="studio-btn">Clear</button>
+            <button type="button" id="studio-save" class="studio-btn" aria-label="Save PNG">Save</button>
+            <button type="button" id="studio-quality" class="studio-btn" aria-pressed="false" aria-label="Simpler blend">Simpler</button>
+          </div>
+          <button type="button" id="studio-print" class="studio-btn studio-print-btn">Print</button>
+        </div>
+      </div>
+      <p id="studio-note" class="studio-note"></p>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <span>© <span id="y">2026</span> Jason Collier</span>
+  <span class="visit-count" hidden></span>
+  <span class="foot-links"><a href="https://x.com/jascol235175" target="_blank" rel="noopener">X @jascol235175</a><a href="https://www.amazon.com/stores/author/B0GDW74Y5S" target="_blank" rel="noopener">Amazon Author Page</a><a href="mailto:outdoorsolution@bellsouth.net">Email</a><a href="https://venmo.com/u/Jason-Collier-40" target="_blank" rel="noopener noreferrer">Tip the trail boss</a></span>
+</footer>
+<dialog id="studio-print-dialog" class="studio-print-dialog" aria-labelledby="studio-print-title">
+  <form id="studio-print-form">
+    <h2 id="studio-print-title">Print this painting</h2>
+    <label for="studio-title">Title
+      <input id="studio-title" name="title" maxlength="80" autocomplete="off" placeholder="Optional">
+    </label>
+    <label for="studio-painter">Name
+      <input id="studio-painter" name="painter" maxlength="80" autocomplete="name" placeholder="Optional">
+    </label>
+    <p class="studio-print-help">Both are optional. The printed page is the painting, plus a title or name if you add one.</p>
+    <p id="studio-print-note" class="studio-print-note" role="status"></p>
+    <div class="studio-print-actions">
+      <button type="submit" class="studio-btn studio-print-btn">Print</button>
+      <button type="button" id="studio-print-cancel" class="studio-btn">Keep painting</button>
+    </div>
+  </form>
+</dialog>
+<script src="main.js" defer></script>
+<script type="module" src="studio-test.js?v=2"></script>
+</body>
+</html>
