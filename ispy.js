@@ -2556,7 +2556,7 @@ const Ambience = window.ISpyAmbience || { unlock(){}, play(){}, stop(){}, toggle
     const cards = book.pics.map(p => {
       const i = ISPY_PICS.indexOf(ISPY_PICS.find(q => q.id === p.id));
       return `<button type="button" class="ispy-card" role="listitem" data-i="${i}">
-        <span class="ispy-card-img"><img src="${p.src}" alt="" loading="lazy"></span>
+        <span class="ispy-card-img"><img src="${p.src}" alt="${p.src === "images/jang-and-tom-wagon-masters.jpg" ? "Cover of Jang and Tom: Wagon Masters by Jason Collier: two unqualified Philadelphia debtors sell themselves as expert wagon-train guides" : ""}" loading="lazy"></span>
         <span class="ispy-card-t"><strong>${esc(p.title)}</strong><em>${p.items.length} things hidden · ${esc(p.credit)}</em></span>
       </button>`;
     }).join("");

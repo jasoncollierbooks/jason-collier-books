@@ -521,7 +521,7 @@ footer a:hover, .end-url:hover, .end-nav a:hover { color: var(--ink); }
   .mcard { display: grid; grid-template-columns: 6.6rem minmax(0, 1fr); }
   .mcard-img { aspect-ratio: auto; min-height: 100%; }
   .spec { letter-spacing: .18em; }
-  .hero-name { font-size: 2.05rem; letter-spacing: .08em; }
+  .hero-name { font-size: min(2.05rem, calc((100vw - 92px) / 10.2)); letter-spacing: .06em; }
   .testcard .kicker { letter-spacing: .05em; line-height: 1.4; }
   .hero-actions .btn { flex: 1 1 auto; }
 }

@@ -406,6 +406,8 @@
   }
 
   function mountRibbon(card) {
+    /* Pages can keep the seasonal skin without the greeting ribbon */
+    if (document.body && document.body.getAttribute("data-season-ribbon") === "off") return;
     var rib = el("div", "season-ribbon");
     var span = document.createElement("span");
     span.textContent = RIBBON[season];
