@@ -120,3 +120,5 @@ fr.addEventListener('load',function(){try{var w=fr.contentWindow,d=fr.contentDoc
  w.open=(function(o){return function(x,t,f){try{var u=new URL(x,w.location.href);if(u.origin===location.origin){route(u);return null}}catch(e){}return window.open(x,'_blank','noopener')}})(w.open);
 }catch(e){}});})();
 window.addEventListener('message',function(e){if(e.origin===location.origin&&e.data&&e.data.ce==='home'){var f=document.getElementById('frame');if(f)f.hidden=true;var i=document.querySelector('#frame iframe');if(i)i.src='about:blank';var t=document.querySelector('.tabs button[data-go="home"]');if(t)t.click()}});
+// signed in inside the app frame (6-digit code): re-check sign-in, close the frame, welcome
+window.addEventListener('message',function(e){if(e.origin!==location.origin||!e.data||e.data.ce!=='signedin')return;var A=window.CollierAuth;var f=document.getElementById('frame'),i=document.querySelector('#frame iframe');if(f)f.hidden=true;if(i)i.src='about:blank';(A&&A.refresh?A.refresh():Promise.resolve()).then(function(){window.CE&&CE.toast('Welcome to the Pine Knot Club!')})});

@@ -72,6 +72,12 @@
 .acct-msg{font-size:18px!important;min-height:1.6em;color:#f3dfb1!important}
 .acct-check{display:flex;gap:.7rem;align-items:flex-start;font-family:var(--ui);font-size:17px!important;font-weight:400!important;line-height:1.4;color:#f3dfb1!important;cursor:pointer}
 .acct-check input{width:24px!important;height:24px;flex:0 0 24px;margin-top:2px;accent-color:#d4af37}
+.code-label{font-family:var(--ui);font-weight:600;font-size:18px;color:#fbf6ee}
+.code-boxes{display:flex;gap:8px;align-items:center;margin:.6rem 0 1rem}
+.code-box{width:46px;height:58px;text-align:center;font:700 28px Georgia,serif;color:#fbf6ee;background:#120f0c;border:1px solid rgba(228,208,164,.6);border-radius:8px;padding:0;caret-color:#d4af37}
+.code-box:focus{outline:2px solid #d4af37;outline-offset:1px}
+.code-dash{color:#a8987a;font-size:22px}
+.code-form{max-width:460px}
 .acct-row{display:flex;flex-wrap:wrap;gap:.8rem;margin:1rem 0}
 [hidden]{display:none!important}
 </style>
@@ -101,11 +107,23 @@
 </section>
 
 <section id="acct-check" hidden>
-  <div class="info-box">
-    <p>We sent a sign-in link to <strong id="acct-to"></strong>. Tap it on this phone or computer to finish signing in.</p>
-    <p class="fine">The link works once and expires in 15 minutes. Don't see it? Look in your spam folder.</p>
-  </div>
-  <div class="acct-row"><button class="acct-btn plain" type="button" id="acct-again">Use a different email</button></div>
+  <p class="info-lede">We sent a 6-digit code to <strong id="acct-to"></strong>. Type it here.</p>
+  <form class="code-form" id="code-form" autocomplete="off">
+    <label class="code-label" for="code-0">Your sign-in code</label>
+    <div class="code-boxes" id="code-boxes">
+      <input id="code-0" class="code-box" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" maxlength="6" aria-label="Digit 1">
+      <input class="code-box" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Digit 2">
+      <input class="code-box" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Digit 3">
+      <span class="code-dash" aria-hidden="true">–</span>
+      <input class="code-box" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Digit 4">
+      <input class="code-box" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Digit 5">
+      <input class="code-box" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Digit 6">
+    </div>
+    <button class="acct-btn" type="submit" id="code-go">Verify</button>
+  </form>
+  <p class="acct-msg" id="code-msg" role="status" aria-live="polite"></p>
+  <p class="fine">Or tap the link in the email. (On iPhone, the link opens Safari, so in the home-screen app the code is the way in.) The code works once and expires in 15 minutes. Don't see the email? Look in your spam folder.</p>
+  <div class="acct-row"><button class="acct-btn plain" type="button" id="code-resend">Resend code</button><button class="acct-btn plain" type="button" id="acct-again">Use a different email</button></div>
 </section>
 
 <section id="acct-in" hidden>
@@ -168,15 +186,65 @@
       show("acct-offline");
     }
   });
+  var lastEmail = "", lastUpd = false;
+  var boxes = [].slice.call(document.querySelectorAll(".code-box"));
+  function codeVal() { return boxes.map(function (b) { return b.value; }).join(""); }
+  function fill(digits, from) {
+    digits = String(digits).replace(/\D/g, "").split("");
+    for (var i = from; i < boxes.length && digits.length; i++) boxes[i].value = digits.shift();
+    var next = boxes.filter(function (b) { return !b.value; })[0];
+    (next || boxes[5]).focus();
+    if (codeVal().length === 6) submitCode();
+  }
+  boxes.forEach(function (b, i) {
+    b.addEventListener("input", function () {
+      var v = b.value.replace(/\D/g, "");
+      b.value = "";
+      if (v) fill(v, i); else b.value = "";
+    });
+    b.addEventListener("focus", function () { b.select(); });
+    b.addEventListener("keydown", function (e) {
+      if (e.key === "Backspace" && !b.value && i > 0) { boxes[i - 1].value = ""; boxes[i - 1].focus(); e.preventDefault(); }
+    });
+    b.addEventListener("paste", function (e) {
+      var t = (e.clipboardData || window.clipboardData).getData("text");
+      if (t) { e.preventDefault(); fill(t, 0); }
+    });
+  });
+  var verifying = false;
+  function submitCode() {
+    var code = codeVal();
+    if (code.length !== 6) { $("code-msg").textContent = "Enter all 6 digits."; return; }
+    if (verifying) return; verifying = true;
+    $("code-go").disabled = true; $("code-msg").textContent = "Checking…";
+    A.verify(lastEmail, code).then(function () {
+      $("code-msg").textContent = "Welcome to the Pine Knot Club!";
+      if (window.parent !== window) { try { window.parent.postMessage({ ce: "signedin" }, location.origin); } catch (e) {} }
+    }).catch(function (err) {
+      var m = String(err && err.message || "");
+      if (/^(Not found\.?|Something went wrong.*)$/.test(m) || /Failed to fetch|NetworkError|Load failed/i.test(m))
+        m = "Code sign-in is being switched on; for now tap the link in the email.";
+      $("code-msg").textContent = m;
+      boxes.forEach(function (b) { b.value = ""; }); boxes[0].focus();
+    }).then(function () { verifying = false; $("code-go").disabled = false; });
+  }
+  $("code-form").addEventListener("submit", function (e) { e.preventDefault(); submitCode(); });
+  $("code-resend").addEventListener("click", function () {
+    $("code-msg").textContent = "Sending a new code…";
+    A.start(lastEmail, ret, lastUpd).then(function () { $("code-msg").textContent = "New code sent. Use the newest email."; boxes.forEach(function (b) { b.value = ""; }); boxes[0].focus(); })
+      .catch(function (err) { $("code-msg").textContent = err.message; });
+  });
   $("acct-form").addEventListener("submit", function (e) {
     e.preventDefault();
     var btn = e.target.querySelector("button"), email = $("acct-email").value.trim();
+    lastEmail = email; lastUpd = $("acct-updates-new").checked;
     btn.disabled = true; $("acct-sent").textContent = "Sending…";
     var upd = $("acct-updates-new").checked;
     try { if (upd) localStorage.setItem("ce-updates-" + email.toLowerCase(), "1"); } catch (e) {}
     A.start(email, ret, upd).then(function () {
       $("acct-sent").textContent = ""; $("acct-to").textContent = email;
       $("acct-title").textContent = "Check your email"; show("acct-check");
+      $("code-msg").textContent = ""; boxes.forEach(function (b) { b.value = ""; }); boxes[0].focus();
     }).catch(function (err) { $("acct-sent").textContent = err.message; })
       .then(function () { btn.disabled = false; });
   });

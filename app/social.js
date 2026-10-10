@@ -30,8 +30,8 @@ function likeCount(id){return srv&&data[id]?data[id].likes:null}
 function rateInfo(id){return srv&&data[id]&&data[id].ratings?data[id]:null}
 function fetchAll(){if(!API)return Promise.resolve();var ids=Object.keys(BYID);
  if(+(ls('ce-rx-off')||0)>Date.now()){srv=false;return Promise.resolve()}
- return fetch(API+'/reactions?ids='+ids.join(','),{credentials:'include'}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(j){srv=true;data=j||{}}).catch(function(){srv=false;ls('ce-rx-off',Date.now()+6*3600e3)})}
-function post(path,body){return fetch(API+path,{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(function(r){if(!r.ok)throw r.status;return r.json()})}
+ return fetch(API+'/reactions?ids='+ids.join(','),{credentials:'include',headers:A.headers?A.headers():{}}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(j){srv=true;data=j||{}}).catch(function(){srv=false;ls('ce-rx-off',Date.now()+6*3600e3)})}
+function post(path,body){return fetch(API+path,{method:'POST',credentials:'include',headers:A.headers?A.headers({'Content-Type':'application/json'}):{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(function(r){if(!r.ok)throw r.status;return r.json()})}
 function hint(){if(srv&&!signedIn())toast('Saved on this phone. Sign in to count your vote.');else if(!srv)toast('Saved on this phone.')}
 function toggleLike(id){var on=!liked(id);ls('ce-like-'+id,on?'1':null);
  if(srv&&signedIn()){var d=data[id]=data[id]||{likes:0};d.liked=on;d.likes=Math.max(0,(d.likes||0)+(on?1:-1));paint();post('/like',{id:id,on:on}).then(function(j){d.likes=j.likes;d.liked=j.liked;paint()}).catch(function(){toast('Couldn\u2019t reach the server. Saved on this phone.')})}
