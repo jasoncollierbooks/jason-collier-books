@@ -356,19 +356,6 @@ html:not(.calm) .cs-int{animation:csBlink 1.2s steps(2) 3}@keyframes csBlink{50%
 .cs-go{display:block;width:100%;margin:12px 0 8px;min-height:54px;border-radius:27px;border:0;background:linear-gradient(#f0cf63,#c99a2a);color:#1a140d;font:700 20px Georgia,serif;box-shadow:0 3px 0 #7a5a12}
 .cs-later{min-height:44px;padding:0 20px;background:none;border:1px solid #4a3a26;border-radius:22px;color:#cdbf9f;font:16px Georgia,serif}
 .cs-mute{position:absolute;right:6px;top:6px;width:40px;height:40px;background:none;border:0;font-size:18px}
-/* ---- Play tab: game list ---- */
-.play-lede{margin:0 0 12px;color:#cdbf9f;font-size:16px}
-.glist{display:flex;flex-direction:column;gap:14px}
-.gcard{display:block;width:100%;text-align:left;border-radius:14px;overflow:hidden;background:#1a140d;border:1px solid #3d2f1f;box-shadow:0 8px 18px #0009;padding:0;color:inherit}
-.gcard img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-bottom:1px solid #3d2f1f}
-.gcard div{padding:12px 14px 14px}
-.gcard small{display:block;letter-spacing:.08em;text-transform:uppercase;font-size:12px;color:#d4af37}
-.gcard b{display:block;font:700 20px Georgia,serif;color:#f6ead0;margin:4px 0}
-.gcard span{display:block;font-size:15px;line-height:1.4;color:#cdbf9f}
-.gcard .gplay{display:inline-block;margin-top:10px;font-style:normal;font-weight:700;color:#1a140d;background:linear-gradient(#f0cf63,#c99a2a);border-radius:18px;padding:8px 16px}
-.gcard:active{opacity:.8}
-.glist .card{display:flex;align-items:center;gap:12px}.glist .card img{width:110px;aspect-ratio:16/9}
-.gcard .rx-row{display:flex!important;margin-top:10px}.gcard .rx-row>span{display:inline-flex!important;width:auto;font-size:14px!important;color:#e8d9b8}
 /* Gazette on Home: real newspaper (js/gazette.css) */
 .gazette:has(.pkg){background:none;box-shadow:none;padding:0;transform:none}
 html:not(.calm) .gazette .pkg{transform:rotate(-.4deg)}

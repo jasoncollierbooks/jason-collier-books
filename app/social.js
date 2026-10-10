@@ -17,7 +17,6 @@ var ITEMS={ // key = data-play / data-frame value
  'book-worlds/':{id:'game-book-worlds',t:'Book Worlds',u:SITE+'book-worlds/',rate:1},
  'i-spy.html':{id:'game-i-spy',t:'I Spy',u:SITE+'i-spy.html',rate:1},
  'coloring.html':{id:'game-coloring',t:'Coloring',u:SITE+'coloring.html',rate:1}};
-(window.CE_GAMES||[]).forEach(function(g){var k='game:'+g.id,it=ITEMS[g.url]&&!/^https?:/.test(g.url)?ITEMS[g.url]:{id:'game-'+g.id,t:g.t,u:/^https?:/.test(g.url)?g.url:SITE+g.url,rate:1};ITEMS[k]=it;if(/^https?:/.test(g.url))it.u=SITE+'play.html'});
 var APP={id:'app',t:'Collier Entertainment',u:SITE+'app/',rate:1};
 var BYID={};function reg(it){BYID[it.id]=it;return it}reg(APP);Object.keys(ITEMS).forEach(function(k){reg(ITEMS[k])});
 var srv=null,data={},signedIn=function(){return !!(A&&A.status==='in')};
@@ -56,11 +55,11 @@ function paint(){
  $$('[data-rx-chip]').forEach(function(e){var id=e.dataset.rxChip,r=rateInfo(id),m=myStars(id);e.textContent=r?'\u2605 '+r.avg.toFixed(1)+' ('+r.ratings+')':(m?'\u2605 '+m:'\u2606 Rate')});}
 // rows on posters, list items and cards
 function decorate(){
- $$('[data-play],[data-frame]').forEach(function(b){if(b.dataset.rxDone||!b.matches('.poster,.item,.card,.gcard'))return;var key=b.dataset.rxKey||b.dataset.play||b.dataset.frame,it=ITEMS[key],art=null;
+ $$('[data-play],[data-frame]').forEach(function(b){if(b.dataset.rxDone||!b.matches('.poster,.item,.card'))return;var key=b.dataset.play||b.dataset.frame,it=ITEMS[key],art=null;
   if(!it&&b.closest('#art')){var im=$('img',b),n=(im&&im.getAttribute('src')||'').replace(/.*\/|-thumb\.jpg$/g,'');if(!n)return;it=reg({id:'art-'+n,t:(im.alt||n),u:SITE+'art.html'});art=1}
   if(!it)return;b.dataset.rxDone=1;
   var row='<span class="rx-row">'+heartHTML(it.id)+(it.rate?'<span class="rx-chip" role="button" tabindex="0" data-rx-open="'+it.id+'" data-rx-chip="'+it.id+'"></span>':'')+'<span class="rx-share" role="button" tabindex="0" data-rx-share="'+it.id+'" aria-label="Share">\u2934 Share</span></span>';
-  var host=b.matches('.item,.gcard')?$('div',b):b;host.insertAdjacentHTML('beforeend',row)})}
+  var host=b.matches('.item')?$('div',b):b;host.insertAdjacentHTML('beforeend',row)})}
 // detail sheet (rating + like + share)
 var sheet=document.createElement('div');sheet.id='rxSheet';sheet.className='rx-sheet';sheet.hidden=true;document.body.appendChild(sheet);
 function openSheet(id,opts){var it=BYID[id];if(!it)return;opts=opts||{};

@@ -1,11 +1,11 @@
 /* Pine Knot Gazette renderer. PKGazette.render(el, {root:'' or '../', app:true|false, compact:true|false, date:Date}) */
 (function(){
-var GO={ep:['audiobooks.html#jang-and-tom-radio','app/media/jang-tom-wide.jpg',{play:'ridge'}],bookworlds:['book-worlds/','images/games/book-worlds.jpg'],oldman:['old-man-game/','images/games/old-man-hunt.jpg'],
- ispy:['i-spy.html','images/games/i-spy.jpg'],coloring:['coloring.html','images/games/coloring.jpg'],studio:['studio.html','images/games/coloring.jpg'],audiobooks:['audiobooks.html','images/the-first-pulse.jpg'],
- books:['books.html','images/jang-and-tom-wagon-masters.jpg'],club:['account.html','app/icons/icon-192.png'],play:['play.html','images/games/born-twice.jpg',{go:'play'}],listen:['audiobooks.html','app/media/jang-tom-tv.jpg',{go:'listen'}],
- firstpulse:['https://fern-valley-glow-reef.grok.me/','images/games/first-pulse.jpg']};
+var GO={ep:['audiobooks.html#jang-and-tom-radio','app/media/jang-tom-wide.jpg',{play:'ridge'}],bookworlds:['book-worlds/','book-worlds/assets/play-cover.webp'],oldman:['old-man-game/','app/media/oldman-hunt-card.jpg'],
+ ispy:['i-spy.html','images/scenes/transcon-s01.jpg'],coloring:['coloring.html','coloring/campfire.png'],studio:['studio.html','coloring/campfire.png'],audiobooks:['audiobooks.html','images/the-first-pulse.jpg'],
+ books:['books.html','images/jang-and-tom-wagon-masters.jpg'],club:['account.html','app/icons/icon-192.png'],play:['play.html','images/lab/born-twice-og.jpg',{go:'play'}],listen:['audiobooks.html','app/media/jang-tom-tv.jpg',{go:'listen'}],
+ firstpulse:['https://fern-valley-glow-reef.grok.me/','images/first-pulse-game.jpg']};
 GO.studio[1]='images/scenes/transcon-s10.jpg';
-var ART=['app/media/jang-tom-wide.jpg','images/hero/hero-1.jpg','images/hero/hero-2.jpg','images/hero/hero-3.jpg','images/hero/hero-4.jpg','images/games/book-worlds.jpg','images/art/transcon-s07.jpg','images/art/philly-s03.jpg','images/scenes/transcon-s21.jpg','images/art/transcon-s26.jpg'];
+var ART=['app/media/jang-tom-wide.jpg','images/hero/hero-1.jpg','images/hero/hero-2.jpg','images/hero/hero-3.jpg','images/hero/hero-4.jpg','book-worlds/assets/play-cover.webp','images/art/transcon-s07.jpg','images/art/philly-s03.jpg','images/scenes/transcon-s21.jpg','images/art/transcon-s26.jpg'];
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function dayNum(d){return Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5)}
 function pick(d){var P=window.PK_GAZETTE||[],n=dayNum(d);return {i:((n%P.length)+P.length)%P.length,no:n-dayNum(new Date(2026,0,1))+1}}

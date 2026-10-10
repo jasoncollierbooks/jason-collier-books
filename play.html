@@ -32,18 +32,6 @@
 <link rel="stylesheet" href="season.css">
 <script src="season.js"></script>
 <script src="app-mode.js?v=2"></script>
-<style>
-.games-lede{margin:0 0 1.2rem}
-.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.2rem;margin:0 0 2rem}
-.game-card{display:flex;flex-direction:column;border:1px solid var(--line,rgba(228,208,164,.3));border-radius:10px;overflow:hidden;background:rgba(10,8,6,.72);color:inherit;text-decoration:none;box-shadow:0 10px 24px rgba(0,0,0,.45);transition:border-color .2s}
-.game-card:hover,.game-card:focus-visible{border-color:rgba(255,138,42,.6)}
-.game-card img{display:block;width:100%;aspect-ratio:16/9;height:auto;object-fit:cover;border-bottom:1px solid rgba(228,208,164,.25)}
-.game-body{display:flex;flex-direction:column;gap:.35rem;padding:1rem 1.1rem 1.2rem;flex:1}
-.game-body .kicker{margin:0;font-size:.8rem}
-.game-title{font-family:Cinzel,Georgia,serif;font-weight:700;font-size:1.35rem;line-height:1.2;color:#fbf6ee}
-.game-text{margin:0!important;padding:0!important;max-width:none!important;text-indent:0;font-size:1.05rem;line-height:1.45;color:#e8dcc4}
-.game-go{margin-top:auto;padding-top:.6rem;font-weight:700;color:#ffb35c}.game-go small{font-weight:400;color:#cdbf9f}
-</style>
 </head>
 <body class="broadcast-lite">
 <div class="grain" aria-hidden="true"></div>
@@ -88,44 +76,34 @@
     <header class="page-head">
       <h1>Play</h1>
     </header>
-    <p class="games-lede">Pick a game. Every one is free.</p>
-    <div class="games-grid">
-      <a class="game-card reveal" href="book-worlds/">
-        <img src="images/games/book-worlds.jpg" alt="Cover art for Book Worlds" width="800" height="450" loading="lazy">
-        <span class="game-body"><span class="kicker">Jang &amp; Tom ride along</span><span class="game-title">Book Worlds</span><span class="game-text">Walk the California Trail as the Keeper, a drifter with a brass skeleton key. Tune the broadcast cabinet and push back the Nonimaginaires leaking into the story.</span><span class="game-go">▶ Play</span></span>
-      </a>
-      <a class="game-card reveal" href="old-man-game/">
-        <img src="images/games/old-man-hunt.jpg" alt="Cover art for Old Man Hunt" width="800" height="450" loading="lazy">
-        <span class="game-body"><span class="kicker">A horror hunt · for older players</span><span class="game-title">Old Man Hunt</span><span class="game-text">Seven days on the mountain, based on the novel. Hang your trail cameras, keep the fire going and hold your nerve.</span><span class="game-go">▶ Play</span></span>
-      </a>
-      <a class="game-card reveal" href="https://kite-bolt-fleet-honey.grok.me/" target="_blank" rel="noopener">
-        <img src="images/games/jang-and-tom.jpg" alt="Cover art for Jang &amp; Tom: The Wagon Train" width="800" height="450" loading="lazy">
-        <span class="game-body"><span class="kicker">Companion game · Wagon Masters</span><span class="game-title">Jang &amp; Tom: The Wagon Train</span><span class="game-text">Lead the wagon train yourself: oxen, debt collectors, Billy the goat and a wagon that lost a fight with a tornado. The book is the prize in Sacramento.</span><span class="game-go">▶ Play <small>· opens in a new tab</small></span></span>
-      </a>
-      <a class="game-card reveal" href="https://kite-bolt-fleet-honey.grok.me/" target="_blank" rel="noopener">
-        <img src="images/games/rusty-stack.jpg" alt="Cover art for The Rusty Stack" width="800" height="450" loading="lazy">
-        <span class="game-body"><span class="kicker">Companion game · airship adventure</span><span class="game-title">The Rusty Stack</span><span class="game-text">Docks, a chained fortress, Crimson Fang interceptors and a rust-bucket airship that looks half-dead on purpose. Found in the same game hub as Jang &amp; Tom.</span><span class="game-go">▶ Play <small>· opens in a new tab</small></span></span>
-      </a>
-      <a class="game-card reveal" href="https://delta-branch-breeze-daisy.grok.me/" target="_blank" rel="noopener">
-        <img src="images/games/born-twice.jpg" alt="Cover art for Born Twice" width="800" height="450" loading="lazy">
-        <span class="game-body"><span class="kicker">Thorne’s Lab · companion game</span><span class="game-title">Born Twice</span><span class="game-text">Grow a living starship in a 1982 laboratory, then fly it across a real solar chart. Some vessels work. Some wake up hungry.</span><span class="game-go">▶ Play <small>· opens in a new tab</small></span></span>
-      </a>
-      <a class="game-card reveal" href="https://fern-valley-glow-reef.grok.me/" target="_blank" rel="noopener">
-        <img src="images/games/first-pulse.jpg" alt="Cover art for The First Pulse" width="800" height="450" loading="lazy">
-        <span class="game-body"><span class="kicker">Companion game</span><span class="game-title">The First Pulse</span><span class="game-text">You are leftover light. Drift, tap a world, and step inside the universe of The First Pulse.</span><span class="game-go">▶ Play <small>· opens in a new tab</small></span></span>
-      </a>
-      <a class="game-card reveal" href="i-spy.html">
-        <img src="images/games/i-spy.jpg" alt="Cover art for I Spy" width="800" height="450" loading="lazy">
-        <span class="game-body"><span class="kicker">Picture game</span><span class="game-title">I Spy</span><span class="game-text">Find five hidden things in scenes from the books. Good for all ages.</span><span class="game-go">▶ Play</span></span>
-      </a>
-      <a class="game-card reveal" href="coloring.html">
-        <img src="images/games/coloring.jpg" alt="Cover art for Coloring" width="800" height="450" loading="lazy">
-        <span class="game-body"><span class="kicker">Color the pages</span><span class="game-title">Coloring</span><span class="game-text">Pick a picture from the books, pick a color and tap to fill. Print them too.</span><span class="game-go">▶ Play</span></span>
-      </a>
-    </div>
-    <nav class="ab-jump" aria-label="More">
+    <a class="play-feature bw-card reveal" href="book-worlds/">
+      <img src="book-worlds/assets/play-cover.webp" alt="Painted title card of a keeper with a brass key beside a wagon at dusk" width="1024" height="576">
+      <span class="play-feature-body">
+        <span class="bw-script">Now showing</span>
+        <span class="kicker">World I · The California Trail</span>
+        <span class="play-feature-title">Book Worlds<small>Jang &amp; Tom ride along</small></span>
+        <span class="play-feature-text">A young drifter called the Keeper walks the wagon road with a brass skeleton key worn like a saber. Jang talks. Tom shoves. Nonimaginaires are leaking through the broadcast — tune the cabinet and restore the story.</span>
+        <span class="btn btn-fire">▶ Take the trail</span>
+      </span>
+    </a>
+    <a class="play-feature reveal" href="old-man-game/">
+      <img src="old-man-game/assets/title.jpg" alt="A campfire at dusk below a dark forested mountain" width="619" height="1100" loading="lazy">
+      <span class="play-feature-body">
+        <span class="kicker">Play in your browser · phone or computer</span>
+        <span class="play-feature-title">Play: Old Man on the Mountain<small>A horror hunt</small></span>
+        <span class="play-feature-text">Seven days on the mountain, based on the novel. Walk the trail, hang your cameras, keep the fire going, and hold your nerve.</span>
+        <span class="btn btn-fire">▶ Play now</span>
+      </span>
+    </a>
+    <nav class="ab-jump" aria-label="Play">
+      <a href="book-worlds/">Book Worlds</a>
+      <a href="https://kite-bolt-fleet-honey.grok.me/" target="_blank" rel="noopener" data-jc-link="hub">Play Jang &amp; Tom</a>
+      <a href="https://kite-bolt-fleet-honey.grok.me/" target="_blank" rel="noopener" data-jc-link="hub">Play The Rusty Stack</a>
+      <a href="https://delta-branch-breeze-daisy.grok.me/" target="_blank" rel="noopener" data-jc-link="bornTwice">Play Born Twice</a>
+      <a href="https://fern-valley-glow-reef.grok.me/" target="_blank" rel="noopener" data-jc-link="firstPulse">Play The First Pulse</a>
+      <a href="i-spy.html">I Spy</a>
+      <a href="coloring.html">Coloring pages</a>
       <a href="studio.html">Oil studio</a>
-      <a href="thorne-lab.html">Thorne’s Lab</a>
       <a href="https://leaf-berry-scarlet-dream.grok.me/" target="_blank" rel="noopener" data-jc-link="oldManShort">Watch Old Man short</a>
     </nav>
     <p>The book is the prize. <a href="index.html">Home</a></p>

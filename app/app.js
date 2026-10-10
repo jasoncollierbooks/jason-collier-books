@@ -33,13 +33,9 @@ $('#listenList').innerHTML=
  item(R+'images/the-rusty-stack.jpg','The Rusty Stack','Animatic preview','data-frame="audiobooks.html#rusty-stack-animatic" data-title="The Rusty Stack"')+
  item(R+'images/art/philly-s01.jpg','Past Inspirations','Old-time radio and inspirations','data-frame="past-inspirations.html" data-title="Past Inspirations"');
 function card(img,t,s,f){return '<button class="card" data-frame="'+f+'" data-title="'+esc(t)+'"><img loading="lazy" src="'+img+'" alt=""><b>'+esc(t)+'</b><span>'+s+'</span></button>'}
-// Play tab: every game, with cover art and a short description (list lives in ../games.js)
-var GAMES=window.CE_GAMES||[];
-function gcard(g){return '<button class="gcard" data-rx-key="game:'+g.id+'" data-frame="'+g.url+'" data-title="'+esc(g.t)+'"><img loading="lazy" src="'+R+'images/games/'+g.id+'.jpg" alt=""><div><small>'+esc(g.k)+'</small><b>'+esc(g.t)+'</b><span>'+esc(g.d)+'</span><i class="gplay">▶ Play</i></div></button>'}
-$('#playList').innerHTML=GAMES.map(gcard).join('');
-(function(){var rail=document.querySelectorAll('#home .shelf')[2];rail=rail&&rail.querySelector('.rail');if(rail&&GAMES.length)rail.innerHTML=GAMES.map(function(g){return '<button class="poster wide" data-rx-key="game:'+g.id+'" data-frame="'+g.url+'" data-title="'+esc(g.t)+'"><img src="'+R+'images/games/'+g.id+'.jpg" alt=""><b>'+esc(g.t)+'</b><span>'+esc(g.k)+'</span></button>'}).join('')})();
+$('#playList').innerHTML=card('media/oldman-hunt-card.jpg','Old Man Hunt','Horror hunt on the mountain','old-man-game/')+card(R+'images/the-first-pulse.jpg','Book Worlds','Step inside the stories','book-worlds/')+card(R+'images/scenes/philly-s09.jpg','I Spy','Find the hidden things','i-spy.html')+card(R+'images/jason-art/sketch-the-raven-thumb.jpg','Coloring','Color the pages','coloring.html');
 $('#listenList').insertAdjacentHTML('beforeend',item(R+'images/the-rusty-stack.jpg','Early episodes','For Pine Knot Club members · coming soon <span class=lock>SOON</span>','data-club="1"'));
-$('#playList').insertAdjacentHTML('beforeend',card(R+'images/games/old-man-hunt.jpg','Bonus hunt chapters','Planned for the Club · coming soon','#club'));
+$('#playList').insertAdjacentHTML('beforeend',card(R+'images/jason-art/sketch-the-wanderer-thumb.jpg','Bonus hunt chapters','Planned for the Club · coming soon','#club'));
 $('#readList').innerHTML=BOOKS.map(function(b){return item(R+b.img,b.t,b.soon?'Coming soon · about the book':'Book page, chapters & audiobook','data-frame="'+b.page+'" data-title="'+esc(b.t)+'"')}).join('')+item(R+'images/old-man-on-the-mountain.jpg','Story Mode','Read along with the audiobook · coming soon <span class=lock>SOON</span>','data-club="1"')+item(R+'images/the-first-pulse.jpg','The Novel','The multi-mind novel, read in the app','data-frame="novel.html" data-title="The Novel"');
 // tabs
 var cur='home';
@@ -48,7 +44,7 @@ function go(id){if(!document.getElementById(id))return;$$('.screen').forEach(fun
 var fr=$('#fr');
 // in-app pages get ?app=1 so app-mode.js opens outside links in the browser and hides the Venmo tip
 function appUrl(u){var i=u.indexOf('#'),h=i<0?'':u.slice(i),p=i<0?u:u.slice(0,i);return p+(p.indexOf('?')<0?'?':'&')+'app=1'+h}
-function openFrame(u,t){fr.src=/^https?:\/\//.test(u)?u:R+appUrl(u);$('#fTitle').textContent=t||'';$('#fSave').hidden=u.indexOf('studio')!==0;$('#frame').hidden=false;if(!au.paused)au.pause()}
+function openFrame(u,t){fr.src=R+appUrl(u);$('#fTitle').textContent=t||'';$('#fSave').hidden=u.indexOf('studio')!==0;$('#frame').hidden=false;if(!au.paused)au.pause()}
 $('#fClose').onclick=function(){$('#frame').hidden=true;fr.src='about:blank'};
 var FULLK='ce-full-studio-day';function today(){return new Date().toDateString()}
 function fullStudio(){return isSub()||localStorage.getItem(FULLK)===today()}
