@@ -112,3 +112,4 @@ fr.addEventListener('load',function(){try{var w=fr.contentWindow,d=fr.contentDoc
   ev.preventDefault();route(u)},false);
  w.open=(function(o){return function(x,t,f){try{var u=new URL(x,w.location.href);if(u.origin===location.origin){route(u);return null}}catch(e){}return window.open(x,'_blank','noopener')}})(w.open);
 }catch(e){}});})();
+window.addEventListener('message',function(e){if(e.origin===location.origin&&e.data&&e.data.ce==='home'){var f=document.getElementById('frame');if(f)f.hidden=true;var i=document.querySelector('#frame iframe');if(i)i.src='about:blank';go('home')}});

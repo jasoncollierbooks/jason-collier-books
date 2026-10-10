@@ -21,6 +21,26 @@
   css.textContent = '.ce-app a[href*="venmo.com"],.ce-app .tip-line,.ce-app .web-only{display:none!important}';
   (document.head || root).appendChild(css);
 
+  // Inside the app's viewer frame: hide the website's own header, menu, home buttons and footer nav,
+  // and send any "home" link back to the app's Home screen.
+  var framed = false;
+  try { framed = window.top !== window.self && /^\/app\//.test(window.parent.location.pathname); } catch (e) {}
+  if (framed) {
+    root.classList.add("ce-framed");
+    var fcss = document.createElement("style");
+    fcss.textContent = '.ce-framed #nav,.ce-framed header.nav,.ce-framed #site-nav,.ce-framed .nav-toggle,.ce-framed .pwa-home,.ce-framed .brand,.ce-framed .end-nav,.ce-framed footer nav,.ce-framed .hud-home{display:none!important}';
+    (document.head || root).appendChild(fcss);
+    document.addEventListener("click", function (ev) {
+      var a = ev.target && ev.target.closest ? ev.target.closest("a[href]") : null;
+      if (!a) return;
+      var u; try { u = new URL(a.getAttribute("href"), location.href); } catch (e) { return; }
+      if (u.origin === location.origin && (u.pathname === "/" || /\/index\.html$/.test(u.pathname)) && !/^\/app\//.test(u.pathname) && u.pathname.split("/").length <= 2) {
+        ev.preventDefault(); ev.stopPropagation();
+        try { window.parent.postMessage({ ce: "home" }, location.origin); } catch (e) {}
+      }
+    }, true);
+  }
+
   function outside(a) {
     var h = a.getAttribute("href");
     if (!h) return false;
