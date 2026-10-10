@@ -74,7 +74,7 @@ var st=$('#subToggle');st.checked=isSub();st.onchange=function(){try{localStorag
 function loadBreaks(){if(isSub()||window.JCBreaks||document.getElementById('cbjs'))return;var s=document.createElement('script');s.id='cbjs';s.src='../commercials.js';document.body.appendChild(s)}
 function breakNow(){if(isSub()||!window.JCBreaks)return false;var ids=Object.keys(JCBreaks.spots);var was=!au.paused;au.pause();var fw=null,fm=[];try{if(!$('#frame').hidden){fw=fr.contentWindow;if(fw.__oldman)fw.__oldman.holdSim(true);fw.document.querySelectorAll('audio,video').forEach(function(m){if(!m.paused){m.pause();fm.push(m)}})}}catch(e){}JCBreaks.open(ids[Math.floor(Math.random()*ids.length)]);var w=setInterval(function(){if(!window.__jcBreakHold&&!document.querySelector('.jc-break, [class*=break-overlay]')){clearInterval(w);try{if(fw&&fw.__oldman)fw.__oldman.holdSim(false);fm.forEach(function(m){m.play().catch(function(){})})}catch(e){}if(was)au.play().catch(function(){})}},700);setTimeout(function(){},0);return true}
 var useMs=0,nextAt=150000+Math.random()*30000,lastT=Date.now();
-setInterval(function(){var n=Date.now(),busy=!au.paused||!$('#frame').hidden;if(busy&&document.visibilityState==='visible'&&!isSub())useMs+=n-lastT;lastT=n;if(useMs>=nextAt){if(breakNow()){useMs=0;nextAt=120000+Math.random()*60000}}},1000);
+setInterval(function(){var n=Date.now(),busy=true;if(busy&&document.visibilityState==='visible'&&!isSub())useMs+=n-lastT;lastT=n;if(useMs>=nextAt){if(breakNow()){useMs=0;nextAt=120000+Math.random()*60000}}},1000);
 au.addEventListener('ended',function(){breakNow()});
 var _load=load;load=function(k,o){if(curT&&curT!==k&&!au.paused){au.pause()}_load(k,o)};
 loadBreaks();window.__ceBreak=breakNow;tierUI();
