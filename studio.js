@@ -18,7 +18,7 @@
    - No drying time, solvent, or real impasto height.
    - Not a spectral mix, so some tube pairs will not match real paint.
 */
-import { PIGMENTS, FAMILIES } from "./studio-colors.js?v=1";
+import { PIGMENTS, FAMILIES } from "./studio-colors.js?v=2";
 export const OILS = [
   { id: "white", name: "White", pigment: "Titanium White", rgb: [244, 240, 230] },
   { id: "yellow", name: "Yellow", pigment: "Cadmium Yellow", rgb: [242, 194, 0] },
@@ -1576,13 +1576,13 @@ function mount() {
     const list = colorsDlg.querySelector(".cp-list");
     list.innerHTML = "";
     FAMILIES.forEach(fam => {
-      const items = PIGMENTS.filter(p => p.family === fam && (!q || (p.name + " " + p.note + " " + fam).toLowerCase().includes(q)));
+      const items = PIGMENTS.filter(p => p.family === fam && (!q || (p.name + " " + fam).toLowerCase().includes(q)));
       if (!items.length) return;
       const h = document.createElement("h3"); h.textContent = fam; list.appendChild(h);
       items.forEach(p => {
         const b = document.createElement("button");
         b.type = "button"; b.className = "cp-item"; b.dataset.pigment = p.name;
-        b.innerHTML = `<span class="cp-sw" style="background:${p.hex}"></span><span class="cp-txt"><b>${p.name}</b><small>${p.note}</small></span>`;
+        b.innerHTML = `<span class="cp-sw" style="background:${p.hex}"></span><span class="cp-txt"><b>${p.name}</b></span>`;
         b.addEventListener("click", () => {
           const slot = OILS[pickSlot];
           setSlot(slot, p); refreshTube(pickSlot); savePalette();
