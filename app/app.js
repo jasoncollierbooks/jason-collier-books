@@ -33,18 +33,9 @@ $('#listenList').innerHTML=
  item(R+'images/the-rusty-stack.jpg','The Rusty Stack','Animatic preview','data-frame="audiobooks.html#rusty-stack-animatic" data-title="The Rusty Stack"')+
  item(R+'images/art/philly-s01.jpg','Past Inspirations','Old-time radio and inspirations','data-frame="past-inspirations.html" data-title="Past Inspirations"');
 function card(img,t,s,f){return '<button class="card" data-frame="'+f+'" data-title="'+esc(t)+'"><img loading="lazy" src="'+img+'" alt=""><b>'+esc(t)+'</b><span>'+s+'</span></button>'}
-// Play tab: the same games and links as the site's play.html, each with a cover and a short description
-var PLAY=[
- ['Book Worlds','Jang & Tom ride along','book-worlds/',R+'book-worlds/assets/play-cover.webp','Walk the California Trail as the Keeper, a drifter with a brass key. Tune the cabinet and restore the story.'],
- ['Old Man on the Mountain','A horror hunt','old-man-game/','media/oldman-hunt-card.jpg','Seven days on the mountain, based on the novel. Hang your cameras, keep the fire going and hold your nerve.'],
- ['Jang & Tom','Companion game','https://kite-bolt-fleet-honey.grok.me/',R+'images/jang-game-screenshot.jpg','Lead the wagon train yourself: oxen, debt collectors and Billy the goat. The book is the prize in Sacramento.'],
- ['The Rusty Stack','Companion game','https://kite-bolt-fleet-honey.grok.me/',R+'images/rusty-stack-game.jpg','Docks, a chained fortress, Crimson Fang interceptors and a rust-bucket that looks half-dead on purpose.'],
- ['Born Twice','Thorne\u2019s Lab','https://delta-branch-breeze-daisy.grok.me/',R+'images/lab/born-twice-og.jpg','Grow a living starship in a 1982 laboratory, then fly it across a real solar chart. Some vessels wake up hungry.'],
- ['The First Pulse','Companion game','https://fern-valley-glow-reef.grok.me/',R+'images/first-pulse-game.jpg','You are leftover light. Drift, tap a world, and step inside the universe of The First Pulse.'],
- ['I Spy','Picture game','i-spy.html',R+'images/scenes/transcon-s01.jpg','Find five hidden things in scenes from the books.'],
- ['Coloring pages','Color the pages','coloring.html',R+'coloring/campfire.png','Pick a picture from the books, pick a color and tap to fill.'],
- ['Oil studio','Paint','studio.html','media/studio-card.jpg','Mix paint on the palette and paint mountains, trees and water with real artist techniques.']];
-$('#playList').innerHTML=PLAY.map(function(g){return '<button class="gcard" data-frame="'+g[2]+'" data-title="'+esc(g[0])+'"><img loading="lazy" src="'+g[3]+'" alt=""><div><small>'+esc(g[1])+'</small><b>'+esc(g[0])+'</b><span>'+esc(g[4])+'</span><i class="gplay">\u25B6 Play</i></div></button>'}).join('');
+// Play tab: the same games as the website's Play page, read from ../games.js (CE_GAMES + the More row)
+var PLAY=(window.CE_GAMES||[]).map(function(g){return [g.t,g.k,g.url,R+'images/games/'+g.id+'.jpg',g.d,g.id]}).concat((window.CE_GAMES_MORE||[]).map(function(g){return [g.t,g.k,g.url,R+g.img,g.d,g.id]}));
+$('#playList').innerHTML=PLAY.map(function(g){return '<button class="gcard" data-rx-key="game:'+g[5]+'" data-frame="'+g[2]+'" data-title="'+esc(g[0])+'"><img loading="lazy" src="'+g[3]+'" alt=""><div><small>'+esc(g[1])+'</small><b>'+esc(g[0])+'</b><span>'+esc(g[4])+'</span><i class="gplay">\u25B6 '+(/short/.test(g[5])?'Watch':/studio|lab/.test(g[5])?'Open':'Play')+'</i></div></button>'}).join('');
 $('#playList').className='glist';
 $('#listenList').insertAdjacentHTML('beforeend',item(R+'images/the-rusty-stack.jpg','Early episodes','For Pine Knot Club members · coming soon <span class=lock>SOON</span>','data-club="1"'));
 $('#playList').insertAdjacentHTML('beforeend',card(R+'images/jason-art/sketch-the-wanderer-thumb.jpg','Bonus hunt chapters','Planned for the Club · coming soon','#club'));

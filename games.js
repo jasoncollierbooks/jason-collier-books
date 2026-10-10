@@ -10,3 +10,9 @@ window.CE_GAMES = [
  {id:'i-spy',t:'I Spy',k:'Picture game',url:'i-spy.html',d:'Find five hidden things in scenes from the books. Good for all ages.'},
  {id:'coloring',t:'Coloring',k:'Color the pages',url:'coloring.html',d:'Pick a picture from the books, pick a color and tap to fill. Print them too.'}
 ];
+/* The "More" row on play.html (shown as cards in the app too). img is relative to the site root. */
+window.CE_GAMES_MORE = [
+ {id:'oil-studio',t:'Oil studio',k:'Paint',url:'studio.html',img:'app/media/studio-card.jpg',d:'Mix paint on the palette and paint mountains, trees and water with real artist techniques.'},
+ {id:'thorne-lab',t:'Thorne\u2019s Lab',k:'Research log',url:'thorne-lab.html',img:'images/lab/born-twice-banner.jpg',d:'The research journal of Dr. Elias Thorne, a work in progress, plus the Born Twice game.'},
+ {id:'old-man-short',t:'Watch Old Man short',k:'Short film',url:'https://leaf-berry-scarlet-dream.grok.me/',img:'app/media/oldman-hunt-card.jpg',d:'A short film from Old Man On The Mountain.'}
+];
