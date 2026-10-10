@@ -369,3 +369,8 @@ html:not(.calm) .cs-int{animation:csBlink 1.2s steps(2) 3}@keyframes csBlink{50%
 .gcard:active{opacity:.8}
 .glist .card{display:flex;align-items:center;gap:12px}.glist .card img{width:110px;aspect-ratio:16/9}
 .gcard .rx-row{display:flex!important;margin-top:10px}.gcard .rx-row>span{display:inline-flex!important;width:auto;font-size:14px!important;color:#e8d9b8}
+/* Gazette on Home: real newspaper (js/gazette.css) */
+.gazette:has(.pkg){background:none;box-shadow:none;padding:0;transform:none}
+html:not(.calm) .gazette .pkg{transform:rotate(-.4deg)}
+.pkg-more{display:block;width:100%;margin-top:10px;min-height:46px;border-radius:23px;border:1px solid #d4af37;background:#1a140d;color:#f0dca8;font:700 16px Georgia,serif}
+.gazette .pkg-ad{min-height:44px}

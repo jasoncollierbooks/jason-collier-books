@@ -1,0 +1,30 @@
+@import url("https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap");
+/* Pine Knot Gazette: vintage newspaper front page */
+.pkg{background:#f1e7cf;color:#1f160c;font-family:Georgia,'Times New Roman',serif;padding:16px 16px 12px;border-radius:3px;box-shadow:0 12px 28px rgba(0,0,0,.6),inset 0 0 60px rgba(150,110,50,.35);background-image:radial-gradient(ellipse at 20% 10%,rgba(255,255,255,.35),transparent 60%),radial-gradient(ellipse at 80% 90%,rgba(140,100,40,.18),transparent 60%);max-width:860px;margin:0 auto;text-align:left}
+.pkg *{box-sizing:border-box}
+.pkg-mast{text-align:center;border-bottom:3px double #1f160c;padding-bottom:6px;margin-bottom:12px}
+.pkg-ears{display:flex;justify-content:space-between;font:700 10px/1.2 Georgia,serif;letter-spacing:.08em}
+.pkg-ears span{border:1px solid #1f160c;padding:3px 6px}
+.pkg-title{font-family:'UnifrakturCook','Old English Text MT','IM Fell English SC',Georgia,serif;font-size:clamp(30px,9vw,58px);line-height:1;margin:6px 0 8px;letter-spacing:.01em;color:#1f160c;font-weight:700;text-transform:none}
+.pkg-rule{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 10px;border-top:1px solid #1f160c;border-bottom:1px solid #1f160c;padding:4px 2px;font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+.pkg-lead h3{font:900 clamp(24px,7vw,40px)/1.05 Georgia,serif;text-transform:uppercase;text-align:center;margin:4px 0 6px;letter-spacing:-.01em;color:#1f160c}
+.pkg-dek{text-align:center;font-style:italic;font-size:17px;margin:0 0 10px;border-bottom:1px solid #1f160c;padding-bottom:8px;color:#1f160c}
+.pkg p{font-size:17px;line-height:1.5;margin:0 0 10px;color:#1f160c;text-align:left}
+.pkg-cut{margin:0 0 10px;border:1px solid #1f160c;padding:4px;background:#e9dcc0}
+.pkg-cut img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;filter:grayscale(1) sepia(.55) contrast(1.25) brightness(.95)}
+.pkg-cut figcaption{font-size:12px;font-style:italic;text-align:center;padding-top:3px}
+.pkg-drop::first-letter{float:left;font-size:3.2em;line-height:.85;padding:4px 6px 0 0;font-weight:700}
+.pkg-cols{display:grid;grid-template-columns:1fr;gap:0;border-top:3px double #1f160c;margin-top:6px}
+.pkg-short{padding:10px 0;border-bottom:1px solid #1f160c}
+.pkg-short h4{font:700 18px/1.15 Georgia,serif;text-transform:uppercase;margin:0 0 4px;color:#1f160c;text-align:left}
+.pkg-short p{margin:0;font-size:16px}
+.pkg-ads{margin-top:12px;display:grid;grid-template-columns:1fr;gap:10px}
+.pkg-adsh{text-align:center;font-size:12px;letter-spacing:.3em;text-transform:uppercase}
+.pkg-ad{display:grid;grid-template-columns:84px 1fr;grid-template-rows:auto auto auto;gap:2px 10px;align-items:start;border:3px double #1f160c;padding:8px;background:#f7efdb;color:#1f160c!important;text-decoration:none;text-align:left;font:inherit;width:100%;cursor:pointer}
+.pkg-ad img{grid-row:1/4;width:84px;height:84px;object-fit:cover;border:1px solid #1f160c;filter:grayscale(1) sepia(.5) contrast(1.2)}
+.pkg-ad b{font:900 19px/1.1 Georgia,serif;letter-spacing:.03em;text-transform:uppercase}
+.pkg-ad span{font-size:15px;line-height:1.35}
+.pkg-ad i{font-style:normal;font-weight:700;font-size:15px;text-decoration:underline}
+.pkg-foot{margin-top:12px;border-top:1px solid #1f160c;padding-top:6px;font-size:11px;text-align:center;font-style:italic}
+@media (min-width:700px){.pkg{padding:22px 26px}.pkg-cols{grid-template-columns:repeat(3,1fr)}.pkg-short{padding:10px 12px;border-bottom:0;border-right:1px solid #1f160c}.pkg-short:last-child{border-right:0}.pkg-lead{column-count:2;column-gap:22px}.pkg-lead h3,.pkg-dek,.pkg-cut{column-span:all}.pkg-ads{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}.pkg-adsh{grid-column:1/-1}}
+.pkg-compact .pkg-lead p:not(.pkg-drop){display:none}
