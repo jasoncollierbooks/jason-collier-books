@@ -23,7 +23,7 @@ if(!sessionStorage.getItem('ce-booted')&&!RM){sessionStorage.setItem('ce-booted'
 // ---------- film grain ----------
 document.body.appendChild(el('<div id="grain" aria-hidden="true"></div>'));
 // ---------- tilt ----------
-if(!RM)document.addEventListener('pointermove',function(e){var p=e.target.closest&&e.target.closest('.poster img,.paint,.tv,.card,.item');if(!p||e.pointerType==='mouse'&&!e.buttons)return;var r=p.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;p.style.transform='perspective(600px) rotateY('+x*8+'deg) rotateX('+(-y*8)+'deg) scale(.98)'},{passive:true});
+if(!RM)document.addEventListener('pointermove',function(e){if(e.pointerType!=='mouse'||document.documentElement.classList.contains('calm'))return;var p=e.target.closest&&e.target.closest('.poster img,.paint,.tv,.card,.item');if(!p||e.pointerType==='mouse'&&!e.buttons)return;var r=p.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;p.style.transform='perspective(600px) rotateY('+x*8+'deg) rotateX('+(-y*8)+'deg) scale(.98)'},{passive:true});
 document.addEventListener('pointerup',function(){document.querySelectorAll('.poster img,.paint,.tv,.card,.item').forEach(function(p){p.style.transform=''})});
 document.addEventListener('pointercancel',function(){document.querySelectorAll('.poster img,.paint,.tv,.card,.item').forEach(function(p){p.style.transform=''})});
 // ---------- badges ----------
@@ -102,5 +102,5 @@ var dial=$('#dial'),ang=0;dial.addEventListener('click',function(){ang+=60;dial.
 // ---------- coming soon ----------
 document.addEventListener('click',function(e){if(e.target.closest('[data-soon]'))CE.toast("🦝 The Great Possum Caper is coming soon. Mrs. Whitaker's prize possum is on the loose.")});
 // SFX toggle in club
-var cl=$('#club');cl.appendChild(el('<label class="sub sfx"><input type="checkbox" id="sfxT"> Button sounds &amp; haptics</label>'));var sx=$('#sfxT');sx.checked=ls('ce-sfx')!=='0';sx.onchange=function(){ls('ce-sfx',sx.checked?'1':'0')};
+var cl=$('#club');cl.appendChild(el('<label class="sub sfx"><input type="checkbox" id="motT"> Lively motion <small>(TV glow, slow hero drift, film grain movement). Off = calm.</small></label>'));var mt=$('#motT');mt.checked=ls('ce-motion')==='lively';mt.onchange=function(){ls('ce-motion',mt.checked?'lively':'calm');document.documentElement.classList.toggle('calm',!mt.checked)};cl.appendChild(el('<label class="sub sfx"><input type="checkbox" id="sfxT"> Button sounds &amp; haptics</label>'));var sx=$('#sfxT');sx.checked=ls('ce-sfx')!=='0';sx.onchange=function(){ls('ce-sfx',sx.checked?'1':'0')};
 })();
