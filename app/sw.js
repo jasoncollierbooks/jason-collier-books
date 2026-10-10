@@ -1,5 +1,5 @@
-var V='collier-shell-v1',AC='collier-audio-v1';
-var SHELL=['./','index.html','app.css','app.js','manifest.json','icons/icon-180.png','icons/icon-192.png','icons/icon-512.png','../images/author-as-jang.jpg','../images/jang-and-tom-wagon-masters.jpg','../images/the-first-pulse.jpg','../images/old-man-on-the-mountain.jpg','../images/the-rusty-stack.jpg','../images/jason-art/painting-lighthouse-at-dusk.jpg','../images/jason-art/painting-lighthouse-at-dusk-thumb.jpg'];
+var V='collier-shell-v2',AC='collier-audio-v1';
+var SHELL=['./','index.html','app.css','app.js','manifest.json','../commercials.js','../commercials.css','icons/icon-180.png','icons/icon-192.png','icons/icon-512.png','../images/author-as-jang.jpg','../images/jang-and-tom-wagon-masters.jpg','../images/the-first-pulse.jpg','../images/old-man-on-the-mountain.jpg','../images/the-rusty-stack.jpg','../images/jason-art/painting-lighthouse-at-dusk.jpg','../images/jason-art/painting-lighthouse-at-dusk-thumb.jpg'];
 self.addEventListener('install',function(e){e.waitUntil(caches.open(V).then(function(c){return c.addAll(SHELL)}).then(function(){return self.skipWaiting()}))});
 self.addEventListener('activate',function(e){e.waitUntil(caches.keys().then(function(k){return Promise.all(k.filter(function(n){return n!==V&&n!==AC}).map(function(n){return caches.delete(n)}))}).then(function(){return self.clients.claim()}))});
 self.addEventListener('fetch',function(e){var r=e.request;if(r.method!=='GET')return;var u=new URL(r.url);if(u.origin!==location.origin)return;

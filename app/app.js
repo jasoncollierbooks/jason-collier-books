@@ -23,7 +23,7 @@ $('#listenList').innerHTML=
  item(R+'images/the-rusty-stack.jpg','The Rusty Stack','Animatic preview','data-frame="audiobooks.html#rusty-stack-animatic" data-title="The Rusty Stack"')+
  item(R+'images/art/philly-s01.jpg','Past Inspirations','Old-time radio and inspirations','data-frame="past-inspirations.html" data-title="Past Inspirations"');
 function card(img,t,s,f){return '<button class="card" data-frame="'+f+'" data-title="'+esc(t)+'"><img loading="lazy" src="'+img+'" alt=""><b>'+esc(t)+'</b><span>'+s+'</span></button>'}
-$('#playList').innerHTML=card(R+'images/old-man-on-the-mountain.jpg','Old Man Hunt','Horror hunt on the mountain','old-man-game/')+card(R+'images/the-first-pulse.jpg','Book Worlds','Step inside the stories','book-worlds/')+card(R+'images/scenes/'+'campfire.png','I Spy','Find the hidden things','i-spy.html')+card(R+'images/jason-art/sketch-the-raven-thumb.jpg','Coloring','Color the pages','coloring.html');
+$('#playList').innerHTML=card(R+'images/old-man-on-the-mountain.jpg','Old Man Hunt','Horror hunt on the mountain','old-man-game/')+card(R+'images/the-first-pulse.jpg','Book Worlds','Step inside the stories','book-worlds/')+card(R+'images/scenes/philly-s09.jpg','I Spy','Find the hidden things','i-spy.html')+card(R+'images/jason-art/sketch-the-raven-thumb.jpg','Coloring','Color the pages','coloring.html');
 $('#readList').innerHTML=BOOKS.map(function(b){return item(R+b.img,b.t,b.soon?'Coming soon · about the book':'Book page, chapters & audiobook','data-frame="'+b.page+'" data-title="'+esc(b.t)+'"')}).join('')+item(R+'images/the-first-pulse.jpg','The Novel','The multi-mind novel, read in the app','data-frame="novel.html" data-title="The Novel"');
 // tabs
 var cur='home';
@@ -60,6 +60,16 @@ if('mediaSession' in navigator){var ms=navigator.mediaSession;ms.setActionHandle
 var AC='collier-audio-v1';
 function dlState(){var b=$('#dl');if(!('caches' in window)){b.hidden=true;return}caches.open(AC).then(function(c){return c.match(new URL(TRACKS[curT].src,location).href)}).then(function(r){b.textContent=r?'✓ Downloaded':'⬇ Download for offline'})}
 $('#dl').onclick=function(){var b=this,u=new URL(TRACKS[curT].src,location).href;b.textContent='Downloading…';caches.open(AC).then(function(c){return c.add(u)}).then(function(){b.textContent='✓ Downloaded';toast('Saved for offline listening')}).catch(function(){b.textContent='⬇ Download for offline';toast('Download failed')})};
+// commercials (free tier): reuse the site's break system; Club preview turns it off
+var SUBK='ce-app-subscriber';function isSub(){try{return localStorage.getItem(SUBK)==='1'}catch(e){return false}}
+var st=$('#subToggle');st.checked=isSub();st.onchange=function(){try{localStorage.setItem(SUBK,st.checked?'1':'0')}catch(e){}toast(st.checked?'Subscriber preview: no commercials':'Free tier: commercials on');if(!st.checked)loadBreaks()};
+function loadBreaks(){if(isSub()||window.JCBreaks||document.getElementById('cbjs'))return;var s=document.createElement('script');s.id='cbjs';s.src='../commercials.js';document.body.appendChild(s)}
+function breakNow(){if(isSub()||!window.JCBreaks)return false;var ids=Object.keys(JCBreaks.spots);var was=!au.paused;au.pause();var fw=null,fm=[];try{if(!$('#frame').hidden){fw=fr.contentWindow;if(fw.__oldman)fw.__oldman.holdSim(true);fw.document.querySelectorAll('audio,video').forEach(function(m){if(!m.paused){m.pause();fm.push(m)}})}}catch(e){}JCBreaks.open(ids[Math.floor(Math.random()*ids.length)]);var w=setInterval(function(){if(!window.__jcBreakHold&&!document.querySelector('.jc-break, [class*=break-overlay]')){clearInterval(w);try{if(fw&&fw.__oldman)fw.__oldman.holdSim(false);fm.forEach(function(m){m.play().catch(function(){})})}catch(e){}if(was)au.play().catch(function(){})}},700);setTimeout(function(){},0);return true}
+var useMs=0,nextAt=150000+Math.random()*30000,lastT=Date.now();
+setInterval(function(){var n=Date.now(),busy=!au.paused||!$('#frame').hidden;if(busy&&document.visibilityState==='visible'&&!isSub())useMs+=n-lastT;lastT=n;if(useMs>=nextAt){if(breakNow()){useMs=0;nextAt=120000+Math.random()*60000}}},1000);
+au.addEventListener('ended',function(){breakNow()});
+var _load=load;load=function(k,o){if(curT&&curT!==k&&!au.paused){au.pause()}_load(k,o)};
+loadBreaks();window.__ceBreak=breakNow;
 // boot
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js',{scope:'./'}).catch(function(){});
 var h=location.hash.slice(1);if(h)go(h);

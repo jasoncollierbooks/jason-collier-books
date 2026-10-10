@@ -69,3 +69,5 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 #fr{flex:1;border:0;width:100%;background:#fff;padding-bottom:env(safe-area-inset-bottom)}
 #toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 14px);transform:translate(-50%,-80px);background:#2a1f14;border:1px solid #d4af37;padding:10px 16px;border-radius:20px;font-size:13px;z-index:98;transition:transform .3s;max-width:90%}
 #toast.show{transform:translate(-50%,0)}
+.model{background:#1a140d;border:1px solid #3d2f1f;border-radius:12px;padding:12px;margin-bottom:10px}.model b{display:block;color:#d4af37}.model span{font-size:13px;color:#cdbf9f}
+.sub{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#2a1f14;border:1px solid #d4af37;border-radius:12px;padding:12px;margin-bottom:12px;font-weight:700}.sub input{width:20px;height:20px;accent-color:#d4af37}.sub small{font-weight:400;color:#a8987a;width:100%}
