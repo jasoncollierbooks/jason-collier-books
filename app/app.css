@@ -71,3 +71,6 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 #toast.show{transform:translate(-50%,0)}
 .model{background:#1a140d;border:1px solid #3d2f1f;border-radius:12px;padding:12px;margin-bottom:10px}.model b{display:block;color:#d4af37}.model span{font-size:13px;color:#cdbf9f}
 .sub{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#2a1f14;border:1px solid #d4af37;border-radius:12px;padding:12px;margin-bottom:12px;font-weight:700}.sub input{width:20px;height:20px;accent-color:#d4af37}.sub small{font-weight:400;color:#a8987a;width:100%}
+.tier{margin:12px 16px 0;padding:10px 12px;border-radius:10px;background:#2a1f14;border:1px dashed #c9a227;font-size:13px}.tier button{margin-top:8px;background:#d4af37;color:#1a140d;font-weight:700;border-radius:14px;padding:6px 12px}
+.tiers{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px}.tiers th{color:#d4af37;text-align:left;padding:6px}.tiers td{padding:6px;border-top:1px solid #2e2316;color:#d8ccb4}
+.lock{font-size:10px;font-weight:800;background:#c9a227;color:#1a140d;border-radius:4px;padding:2px 5px;margin-left:6px;vertical-align:middle}
