@@ -12,8 +12,8 @@
   var againBtn = document.getElementById("studio-howto-again");
   var closeBtn = document.getElementById("studio-howto-close");
   var SRC = {
-    p: { mp4: "assets/video/studio-howto-9x16.mp4?v=3", poster: "assets/video/studio-howto-9x16.jpg?v=3" },
-    l: { mp4: "assets/video/studio-howto-16x9.mp4?v=3", poster: "assets/video/studio-howto-16x9.jpg?v=3" }
+    p: { mp4: "assets/video/studio-howto-9x16.mp4?v=4", poster: "assets/video/studio-howto-9x16.jpg?v=4" },
+    l: { mp4: "assets/video/studio-howto-16x9.mp4?v=4", poster: "assets/video/studio-howto-16x9.jpg?v=4" }
   };
   var hasModal = typeof dlg.showModal === "function";
   if (!hasModal) dlg.classList.add("howto-fallback");
