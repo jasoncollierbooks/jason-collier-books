@@ -8,7 +8,10 @@ var BOOKS=[
  {t:'The Rusty Stack',img:'images/the-rusty-stack.jpg',page:'rusty-stack.html',soon:1}];
 var ART=['painting-lighthouse-at-dusk','painting-autumn-hillside','painting-wildflower-meadow','sketch-longhorn-in-the-grass','sketch-the-raven','sketch-the-wanderer'];
 var TRACKS={
- pineknot:{t:'Jang & Tom in Pine Knot',s:'Radio story · Collier Entertainment',src:'media/jang-tom-pine-knot.mp3',art:R+'images/jang-and-tom-wagon-masters.jpg'},
+ ridge:{t:"The Treasure of Miller's Ridge",s:'Jang & Tom · radio show · 16:49',src:R+'media/jang-tom-millers-ridge.mp3',art:R+'images/author-as-jang.jpg',ep:1,
+  credit:'Music by Kevin MacLeod (incompetech.com), licensed under Creative Commons: By Attribution 4.0',
+  ch:[[0,'Cold open'],[30,'Pine Knot intro'],[114,'Sponsor: I Spy'],[144,'The napkin map & Over Yonder'],[218,'Hugh / Nobody cooks'],[335,"Up Miller's Ridge"],[461,'Loafing'],[527,'The groundhog'],[585,'Old Man Jenkins'],[701,'Sponsor break'],[842,'Treasure on the log'],[888,'Sponsor: The First Pulse'],[935,'Goodnight, Pine Knot']]},
+ pineknot:{t:'Jang & Tom in Pine Knot (Preview)',s:'Radio story preview · 4:20',src:'media/jang-tom-pine-knot.mp3',art:R+'images/jang-and-tom-wagon-masters.jpg'},
  oldman:{t:'Old Man On The Mountain',s:'Audiobook · Part 1',src:R+'old-man-audiobook/audio/om01.m4a',art:R+'images/old-man-on-the-mountain.jpg'}};
 var esc=function(s){return s.replace(/&/g,'&amp;')};
 // Books + art
@@ -16,7 +19,7 @@ $('#books').innerHTML=BOOKS.map(function(b){return b.soon?'<span class="bk"><img
 $('#art').innerHTML=ART.map(function(a){return '<button class="poster sq" data-frame="art.html" data-title="Art"><img loading="lazy" src="'+R+'images/jason-art/'+a+'-thumb.jpg" alt="'+a.replace(/^(painting|sketch)-/,'').replace(/-/g,' ')+' by Jason Collier"><b>'+a.replace(/^(painting|sketch)-/,'').replace(/-/g,' ')+'</b></button>'}).join('');
 function item(img,t,s,attrs){return '<button class="item" '+attrs+'><img loading="lazy" src="'+img+'" alt=""><div><b>'+esc(t)+'</b><span>'+s+'</span></div><span class="go">›</span></button>'}
 $('#listenList').innerHTML=
- item(R+'images/jang-and-tom-wagon-masters.jpg','Jang & Tom in Pine Knot','Radio story · 4:20 · download for offline','data-play="pineknot"')+
+ item(R+'images/author-as-jang.jpg',"The Treasure of Miller's Ridge",'Jang & Tom radio show · 16:49 · chapters & listen-along','data-play="ridge"')+item(R+'images/jang-and-tom-wagon-masters.jpg','Pine Knot preview','Short preview · 4:20','data-play="pineknot"')+item(R+'images/hero/hero-1.jpg','The Great Possum Caper','Next on Jang & Tom · coming soon','data-soon="1"')+
  item(R+'images/old-man-on-the-mountain.jpg','Old Man On The Mountain','Audiobook · app player','data-play="oldman"')+
  item(R+'images/jang-and-tom-wagon-masters.jpg','Jang & Tom audiobooks','Wagon Masters, Philadelphia Follies, Transcontinental','data-frame="audiobooks.html#jang-and-tom" data-title="Jang & Tom"')+
  item(R+'images/the-first-pulse.jpg','The First Pulse','Audiobook · Chapters One & Two in seven parts','data-frame="audiobooks.html#first-pulse" data-title="The First Pulse"')+
@@ -50,9 +53,9 @@ $('#joinBtn').onclick=function(){toast('Preview only, purchases are not active y
 // player
 var au=$('#au'),curT=null,speeds=[1,1.25,1.5,2,0.75],si=0;
 function fmt(s){s=Math.floor(s||0);return Math.floor(s/60)+':'+('0'+s%60).slice(-2)}
-function load(k,open){var t=TRACKS[k];if(curT!==k){curT=k;au.src=t.src;au.playbackRate=speeds[si];$('#plTitle').textContent=$('#miniT').textContent=t.t;$('#plSub').textContent=$('#miniS').textContent=t.s;$('#plArt').src=$('#mini img').src=t.art;
+function load(k,open,off){var t=TRACKS[k];if(curT!==k){var pos=+(localStorage.getItem('ce-pos-'+k)||0);au.addEventListener('loadedmetadata',function f(){au.removeEventListener('loadedmetadata',f);if(off!=null)au.currentTime=off;else if(pos>5&&pos<au.duration-10)au.currentTime=pos},{once:true});curT=k;au.src=t.src;au.playbackRate=speeds[si];$('#plTitle').textContent=$('#miniT').textContent=t.t;$('#plSub').textContent=$('#miniS').textContent=t.s;$('#plArt').src=$('#mini img').src=t.art;window.CE&&CE.onTrack&&CE.onTrack(k,t);
  if('mediaSession' in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:t.t,artist:'Collier Entertainment',album:t.s,artwork:[{src:new URL(t.art,location).href,sizes:'512x512',type:'image/jpeg'}]})}dlState()}
- $('#mini').hidden=false;if(open)$('#player').hidden=false;au.play().catch(function(){})}
+ else if(off!=null)au.currentTime=off;$('#mini').hidden=false;if(open)$('#player').hidden=false;au.play().catch(function(){})}
 function pp(){au.paused?au.play():au.pause()}
 $('#pp').onclick=pp;$('#miniPP').onclick=pp;$('#mini').addEventListener('click',function(e){if(e.target.id!=='miniPP')$('#player').hidden=false});
 $('#plClose').onclick=function(){$('#player').hidden=true};
@@ -76,10 +79,11 @@ function breakNow(){if(isSub()||!window.JCBreaks)return false;var ids=Object.key
 var useMs=0,nextAt=150000+Math.random()*30000,lastT=Date.now();
 setInterval(function(){var n=Date.now(),busy=true;if(busy&&document.visibilityState==='visible'&&!isSub())useMs+=n-lastT;lastT=n;if(useMs>=nextAt){if(breakNow()){useMs=0;nextAt=120000+Math.random()*60000}}},1000);
 au.addEventListener('ended',function(){breakNow()});
-var _load=load;load=function(k,o){if(curT&&curT!==k&&!au.paused){au.pause()}_load(k,o)};
+var _load=load;load=function(k,o,f){if(curT&&curT!==k&&!au.paused){au.pause()}_load(k,o,f)};
 loadBreaks();window.__ceBreak=breakNow;tierUI();
+window.CE={au:au,load:load,go:go,toast:toast,isSub:isSub,TRACKS:TRACKS,cur:function(){return curT},frame:openFrame};
 // boot
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js',{scope:'./'}).catch(function(){});
 var h=location.hash.slice(1);if(h)go(h);
-setTimeout(function(){$('#splash').classList.add('out')},700);
+setTimeout(function(){var s=$('#splash');s&&s.classList.add('out')},700);
 })();
