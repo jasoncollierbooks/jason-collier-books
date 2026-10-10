@@ -155,3 +155,4 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .ticket small{font:800 9px sans-serif;letter-spacing:3px}.ticket b{display:block;font:bold 22px Georgia,serif;letter-spacing:2px;margin:4px 0}.ticket span{font-size:10px}
 .perkgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}.perkgrid div{background:linear-gradient(#2a1f14,#1a140d);border:1px solid #3d2f1f;border-radius:12px;padding:12px}.perkgrid i{font-style:normal;font-size:24px}.perkgrid b{display:block;font-size:13px;margin:4px 0 2px;color:#f0e6d2}.perkgrid span{font-size:11px;color:#a8987a}
 .plan.best{position:relative;background:#2a1f14}.plan.best::before{content:"BEST VALUE";position:absolute;top:-8px;left:50%;transform:translateX(-50%);font:800 8px sans-serif;letter-spacing:1px;background:#d4af37;color:#1a140d;padding:2px 6px;border-radius:3px}
+.badge-pop,#toast{pointer-events:none}
