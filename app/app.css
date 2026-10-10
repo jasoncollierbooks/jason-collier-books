@@ -166,3 +166,123 @@ input,select,textarea{font-size:16px}
 .calm .poster img,.calm .paint,.calm .tv,.calm .card,.calm .item{transform:none!important;transition:none}
 .calm .ticket{transform:rotate(-2deg)}
 #fr{width:100%;max-width:100vw}
+
+/* ===================== Readability pass (Oct 10) =====================
+   Rule: no visible text under 15px; key labels 16px+. */
+.brand span,.logo span{font-size:15px;letter-spacing:3px;color:#c9a95e}
+.chan .logo{font-size:20px}
+.badge{font-size:15px}
+.tile b,.book b{font-size:15px}
+.buy{font-size:15px;padding:7px 12px}
+.club-cta span{font-size:16px;line-height:1.35;color:#e2d6bd}
+.item b{font-size:17px}.item span{font-size:15px;color:#cdbf9f;line-height:1.3}
+.card b{font-size:16px}.card span{font-size:15px;color:#cdbf9f;line-height:1.3}
+.hint{font-size:15px!important;color:#cdbf9f!important}
+.studio-card p{font-size:16px}
+.preview{font-size:16px;letter-spacing:.5px;line-height:1.35}
+.club-hero p{font-size:16px}
+.plan b{font-size:17px}.plan span{font-size:16px}
+.link{font-size:16px}.fine{font-size:15px;color:#b3a281;line-height:1.35}
+.tabs button{font-size:15px;color:#b3a281;height:66px}
+#app{bottom:calc(66px + env(safe-area-inset-bottom))}
+.mt b{font-size:16px}.mt span{font-size:15px}
+#mini{bottom:calc(72px + env(safe-area-inset-bottom))}
+.sheet p{font-size:16px}
+.times{font-size:15px}
+.ctl button{font-size:22px}
+.ctl2 button{font-size:16px;padding:9px 16px}
+.fbar button,.fbar span{font-size:17px}
+#fSave{font-size:15px}
+#toast{font-size:16px}
+.model span{font-size:16px;line-height:1.35}.model b{font-size:17px}
+.sub{font-size:17px}.sub small{font-size:15px;color:#cdbf9f;line-height:1.35}
+.tier{font-size:16px;line-height:1.35}.tier button{font-size:16px}
+.tiers{font-size:15px}.tiers th{font-size:16px}
+.lock{font-size:15px;padding:2px 6px}
+.onair{font-size:15px;letter-spacing:1.5px;padding:4px 8px}
+.np{font-size:15px;letter-spacing:1.5px}
+.tv-in p{font-size:16px;line-height:1.35}
+.hero-act b{font-size:18px}.hero-act span{font-size:16px;color:#e2d6bd}.hero-act i{font-style:normal}
+.shelf h3{font-size:22px}.shelf small{font-size:15px;color:#b3a281}
+.poster b{font-size:16px;line-height:1.25;text-transform:none}.poster span{display:block;font-size:15px;color:#cdbf9f;margin-top:2px}.poster span i{font-style:normal}
+.poster.tall img{width:140px;height:196px}.poster.tall b,.poster.tall span{max-width:140px}
+.poster.wide b,.poster.wide span{max-width:230px}.poster.sq b{max-width:120px}
+.paint p{font-size:16px}
+.getbooks h4{font-size:15px;color:#b3a281}
+.bk{font-size:15px;padding:6px 10px 6px 6px}.bk img{width:26px;height:38px}
+.soon-tag{font-size:15px;padding:3px 8px}
+.gz-head span{font-size:15px}.gazette cite{font-size:15px}
+.badge-pop small{font-size:15px}
+.cast b{font-size:15px}
+.chap-now{font-size:16px}
+.chaps summary{font-size:17px}.chaps button{font-size:16px}
+.credit{font-size:15px!important;color:#b3a281!important}
+.onair.sm{font-size:15px;padding:3px 7px}
+.dial-row p{font-size:16px}
+.sched time{font-size:15px;min-width:72px}.sched b{font-size:16px}.sched span{font-size:15px;color:#cdbf9f}
+.chapnav button{font-size:16px;padding:7px 12px}
+.ticket small{font-size:15px;letter-spacing:2px}.ticket span{font-size:15px}
+.perkgrid b{font-size:16px}.perkgrid span{display:block;font-size:15px;color:#cdbf9f;line-height:1.3}
+.plan.best::before{font-size:15px;top:-12px;padding:2px 8px;white-space:nowrap}
+.plans{margin-top:8px}
+.b-id span{font-size:15px;letter-spacing:5px}
+.b-id em{font-size:20px;font-weight:700;color:#f2d36b;letter-spacing:2px;margin-top:30px}
+/* Now / Next ticker: two full lines instead of one clipped line */
+.guide{white-space:normal;font-size:16px;line-height:1.35;padding:10px 12px;display:flex;flex-direction:column;gap:6px;color:#e2d6bd}
+.g-row{display:flex;gap:8px;align-items:baseline}
+.g-now,.g-next{flex:0 0 auto;font-size:15px;padding:2px 7px;margin:0}
+.g-more{color:#d4af37;font-size:15px;align-self:flex-end}
+/* Tier strip */
+.tierstrip{font-size:16px;line-height:1.35;padding:9px 12px}
+/* Badges: wider, and locked ones stay readable */
+.bdg{flex:0 0 150px;opacity:1;padding:12px}
+.bdg b{font-size:16px;color:#f0e6d2}.bdg span{display:block;font-size:15px;line-height:1.3;color:#d8ccb4}
+.bdg:not(.on){background:#16110b;border-color:#4a3a26}.bdg:not(.on) i{opacity:.6}.bdg:not(.on) b{color:#e2d6bd}
+/* Club: coming soon */
+.soon-pill{display:inline-block;font-style:normal;font:800 15px sans-serif;letter-spacing:1px;background:#7a1f1f;color:#fff;padding:3px 8px;border-radius:4px;margin-bottom:8px}
+.club-hero h1 em{display:block;font-size:22px;color:#f0e6d2;font-style:italic;margin-top:4px}
+.soonbtn,.soonbtn:disabled{background:#3d2f1f;color:#e2d6bd;box-shadow:none;opacity:1;cursor:default;font-size:17px}
+.sec{font-size:20px}
+/* Old Man Hunt card: brighter crop */
+.poster img[src*="oldman-hunt-card"]{filter:brightness(1.05)}
+
+/* ===================== Player re-skin: painted-wood TV with a gold dial ===================== */
+.tv{position:relative;padding:14px 14px 12px;border-radius:30px;
+ background:
+  repeating-linear-gradient(92deg,#0000 0 7px,#2a160818 7px 9px,#0000 9px 19px,#ffd59a0d 19px 21px),
+  repeating-linear-gradient(88deg,#0000 0 31px,#1a0c0430 31px 33px),
+  radial-gradient(120% 70% at 30% 0%,#a8703c,#7a4a22 45%,#4a2a12 100%);
+ box-shadow:0 20px 44px #000,inset 0 2px 0 #d9a066,inset 0 -6px 14px #0008,inset 0 0 0 2px #2a1608;border:1px solid #1e1006}
+.tv-cab-top{display:flex;justify-content:center;margin:-2px 0 10px}
+.tv-plate{font:bold 15px Georgia,serif;letter-spacing:5px;color:#2a1608;background:linear-gradient(#f2d36b,#b8921f);padding:3px 14px;border-radius:4px;box-shadow:0 2px 5px #0009,inset 0 1px 0 #fff7}
+.tv-screen{border-radius:26px/34px;min-height:430px;border:6px solid #1a0f06;box-shadow:0 0 0 3px #b8921f,0 0 0 5px #3a2312,inset 0 0 50px #000}
+.tv-screen>img{object-position:center 18%;filter:sepia(.15) saturate(1.1) contrast(1.05)}
+.tv-in{background:linear-gradient(transparent 30%,#0d0a07e6 78%,#0d0a07 100%)}
+.tv-in h1{font-size:34px}.tv-in h1 em{font-size:24px}
+.tv-panel{display:flex;align-items:center;gap:14px;margin-top:12px;padding:0 4px}
+.tv-grille{flex:1;height:58px;border-radius:10px;background:repeating-linear-gradient(90deg,#2a1608 0 4px,#c9a066 4px 6px,#2a1608 6px 10px);box-shadow:inset 0 2px 6px #000c,0 1px 0 #d9a06655;border:2px solid #2a1608}
+.tv-dials{display:flex;flex-direction:column;align-items:center;gap:4px}
+.tv-dials small{font:700 15px Georgia,serif;letter-spacing:1px;color:#f2d36b;text-shadow:0 1px 2px #000}
+.gold-dial{position:relative;width:62px;height:62px;border-radius:50%;
+ background:repeating-conic-gradient(from 0deg,#0000 0 8deg,#6b4a1a55 8deg 10deg),radial-gradient(circle at 35% 30%,#fff1b0,#e3c04a 30%,#b8921f 60%,#6b4a1a 100%);
+ box-shadow:0 5px 12px #000c,inset 0 -4px 8px #0007,0 0 0 4px #2a1608,0 0 0 6px #b8921f}
+.gold-dial span{position:absolute;left:50%;top:6px;width:5px;height:22px;margin-left:-2.5px;background:#2a1608;border-radius:3px}
+.gold-dial:active{transform:rotate(30deg)}
+/* Full player art framed like the TV */
+#plArt{border:6px solid #1a0f06;box-shadow:0 0 0 3px #b8921f,0 0 0 9px #6b4423,0 14px 40px #000}
+/* Home layout: Listen / Play / Studio rows */
+.shelf h3.sub-h{font-size:19px;color:#e3c97a;margin-top:16px}
+.paint{margin-top:0}
+.tierstrip{margin:12px 0 0}
+/* Bigger tap targets */
+.poster{min-height:48px}.chapnav button,.ctl2 button,.tier button{min-height:44px}
+.close{min-width:48px;min-height:48px}.back{min-width:44px;min-height:44px}
+#miniPP{width:48px;height:48px}
+/* iPhone Add to Home Screen hint */
+.a2hs{position:relative;background:#2a1f14;border:1px solid #d4af37;border-radius:14px;padding:14px 46px 14px 14px;margin-bottom:12px}
+.a2hs b{display:block;font-size:17px;color:#f2d36b;margin-bottom:4px}.a2hs span{font-size:16px;line-height:1.4;color:#e2d6bd}.a2hs i{font-style:normal;font-weight:700;color:#f0e6d2}
+.a2hs-x{position:absolute;top:4px;right:4px;width:44px;height:44px;font-size:26px;color:#d4af37}
+/* let the painted art breathe above the title */
+.tv-screen{min-height:500px}
+.tv-screen>img{height:66%;bottom:auto;object-position:center 8%}
+.tv-in{background:linear-gradient(transparent 0,transparent 42%,#0d0a07cc 56%,#0d0a07 66%)}

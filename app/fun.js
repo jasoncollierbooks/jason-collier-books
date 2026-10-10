@@ -33,12 +33,12 @@ function award(k){var g=got();if(g[k])return;g[k]=Date.now();ls('ce-badges',JSON
 CE.award=award;
 var home=$('#home'),paint=$('.paint',home);
 home.insertBefore(el('<div class="shelf" id="contShelf" hidden><h3>Continue</h3><div class="rail" id="contRail"></div></div>'),$('.shelf',home));
-home.insertBefore(el('<div class="gazette" id="gazette"></div>'),paint);
+$('.club-cta',home).insertAdjacentElement('beforebegin',el('<div class="gazette" id="gazette"></div>'));
 $('.club-cta',home).insertAdjacentElement('beforebegin',el('<div class="shelf"><h3>Your badges</h3><div class="rail" id="badgeRail"></div></div>'));
 function renderBadges(){var g=got();$('#badgeRail').innerHTML=Object.keys(BADGES).map(function(k){var b=BADGES[k];return '<div class="bdg'+(g[k]?' on':'')+'"><i>'+(g[k]?b[0]:'🔒')+'</i><b>'+b[1]+'</b><span>'+b[2]+'</span></div>'}).join('')}
 renderBadges();
-var strip=el('<button class="tierstrip" data-go="club"></button>');home.insertBefore(strip,$('.tv',home));
-function tierStrip(){strip.innerHTML=CE.isSub()?'<b>★ PINE KNOT CLUB</b> member preview · no station breaks':'<b>FREE</b> with station breaks · <u>Go ad-free with the Club</u>';strip.classList.toggle('mem',CE.isSub())}
+var strip=el('<button class="tierstrip" data-go="club"></button>');$('.guide',home).insertAdjacentElement('afterend',strip);
+function tierStrip(){strip.innerHTML=CE.isSub()?'<b>TEST MEMBER</b> mode · Club coming soon':'<b>FREE</b> with station breaks · Pine Knot Club <u>coming soon</u>';strip.classList.toggle('mem',CE.isSub())}
 tierStrip();document.addEventListener('change',function(e){if(e.target.id==='subToggle'){tierStrip();if(e.target.checked){chime();buzz([10,30,10,30,20])}}});
 document.addEventListener('click',function(e){var f=e.target.closest('[data-frame]');if(!f)return;var u=f.dataset.frame;if(/studio/.test(u))award('painter');if(/old-man-game/.test(u))award('hunter');if(/book-worlds/.test(u))award('explorer')});
 $('#openStudio').addEventListener('click',function(){award('painter')});
@@ -46,7 +46,7 @@ $('#openStudio').addEventListener('click',function(){award('painter')});
 function renderCont(){var h='';Object.keys(CE.TRACKS).forEach(function(k){var p=+(ls('ce-pos-'+k)||0),d=+(ls('ce-dur-'+k)||0),t=CE.TRACKS[k];if(p>5&&d&&p<d-10)h+='<button class="poster wide cont" data-play="'+k+'"><img src="'+t.art+'" alt=""><i class="bar"><u style="width:'+(p/d*100)+'%"></u></i><b>'+t.t+'</b><span>'+Math.round((d-p)/60)+' min left</span></button>'});$('#contRail').innerHTML=h;$('#contShelf').hidden=!h}
 renderCont();
 var au=CE.au,lastSave=0;
-au.addEventListener('timeupdate',function(){var k=CE.cur();if(!k)return;if(Date.now()-lastSave>3000){lastSave=Date.now();ls('ce-pos-'+k,au.currentTime);ls('ce-dur-'+k,au.duration||0)}if(k==='ridge'&&au.currentTime>847)award('nails');sync()});
+au.addEventListener('timeupdate',function(){var k=CE.cur();if(!k)return;if(Date.now()-lastSave>3000){lastSave=Date.now();ls('ce-pos-'+k,au.currentTime);ls('ce-dur-'+k,au.duration||0)}if(k==='ridge'&&au.currentTime>(window.CE_EP1?CE_EP1.secs-162:847))award('nails');sync()});
 au.addEventListener('play',function(){award('tuned')});
 au.addEventListener('ended',function(){var k=CE.cur();ls('ce-pos-'+k,0);if(k==='ridge')award('ridge');renderCont();if(live)nextLive()});
 au.addEventListener('pause',renderCont);
@@ -82,7 +82,7 @@ function chJump(dir){if(!curInfo||!curInfo.ch)return;var t=au.currentTime,c=curI
 $('#chPrev').onclick=function(){chJump(-1)};$('#chNext').onclick=function(){chJump(1)};
 function eqState(){$('#eq').classList.toggle('on',!au.paused)}au.addEventListener('play',eqState);au.addEventListener('pause',eqState);
 // ---------- live channel + guide ----------
-var SCHED=[{k:'ridge',t:"Jang & Tom: The Treasure of Miller's Ridge",d:1009},{k:'spot1',t:'Station break',d:14,src:R+'audio/commercials/jangtom.mp3',art:R+'images/jang-and-tom-wagon-masters.jpg'},{k:'oldman',t:'Old Man On The Mountain · Part 1',d:741},{k:'spot2',t:'Station break',d:12,src:R+'audio/commercials/worlds.mp3',art:R+'book-worlds/assets/play-cover.webp'},{k:'pineknot',t:'Jang & Tom in Pine Knot (Preview)',d:261},{k:'spot3',t:'Station break',d:12,src:R+'audio/commercials/pulse.mp3',art:R+'images/the-first-pulse.jpg'}];
+var SCHED=[{k:'ridge',t:"Jang & Tom: The Treasure of Miller's Ridge",d:(window.CE_EP1&&CE_EP1.secs)||1009},{k:'spot1',t:'Station break',d:14,src:R+'audio/commercials/jangtom.mp3',art:R+'images/jang-and-tom-wagon-masters.jpg'},{k:'oldman',t:'Old Man On The Mountain · Part 1',d:741},{k:'spot2',t:'Station break',d:12,src:R+'audio/commercials/worlds.mp3',art:R+'book-worlds/assets/play-cover.webp'},{k:'spot3',t:'Station break',d:12,src:R+'audio/commercials/pulse.mp3',art:R+'images/the-first-pulse.jpg'}];
 SCHED.forEach(function(s){if(s.src)CE.TRACKS[s.k]={t:s.t,s:'Collier Entertainment · station break',src:s.src,art:s.art}});
 var CYC=SCHED.reduce(function(a,s){return a+s.d},0);
 function nowSlot(at){var d=new Date(at||Date.now()),sec=(d-new Date(d.getFullYear(),d.getMonth(),d.getDate()))/1000,o=sec%CYC,st=at||Date.now();for(var i=0;i<SCHED.length;i++){if(o<SCHED[i].d)return {i:i,off:o,start:st-o*1000};o-=SCHED[i].d}}
@@ -93,7 +93,7 @@ function nextLive(){var n=nowSlot();CE.load(SCHED[n.i].k,false,Math.floor(n.off)
 au.addEventListener('pause',function(){if(document.querySelector('.jc-break'))return;});
 var gs=el('<section class="screen" id="guide"><header class="top"><button class="back" data-go="home">‹</button><h2>Channel Guide</h2><span class="onair sm"><i></i>LIVE</span></header><div class="dial-row"><div class="dial" id="dial"><span></span></div><div><b>CE-1 · Collier Entertainment</b><p>One station, always on. Tune in and it plays like the radio: shows, audiobooks and station breaks back to back.</p></div></div><button class="btn wide" id="tuneBtn">📻 Tune in now</button><ol class="sched" id="sched"></ol><p class="fine">Schedule runs on your local time and repeats through the day.</p></section>');
 $('#app').appendChild(gs);
-function renderGuide(){var n=nowSlot(),h='',t=n.start;for(var j=0;j<8;j++){var s=SCHED[(n.i+j)%SCHED.length];var cls=j===0?'now':'';var pct=j===0?Math.round(n.off/s.d*100):0;h+='<li class="'+cls+'"><time>'+(j===0?'NOW':fmtT(t))+'</time><div><b>'+s.t+'</b><span>'+Math.round(s.d/60)+' min'+(s.src?' · sponsor':'')+'</span>'+(j===0?'<i class="bar"><u style="width:'+pct+'%"></u></i>':'')+'</div></li>';t+=s.d*1000}
+function renderGuide(){var n=nowSlot(),h='',t=n.start;for(var j=0;j<8;j++){var s=SCHED[(n.i+j)%SCHED.length];var cls=j===0?'now':'';var pct=j===0?Math.round(n.off/s.d*100):0;h+='<li class="'+cls+'"><time>'+(j===0?'NOW':fmtT(t))+'</time><div><b>'+s.t+'</b><span>'+(s.d<60?s.d+' sec':Math.round(s.d/60)+' min')+(s.src?' · sponsor':'')+'</span>'+(j===0?'<i class="bar"><u style="width:'+pct+'%"></u></i>':'')+'</div></li>';t+=s.d*1000}
  $('#sched').innerHTML=h;var nx=SCHED[(n.i+1)%SCHED.length];$('#gNow').textContent=SCHED[n.i].t;$('#gNext').textContent=nx.t+' · '+fmtT(n.start+SCHED[n.i].d*1000)}
 renderGuide();setInterval(renderGuide,20000);
 $('#tuneBtn').onclick=function(){staticBurst(.3);tune()};
@@ -103,4 +103,14 @@ var dial=$('#dial'),ang=0;dial.addEventListener('click',function(){ang+=60;dial.
 document.addEventListener('click',function(e){if(e.target.closest('[data-soon]'))CE.toast("🦝 The Great Possum Caper is coming soon. Mrs. Whitaker's prize possum is on the loose.")});
 // SFX toggle in club
 var cl=$('#club');cl.appendChild(el('<label class="sub sfx"><input type="checkbox" id="motT"> Lively motion <small>(TV glow, slow hero drift, film grain movement). Off = calm.</small></label>'));var mt=$('#motT');mt.checked=ls('ce-motion')==='lively';mt.onchange=function(){ls('ce-motion',mt.checked?'lively':'calm');document.documentElement.classList.toggle('calm',!mt.checked)};cl.appendChild(el('<label class="sub sfx"><input type="checkbox" id="sfxT"> Button sounds &amp; haptics</label>'));var sx=$('#sfxT');sx.checked=ls('ce-sfx')!=='0';sx.onchange=function(){ls('ce-sfx',sx.checked?'1':'0')};
+// ---------- Add to Home Screen hint (iPhone Safari, not yet installed) ----------
+(function(){var ios=/iphone|ipad|ipod/i.test(navigator.userAgent),standalone=navigator.standalone||matchMedia('(display-mode: standalone)').matches;
+ if(!ios||standalone||ls('ce-a2hs')==='x')return;
+ var a=el('<div class="a2hs" role="note"><button class="a2hs-x" aria-label="Close">×</button><b>Put Collier on your Home Screen</b><span>Tap the Share button <i>⬆︎</i> at the bottom of Safari, then <i>Add to Home Screen</i>. It opens full screen like an app, and shows keep playing with the screen locked.</span></div>');
+ $('.tv',home).insertAdjacentElement('beforebegin',a);a.querySelector('.a2hs-x').onclick=function(){ls('ce-a2hs','x');a.remove()}})();
+// ---------- Lock-screen controls: position + chapter skip ----------
+if('mediaSession' in navigator){var ms=navigator.mediaSession;
+ function pos(){try{if(au.duration&&isFinite(au.duration))ms.setPositionState({duration:au.duration,playbackRate:au.playbackRate,position:Math.min(au.currentTime,au.duration)})}catch(e){}}
+ au.addEventListener('loadedmetadata',pos);au.addEventListener('seeked',pos);au.addEventListener('ratechange',pos);au.addEventListener('play',function(){ms.playbackState='playing';pos()});au.addEventListener('pause',function(){ms.playbackState='paused'});
+ try{ms.setActionHandler('previoustrack',function(){chJump(-1)});ms.setActionHandler('nexttrack',function(){chJump(1)})}catch(e){}}
 })();
