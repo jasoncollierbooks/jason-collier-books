@@ -38,8 +38,8 @@ $('.club-cta',home).insertAdjacentElement('beforebegin',el('<div class="shelf"><
 function renderBadges(){var g=got();$('#badgeRail').innerHTML=Object.keys(BADGES).map(function(k){var b=BADGES[k];return '<div class="bdg'+(g[k]?' on':'')+'"><i>'+(g[k]?b[0]:'🔒')+'</i><b>'+b[1]+'</b><span>'+b[2]+'</span></div>'}).join('')}
 renderBadges();
 var strip=el('<button class="tierstrip" data-go="club"></button>');$('.guide',home).insertAdjacentElement('afterend',strip);
-function tierStrip(){strip.innerHTML=CE.isSub()?'<b>TEST MEMBER</b> mode · Club coming soon':'<b>FREE</b> with station breaks · Pine Knot Club <u>coming soon</u>';strip.classList.toggle('mem',CE.isSub())}
-tierStrip();document.addEventListener('change',function(e){if(e.target.id==='subToggle'){tierStrip();if(e.target.checked){chime();buzz([10,30,10,30,20])}}});
+function tierStrip(){strip.innerHTML=CE.isSub()?'<b>CLUB MEMBER</b> · fewer commercials':'<b>FREE</b> with station breaks · <u>Join the Club free, just sign in</u>';strip.classList.toggle('mem',CE.isSub())}
+tierStrip();CE.onClub=tierStrip;document.addEventListener('change',function(e){if(e.target.id==='subToggle'){tierStrip();if(e.target.checked){chime();buzz([10,30,10,30,20])}}});
 document.addEventListener('click',function(e){var f=e.target.closest('[data-frame]');if(!f)return;var u=f.dataset.frame;if(/studio/.test(u))award('painter');if(/old-man-game/.test(u))award('hunter');if(/book-worlds/.test(u))award('explorer')});
 $('#openStudio').addEventListener('click',function(){award('painter')});
 // ---------- continue ----------

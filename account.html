@@ -70,6 +70,8 @@
 .acct-btn.plain{background:transparent;color:#f3dfb1}
 .acct-btn.danger{background:transparent;border-color:#c0623f;color:#f2b39a}
 .acct-msg{font-size:18px!important;min-height:1.6em;color:#f3dfb1!important}
+.acct-check{display:flex;gap:.7rem;align-items:flex-start;font-family:var(--ui);font-size:17px!important;font-weight:400!important;line-height:1.4;color:#f3dfb1!important;cursor:pointer}
+.acct-check input{width:24px!important;height:24px;flex:0 0 24px;margin-top:2px;accent-color:#d4af37}
 .acct-row{display:flex;flex-wrap:wrap;gap:.8rem;margin:1rem 0}
 [hidden]{display:none!important}
 </style>
@@ -87,10 +89,11 @@
 </section>
 
 <section id="acct-out" hidden>
-  <p class="info-lede">Type your email and we'll send you a sign-in link. No password needed.</p>
+  <p class="info-lede">Join the Pine Knot Club free: type your email and we'll send you a sign-in link. No password, no cost. Members get fewer commercials, the full Oil Studio and offline downloads in the app.</p>
   <form class="acct-form" id="acct-form">
     <label for="acct-email">Your email</label>
     <input id="acct-email" type="email" autocomplete="email" inputmode="email" required placeholder="you@example.com">
+    <label class="acct-check"><input type="checkbox" id="acct-updates-new"> Email me about new episodes, books and events (about once a month, unsubscribe anytime)</label>
     <button class="acct-btn" type="submit">Send me a sign-in link</button>
   </form>
   <p class="acct-msg" id="acct-sent" role="status" aria-live="polite"></p>
@@ -108,7 +111,9 @@
 <section id="acct-in" hidden>
   <div class="info-box">
     <p><strong>Signed in as:</strong> <span id="acct-who"></span></p>
-    <p><strong>Pine Knot Club:</strong> Coming soon</p>
+    <p><strong>Pine Knot Club:</strong> Member (free)</p>
+    <label class="acct-check"><input type="checkbox" id="acct-updates"> Email me about new episodes, books and events (about once a month, unsubscribe anytime)</label>
+    <p class="acct-msg" id="acct-upd-msg" role="status" aria-live="polite"></p>
     <p class="fine" id="acct-since"></p>
   </div>
   <div class="acct-row">
@@ -151,6 +156,8 @@
       show("acct-in");
       $("acct-title").textContent = "Your account";
       $("acct-who").textContent = A.user.email;
+      var loc = null; try { loc = localStorage.getItem("ce-updates-" + A.user.email); } catch (e) {}
+      $("acct-updates").checked = typeof A.user.updates === "boolean" ? A.user.updates : loc === "1";
       var d = new Date(String(A.user.created).replace(" ", "T") + "Z");
       $("acct-since").textContent = isNaN(d) ? "" : "Signed up " + d.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
     } else if (A.status === "out") {
@@ -165,11 +172,24 @@
     e.preventDefault();
     var btn = e.target.querySelector("button"), email = $("acct-email").value.trim();
     btn.disabled = true; $("acct-sent").textContent = "Sending…";
-    A.start(email, ret).then(function () {
+    var upd = $("acct-updates-new").checked;
+    try { if (upd) localStorage.setItem("ce-updates-" + email.toLowerCase(), "1"); } catch (e) {}
+    A.start(email, ret, upd).then(function () {
       $("acct-sent").textContent = ""; $("acct-to").textContent = email;
       $("acct-title").textContent = "Check your email"; show("acct-check");
     }).catch(function (err) { $("acct-sent").textContent = err.message; })
       .then(function () { btn.disabled = false; });
+  });
+  $("acct-updates").addEventListener("change", function () {
+    var on = this.checked, key = "ce-updates-" + (A.user && A.user.email || "");
+    function local() { try { localStorage.setItem(key, on ? "1" : "0"); } catch (e) {} }
+    $("acct-upd-msg").textContent = "Saving…";
+    A.setUpdates(on).then(function () {
+      local(); $("acct-upd-msg").textContent = on ? "Saved. You'll get the occasional update." : "Saved. No update emails.";
+    }).catch(function () {
+      /* Email updates aren't switched on at the server yet: remember the choice here. */
+      local(); $("acct-upd-msg").textContent = "Saved.";
+    });
   });
   $("acct-again").addEventListener("click", function () { $("acct-title").textContent = "Sign in"; show("acct-out"); $("acct-email").focus(); });
   $("acct-logout").addEventListener("click", function () {

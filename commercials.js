@@ -188,7 +188,9 @@
 
   var ids = Object.keys(SPOTS);
 
+  var MEMBER_MIN_MS = 8 * 60 * 1000, MEMBER_MAX_MS = 10 * 60 * 1000, MEMBER_SKIP_MS = 3000;
   function newTarget() {
+    if (isMember()) return Math.round(MEMBER_MIN_MS + Math.random() * (MEMBER_MAX_MS - MEMBER_MIN_MS));
     if (!TEST) return BREAK_INTERVAL_MS;
     var fixed = 0;
     try { fixed = parseInt(localStorage.getItem(TEST_MS_KEY), 10) || 0; } catch (e) {}
@@ -323,6 +325,17 @@
   function framePlaying() {
     var el = document.activeElement;
     return !!(el && (el.tagName || "").toLowerCase() === "iframe");
+  }
+
+  /* Pine Knot Club members (signed in, free) get fewer breaks: about every 8-10 minutes, Skip after 3 s.
+     js/auth.js keeps the ce-member flag current. */
+  function isMember() {
+    try {
+      var A = window.CollierAuth || (window.parent !== window && window.parent.CollierAuth);
+      if (A && A.status === "in") return true;
+      if (A && A.status === "out") return false;
+    } catch (e) {}
+    try { return +(localStorage.getItem("ce-member") || 0) > Date.now(); } catch (e) { return false; }
   }
 
   function canStart() {
@@ -882,7 +895,7 @@
     if (testBreak) {
       overlay.classList.add("is-test");
       if (!programHeld) { holdProgram(); programHeld = true; }
-      skipReadyAt = Date.now() + SKIP_AFTER_MS;
+      skipReadyAt = Date.now() + (isMember() ? MEMBER_SKIP_MS : SKIP_AFTER_MS);
       skip.classList.add("is-waiting");
       skip.setAttribute("aria-disabled", "true");
       var paintSkip = function () {
@@ -994,6 +1007,8 @@
       return;
     }
     elapsed += dt;
+    if (isMember() && target < MEMBER_MIN_MS) target = newTarget();
+    if (!isMember() && target >= MEMBER_MIN_MS) target = newTarget();
     if (elapsed >= target) {
       elapsed = 0;
       target = newTarget();
