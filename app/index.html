@@ -12,20 +12,34 @@
 <div id="splash"><img src="icons/icon-512.png" alt=""><div class="brand">COLLIER<span>ENTERTAINMENT</span></div></div>
 <main id="app">
 <section class="screen active" id="home">
- <header class="top"><div class="logo">COLLIER<span>ENTERTAINMENT</span></div></header>
- <div class="hero"><img src="../images/author-as-jang.jpg" alt="">
-  <div class="hero-in"><span class="badge">NEW EPISODE</span><h1>Jang &amp; Tom in Pine Knot</h1><p>Civil War gold on Miller's Ridge, a shovel-stealing groundhog, and a possum named Precious. Radio story · 4:20</p>
-  <button class="btn" data-play="pineknot">▶ Play episode</button></div></div>
- <h3 class="sec">Continue</h3>
- <div class="row">
-  <button class="tile" data-go="listen"><img src="../images/jang-and-tom-wagon-masters.jpg" alt=""><b>Listen</b></button>
-  <button class="tile" data-go="play"><img src="../images/old-man-on-the-mountain.jpg" alt=""><b>Play</b></button>
-  <button class="tile" data-go="studio"><img src="../images/jason-art/painting-lighthouse-at-dusk-thumb.jpg" alt=""><b>Studio</b></button>
-  <button class="tile" data-go="read"><img src="../images/the-first-pulse.jpg" alt=""><b>Read</b></button>
+ <header class="top chan"><div class="logo">COLLIER<span>ENTERTAINMENT</span></div><span class="onair"><i></i>ON AIR</span></header>
+ <div class="tv">
+  <div class="tv-screen"><img src="../images/author-as-jang.jpg" alt="Jang and Tom"><div class="scan"></div><div class="glow"></div>
+   <div class="tv-in"><span class="np">NOW PLAYING ON COLLIER ENTERTAINMENT</span><h1>Jang &amp; Tom<br><em>in Pine Knot</em></h1>
+   <p>Civil War gold on Miller's Ridge, a shovel-stealing groundhog, and a possum named Precious.</p>
+   <div class="hero-act"><button class="bigplay" data-play="pineknot" aria-label="Play episode">▶</button><div><b>Play the episode</b><span>Radio story · 4:20</span></div></div></div></div>
+  <div class="tv-knobs"><span></span><span></span></div>
  </div>
- <h3 class="sec">The Books</h3><div id="books" class="books"></div>
- <h3 class="sec">Jason's Art</h3><div id="art" class="art"></div>
- <button class="club-cta" data-go="club"><b>Pine Knot Club</b><span>See what members would get →</span></button>
+ <div class="guide"><span class="g-now">NOW</span> Jang &amp; Tom in Pine Knot <span class="g-next">ALSO ON</span> Old Man On The Mountain</div>
+ <div class="shelf"><h3>Shows &amp; Radio</h3><div class="rail">
+  <button class="poster wide" data-play="pineknot"><img src="../images/jang-and-tom-wagon-masters.jpg" alt=""><b>Jang &amp; Tom in Pine Knot</b><span>Radio story</span></button>
+  <button class="poster wide" data-frame="past-inspirations.html" data-title="Past Inspirations"><img src="../images/art/philly-s01.jpg" alt=""><b>Past Inspirations</b><span>Old-time radio</span></button>
+  <button class="poster wide" data-frame="audiobooks.html#rusty-stack-animatic" data-title="The Rusty Stack"><img src="../images/the-rusty-stack.jpg" alt=""><b>The Rusty Stack</b><span>Animatic preview</span></button></div></div>
+ <div class="shelf"><h3>Audiobooks <small>watch &amp; listen</small></h3><div class="rail">
+  <button class="poster tall" data-play="oldman"><img src="../old-man-audiobook/img/om01_ridge.webp" alt=""><b>Old Man On The Mountain</b><span>Listen</span></button>
+  <button class="poster tall" data-frame="audiobooks.html#jang-and-tom" data-title="Jang &amp; Tom"><img src="../media/wagonmasters_part1of6_poster.jpg" alt=""><b>Wagon Masters</b><span>Watch</span></button>
+  <button class="poster tall" data-frame="audiobooks.html#philadelphia-follies" data-title="Jang &amp; Tom"><img src="../media/philly_part1of7_poster.jpg" alt=""><b>Philadelphia Follies</b><span>Watch</span></button>
+  <button class="poster tall" data-frame="audiobooks.html#transcontinental" data-title="Jang &amp; Tom"><img src="../media/transcon_part1of4_poster.jpg" alt=""><b>Transcontinental</b><span>Watch</span></button>
+  <button class="poster tall" data-frame="audiobooks.html#first-pulse" data-title="The First Pulse"><img src="../media/firstpulse_part1of7_poster.jpg" alt=""><b>The First Pulse</b><span>Watch</span></button></div></div>
+ <div class="shelf"><h3>Games</h3><div class="rail">
+  <button class="poster wide" data-frame="old-man-game/" data-title="Old Man Hunt"><img src="../old-man-game/assets/title.jpg" alt=""><b>Old Man Hunt</b><span>Horror hunt</span></button>
+  <button class="poster wide" data-frame="book-worlds/" data-title="Book Worlds"><img src="../book-worlds/assets/play-cover.webp" alt=""><b>Book Worlds</b><span>Step inside the books</span></button>
+  <button class="poster wide" data-frame="i-spy.html" data-title="I Spy"><img src="../images/scenes/transcon-s01.jpg" alt=""><b>I Spy</b><span>Find the hidden things</span></button>
+  <button class="poster wide" data-frame="coloring.html" data-title="Coloring"><img src="../coloring/campfire.png" alt=""><b>Coloring</b><span>Color the pages</span></button></div></div>
+ <div class="paint"><img src="../images/jason-art/painting-lighthouse-at-dusk.jpg" alt="Lighthouse at Dusk by Jason Collier"><div><span class="np">OIL STUDIO</span><h3>Paint like the masters</h3><p>Mix on the palette, load the knife, paint mountains and trees.</p><button class="btn" data-go="studio">🖌 Paint now</button></div></div>
+ <div class="shelf"><h3>Jason's Art</h3><div class="rail" id="art"></div></div>
+ <button class="club-cta" data-go="club"><b>Pine Knot Club</b><span>No commercials, the full studio, early episodes →</span></button>
+ <div class="getbooks"><h4>Get the books</h4><div id="books" class="books"></div></div>
 </section>
 <section class="screen" id="listen"><header class="top"><h2>Listen</h2></header><div id="listenList" class="list"></div></section>
 <section class="screen" id="play"><header class="top"><h2>Play</h2></header><div id="playList" class="cards"></div></section>

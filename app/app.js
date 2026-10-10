@@ -12,8 +12,8 @@ var TRACKS={
  oldman:{t:'Old Man On The Mountain',s:'Audiobook · Part 1',src:R+'old-man-audiobook/audio/om01.m4a',art:R+'images/old-man-on-the-mountain.jpg'}};
 var esc=function(s){return s.replace(/&/g,'&amp;')};
 // Books + art
-$('#books').innerHTML=BOOKS.map(function(b){return '<div class="book"><img loading="lazy" src="'+R+b.img+'" alt="'+esc(b.t)+' cover"><b>'+esc(b.t)+'</b>'+(b.soon?'<span class="buy soon">Coming soon</span>':'<a class="buy" target="_blank" rel="noopener" href="'+b.buy+'">Buy on Amazon</a>')+'</div>'}).join('');
-$('#art').innerHTML=ART.map(function(a){return '<img loading="lazy" data-frame="art.html" data-title="Art" src="'+R+'images/jason-art/'+a+'-thumb.jpg" alt="'+a.replace(/^(painting|sketch)-/,'').replace(/-/g,' ')+' by Jason Collier">'}).join('');
+$('#books').innerHTML=BOOKS.map(function(b){return b.soon?'<span class="bk"><img src="'+R+b.img+'" alt="">'+esc(b.t)+' · soon</span>':'<a class="bk" target="_blank" rel="noopener" href="'+b.buy+'"><img loading="lazy" src="'+R+b.img+'" alt="">'+esc(b.t)+'</a>'}).join('');
+$('#art').innerHTML=ART.map(function(a){return '<button class="poster sq" data-frame="art.html" data-title="Art"><img loading="lazy" src="'+R+'images/jason-art/'+a+'-thumb.jpg" alt="'+a.replace(/^(painting|sketch)-/,'').replace(/-/g,' ')+' by Jason Collier"><b>'+a.replace(/^(painting|sketch)-/,'').replace(/-/g,' ')+'</b></button>'}).join('');
 function item(img,t,s,attrs){return '<button class="item" '+attrs+'><img loading="lazy" src="'+img+'" alt=""><div><b>'+esc(t)+'</b><span>'+s+'</span></div><span class="go">›</span></button>'}
 $('#listenList').innerHTML=
  item(R+'images/jang-and-tom-wagon-masters.jpg','Jang & Tom in Pine Knot','Radio story · 4:20 · download for offline','data-play="pineknot"')+
