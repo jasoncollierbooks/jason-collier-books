@@ -100,7 +100,8 @@ $('#tuneBtn').onclick=function(){staticBurst(.3);tune()};
 document.addEventListener('click',function(e){if(e.target.closest('[data-go=guide]')){award('guide');renderGuide()}});
 var dial=$('#dial'),ang=0;dial.addEventListener('click',function(){ang+=60;dial.style.transform='rotate('+ang+'deg)';staticBurst(.15);buzz(10);var tabs=['home','listen','play','studio','read'];CE.go(tabs[(ang/60)%tabs.length]);});
 // ---------- coming soon ----------
-document.addEventListener('click',function(e){if(e.target.closest('[data-soon]'))CE.toast("🦝 The Great Possum Caper is coming soon. Mrs. Whitaker's prize possum is on the loose.")});
+// Great Possum Caper (not out yet): tap plays its preview straight away (the teaser at the end of Miller's Ridge). No popup.
+document.addEventListener('click',function(e){if(e.target.closest('[data-soon]'))CE.load('ridge',true,944)});
 // SFX toggle in club
 var cl=$('#club');cl.appendChild(el('<label class="sub sfx"><input type="checkbox" id="motT"> Lively motion <small>(TV glow, slow hero drift, film grain movement). Off = calm.</small></label>'));var mt=$('#motT');mt.checked=ls('ce-motion')==='lively';mt.onchange=function(){ls('ce-motion',mt.checked?'lively':'calm');document.documentElement.classList.toggle('calm',!mt.checked)};cl.appendChild(el('<label class="sub sfx"><input type="checkbox" id="sfxT"> Button sounds &amp; haptics</label>'));var sx=$('#sfxT');sx.checked=ls('ce-sfx')!=='0';sx.onchange=function(){ls('ce-sfx',sx.checked?'1':'0')};
 // Help & info in settings: Privacy, Support, Credits

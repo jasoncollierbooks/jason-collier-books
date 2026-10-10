@@ -373,3 +373,6 @@ html:not(.calm) .gazette .pkg{transform:rotate(-.4deg)}
 .gcard:active{opacity:.8}
 .glist .card{display:flex;align-items:center;gap:12px}.glist .card img{width:110px;aspect-ratio:16/9}
 .gcard .rx-row{display:flex!important;margin-top:10px}.gcard .rx-row>span{display:inline-flex!important;width:auto;font-size:14px!important;color:#e8d9b8}
+/* Toast: fully hidden when not showing (long two-line toasts used to stay half-visible under the iPhone notch) */
+#toast{transform:translate(-50%,calc(-100% - 160px));opacity:0;visibility:hidden;transition:transform .3s,opacity .3s,visibility 0s .3s}
+#toast.show{transform:translate(-50%,0);opacity:1;visibility:visible;transition:transform .3s,opacity .3s}
