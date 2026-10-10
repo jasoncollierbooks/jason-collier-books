@@ -92,7 +92,7 @@
  <button data-go="home" class="on"><i>⌂</i>Home</button><button data-go="listen"><i>🎧</i>Listen</button><button data-go="play"><i>🎮</i>Play</button><button data-go="studio"><i>🎨</i>Studio</button><button data-go="read"><i>📖</i>Read</button>
 </nav>
 <audio id="au" preload="metadata"></audio>
-<script src="../js/auth.js"></script><script src="app.js"></script><script src="fun.js"></script><script>(function(){var A=window.CollierAuth;if(!A)return;A.onChange(function(){var c=document.getElementById('acctChip'),l=document.getElementById('acctLine'),g=document.querySelector('#acctCard .acct-go');
+<script src="../js/auth.js"></script><script src="app.js"></script><script src="fun.js"></script><script src="social.js"></script><script>(function(){var A=window.CollierAuth;if(!A)return;A.onChange(function(){var c=document.getElementById('acctChip'),l=document.getElementById('acctLine'),g=document.querySelector('#acctCard .acct-go');
 if(A.status==='in'){var e=A.user&&A.user.email||'';c.textContent='Account';c.setAttribute('aria-label','Account');l.textContent='Signed in as '+e;g.textContent='Account'}
 else if(A.status==='offline'){c.hidden=true;document.getElementById('acctCard').hidden=true}
 else{c.textContent='Sign in';l.textContent='Sign in to save your spot for the Club';g.textContent='Sign in'}})})();</script></body></html>
