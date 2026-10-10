@@ -96,3 +96,19 @@ if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js',{scope:
 var h=location.hash.slice(1);if(h)go(h);
 setTimeout(function(){var s=$('#splash');s&&s.classList.add('out')},700);
 })();
+// keep every same-site link inside the app (iframe pages): site nav maps to app tabs, other pages open in the frame, only truly outside links leave
+(function(){var TAB={'':'home','index.html':'home','books.html':'read','audiobooks.html':'listen','listen.html':'listen','play.html':'play','studio.html':'studio','art.html':'home'};
+function route(u){var p=u.pathname.replace(/^\//,'');if(p==='app/'||p.indexOf('app/')===0){$('#frame').hidden=true;fr.src='about:blank';go('home');return}
+ if(TAB[p]&&!u.hash&&p!=='studio.html'&&p!=='art.html'){$('#frame').hidden=true;fr.src='about:blank';go(TAB[p]);return}
+ var s=p+u.search.replace(/[?&]app=1/,'').replace(/^&/,'?')+u.hash;openFrame(s||'index.html',$('#fTitle').textContent)}
+fr.addEventListener('load',function(){try{var w=fr.contentWindow,d=fr.contentDocument;if(!d||!d.head)return;
+ var st=d.createElement('style');st.textContent='#nav,header.nav,#site-nav,.end-nav,footer nav{display:none!important}a.ce-out::after{content:" \u2197";font-size:.8em;opacity:.7}.ce-outnote{font-size:.7em;opacity:.7}';d.head.appendChild(st);
+ function mark(){d.querySelectorAll('a[href]').forEach(function(a){try{var u=new URL(a.getAttribute('href'),w.location.href);if(/^(https?|mailto|tel):$/.test(u.protocol)&&u.origin!==location.origin&&!a.classList.contains('ce-out')){a.classList.add('ce-out');a.title='Opens in browser'}}catch(e){}})}
+ mark();new w.MutationObserver(mark).observe(d.body,{childList:true,subtree:true});
+ d.addEventListener('click',function(ev){if(ev.defaultPrevented)return;var a=ev.target.closest&&ev.target.closest('a[href]');if(!a||a.hasAttribute('download'))return;var h=a.getAttribute('href');if(!h||h.charAt(0)==='#'||/^javascript:/i.test(h))return;var u;try{u=new URL(h,w.location.href)}catch(e){return}
+  if(u.origin!==location.origin){ev.preventDefault();window.open(u.href,'_blank','noopener');return}
+  if(u.pathname===w.location.pathname&&u.search===w.location.search&&u.hash)return;
+  if(/\.(mp3|m4a|pdf|zip|png|jpe?g)$/i.test(u.pathname))return;
+  ev.preventDefault();route(u)},false);
+ w.open=(function(o){return function(x,t,f){try{var u=new URL(x,w.location.href);if(u.origin===location.origin){route(u);return null}}catch(e){}return window.open(x,'_blank','noopener')}})(w.open);
+}catch(e){}});})();
