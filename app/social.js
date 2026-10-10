@@ -16,6 +16,9 @@ var ITEMS={ // key = data-play / data-frame value
  'old-man-game/':{id:'game-old-man-hunt',t:'Old Man Hunt',u:SITE+'old-man-game/',rate:1},
  'book-worlds/':{id:'game-book-worlds',t:'Book Worlds',u:SITE+'book-worlds/',rate:1},
  'i-spy.html':{id:'game-i-spy',t:'I Spy',u:SITE+'i-spy.html',rate:1},
+ 'https://kite-bolt-fleet-honey.grok.me/':{id:'game-jang-tom-hub',t:'Jang & Tom and The Rusty Stack games',u:SITE+'play.html',rate:1},
+ 'https://delta-branch-breeze-daisy.grok.me/':{id:'game-born-twice',t:'Born Twice',u:SITE+'thorne-lab.html',rate:1},
+ 'https://fern-valley-glow-reef.grok.me/':{id:'game-first-pulse',t:'The First Pulse game',u:SITE+'first-pulse.html',rate:1},
  'coloring.html':{id:'game-coloring',t:'Coloring',u:SITE+'coloring.html',rate:1}};
 var APP={id:'app',t:'Collier Entertainment',u:SITE+'app/',rate:1};
 var BYID={};function reg(it){BYID[it.id]=it;return it}reg(APP);Object.keys(ITEMS).forEach(function(k){reg(ITEMS[k])});
@@ -55,11 +58,11 @@ function paint(){
  $$('[data-rx-chip]').forEach(function(e){var id=e.dataset.rxChip,r=rateInfo(id),m=myStars(id);e.textContent=r?'\u2605 '+r.avg.toFixed(1)+' ('+r.ratings+')':(m?'\u2605 '+m:'\u2606 Rate')});}
 // rows on posters, list items and cards
 function decorate(){
- $$('[data-play],[data-frame]').forEach(function(b){if(b.dataset.rxDone||!b.matches('.poster,.item,.card'))return;var key=b.dataset.play||b.dataset.frame,it=ITEMS[key],art=null;
+ $$('[data-play],[data-frame]').forEach(function(b){if(b.dataset.rxDone||!b.matches('.poster,.item,.card,.gcard'))return;var key=b.dataset.play||b.dataset.frame,it=ITEMS[key],art=null;
   if(!it&&b.closest('#art')){var im=$('img',b),n=(im&&im.getAttribute('src')||'').replace(/.*\/|-thumb\.jpg$/g,'');if(!n)return;it=reg({id:'art-'+n,t:(im.alt||n),u:SITE+'art.html'});art=1}
   if(!it)return;b.dataset.rxDone=1;
   var row='<span class="rx-row">'+heartHTML(it.id)+(it.rate?'<span class="rx-chip" role="button" tabindex="0" data-rx-open="'+it.id+'" data-rx-chip="'+it.id+'"></span>':'')+'<span class="rx-share" role="button" tabindex="0" data-rx-share="'+it.id+'" aria-label="Share">\u2934 Share</span></span>';
-  var host=b.matches('.item')?$('div',b):b;host.insertAdjacentHTML('beforeend',row)})}
+  var host=b.matches('.item,.gcard')?$('div',b):b;host.insertAdjacentHTML('beforeend',row)})}
 // detail sheet (rating + like + share)
 var sheet=document.createElement('div');sheet.id='rxSheet';sheet.className='rx-sheet';sheet.hidden=true;document.body.appendChild(sheet);
 function openSheet(id,opts){var it=BYID[id];if(!it)return;opts=opts||{};
