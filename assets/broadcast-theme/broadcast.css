@@ -651,3 +651,7 @@ html.reduce-motion .track { width: auto; flex-wrap: wrap; justify-content: cente
 @media (min-width: 1100px) {
   .choice-grid { grid-template-columns: 1fr 1fr 1fr; }
 }
+
+/* Privacy / Support / Credits row in the footer: big enough to read */
+footer .foot-legal { display: flex; flex-wrap: wrap; gap: .2rem 1.6rem; width: 100%; font-size: 16px; letter-spacing: .06em; text-transform: none; font-weight: 600; }
+footer .foot-legal a { min-height: 44px; display: inline-flex; align-items: center; text-decoration: underline; text-underline-offset: 4px; }

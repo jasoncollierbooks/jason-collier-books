@@ -685,3 +685,7 @@ body.milestone-open{overflow:hidden}
 .tip-line a:hover{color:var(--ink)}
 .book .buy + .tip-line{margin-top:.9rem}
 .book .tip-line + p,.book .tip-line + .review{margin-top:1.3rem}
+
+/* Privacy / Support / Credits row in every footer: big enough to read */
+footer .foot-legal{display:flex;flex-wrap:wrap;gap:.2rem 1.6rem;width:100%;font-size:16px;letter-spacing:.06em;text-transform:none;font-weight:600}
+footer .foot-legal a{min-height:44px;display:inline-flex;align-items:center;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px}
