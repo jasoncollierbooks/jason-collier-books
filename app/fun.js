@@ -23,9 +23,9 @@ if(!sessionStorage.getItem('ce-booted')&&!RM){sessionStorage.setItem('ce-booted'
 // ---------- film grain ----------
 document.body.appendChild(el('<div id="grain" aria-hidden="true"></div>'));
 // ---------- tilt ----------
-if(!RM)document.addEventListener('pointermove',function(e){var p=e.target.closest&&e.target.closest('.poster img,.paint,.tv');if(!p||e.pointerType==='mouse'&&!e.buttons)return;var r=p.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;p.style.transform='perspective(600px) rotateY('+x*8+'deg) rotateX('+(-y*8)+'deg) scale(.98)'},{passive:true});
-document.addEventListener('pointerup',function(){document.querySelectorAll('.poster img,.paint,.tv').forEach(function(p){p.style.transform=''})});
-document.addEventListener('pointercancel',function(){document.querySelectorAll('.poster img,.paint,.tv').forEach(function(p){p.style.transform=''})});
+if(!RM)document.addEventListener('pointermove',function(e){var p=e.target.closest&&e.target.closest('.poster img,.paint,.tv,.card,.item');if(!p||e.pointerType==='mouse'&&!e.buttons)return;var r=p.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;p.style.transform='perspective(600px) rotateY('+x*8+'deg) rotateX('+(-y*8)+'deg) scale(.98)'},{passive:true});
+document.addEventListener('pointerup',function(){document.querySelectorAll('.poster img,.paint,.tv,.card,.item').forEach(function(p){p.style.transform=''})});
+document.addEventListener('pointercancel',function(){document.querySelectorAll('.poster img,.paint,.tv,.card,.item').forEach(function(p){p.style.transform=''})});
 // ---------- badges ----------
 var BADGES={tuned:['📻','Tuned In','Played your first show'],nails:['🔩','Three Rusty Nails','Stayed up the ridge to count the treasure'],ridge:['⛰️',"Miller's Ridge",'Finished the whole episode'],hog:['🐾','Groundhog Wrangler','Caught the groundhog 3 times'],painter:['🎨','Painter','Opened the Oil Studio'],hunter:['🦌','Hunter','Went up the mountain in the Old Man hunt'],explorer:['🗺️','World Walker','Stepped into Book Worlds'],guide:['📺','Channel Surfer','Checked the channel guide']};
 function got(){try{return JSON.parse(ls('ce-badges')||'{}')}catch(e){return {}}}
@@ -37,6 +37,9 @@ home.insertBefore(el('<div class="gazette" id="gazette"></div>'),paint);
 $('.club-cta',home).insertAdjacentElement('beforebegin',el('<div class="shelf"><h3>Your badges</h3><div class="rail" id="badgeRail"></div></div>'));
 function renderBadges(){var g=got();$('#badgeRail').innerHTML=Object.keys(BADGES).map(function(k){var b=BADGES[k];return '<div class="bdg'+(g[k]?' on':'')+'"><i>'+(g[k]?b[0]:'🔒')+'</i><b>'+b[1]+'</b><span>'+b[2]+'</span></div>'}).join('')}
 renderBadges();
+var strip=el('<button class="tierstrip" data-go="club"></button>');home.insertBefore(strip,$('.tv',home));
+function tierStrip(){strip.innerHTML=CE.isSub()?'<b>★ PINE KNOT CLUB</b> member preview · no station breaks':'<b>FREE</b> with station breaks · <u>Go ad-free with the Club</u>';strip.classList.toggle('mem',CE.isSub())}
+tierStrip();document.addEventListener('change',function(e){if(e.target.id==='subToggle'){tierStrip();if(e.target.checked){chime();buzz([10,30,10,30,20])}}});
 document.addEventListener('click',function(e){var f=e.target.closest('[data-frame]');if(!f)return;var u=f.dataset.frame;if(/studio/.test(u))award('painter');if(/old-man-game/.test(u))award('hunter');if(/book-worlds/.test(u))award('explorer')});
 $('#openStudio').addEventListener('click',function(){award('painter')});
 // ---------- continue ----------
@@ -61,7 +64,7 @@ hog.onclick=function(){hogN++;tone(330,.08,'square',.05);tone(220,.12,'square',.
 CE.popHog=popHog;
 // ---------- player: chapters, captions, cast ----------
 var pl=$('#player');pl.classList.add('rich');
-var extra=el('<div class="pl-extra"><div class="cast" id="cast"><div data-s="jang"><i>J</i><b>Jang</b></div><div data-s="tom"><i>T</i><b>Tom</b></div><div data-s="narrator"><i>📻</i><b>Narrator</b></div><div data-s="jenkins"><i>OJ</i><b>Jenkins</b></div></div><p class="cap" id="cap" aria-live="off"></p><div class="chap-now" id="chapNow"></div><details class="chaps"><summary>Chapters</summary><ol id="chapList"></ol></details><p class="credit" id="credit"></p></div>');
+var extra=el('<div class="pl-extra"><div class="cast" id="cast"><div data-s="jang"><i>J</i><b>Jang</b></div><div data-s="tom"><i>T</i><b>Tom</b></div><div data-s="narrator"><i>📻</i><b>Narrator</b></div><div data-s="jenkins"><i>OJ</i><b>Jenkins</b></div></div><p class="cap" id="cap" aria-live="off"></p><div class="chap-now" id="chapNow"></div><div class="chapnav"><button id="chPrev">⏮ Chapter</button><div class="eq" id="eq"><i></i><i></i><i></i><i></i><i></i></div><button id="chNext">Chapter ⏭</button></div><details class="chaps"><summary>Chapters</summary><ol id="chapList"></ol></details><p class="credit" id="credit"></p></div>');
 pl.appendChild(extra);
 var CAP=[];fetch('captions.json').then(function(r){return r.json()}).then(function(j){CAP=j}).catch(function(){});
 var curInfo=null;
@@ -75,6 +78,9 @@ function sync(){if(!curInfo||!curInfo.ch)return;var t=au.currentTime,c=null,i;fo
  if(L&&$('#cap').textContent!==L[2])$('#cap').textContent=L[2];
  document.querySelectorAll('#cast [data-s]').forEach(function(d){d.classList.toggle('lit',d.dataset.s===sp&&!au.paused)})}
 au.addEventListener('pause',sync);
+function chJump(dir){if(!curInfo||!curInfo.ch)return;var t=au.currentTime,c=curInfo.ch,i=0;for(var j=0;j<c.length;j++)if(c[j][0]<=t+.5)i=j;var n=dir>0?i+1:(t-c[i][0]>4?i:i-1);n=Math.max(0,Math.min(c.length-1,n));au.currentTime=c[n][0];buzz(8);staticBurst(.08)}
+$('#chPrev').onclick=function(){chJump(-1)};$('#chNext').onclick=function(){chJump(1)};
+function eqState(){$('#eq').classList.toggle('on',!au.paused)}au.addEventListener('play',eqState);au.addEventListener('pause',eqState);
 // ---------- live channel + guide ----------
 var SCHED=[{k:'ridge',t:"Jang & Tom: The Treasure of Miller's Ridge",d:1009},{k:'spot1',t:'Station break',d:14,src:R+'audio/commercials/jangtom.mp3',art:R+'images/jang-and-tom-wagon-masters.jpg'},{k:'oldman',t:'Old Man On The Mountain · Part 1',d:741},{k:'spot2',t:'Station break',d:12,src:R+'audio/commercials/worlds.mp3',art:R+'book-worlds/assets/play-cover.webp'},{k:'pineknot',t:'Jang & Tom in Pine Knot (Preview)',d:261},{k:'spot3',t:'Station break',d:12,src:R+'audio/commercials/pulse.mp3',art:R+'images/the-first-pulse.jpg'}];
 SCHED.forEach(function(s){if(s.src)CE.TRACKS[s.k]={t:s.t,s:'Collier Entertainment · station break',src:s.src,art:s.art}});
