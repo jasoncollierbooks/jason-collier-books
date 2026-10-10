@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="theme-color" content="#16130f">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in | Collier Entertainment</title>
+<meta name="description" content="Sign in to Collier Entertainment with your email. No passwords.">
+<meta property="og:title" content="Sign in | Collier Entertainment">
+<meta property="og:description" content="Sign in to Collier Entertainment with your email. No passwords.">
+<meta property="og:url" content="https://collierentertainment.com/account.html">
+<meta property="og:site_name" content="Collier Entertainment">
+<link rel="canonical" href="https://collierentertainment.com/account.html">
+<link rel="icon" href="icons/pages/about-32.png?v=tv2" sizes="32x32" type="image/png">
+<link rel="icon" href="icons/pages/about-48.png?v=tv2" sizes="48x48" type="image/png">
+<link rel="apple-touch-icon" href="icons/pages/about-apple-touch.png?v=tv2" sizes="180x180">
+<link rel="manifest" href="manifest.json?v=tv1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Rye&family=Orbitron:wght@500;700;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&family=IM+Fell+English+SC&family=Special+Elite&family=Josefin+Sans:wght@400;600;700&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="polish.css">
+<link rel="stylesheet" href="assets/broadcast-theme/site.css">
+<link rel="stylesheet" href="season.css">
+<link rel="stylesheet" href="info.css">
+<script src="season.js"></script>
+<script src="app-mode.js"></script>
+<meta name="robots" content="noindex">
+</head>
+<body class="broadcast-lite page-info page-account" data-season-ribbon="off">
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="index.html" aria-label="Jason Collier, home">J<span>·</span>C</a>
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><span></span><span></span><span></span></button>
+  <nav id="site-nav" aria-label="Main">
+    <a class="nav-link" href="index.html">Home</a>
+    <div class="nav-group">
+      <button type="button" class="nav-label" aria-expanded="false" aria-haspopup="true" aria-controls="menu-books">Books</button>
+      <div class="nav-menu" id="menu-books" role="group" aria-label="Books">
+        <a href="books.html">All Books</a>
+        <a href="jang-and-tom.html">Jang &amp; Tom</a>
+        <a href="first-pulse.html">First Pulse</a>
+        <a href="old-man-on-the-mountain.html">Old Man</a>
+        <a href="rusty-stack.html">Rusty Stack</a>
+      </div>
+    </div>
+    <a class="nav-link" href="audiobooks.html">Listen</a>
+    <a class="nav-link" href="past-inspirations.html">Past Inspirations</a>
+    <div class="nav-group">
+      <button type="button" class="nav-label" aria-expanded="false" aria-haspopup="true" aria-controls="menu-extra">Extra</button>
+      <div class="nav-menu" id="menu-extra" role="group" aria-label="Extra">
+        <a href="art.html">Art</a>
+        <a href="studio.html">Studio</a>
+        <a href="thorne-lab.html">Thorne’s Lab</a>
+        <a href="play.html">Play</a>
+        <a href="novel.html">The Novel</a>
+      </div>
+    </div>
+    <a class="nav-link" href="about.html">About</a>
+    <a class="nav-link on" aria-current="page" href="account.html" style="font-size:15px">Sign in</a>
+  </nav>
+</header>
+
+<style>
+.acct-form{display:grid;gap:.8rem;margin:1rem 0 1.2rem;max-width:460px}
+.acct-form label{font-family:var(--ui);font-weight:600;font-size:18px;color:#fbf6ee}
+.acct-form input{font-size:19px;padding:.85rem 1rem;border-radius:4px;border:1px solid rgba(228,208,164,.5);background:#120f0c;color:#fbf6ee;width:100%;box-sizing:border-box}
+.acct-btn{font-family:var(--ui);font-size:18px;font-weight:700;letter-spacing:.04em;min-height:52px;padding:.7rem 1.4rem;border-radius:4px;border:1px solid #d4af37;background:#7a4a1c;color:#fff;cursor:pointer}
+.acct-btn.plain{background:transparent;color:#f3dfb1}
+.acct-btn.danger{background:transparent;border-color:#c0623f;color:#f2b39a}
+.acct-msg{font-size:18px!important;min-height:1.6em;color:#f3dfb1!important}
+.acct-row{display:flex;flex-wrap:wrap;gap:.8rem;margin:1rem 0}
+[hidden]{display:none!important}
+</style>
+<main id="top">
+<article class="info">
+<header class="page-head">
+  <span class="info-brand">Collier Entertainment</span>
+  <h1 id="acct-title">Sign in</h1>
+</header>
+
+<p class="acct-msg" id="acct-loading">Checking…</p>
+
+<section id="acct-offline" hidden>
+  <p class="info-lede">Sign-in is coming soon. Everything on the site is free to enjoy in the meantime.</p>
+</section>
+
+<section id="acct-out" hidden>
+  <p class="info-lede">Type your email and we'll send you a sign-in link. No password needed.</p>
+  <form class="acct-form" id="acct-form">
+    <label for="acct-email">Your email</label>
+    <input id="acct-email" type="email" autocomplete="email" inputmode="email" required placeholder="you@example.com">
+    <button class="acct-btn" type="submit">Send me a sign-in link</button>
+  </form>
+  <p class="acct-msg" id="acct-sent" role="status" aria-live="polite"></p>
+  <p class="fine">Signing in is optional. Everything free on the site works without it. See <a href="privacy.html">Privacy</a> for what we keep.</p>
+</section>
+
+<section id="acct-check" hidden>
+  <div class="info-box">
+    <p>We sent a sign-in link to <strong id="acct-to"></strong>. Tap it on this phone or computer to finish signing in.</p>
+    <p class="fine">The link works once and expires in 15 minutes. Don't see it? Look in your spam folder.</p>
+  </div>
+  <div class="acct-row"><button class="acct-btn plain" type="button" id="acct-again">Use a different email</button></div>
+</section>
+
+<section id="acct-in" hidden>
+  <div class="info-box">
+    <p><strong>Signed in as:</strong> <span id="acct-who"></span></p>
+    <p><strong>Pine Knot Club:</strong> Coming soon</p>
+    <p class="fine" id="acct-since"></p>
+  </div>
+  <div class="acct-row">
+    <button class="acct-btn plain" type="button" id="acct-logout">Sign out</button>
+    <button class="acct-btn danger" type="button" id="acct-delete">Delete my account</button>
+  </div>
+  <p class="acct-msg" id="acct-msg" role="status" aria-live="polite"></p>
+  <p class="fine">Deleting your account erases your email and sign-ins from our records right away. It can't be undone.</p>
+</section>
+</article>
+</main>
+
+<footer>
+  <span>© <span id="y">2026</span> Jason Collier</span>
+  <span class="visit-count" hidden></span>
+  <span class="foot-links"><a href="https://x.com/jascol235175" target="_blank" rel="noopener">X @jascol235175</a><a href="https://www.amazon.com/stores/author/B0GDW74Y5S" target="_blank" rel="noopener">Amazon Author Page</a><a href="mailto:outdoorsolution@bellsouth.net">Email</a><a href="https://venmo.com/u/Jason-Collier-40" target="_blank" rel="noopener noreferrer">Tip the trail boss</a></span>
+  <span class="foot-legal"><a href="privacy.html">Privacy</a><a href="support.html">Support</a><a href="credits.html">Credits</a></span>
+</footer>
+<script src="main.js" defer></script>
+<script src="js/auth.js"></script>
+<script>
+/* account.html: email sign-in link, your account, sign out, delete. */
+(function () {
+  var A = window.CollierAuth, $ = function (id) { return document.getElementById(id); };
+  var params = new URLSearchParams(location.search);
+  /* After signing in, go back to the page they came from (or /app/ inside the app). */
+  var ret = "/account.html";
+  try {
+    if (window.CE_APP_MODE) ret = "/app/";
+    else if (document.referrer) {
+      var r = new URL(document.referrer);
+      if (r.origin === location.origin && !/account\.html$/.test(r.pathname)) ret = r.pathname + r.search;
+    }
+  } catch (e) {}
+  function show(id) {
+    ["acct-loading", "acct-offline", "acct-out", "acct-check", "acct-in"].forEach(function (s) { $(s).hidden = s !== id; });
+  }
+  A.onChange(function () {
+    if (A.status === "in") {
+      show("acct-in");
+      $("acct-title").textContent = "Your account";
+      $("acct-who").textContent = A.user.email;
+      var d = new Date(String(A.user.created).replace(" ", "T") + "Z");
+      $("acct-since").textContent = isNaN(d) ? "" : "Signed up " + d.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+    } else if (A.status === "out") {
+      show("acct-out");
+      $("acct-title").textContent = "Sign in";
+      if (params.get("signin") === "expired") $("acct-sent").textContent = "That link has expired or was already used. Enter your email for a new one.";
+    } else if (A.status === "offline") {
+      show("acct-offline");
+    }
+  });
+  $("acct-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var btn = e.target.querySelector("button"), email = $("acct-email").value.trim();
+    btn.disabled = true; $("acct-sent").textContent = "Sending…";
+    A.start(email, ret).then(function () {
+      $("acct-sent").textContent = ""; $("acct-to").textContent = email;
+      $("acct-title").textContent = "Check your email"; show("acct-check");
+    }).catch(function (err) { $("acct-sent").textContent = err.message; })
+      .then(function () { btn.disabled = false; });
+  });
+  $("acct-again").addEventListener("click", function () { $("acct-title").textContent = "Sign in"; show("acct-out"); $("acct-email").focus(); });
+  $("acct-logout").addEventListener("click", function () {
+    A.logout().catch(function (err) { $("acct-msg").textContent = err.message; });
+  });
+  $("acct-delete").addEventListener("click", function () {
+    if (!confirm("Delete your Collier Entertainment account? This erases your email and sign-ins. It can't be undone.")) return;
+    A.deleteAccount().then(function () {
+      $("acct-sent").textContent = "Your account has been deleted.";
+    }).catch(function (err) { $("acct-msg").textContent = err.message; });
+  });
+})();
+</script>
+</body>
+</html>
