@@ -26,7 +26,7 @@
 <script src="season.js?v=lite2"></script>
 <script src="app-mode.js?v=2"></script>
 <link rel="stylesheet" href="ce-site.css?v=4">
-<link rel="stylesheet" href="rusty-adventure.css?v=2">
+<link rel="stylesheet" href="rusty-adventure.css?v=3">
 </head>
 <body class="broadcast-lite page-book">
 <div class="grain" aria-hidden="true"></div>
@@ -62,7 +62,7 @@
 <div class="lbook closed" id="book">
  <div class="spread" id="spread">
   <section class="page pl" id="pgL">
-   <figure class="plate"><img id="rcaImg" src="images/the-rusty-stack.jpg" alt="" onerror="this.onerror=null;this.src='images/the-rusty-stack.jpg'"></figure>
+   <figure class="plate" id="rcaPlate"></figure>
    <p class="kick" id="rcaNum"></p>
    <h2 id="rcaTitle" class="rca-title">The Rusty Stack</h2>
    <div class="rca-flags" id="rcaFlags"></div>
@@ -86,7 +86,7 @@
  <div class="rca-prog"><div class="rca-bar"><i id="rcaBar"></i></div><span id="rcaTime">0:00</span></div>
  <button id="rcaMute" class="rca-sm" aria-label="Mute">🔊</button>
 </div>
-<div class="rca-tools"><button id="rcaSkip" class="rca-sm">⏭ Skip narration</button><button id="rcaEndBtn" class="rca-sm">🏆 Endings <span id="rcaCount">0/8</span></button><button id="rcaRestart" class="rca-sm">↺ Restart</button></div>
+<div class="rca-tools"><button id="rcaSkip" class="rca-sm">⏭ Skip narration</button><button id="rcaEndBtn" class="rca-sm">🏆 Endings <span id="rcaCount">0/8</span></button><button id="rcaRestart" class="rca-sm">↺ Restart</button><span class="rca-sm rs-gagc" title="Tap funny things hidden in the pictures">🔍 Gags <span id="rsGagCount">0/0</span></span></div>
 <div id="rcaEndings" class="rca-endings" hidden><h2>Endings found: <span id="rcaCount2">0/8</span></h2><div id="rcaEndList"></div><button class="rca-choice" id="rcaEndClose">Back to the book</button></div>
 <audio id="rcaAudio" preload="auto"></audio>
 </main>
@@ -100,7 +100,9 @@
 </footer>
 <script src="js/rusty-cyoa-data.js?v=1"></script>
 <script src="js/rusty-cyoa-audio.js?v=1"></script>
-<script src="rusty-adventure.js?v=2" defer></script>
+<script src="js/rusty-cyoa-stage.js?v=1"></script>
+<script src="rusty-stage.js?v=1"></script>
+<script src="rusty-adventure.js?v=3" defer></script>
 <script src="main.js?v=pass3" defer></script>
 <script src="links.js" defer></script>
 </body>
