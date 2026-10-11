@@ -96,7 +96,13 @@ function nowSlot(at){var st=at||Date.now(),o=(st/1000)%CYC;for(var i=0;i<SCHED.l
 function fmtT(ms){return new Date(ms).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}
 var live=false;
 function tune(){var n=nowSlot();live=true;CE.load(SCHED[n.i].k,true,Math.floor(n.off));CE.toast('📺 Tuned in to Collier Entertainment')}
-function nextLive(){var n=nowSlot();CE.load(SCHED[n.i].k,false,Math.floor(n.off))}
+var BAD={},TRY={};function bad(k){return BAD[k]&&Date.now()-BAD[k]<15*60e3}
+function nextLive(){var n=nowSlot();if(!bad(SCHED[n.i].k)){CE.load(SCHED[n.i].k,false,Math.floor(n.off));return}skipFrom(n.i)}
+function skipFrom(i){for(var j=1;j<SCHED.length;j++){var s=SCHED[(i+j)%SCHED.length];if(!bad(s.k)){CE.load(s.k,true,0);return}}}
+// archive.org stream failed: retry twice (same spot), then skip to the next program in the schedule
+au.addEventListener('error',function(){if(!live)return;var k=CE.cur();if(!k||!/^otr/.test(k))return;TRY[k]=(TRY[k]||0)+1;
+ if(TRY[k]<=2){var t=au.currentTime;setTimeout(function(){if(CE.cur()!==k)return;au.load();au.addEventListener('loadedmetadata',function f(){au.removeEventListener('loadedmetadata',f);try{au.currentTime=t||Math.floor(nowSlot().off)}catch(e){}},{once:true});au.play().catch(function(){})},1500*TRY[k]);return}
+ TRY[k]=0;BAD[k]=Date.now();CE.toast('📻 That program isn\u2019t coming in. Skipping ahead.');for(var i=0;i<SCHED.length;i++)if(SCHED[i].k===k){skipFrom(i);return}});
 au.addEventListener('pause',function(){if(document.querySelector('.jc-break'))return;});
 var gs=el('<section class="screen" id="guide"><header class="top"><button class="back" data-go="home">‹</button><h2>Channel Guide</h2><span class="onair sm"><i></i>LIVE</span></header><div class="dial-row"><div class="dial" id="dial"><span></span></div><div><b>CE-1 · Collier Entertainment</b><p>One station, always on. Tune in and it plays like the radio: shows, audiobooks and station breaks back to back.</p></div></div><button class="btn wide" id="tuneBtn">📻 Tune in now</button><ol class="sched" id="sched"></ol><p class="fine">A 12-hour loop, live for everyone at the same moment. Times are shown in your time zone. Old-time radio is public-domain recordings streamed from archive.org.</p></section>');
 $('#app').appendChild(gs);

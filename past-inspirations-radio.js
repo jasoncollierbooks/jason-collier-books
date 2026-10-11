@@ -18,43 +18,35 @@
     { id: "drama", name: "Drama", khz: "1320" }
   ];
   var SHOWS = [
-    { station: "mystery", identifier: "OTRR_Suspense_Singles", title: "Suspense", years: "1942–1962", note: "The man in black, and a different story every week." },
-    { station: "mystery", identifier: "OTRR_Whistler_Singles", title: "The Whistler", years: "1942–1955", note: "He walks by night, and he knows how the story ends." },
-    { station: "mystery", identifier: "OTRR_Inner_Sanctum_Mysteries_Singles", title: "Inner Sanctum Mysteries", years: "1941–1952", note: "A creaking door, then the story." },
-    { station: "mystery", identifier: "LightsOutoldTimeRadio", title: "Lights Out", years: "1934–1947", note: "Arch Oboler’s horror half hour. Cat Wife is in the stack." },
-    { station: "mystery", identifier: "the-shadow-1938-10-09-141-death-stalks-the-shadow", title: "The Shadow", years: "1937–1954", note: "Who knows what evil lurks in the hearts of men?" },
-    { station: "mystery", identifier: "OTRR_Escape_Singles", title: "Escape", years: "1947–1954", note: "Tired of the everyday grind? Designed to free you from it." },
-    { station: "mystery", identifier: "OTRR_Mysterious_Traveler_Singles", title: "The Mysterious Traveler", years: "1943–1952", note: "A stranger on the train, with a story for the ride." },
+    { station: "mystery", identifier: "SUSPENSE", title: "Suspense", years: "1942–1962", note: "The man in black, and a different story every week." },
+    { station: "mystery", identifier: "TheWhistler1947", title: "The Whistler", years: "1942–1955", note: "He walks by night, and he knows how the story ends." },
+    { station: "mystery", identifier: "inner-sanctum-mysteries-radio-show-1941-episodes", title: "Inner Sanctum Mysteries", years: "1941–1952", note: "A creaking door, then the story." },
+    { station: "mystery", identifier: "lights-out_20200820", title: "Lights Out", years: "1934–1947", note: "Arch Oboler’s horror half hour. Cat Wife is in the stack." },
+    { station: "mystery", identifier: "Escape19491950", title: "Escape", years: "1947–1954", note: "Tired of the everyday grind? Designed to free you from it." },
+    { station: "mystery", identifier: "TheMysteriousTraveler-Hideout", title: "The Mysterious Traveler", years: "1943–1952", note: "A stranger on the train, with a story for the ride." },
     { station: "mystery", identifier: "Quiet_Please", title: "Quiet, Please", years: "1947–1949", note: "Wyllis Cooper’s quiet, strange half hours." },
-    { station: "mystery", identifier: "OTRR_YoursTrulyJohnnyDollar_Singles", title: "Yours Truly, Johnny Dollar", years: "1949–1962", note: "The man with the action-packed expense account." },
+    { station: "mystery", identifier: "YTJD_A", title: "Yours Truly, Johnny Dollar", years: "1949–1962", note: "The man with the action-packed expense account." },
     { station: "mystery", identifier: "Dragnet_OTR", title: "Dragnet", years: "1949–1957", note: "Jack Webb, and just the facts." },
-    { station: "westerns", identifier: "OTRR_Gunsmoke_Singles", title: "Gunsmoke", years: "1952–1961", note: "Matt Dillon, United States Marshal, Dodge City." },
     { station: "westerns", identifier: "HaveGunWillTravel_543", title: "Have Gun, Will Travel", years: "1958–1960", note: "Wire Paladin, San Francisco." },
-    { station: "westerns", identifier: "The-Cisco-Kid-VER.2", title: "The Cisco Kid", years: "1942–1956", note: "The Cisco Kid and Pancho, along the border." },
-    { station: "westerns", identifier: "OTRR_The_Six_Shooter_Singles", title: "The Six Shooter", years: "1953–1954", note: "James Stewart as Britt Ponset." },
     { station: "westerns", identifier: "TalesOfTheTexasRangers", title: "Tales of the Texas Rangers", years: "1950–1952", note: "Joel McCrea as Ranger Jace Pearson." },
-    { station: "westerns", identifier: "OTRR_Fort_Laramie_Singles", title: "Fort Laramie", years: "1956", note: "Raymond Burr at a post on the frontier." },
+    { station: "westerns", identifier: "FortLaramie_662", title: "Fort Laramie", years: "1956", note: "Raymond Burr at a post on the frontier." },
     { station: "westerns", identifier: "HopalongCassidy", title: "Hopalong Cassidy", years: "1950–1952", note: "William Boyd’s Hoppy, this time on the radio." },
-    { station: "comedy", identifier: "fibber-mc-gee-and-molly", title: "Fibber McGee and Molly", years: "1935–1959", note: "79 Wistful Vista, and the hall closet." },
+    { station: "comedy", identifier: "FibberMcGeeandMolly1941", title: "Fibber McGee and Molly", years: "1935–1959", note: "79 Wistful Vista, and the hall closet." },
     { station: "comedy", identifier: "JackBenny1", title: "The Jack Benny Program", years: "1932–1955", note: "Jack, Mary, Rochester, and the Maxwell." },
-    { station: "comedy", identifier: "OTRR_Abbott_Costello_Singles", title: "Abbott and Costello", years: "1940–1949", note: "The same pair as the films up above." },
-    { station: "comedy", identifier: "Otrr_The_Great_Gildersleeve_Singles", title: "The Great Gildersleeve", years: "1941–1957", note: "Throckmorton P. Gildersleeve, water commissioner." },
-    { station: "comedy", identifier: "Our_Miss_Brooks_190_Episodes", title: "Our Miss Brooks", years: "1948–1957", note: "Eve Arden at Madison High." },
-    { station: "comedy", identifier: "the-burns-and-allen-show-1934-09-26-2-leaving-for-america", title: "Burns and Allen", years: "1934–1950", note: "George Burns asks. Gracie Allen answers." },
+    { station: "comedy", identifier: "Abbott_And_Costello_otr", title: "Abbott and Costello", years: "1940–1949", note: "The same pair as the films up above." },
+    { station: "comedy", identifier: "TheGreatGildersleeve_201606", title: "The Great Gildersleeve", years: "1941–1957", note: "Throckmorton P. Gildersleeve, water commissioner." },
+    { station: "comedy", identifier: "OurMissBrooks", title: "Our Miss Brooks", years: "1948–1957", note: "Eve Arden at Madison High." },
+    { station: "comedy", identifier: "TheBurnsAndAllenShow062545-22650", title: "Burns and Allen", years: "1934–1950", note: "George Burns asks. Gracie Allen answers." },
     { station: "comedy", identifier: "DuffysTavern_524", title: "Duffy’s Tavern", years: "1941–1951", note: "Where the elite meet to eat." },
     { station: "comedy", identifier: "TheLifeOfRiley", title: "The Life of Riley", years: "1944–1951", note: "William Bendix, and another scheme." },
     { station: "adventure", identifier: "TheAdventuresOfSuperman_201805", title: "The Adventures of Superman", years: "1940–1951", note: "Up in the sky. A bird, a plane, then the daily chapter." },
     { station: "adventure", identifier: "sherlockholmes_otr", title: "Sherlock Holmes", years: "1939–1946", note: "Basil Rathbone and Nigel Bruce." },
-    { station: "adventure", identifier: "OTRR_Box_13_Singles", title: "Box 13", years: "1947–1948", note: "Alan Ladd’s writer, waiting on a letter." },
+    { station: "adventure", identifier: "Box_13", title: "Box 13", years: "1947–1948", note: "Alan Ladd’s writer, waiting on a letter." },
     { station: "adventure", identifier: "BoldVenture57Episodes", title: "Bold Venture", years: "1951–1952", note: "Humphrey Bogart and Lauren Bacall, in Havana." },
-    { station: "scifi", identifier: "OTRR_X_Minus_One_Singles", title: "X Minus One", years: "1955–1958", note: "Stories out of Galaxy and Astounding." },
-    { station: "scifi", identifier: "OTRR_Dimension_X_Singles", title: "Dimension X", years: "1950–1951", note: "Adventures in time and space." },
+    { station: "scifi", identifier: "xminusoneotr", title: "X Minus One", years: "1955–1958", note: "Stories out of Galaxy and Astounding." },
+    { station: "scifi", identifier: "Dimension-X", title: "Dimension X", years: "1950–1951", note: "Adventures in time and space." },
     { station: "scifi", identifier: "WarOfTheWorlds1938RadioBroadcast256kbps", title: "The War of the Worlds", years: "1938", note: "Orson Welles and the Mercury Theatre, Halloween night.", match: /136kbps-cleaned\.mp3$/i },
-    { station: "scifi", identifier: "otr_2000Plus", title: "2000 Plus", years: "1950–1952", note: "The first adult science-fiction series on radio." },
-    { station: "drama", identifier: "OTRR_Lux_Radio_Theater_Singles", title: "Lux Radio Theatre", years: "1934–1955", note: "A Hollywood picture, done in an hour." },
-    { station: "drama", identifier: "otr_campbellplayhouse", title: "The Campbell Playhouse", years: "1938–1940", note: "Orson Welles and the Mercury company, for Campbell’s Soup." },
-    { station: "drama", identifier: "OTRR_Screen_Directors_Playhouse_Singles", title: "Screen Directors’ Playhouse", years: "1949–1951", note: "The director, and the stars, in the studio." },
-    { station: "drama", identifier: "otr_academyawardtheater", title: "Academy Award Theater", years: "1946", note: "Oscar pictures, told in half an hour." },
+    { station: "drama", identifier: "LuxRadioTheatre", title: "Lux Radio Theatre", years: "1934–1955", note: "A Hollywood picture, done in an hour." },
     { station: "drama", identifier: "You_Are_There_OTR", title: "You Are There", years: "1947–1950", note: "A news desk, reporting live from history." }
   ];
 
@@ -672,7 +664,7 @@
       return;
     }
     var params = new URLSearchParams();
-    params.set("q", "collection:oldtimeradio AND mediatype:audio AND (" + term + ")");
+    params.set("q", "collection:oldtimeradio AND mediatype:audio AND licenseurl:*publicdomain* AND NOT identifier:OTRR* AND NOT title:(shadow OR gunsmoke) AND (" + term + ")");
     ["identifier", "title", "year", "description"].forEach(function (field) { params.append("fl[]", field); });
     params.append("sort[]", "downloads desc");
     params.set("rows", "12");

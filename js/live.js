@@ -20,7 +20,12 @@ function render(el,o){o=o||{};var R=o.root||'',S=build(R),CYC=S.reduce(function(
   h+='<div class="rs-ep"><span class="rs-n" style="font-size:14px">'+(j?fmt(t):'NOW')+'</span><div><b>'+e(s.t)+'</b><span>'+(s.spot?'Station break':Math.round(s.d/60)+' min'+(s.otr?' · old-time radio · <a href="'+s.page+'" target="_blank" rel="noopener">source</a>':''))+'</span></div><span></span></div>';t+=s.d*1000;c++}
   $('lvList').innerHTML=h;var s0=S[n.i];$('lvT').textContent=s0.t;$('lvS').textContent=(s0.spot?'Station break':Math.round(s0.d/60)+' min')+' · ends '+fmt(n.start+s0.d*1000);$('lvA').src=s0.art;$('lvNow').textContent='Now: '+s0.t}
  function play(){var n=slot();cur=n.i;var s=S[n.i];au.src=s.src;au.addEventListener('loadedmetadata',function f(){au.removeEventListener('loadedmetadata',f);try{au.currentTime=Math.floor(n.off)}catch(x){}},{once:true});au.play().catch(function(){});guide()}
- au.addEventListener('ended',function(){if(on)play()});
+ var tries=0,bad={};
+ function playIdx(i,off){cur=i;var s=S[i];tries=0;au.src=s.src;au.addEventListener('loadedmetadata',function f(){au.removeEventListener('loadedmetadata',f);try{au.currentTime=Math.floor(off)}catch(x){}},{once:true});au.play().catch(function(){});guide()}
+ au.addEventListener('ended',function(){if(!on)return;var n=slot();if(bad[n.i]&&Date.now()-bad[n.i]<9e5){for(var j=1;j<S.length;j++){var k=(n.i+j)%S.length;if(!bad[k]){playIdx(k,0);return}}}play()});
+ // archive.org stream failed: retry twice, then skip to the next program
+ au.addEventListener('error',function(){if(!on||cur<0)return;tries++;if(tries<=2){var t=au.currentTime;setTimeout(function(){au.load();au.addEventListener('loadedmetadata',function f(){au.removeEventListener('loadedmetadata',f);try{au.currentTime=t||Math.floor(slot().off)}catch(x){}},{once:true});au.play().catch(function(){})},1500*tries);return}
+  bad[cur]=Date.now();for(var j=1;j<S.length;j++){var k=(cur+j)%S.length;if(!bad[k]){playIdx(k,0);return}}});
  $('lvBtn').onclick=function(){on=!on;if(on){play();this.textContent='\u275A\u275A Stop'}else{au.pause();this.textContent='\u25B6 Tune in'}};
  guide();setInterval(guide,20000);window.CELiveAudio=au}
 window.CELive={render:render};
