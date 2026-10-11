@@ -15,3 +15,14 @@
   footer, footer span, footer a, footer .ce-foot-wm { font-size: 15px !important; }
   .rs-ep span, .rs-credit, .ab-note, .ab-synopsis, .tip-line, .lab-sub, .hand-note { font-size: 16px; }
 }
+
+/* Main menu = the app's tabs (Home, Listen, Play, Studio, Read) + small links */
+.nav-small{display:inline-flex;flex-wrap:wrap;align-items:center;gap:0 .2rem;margin-left:.4rem;padding-left:.6rem;border-left:1px solid rgba(244,236,225,.18)}
+.nav-small a{display:inline-flex;align-items:center;min-height:44px;padding:0 .45rem;color:var(--muted,#bfb3a0);font:500 .72rem/1 "Inter",system-ui,sans-serif;letter-spacing:.06em;text-decoration:none}
+.nav-small a:hover,.nav-small a.on{color:var(--fire2,#f0cf63)}
+@media (max-width:760px){.nav-small{display:flex;margin:.4rem 0 0;padding:.4rem 0 0;border-left:0;border-top:1px solid rgba(244,236,225,.15)}.nav-small a{font-size:15px;padding:0 .7rem}}
+
+/* hub links (Listen entry point, radio/book cross-links) */
+.ce-hub{display:flex;flex-wrap:wrap;gap:.5rem;margin:.8rem 0 1rem}
+.ce-hub a{display:inline-flex;align-items:center;min-height:44px;padding:0 1rem;border:1px solid #d4af37;border-radius:999px;color:#f6ead0;text-decoration:none;font-size:15px;background:rgba(29,21,13,.7)}
+.ce-hub a:hover{background:rgba(212,175,55,.15)}
