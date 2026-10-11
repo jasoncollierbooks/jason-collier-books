@@ -86,7 +86,7 @@ var SPOTS=[{k:'spot1',t:'Station break',d:14,src:R+'audio/commercials/jangtom.mp
 // 12-hour loop from ../js/live-data.js (shared with the site's live.html); a station break follows every program, same as before.
 var JT=(window.CE_SHOWS&&CE_SHOWS.jangtom.episodes)||[],jt=function(k){for(var i=0;i<JT.length;i++)if(JT[i].key===k)return JT[i]};
 var SCHED=[];(window.CE_LIVE?CE_LIVE.programs:[{k:'ridge'},{k:'oldman'}]).forEach(function(p,i){var x;
- if(p.k==='oldman')x={k:'oldman',t:'Old Man On The Mountain · Part 1',d:741};else if(jt(p.k)){var e=jt(p.k);x={k:p.k,t:'Jang & Tom: '+e.t,d:e.secs}}
+ if(p.k==='oldman')x={k:'oldman',t:'Old Man On The Mountain · Part 1',d:741};else if(p.k==='dogs'&&window.CE_DOGS)x={k:'dogs',t:'Dogs That Chose Me · audiobook',d:CE_DOGS.secs};else if(jt(p.k)){var e=jt(p.k);x={k:p.k,t:'Jang & Tom: '+e.t,d:e.secs}}
  else{x={k:p.k,t:p.t,d:p.d,src:p.src,art:R+p.art,otr:1};CE.TRACKS[p.k]={t:p.t,s:'Old-time radio · public domain · archive.org',src:p.src,art:R+p.art}}
  SCHED.push(x,SPOTS[i%SPOTS.length])});
 SPOTS.forEach(function(s){CE.TRACKS[s.k]={t:s.t,s:'Collier Entertainment · station break',src:s.src,art:s.art}});
@@ -125,3 +125,6 @@ if('mediaSession' in navigator){var ms=navigator.mediaSession;
  au.addEventListener('loadedmetadata',pos);au.addEventListener('seeked',pos);au.addEventListener('ratechange',pos);au.addEventListener('play',function(){ms.playbackState='playing';pos()});au.addEventListener('pause',function(){ms.playbackState='paused'});
  try{ms.setActionHandler('previoustrack',function(){chJump(-1)});ms.setActionHandler('nexttrack',function(){chJump(1)})}catch(e){}}
 })();
+
+// Dogs That Chose Me: player art follows the story (../js/dogs-data.js)
+(function(){var CE=window.CE,D=window.CE_DOGS;if(!CE||!D)return;var cur='';CE.au.addEventListener('timeupdate',function(){if(CE.cur()!=='dogs'){cur='';return}var s=D.slideAt(CE.au.currentTime);if(s[1]===cur)return;cur=s[1];var u='../images/dogs/'+s[1]+'.jpg',a=document.getElementById('plArt'),m=document.querySelector('#mini img');if(a){a.src=u;a.alt=s[2]}if(m)m.src=u});CE.au.addEventListener('ended',function(){if(CE.cur()==='dogs'){var a=document.getElementById('plArt');if(a)a.src='../images/dogs/cover.jpg'}})})();

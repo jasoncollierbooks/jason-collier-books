@@ -20,6 +20,7 @@ var TRACKS={
   ch:[[0,'Cold open'],[30,'Pine Knot intro'],[114,'Sponsor: I Spy'],[144,'The napkin map & Over Yonder'],[218,'Hugh / Nobody cooks'],[335,"Up Miller's Ridge"],[461,'Loafing'],[527,'The groundhog'],[585,'Old Man Jenkins'],[701,'Sponsor break'],[842,'Treasure on the log'],[888,'Sponsor: The First Pulse'],[935,'Goodnight, Pine Knot']]},
  possum:(function(){var e=CE_SHOWS.jangtom.episodes[1];return {t:e.t,s:'Jang & Tom · radio show · Episode 2 · '+e.len,src:R+e.src,art:R+e.art,ep:2,credit:CE_SHOWS.jangtom.credit,ch:e.ch}})(),
  icefish:(function(){var e=CE_SHOWS.jangtom.episodes[2];return {t:e.t,s:'Jang & Tom · radio show · Episode 3 · '+e.len,src:R+e.src,art:R+e.art,ep:3,credit:CE_SHOWS.jangtom.credit,ch:e.ch}})(),
+ dogs:{t:CE_DOGS.t,s:'Audiobook · Jason Collier · '+CE_DOGS.len,src:R+CE_DOGS.src,art:R+CE_DOGS.art,ch:CE_DOGS.ch},
  oldman:{t:'Old Man On The Mountain',s:'Audiobook · Part 1',src:R+'old-man-audiobook/audio/om01.m4a',art:R+'images/old-man-on-the-mountain.jpg'}};
 var esc=function(s){return s.replace(/&/g,'&amp;')};
 // Books + art
@@ -32,6 +33,7 @@ $('#listenList').innerHTML=
  item(R+'images/hero/hero-1.jpg','The Great Possum Caper','Jang & Tom radio show · Episode 2 · 18:21 · chapters','data-play="possum"')+
  item(R+'images/jang-tom-ice-fishin.jpg',"The Ice Fishin' Fiasco",'Jang & Tom radio show · Episode 3 · 14:02 · new · chapters','data-play="icefish"')+
  item('media/jang-tom-tv.jpg','Jang & Tom Radio Show','All episodes · the Collier Radio Hour','data-go="jangtom"')+
+ item(R+'images/dogs/cover-thumb.jpg','Dogs That Chose Me','Audiobook · a short story by Jason Collier · 11:04 · chapters','data-play="dogs"')+
  item(R+'images/old-man-on-the-mountain.jpg','Old Man On The Mountain','Audiobook · app player','data-play="oldman"')+
  item(R+'images/jang-and-tom-wagon-masters.jpg','Jang & Tom audiobooks','Wagon Masters, Philadelphia Follies, Transcontinental','data-frame="audiobooks.html#jang-and-tom" data-title="Jang & Tom"')+
  item(R+'images/the-first-pulse.jpg','The First Pulse','Audiobook · Chapters One & Two in seven parts','data-frame="audiobooks.html#first-pulse" data-title="The First Pulse"')+

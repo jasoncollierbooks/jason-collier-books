@@ -301,6 +301,31 @@
       </div>
     </section>
 
+    <section class="ab-book" id="dogs-that-chose-me" aria-labelledby="dogs-h">
+      <div class="ab-book-head reveal">
+        <img class="ab-cover" src="images/dogs/cover-thumb.jpg" alt="Dogs That Chose Me by Jason Collier" loading="lazy">
+        <div>
+          <p class="excerpt-label">Audiobook &middot; a short story by Jason Collier</p>
+          <h2 id="dogs-h" class="ab-h">Dogs That Chose Me</h2>
+          <p class="ab-note">Elias never chose a dog. From a lonely farm boy on a rainy porch to an old man on an autumn evening, the dogs always found him, and the first one never really left. 11 minutes 4 seconds.</p>
+        </div>
+      </div>
+      <figure class="dogs-slide" style="margin:12px 0 0;position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#120d08">
+        <img id="dogsSlide" src="images/dogs/cover.jpg" alt="Dogs That Chose Me" style="width:100%;height:100%;object-fit:cover;transition:opacity .6s">
+      </figure>
+      <audio id="dogsAudio" controls preload="none" src="media/dogs-that-chose-me.mp3" style="width:100%;margin:12px 0" aria-label="Dogs That Chose Me, audiobook"></audio>
+      <ol class="dogs-ch" id="dogsCh" style="list-style:none;padding:0;margin:0;columns:1"></ol>
+      <script src="js/dogs-data.js?v=1"></script>
+      <script>(function(){var D=window.CE_DOGS,au=document.getElementById('dogsAudio'),img=document.getElementById('dogsSlide'),ol=document.getElementById('dogsCh'),cur='';
+       function mm(s){return Math.floor(s/60)+':'+('0'+s%60).slice(-2)}
+       ol.innerHTML=D.ch.map(function(c){return '<li><button type="button" data-t="'+c[0]+'" style="display:flex;gap:12px;width:100%;min-height:44px;align-items:center;text-align:left;background:none;border:0;border-bottom:1px dotted rgba(228,208,164,.3);color:inherit;font:inherit;cursor:pointer"><i style="font-style:normal;opacity:.7;min-width:3em">'+mm(c[0])+'</i><span>'+c[1]+'</span></button></li>'}).join('');
+       function show(t){var s=D.slideAt(t);if(s[1]===cur)return;cur=s[1];img.style.opacity=0;setTimeout(function(){img.src='images/dogs/'+s[1]+'.jpg';img.alt=s[2];img.style.opacity=1},300)}
+       au.addEventListener('timeupdate',function(){show(au.currentTime);var on=0;D.ch.forEach(function(c,i){if(c[0]<=au.currentTime)on=i});[].forEach.call(ol.querySelectorAll('button'),function(b,i){b.style.color=i===on&&!au.paused?'#f0cf63':''})});
+       ol.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var t=+b.dataset.t,go=function(){au.currentTime=t;au.play().catch(function(){})};if(au.readyState>0)go();else{au.preload='metadata';au.addEventListener('loadedmetadata',go,{once:true});au.load()}});
+       au.addEventListener('ended',function(){show(9999)});
+      })();</script>
+    </section>
+
     <section class="ab-book" id="old-man-audiobook" aria-labelledby="om-h">
       <div class="ab-book-head reveal">
         <img class="ab-cover" src="images/old-man-on-the-mountain.jpg" alt="Cover of Old Man On The Mountain by Jason Collier: a hunter on a great elk hunt meets the Old Man" loading="lazy">
