@@ -1,6 +1,6 @@
 /* Pine Knot Gazette renderer. PKGazette.render(el, {root:'' or '../', app:true|false, compact:true|false, date:Date}) */
 (function(){
-var GO={ep:['audiobooks.html#jang-and-tom-radio','app/media/jang-tom-wide.jpg',{play:'ridge'}],ep2:['audiobooks.html#great-possum-caper','images/hero/hero-1.jpg',{play:'possum'}],bookworlds:['book-worlds/','book-worlds/assets/play-cover.webp'],oldman:['old-man-game/','app/media/oldman-hunt-card.jpg'],
+var GO={ep:['audiobooks.html#jang-and-tom-radio','app/media/jang-tom-wide.jpg',{play:'ridge'}],ep2:['audiobooks.html#great-possum-caper','images/hero/hero-1.jpg',{play:'possum'}],ep3:['audiobooks.html#ice-fishin-fiasco','images/jang-tom-ice-fishin.jpg',{play:'icefish'}],bookworlds:['book-worlds/','book-worlds/assets/play-cover.webp'],oldman:['old-man-game/','app/media/oldman-hunt-card.jpg'],
  ispy:['i-spy.html','images/scenes/transcon-s01.jpg'],coloring:['coloring.html','coloring/campfire.png'],studio:['studio.html','coloring/campfire.png'],audiobooks:['audiobooks.html','images/the-first-pulse.jpg'],
  books:['books.html','images/jang-and-tom-wagon-masters.jpg'],club:['account.html','app/icons/icon-192.png'],play:['play.html','images/lab/born-twice-og.jpg',{go:'play'}],listen:['audiobooks.html','app/media/jang-tom-tv.jpg',{go:'listen'}],
  firstpulse:['https://fern-valley-glow-reef.grok.me/','images/first-pulse-game.jpg']};
