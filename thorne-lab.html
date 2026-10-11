@@ -75,6 +75,16 @@
       <h1 class="lab-title reveal">Thorne’s Lab</h1>
       <p class="lab-lede reveal">The research log of Dr. Elias Thorne, physicist. Personal Laboratory, Princeton, New Jersey, 1982.</p>
       <p class="lab-sub reveal">Jason Collier’s work in progress. The log is still being written, and new entries appear here as it grows.</p>
+      <div class="tj-listen" id="tj-listen">
+        <button type="button" class="tj-btn" id="tj-btn" aria-pressed="false"><span class="tj-ico" aria-hidden="true">&#9654;</span><span class="tj-txt"><b>Listen to the journal</b><small id="tj-sub">Dr. Thorne reads all 8 entries &middot; 54:48</small></span></button>
+        <audio id="tj-audio" preload="none" src="media/thorne-lab-journal.mp3"></audio>
+      </div>
+      <style>.tj-listen{margin:18px 0 14px}.tj-btn{display:inline-flex;align-items:center;gap:12px;min-height:56px;padding:8px 24px 8px 10px;border-radius:999px;border:0;cursor:pointer;background:linear-gradient(#f3d470,#c99a2a);color:#1a140d;box-shadow:0 3px 0 #7a5a12,0 8px 22px rgba(0,0,0,.45);font-family:Georgia,serif;text-align:left}.tj-btn:hover{filter:brightness(1.06)}.tj-ico{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:#1a140d;color:#f3d470;font-size:18px;flex:none}.tj-txt b{display:block;font-size:19px}.tj-txt small{display:block;font-size:13px;opacity:.85}</style>
+      <script>(function(){var b=document.getElementById("tj-btn"),a=document.getElementById("tj-audio"),sub=document.getElementById("tj-sub"),ico=b.querySelector(".tj-ico"),D="54:48";
+function f(s){s=Math.floor(s||0);return Math.floor(s/60)+":"+("0"+s%60).slice(-2)}
+function ui(){var on=!a.paused&&!a.ended;b.setAttribute("aria-pressed",on);ico.innerHTML=on?"&#10074;&#10074;":"&#9654;";b.querySelector("b").textContent=on?"Pause the journal":(a.currentTime>0&&!a.ended?"Resume the journal":"Listen to the journal");sub.textContent=a.currentTime>0?f(a.currentTime)+" / "+D:"Dr. Thorne reads all 8 entries \u00b7 "+D}
+b.addEventListener("click",function(){if(a.paused){var p=a.play();if(p&&p.catch)p.catch(ui)}else a.pause()});
+["play","pause","ended","timeupdate"].forEach(function(e){a.addEventListener(e,ui)})})();</script>
       <nav class="lab-jump reveal" aria-label="In the lab">
         <a href="#log">Read the log</a><a href="#terminal">Lab terminal</a><a href="i-spy.html">Play I Spy</a><a href="#instruments">Bench instruments</a>
       </nav>

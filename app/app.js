@@ -22,6 +22,7 @@ var TRACKS={
  icefish:(function(){var e=CE_SHOWS.jangtom.episodes[2];return {t:e.t,s:'Jang & Tom · radio show · Episode 3 · '+e.len,src:R+e.src,art:R+e.art,ep:3,credit:CE_SHOWS.jangtom.credit,ch:e.ch}})(),
  rocket:(function(){var e=CE_SHOWS.jangtom.episodes[3];return {t:e.t,s:'Jang & Tom · radio show · Episode 4 · '+e.len,src:R+e.src,art:R+e.art,ep:4,credit:CE_SHOWS.jangtom.credit,ch:e.ch}})(),
  dogs:{t:CE_DOGS.t,s:'Audiobook · Jason Collier · '+CE_DOGS.len,src:R+CE_DOGS.src,art:R+CE_DOGS.art,ch:CE_DOGS.ch},
+ thorne:{t:"Thorne's Lab Journal",s:'Dr. Thorne reads the research log · 54:48',src:R+'media/thorne-lab-journal.mp3',art:R+'images/lab/born-twice-og.jpg'},
  oldman:{t:'Old Man On The Mountain',s:'Audiobook · Part 1',src:R+'old-man-audiobook/audio/om01.m4a',art:R+'images/old-man-on-the-mountain.jpg'}};
 var esc=function(s){return s.replace(/&/g,'&amp;')};
 // Books + art
@@ -37,6 +38,7 @@ $('#listenList').innerHTML=
  item('media/jang-tom-tv.jpg','Jang & Tom Radio Show','All episodes · the Collier Radio Hour','data-go="jangtom"')+
  item(R+'images/dogs/cover-thumb.jpg','Dogs That Chose Me','Audiobook · a short story by Jason Collier · 11:04 · chapters','data-play="dogs"')+
  item(R+'images/old-man-on-the-mountain.jpg','Old Man On The Mountain','Audiobook · app player','data-play="oldman"')+
+ item(R+'images/lab/born-twice-og.jpg',"Thorne's Lab Journal",'Dr. Thorne reads all 8 entries · 54:48','data-play="thorne"')+
  item(R+'images/jang-and-tom-wagon-masters.jpg','Jang & Tom audiobooks','Wagon Masters, Philadelphia Follies, Transcontinental','data-frame="audiobooks.html#jang-and-tom" data-title="Jang & Tom"')+
  item(R+'images/the-first-pulse.jpg','The First Pulse','Audiobook · Chapters One & Two in seven parts','data-frame="audiobooks.html#first-pulse" data-title="The First Pulse"')+
  item(R+'images/the-rusty-stack.jpg','The Rusty Stack','Animatic preview','data-frame="audiobooks.html#rusty-stack-animatic" data-title="The Rusty Stack"')+
