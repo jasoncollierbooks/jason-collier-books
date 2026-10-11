@@ -78,7 +78,7 @@ function decorate(){
 var sheet=document.createElement('div');sheet.id='rxSheet';sheet.className='rx-sheet';sheet.hidden=true;document.body.appendChild(sheet);
 function openSheet(id,opts){var it=BYID[id];if(!it)return;opts=opts||{};
  sheet.innerHTML='<div class="rx-card" role="dialog" aria-modal="true" aria-label="Rate '+esc(it.t)+'"><button class="rx-x" data-rx-close aria-label="Close">\u2715</button><small class="rx-kicker">'+(opts.kicker||'RATE &amp; SHARE')+'</small><h3>'+esc(it.t)+'</h3>'+(opts.msg?'<p>'+opts.msg+'</p>':'')+'<div class="rx-big">'+starsHTML(id)+'</div><div class="rx-acts">'+(id==='app'?'':heartHTML(id))+'<button class="rx-btn" data-rx-share="'+id+'">\u2934 Share</button></div>'+
- (srv===true&&!signedIn()?'<p class="rx-note">Your vote is saved on this phone. <button class="rx-link" data-frame="account.html" data-title="Account" data-rx-close>Sign in</button> to count it.</p>':(srv===false?'<p class="rx-note">Saved on this phone for now. Public counts are coming soon.</p>':''))+
+ (srv===true&&!signedIn()?'<p class="rx-note">Your vote is saved on this phone. <button class="rx-link" data-frame="account.html" data-title="Account" data-rx-close>Sign in</button> to count it.</p>':(srv===false?'<p class="rx-note">Saved on this phone for now. Saved on this phone.</p>':''))+
  (opts.later?'<div class="rx-later"><button class="rx-btn ghost" data-rx-close>Not now</button><button class="rx-btn ghost" data-rx-never>Don\u2019t ask again</button></div>':'')+'</div>';
  sheet.hidden=false;paint()}
 function closeSheet(){sheet.hidden=true;sheet.innerHTML=''}

@@ -112,7 +112,6 @@ renderGuide();setInterval(renderGuide,20000);
 $('#tuneBtn').onclick=function(){staticBurst(.3);tune()};
 document.addEventListener('click',function(e){if(e.target.closest('[data-go=guide]')){award('guide');renderGuide()}});
 var dial=$('#dial'),ang=0;dial.addEventListener('click',function(){ang+=60;dial.style.transform='rotate('+ang+'deg)';staticBurst(.15);buzz(10);var tabs=['home','listen','play','studio','read'];CE.go(tabs[(ang/60)%tabs.length]);});
-// ---------- coming soon ----------
 // SFX toggle in club
 var cl=$('#club');cl.appendChild(el('<label class="sub sfx"><input type="checkbox" id="motT"> Lively motion <small>(TV glow, slow hero drift, film grain movement). Off = calm.</small></label>'));var mt=$('#motT');mt.checked=ls('ce-motion')==='lively';mt.onchange=function(){ls('ce-motion',mt.checked?'lively':'calm');document.documentElement.classList.toggle('calm',!mt.checked)};cl.appendChild(el('<label class="sub sfx"><input type="checkbox" id="sfxT"> Button sounds &amp; haptics</label>'));var sx=$('#sfxT');sx.checked=ls('ce-sfx')!=='0';sx.onchange=function(){ls('ce-sfx',sx.checked?'1':'0')};
 // Help & info in settings: Privacy, Support, Credits

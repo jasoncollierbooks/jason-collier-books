@@ -28,7 +28,7 @@ var TRACKS={
 var esc=function(s){return s.replace(/&/g,'&amp;')};
 // Books + art
 document.querySelectorAll('.ep1-len').forEach(function(e){e.textContent=EP1.len});
-$('#books').innerHTML=BOOKS.map(function(b){return b.soon?'<span class="bk"><img src="'+R+b.img+'" alt="">'+esc(b.t)+' · soon</span>':'<a class="bk" target="_blank" rel="noopener" href="'+b.buy+'"><img loading="lazy" src="'+R+b.img+'" alt="">'+esc(b.t)+'</a>'}).join('');
+$('#books').innerHTML=BOOKS.map(function(b){return b.soon?'<span class="bk"><img src="'+R+b.img+'" alt="">'+esc(b.t)+'</span>':'<a class="bk" target="_blank" rel="noopener" href="'+b.buy+'"><img loading="lazy" src="'+R+b.img+'" alt="">'+esc(b.t)+'</a>'}).join('');
 $('#art').innerHTML=ART.map(function(a){return '<button class="poster sq" data-frame="art.html" data-title="Art"><img loading="lazy" src="'+R+'images/jason-art/'+a+'-thumb.jpg" alt="'+a.replace(/^(painting|sketch)-/,'').replace(/-/g,' ')+' by Jason Collier"><b>'+a.replace(/^(painting|sketch)-/,'').replace(/-/g,' ')+'</b></button>'}).join('');
 function item(img,t,s,attrs){return '<button class="item" '+attrs+'><img loading="lazy" src="'+img+'" alt=""><div><b>'+esc(t)+'</b><span>'+s+'</span></div><span class="go">›</span></button>'}
 $('#listenList').innerHTML=
@@ -52,9 +52,7 @@ $('#playList').innerHTML=PLAY.map(function(g){return '<button class="gcard" data
 $('#playList').className='glist';
 // Home Play row: the same full list and order as the Play tab, then See all
 (function(){var hp=document.getElementById('homePlay');if(!hp)return;hp.innerHTML=PLAY.map(function(g){return '<button class="poster wide" data-rx-key="game:'+g[5]+'" data-frame="'+g[2]+'" data-title="'+esc(g[0])+'"><img loading="lazy" src="'+g[3]+'" alt=""><b>'+esc(g[0])+'</b><span>'+esc(g[1])+'</span></button>'}).join('')+'<button class="poster wide seeall" data-go="play"><b>See all \u203A</b><span>'+PLAY.length+' games &amp; more</span></button>'})();
-$('#listenList').insertAdjacentHTML('beforeend',item(R+'images/the-rusty-stack.jpg','Early episodes','For Pine Knot Club members · coming soon <span class=lock>SOON</span>','data-club="1"'));
-$('#playList').insertAdjacentHTML('beforeend',card(R+'images/jason-art/sketch-the-wanderer-thumb.jpg','Bonus hunt chapters','Planned for the Club · coming soon','#club'));
-$('#readList').innerHTML=BOOKS.map(function(b){return item(R+b.img,b.t,b.soon?'Coming soon · about the book':'Book page, chapters & audiobook','data-frame="'+b.page+'" data-title="'+esc(b.t)+'"')}).join('')+item(R+'images/old-man-on-the-mountain.jpg','Story Mode','Read along with the audiobook · coming soon <span class=lock>SOON</span>','data-club="1"')+item(R+'images/the-first-pulse.jpg','The Novel','The multi-mind novel, read in the app','data-frame="novel.html" data-title="The Novel"');
+$('#readList').innerHTML=BOOKS.map(function(b){return item(R+b.img,b.t,b.soon?'About the book, game & animated audiobook':'Book page, chapters & audiobook','data-frame="'+b.page+'" data-title="'+esc(b.t)+'"')}).join('')+item(R+'images/old-man-on-the-mountain.jpg','Story Mode','Read along with the audiobook · coming soon <span class=lock>SOON</span>','data-club="1"')+item(R+'images/the-first-pulse.jpg','The Novel','The multi-mind novel, read in the app','data-frame="novel.html" data-title="The Novel"');
 // tabs
 var cur='home';
 function go(id){if(!document.getElementById(id))return;$$('.screen').forEach(function(s){s.classList.toggle('active',s.id===id)});$$('.tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.go===id)});cur=id;history.replaceState(null,'','#'+id)}
