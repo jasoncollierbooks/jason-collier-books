@@ -376,3 +376,4 @@ html:not(.calm) .gazette .pkg{transform:rotate(-.4deg)}
 /* Toast: fully hidden when not showing (long two-line toasts used to stay half-visible under the iPhone notch) */
 #toast{transform:translate(-50%,calc(-100% - 160px));opacity:0;visibility:hidden;transition:transform .3s,opacity .3s,visibility 0s .3s}
 #toast.show{transform:translate(-50%,0);opacity:1;visibility:visible;transition:transform .3s,opacity .3s}
+.jt-banner{margin:14px 14px 6px}

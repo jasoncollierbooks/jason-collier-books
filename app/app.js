@@ -106,7 +106,7 @@ if(window.CollierAuth)CollierAuth.onChange(clubRefresh);
 window.CE={au:au,load:load,go:go,toast:toast,isSub:isSub,TRACKS:TRACKS,cur:function(){return curT},frame:openFrame};
 // boot
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js',{scope:'./'}).catch(function(){});
-if(window.CEShow)CEShow.render(document.getElementById('jtShow'),{show:'jangtom',root:R,app:true});
+if(window.CEShow){CEShow.render(document.getElementById('jtShow'),{show:'jangtom',root:R,app:true});CEShow.banner(document.getElementById('jtBannerHome'));CEShow.banner(document.getElementById('jtBannerListen'))}
 var h=location.hash.slice(1);if(h)go(h);
 setTimeout(function(){var s=$('#splash');s&&s.classList.add('out')},700);
 })();

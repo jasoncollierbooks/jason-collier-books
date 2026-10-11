@@ -27,3 +27,16 @@ html:not(.calm) .rs-air i{animation:rsBlink 2.4s infinite}@keyframes rsBlink{50%
 .rs-ep .rs-play{min-height:38px;padding:0 14px;font-size:14px}
 .rs-ep audio{grid-column:1/-1;width:100%}
 .rs-credit{margin:10px 0 0;font-size:12px;opacity:.75;text-align:center}
+
+.rs-ch{grid-column:2/-1;margin-top:-2px}
+.rs-ch summary{cursor:pointer;font:700 12px 'Futura','Avenir Next',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#7a4a14;min-height:32px;display:flex;align-items:center}
+.rs-ch ol{list-style:none;margin:4px 0 6px;padding:0}
+.rs-ch button{display:flex;gap:10px;width:100%;text-align:left;border:0;border-bottom:1px dotted #c9a86a;background:none;padding:8px 2px;font:15px Georgia,serif;color:#2a1608;cursor:pointer;min-height:40px;align-items:center}
+.rs-ch button i{font-style:normal;font-variant-numeric:tabular-nums;color:#7a4a14;min-width:42px}
+.rs-banner{display:block;width:100%;text-align:left;border:2px solid #2a1608;border-radius:20px 20px 12px 12px;padding:12px 14px;background:repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 3px,transparent 3px 11px),linear-gradient(170deg,#7a4a24,#5a3519 40%,#3a200e);box-shadow:inset 0 2px 0 #a8743f,0 8px 20px #000a;color:#f3e3c3;font-family:Georgia,serif;cursor:pointer}
+.rs-banner .rs-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.rs-banner .rs-kicker{font-size:10.5px}
+.rs-bdial{display:block;margin:10px 0 8px;padding:12px;border-radius:60px 60px 10px 10px;text-align:center;background:radial-gradient(ellipse at 50% 120%,#f6dfa0,#d9b46a 55%,#a77c34);color:#2a1608;border:2px solid #2a1608}
+.rs-bdial b{display:block;font:700 28px/1.1 'Didot','Bodoni 72',Georgia,serif}
+.rs-bdial small{display:block;margin-top:4px;font-style:italic;font-size:14px;line-height:1.3}
+.rs-btune{display:block;text-align:right;font:700 13px Georgia,serif;color:#f0cf63}
