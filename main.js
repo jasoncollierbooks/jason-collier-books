@@ -2,9 +2,15 @@
 (() => {
   const HOME_LINE = "Jason Collier — books, audiobooks and games";
   function payload() {
+    /* Shared links open the app (deep link); without the app it still opens /app in the browser with this page open. */
     const home = document.body.classList.contains("home");
     const label = home ? HOME_LINE : document.title;
-    return { title: label, text: label, url: location.href };
+    const TAB = { "": "home", "index.html": "home", "books.html": "read", "audiobooks.html": "listen", "play.html": "play", "studio.html": "studio" };
+    const p = location.pathname.replace(/^\//, "");
+    const open = TAB[p] !== undefined && !location.hash ? (TAB[p] === "home" ? "" : "tab:" + TAB[p]) : p === "gazette.html" ? "gazette" : "frame:" + p + location.hash;
+    const url = "https://collierentertainment.com/app/" + (open ? "?open=" + encodeURIComponent(open) : "");
+    const text = home ? "Watch Jang & Tom on Collier Entertainment" : "Check out " + label.replace(/\s*[|\u2014-]\s*Collier Entertainment$/, "") + " on Collier Entertainment";
+    return { title: label, text, url };
   }
   function toast(message) {
     let el = document.getElementById("link-toast");

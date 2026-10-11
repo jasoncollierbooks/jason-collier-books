@@ -21,7 +21,11 @@ var ITEMS={ // key = data-play / data-frame value
  'https://fern-valley-glow-reef.grok.me/':{id:'game-first-pulse',t:'The First Pulse game',u:SITE+'first-pulse.html',rate:1},
  'coloring.html':{id:'game-coloring',t:'Coloring',u:SITE+'coloring.html',rate:1}};
 (window.CE_GAMES||[]).concat(window.CE_GAMES_MORE||[]).forEach(function(g){var ext=/^https?:/.test(g.url);ITEMS['game:'+g.id]=(!ext&&ITEMS[g.url])||{id:'game-'+g.id,t:g.t,u:ext?SITE+'play.html':SITE+g.url,rate:1}});
-var APP={id:'app',t:'Collier Entertainment',u:SITE+'app/',rate:1};
+// Every shared link opens the APP (deep link /app/?open=...); without the app installed it still opens /app in the browser with the item open.
+function appLink(o){return SITE+'app/'+(o?'?open='+encodeURIComponent(o):'')}
+var GBYURL={};(window.CE_GAMES||[]).concat(window.CE_GAMES_MORE||[]).forEach(function(g){if(!GBYURL[g.url])GBYURL[g.url]=g.id});
+Object.keys(ITEMS).forEach(function(k){ITEMS[k].u=appLink(/^(ridge|oldman)$/.test(k)?'play:'+k:/^game:/.test(k)?k:GBYURL[k]?'game:'+GBYURL[k]:'frame:'+k)});
+var APP={id:'app',t:'Collier Entertainment',u:appLink(''),rate:1};
 var BYID={};function reg(it){BYID[it.id]=it;return it}reg(APP);Object.keys(ITEMS).forEach(function(k){reg(ITEMS[k])});
 var srv=null,data={},signedIn=function(){return !!(A&&A.status==='in')};
 function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){}}
@@ -44,7 +48,8 @@ function setRate(id,n){ls('ce-rate-'+id,String(n));
  if(srv&&signedIn()){post('/rate',{id:id,stars:n}).then(function(j){data[id]=Object.assign(data[id]||{},j);paint();toast('Thanks for rating!')}).catch(function(){toast('Saved on this phone.')})}
  else{paint();if(srv)toast('Thanks! Saved on this phone. Sign in to count your vote.');else toast('Thanks! Your rating is saved on this phone.')}}
 // ---- share
-function share(it){var d={title:it.t,text:it.t+' \u2014 Collier Entertainment',url:it.u};
+function shareText(it){var v=it.id==='app'?'Watch':/^(ep|ab)-/.test(it.id)?'Listen to':/^game-/.test(it.id)?'Play':it.id==='studio'?'Paint in':/^art-/.test(it.id)?'See':'Check out';return it.id==='app'?'Watch Jang & Tom on Collier Entertainment':v+' '+it.t+' on Collier Entertainment'}
+function share(it){var d={title:it.t,text:shareText(it),url:it.u};
  if(navigator.share){navigator.share(d).catch(function(){});return}
  var done=function(){toast('Link copied')};
  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(it.u).then(done,function(){fallback(it.u)&&done()});else if(fallback(it.u))done();else toast(it.u)}
@@ -60,7 +65,7 @@ function paint(){
 // rows on posters, list items and cards
 function decorate(){
  $$('[data-play],[data-frame]').forEach(function(b){if(b.dataset.rxDone||!b.matches('.poster,.item,.card,.gcard'))return;var key=b.dataset.rxKey||b.dataset.play||b.dataset.frame,it=ITEMS[key],art=null;
-  if(!it&&b.closest('#art')){var im=$('img',b),n=(im&&im.getAttribute('src')||'').replace(/.*\/|-thumb\.jpg$/g,'');if(!n)return;it=reg({id:'art-'+n,t:(im.alt||n),u:SITE+'art.html'});art=1}
+  if(!it&&b.closest('#art')){var im=$('img',b),n=(im&&im.getAttribute('src')||'').replace(/.*\/|-thumb\.jpg$/g,'');if(!n)return;it=reg({id:'art-'+n,t:(im.alt||n),u:appLink('frame:art.html')});art=1}
   if(!it)return;b.dataset.rxDone=1;
   var row='<span class="rx-row">'+heartHTML(it.id)+(it.rate?'<span class="rx-chip" role="button" tabindex="0" data-rx-open="'+it.id+'" data-rx-chip="'+it.id+'"></span>':'')+'<span class="rx-share" role="button" tabindex="0" data-rx-share="'+it.id+'" aria-label="Share">\u2934 Share</span></span>';
   var host=b.matches('.item,.gcard')?$('div',b):b;host.insertAdjacentHTML('beforeend',row)})}
@@ -77,7 +82,7 @@ function playerRow(){var c=$('#player .ctl2');if(!c||$('#rxPl'))return;c.insertA
 function playerSet(k){playerRow();var it=ITEMS[k],r=$('#rxPl');if(!r)return;if(!it){r.innerHTML='';return}r.innerHTML=heartHTML(it.id)+'<span class="rx-plstars">'+starsHTML(it.id)+'</span><span class="rx-share" role="button" tabindex="0" data-rx-share="'+it.id+'" aria-label="Share">\u2934 Share</span>';paint()}
 // home share + studio share
 function extras(){var cta=$('.club-cta');if(cta&&!$('#rxApp'))cta.insertAdjacentHTML('beforebegin','<div class="rx-appbar" id="rxApp"><div><b>Enjoying Collier Entertainment?</b><span>Tell a friend or leave a rating.</span></div><button class="rx-btn" data-rx-share="app">\u2934 Share app</button><button class="rx-btn ghost" data-rx-open="app">\u2606 Rate</button></div>');
- var sc=$('#studio .studio-card');if(sc&&!$('#rxStudio')){reg({id:'studio',t:'Collier Oil Studio',u:SITE+'studio.html'});reg({id:'art-painting-lighthouse-at-dusk',t:'Lighthouse at Dusk by Jason Collier',u:SITE+'art.html'});
+ var sc=$('#studio .studio-card');if(sc&&!$('#rxStudio')){reg({id:'studio',t:'the Collier Oil Studio',u:appLink('tab:studio')});reg({id:'art-painting-lighthouse-at-dusk',t:'Lighthouse at Dusk by Jason Collier',u:appLink('frame:art.html')});
   $('#openStudio',sc).insertAdjacentHTML('afterend','<div class="rx-row big" id="rxStudio">'+heartHTML('art-painting-lighthouse-at-dusk')+'<span class="rx-share" role="button" tabindex="0" data-rx-share="studio">\u2934 Share the studio</span></div>')}}
 // events (capture, so the card itself doesn't open)
 function act(e){var t=e.target.closest&&e.target.closest('[data-rx-like],[data-rx-star],[data-rx-share],[data-rx-open],[data-rx-close],[data-rx-never]');
@@ -104,5 +109,5 @@ decorate();extras();paint();
 new MutationObserver(function(){decorate()}).observe($('#app'),{childList:true,subtree:true});
 fetchAll().then(paint);
 if(A&&A.onChange)A.onChange(function(){if(srv)fetchAll().then(paint);else paint()});
-window.CESocial={share:share,openSheet:openSheet,state:function(){return {server:srv,data:data}}};
+window.CESocial={appLink:appLink,items:BYID,shareText:shareText,share:share,openSheet:openSheet,state:function(){return {server:srv,data:data}}};
 })();
