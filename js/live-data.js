@@ -1,214 +1,118 @@
-/* CE-1 live broadcast: one 12-hour loop, synced to the clock (UTC) so everyone hears the same thing.
-   Collier programs + public-domain-marked old-time radio streamed from archive.org (see src_page/lic). A station break follows every program. */
+/* CE-1 live broadcast: one ~12-hour loop of Jason Collier's own work (Jang & Tom episodes and his audiobooks), synced to the clock (UTC) so everyone hears the same thing.
+   A station break (his own commercial spots) follows every program. */
 window.CE_LIVE={programs:[
-{
-"k": "ridge"
-},
-{
-"k": "otr1",
-"t": "Hopalong Cassidy: The Dead Man's Hand (1950)",
-"d": 1724,
-"src": "https://archive.org/download/HopalongCassidy/Hopalong_Cassidy_500101_0001_The_Dead_Mans_Hand.MP3",
-"art": "images/otr/hop.jpg",
-"src_page": "https://archive.org/details/HopalongCassidy",
-"lic": "http://creativecommons.org/licenses/publicdomain/"
-},
-{
-"k": "otr2",
-"t": "Abbott & Costello: Grade School (1944)",
-"d": 1765,
-"src": "https://archive.org/download/Abbott_And_Costello_otr/Abbott_Costello441116_Grade_School.mp3",
-"art": "images/otr/ac.jpg",
-"src_page": "https://archive.org/details/Abbott_And_Costello_otr",
-"lic": "http://creativecommons.org/licenses/publicdomain/"
-},
-{
-"k": "otr3",
-"t": "The Whistler: Dear Roger (1947)",
-"d": 1796,
-"src": "https://archive.org/download/TheWhistler1947/Whistler_470106_Dear_Roger.mp3",
-"art": "images/otr/wh.jpg",
-"src_page": "https://archive.org/details/TheWhistler1947",
-"lic": "http://creativecommons.org/licenses/publicdomain/"
-},
-{
-"k": "otr4",
-"t": "Sherlock Holmes: The Speckled Band (1948)",
-"d": 1743,
-"src": "https://archive.org/download/SherlockHolmes1948-12-19TheSpeckledBand/1948-12-19TheSpeckledBand.mp3",
-"art": "images/otr/hol.jpg",
-"src_page": "https://archive.org/details/SherlockHolmes1948-12-19TheSpeckledBand",
-"lic": "http://creativecommons.org/licenses/publicdomain/"
-},
-{
-"k": "possum"
-},
-{
-"k": "otr5",
-"t": "Hopalong Cassidy: Coltsville Territory (1950)",
-"d": 1733,
-"src": "https://archive.org/download/HopalongCassidy/Hopalong_Cassidy_500115_0003_Coltsville_Territory.MP3",
-"art": "images/otr/hop.jpg",
-"src_page": "https://archive.org/details/HopalongCassidy",
-"lic": "http://creativecommons.org/licenses/publicdomain/"
-},
-{
-"k": "otr6",
-"t": "Abbott & Costello: A Job for the Girlfriend (1945)",
-"d": 1786,
-"src": "https://archive.org/download/Abbott_And_Costello_otr/Abbott_Costello451004_Job_for_Girlfriend.mp3",
-"art": "images/otr/ac.jpg",
-"src_page": "https://archive.org/details/Abbott_And_Costello_otr",
-"lic": "http://creativecommons.org/licenses/publicdomain/"
-},
-{
-"k": "otr7",
-"t": "The Whistler: Last Curtain (1947)",
-"d": 1629,
-"src": "https://archive.org/download/TheWhistler1947/Whistler_470120_Last_Curtain.mp3",
-"art": "images/otr/wh.jpg",
-"src_page": "https://archive.org/details/TheWhistler1947",
-"lic": "http://creativecommons.org/licenses/publicdomain/"
-},
-{
-"k": "rocket"
-},
-{
-"k": "otr8",
-"t": "Sherlock Holmes: The Blue Carbuncle (1948)",
-"d": 1784,
-"src": "https://archive.org/download/SherlockHolmes-1948-12-26-TheBlueCarbuncle/1948-12-26TheBlueCarbuncle.mp3",
-"art": "images/otr/hol.jpg",
-"src_page": "https://archive.org/details/SherlockHolmes-1948-12-26-TheBlueCarbuncle",
-"lic": "http://creativecommons.org/licenses/publicdomain/"
-},
-{
-"k": "oldman"
-},
-{
-"k": "icefish"
-},
-{
-"k": "otr9",
-"t": "Hopalong Cassidy: The Mystery of Skull Valley (1950)",
-"d": 1714,
-"src": "https://archive.org/download/HopalongCassidy/Hopalong_Cassidy_500122_0004_The_Mystery_of_Skull_Valley.MP3",
-"art": "images/otr/hop.jpg",
-"src_page": "https://archive.org/details/HopalongCassidy",
-"lic": "http://creativecommons.org/licenses/publicdomain/"
-},
-{
-"k": "otr10",
-"t": "Abbott & Costello: Lou Joins the Yankees (1947)",
-"d": 1845,
-"src": "https://archive.org/download/Abbott_And_Costello_otr/Abbott_Costello470619_Lou_Joins_The_New_York_Yankees.mp3",
-"art": "images/otr/ac.jpg",
-"src_page": "https://archive.org/details/Abbott_And_Costello_otr",
-"lic": "http://creativecommons.org/licenses/publicdomain/"
-},
-{
-"k": "otr11",
-"t": "The Whistler: Night Melody (1947)",
-"d": 1805,
-"src": "https://archive.org/download/TheWhistler1947/Whistler_470127_Night_Melody.mp3",
-"art": "images/otr/wh.jpg",
-"src_page": "https://archive.org/details/TheWhistler1947",
-"lic": "http://creativecommons.org/licenses/publicdomain/"
-},
-{
-"k": "otr12",
-"t": "Sherlock Holmes: Island of the Dead (1948)",
-"d": 1793,
-"src": "https://archive.org/download/SherlockHolmes1948-12-05IslandOfTheDead/1948-12-05IslandOfTheDead.mp3",
-"art": "images/otr/hol.jpg",
-"src_page": "https://archive.org/details/SherlockHolmes1948-12-05IslandOfTheDead",
-"lic": "http://creativecommons.org/licenses/publicdomain/"
-},
-{
-"k": "ridge"
-},
-{
-"k": "otr13",
-"t": "Hopalong Cassidy: Renegades of the San Rafael (1950)",
-"d": 1673,
-"src": "https://archive.org/download/HopalongCassidy/Hopalong_Cassidy_500129_0005_Renegades_of_the_San_Rafael.MP3",
-"art": "images/otr/hop.jpg",
-"src_page": "https://archive.org/details/HopalongCassidy",
-"lic": "http://creativecommons.org/licenses/publicdomain/"
-},
-{
-"k": "otr14",
-"t": "Abbott & Costello: Incorrigible (1946)",
-"d": 1771,
-"src": "https://archive.org/download/Abbott_And_Costello_otr/Abbott_Costello461003_Incorrigible.mp3",
-"art": "images/otr/ac.jpg",
-"src_page": "https://archive.org/details/Abbott_And_Costello_otr",
-"lic": "http://creativecommons.org/licenses/publicdomain/"
-},
-{
-"k": "otr15",
-"t": "The Whistler: Safety in Numbers (1947)",
-"d": 1765,
-"src": "https://archive.org/download/TheWhistler1947/Whistler_470210_Safety_in_Numbers.mp3",
-"art": "images/otr/wh.jpg",
-"src_page": "https://archive.org/details/TheWhistler1947",
-"lic": "http://creativecommons.org/licenses/publicdomain/"
-},
-{
-"k": "rocket"
-},
-{
-"k": "otr16",
-"t": "Sherlock Holmes: The Adventure of London Tower (1948)",
-"d": 1810,
-"src": "https://archive.org/download/SherlockHolmes1948-12-12TheAdventureOfLondonTower/1948-12-12TheAdventureOfLondonTower.mp3",
-"art": "images/otr/hol.jpg",
-"src_page": "https://archive.org/details/SherlockHolmes1948-12-12TheAdventureOfLondonTower",
-"lic": "http://creativecommons.org/licenses/publicdomain/"
-},
-{
-"k": "possum"
-},
-{
-"k": "otr17",
-"t": "Hopalong Cassidy: The Phantom Bandito (1950)",
-"d": 1660,
-"src": "https://archive.org/download/HopalongCassidy/Hopalong_Cassidy_500205_0006_The_Phantom_Bandito.MP3",
-"art": "images/otr/hop.jpg",
-"src_page": "https://archive.org/details/HopalongCassidy",
-"lic": "http://creativecommons.org/licenses/publicdomain/"
-},
-{
-"k": "dogs"
-},
-{
-"k": "otr18",
-"t": "Abbott & Costello: Lion Hunting (1940)",
-"d": 1505,
-"src": "https://archive.org/download/Abbott_And_Costello_otr/Abbott_costello400320LionHunting.mp3",
-"art": "images/otr/ac.jpg",
-"src_page": "https://archive.org/details/Abbott_And_Costello_otr",
-"lic": "http://creativecommons.org/licenses/publicdomain/"
-},
-{
-"k": "otr19",
-"t": "The Whistler: Eight to Twelve (1947)",
-"d": 1847,
-"src": "https://archive.org/download/TheWhistler1947/Whistler_470224_Eight_to_Twelve.mp3",
-"art": "images/otr/wh.jpg",
-"src_page": "https://archive.org/details/TheWhistler1947",
-"lic": "http://creativecommons.org/licenses/publicdomain/"
-},
-{
-"k": "icefish"
-},
-{
-"k": "otr20",
-"t": "Hopalong Cassidy: Murder on the Trail (1950)",
-"d": 1704,
-"src": "https://archive.org/download/HopalongCassidy/Hopalong_Cassidy_500212_0007_Murder_on_the_Trail.MP3",
-"art": "images/otr/hop.jpg",
-"src_page": "https://archive.org/details/HopalongCassidy",
-"lic": "http://creativecommons.org/licenses/publicdomain/"
-}
+{"k": "lv-fp1", "t": "The First Pulse · Part 1 of 7", "d": 242, "src": "media/firstpulse_part1of7.mp4", "art": "images/the-first-pulse.jpg"},
+{"k": "lv-fp2", "t": "The First Pulse · Part 2 of 7", "d": 237, "src": "media/firstpulse_part2of7.mp4", "art": "images/the-first-pulse.jpg"},
+{"k": "lv-fp3", "t": "The First Pulse · Part 3 of 7", "d": 244, "src": "media/firstpulse_part3of7.mp4", "art": "images/the-first-pulse.jpg"},
+{"k": "lv-fp4", "t": "The First Pulse · Part 4 of 7", "d": 234, "src": "media/firstpulse_part4of7.mp4", "art": "images/the-first-pulse.jpg"},
+{"k": "lv-fp5", "t": "The First Pulse · Part 5 of 7", "d": 243, "src": "media/firstpulse_part5of7.mp4", "art": "images/the-first-pulse.jpg"},
+{"k": "lv-fp6", "t": "The First Pulse · Part 6 of 7", "d": 242, "src": "media/firstpulse_part6of7.mp4", "art": "images/the-first-pulse.jpg"},
+{"k": "lv-fp7", "t": "The First Pulse · Part 7 of 7", "d": 237, "src": "media/firstpulse_part7of7.mp4", "art": "images/the-first-pulse.jpg"},
+{"k": "dogs"},
+{"k": "ridge"},
+{"k": "lv-ph1", "t": "Jang & Tom: Philadelphia Follies · Part 1 of 7", "d": 165, "src": "media/philly_part1of7.mp4", "art": "images/art/philly-s01.jpg"},
+{"k": "lv-ph2", "t": "Jang & Tom: Philadelphia Follies · Part 2 of 7", "d": 182, "src": "media/philly_part2of7.mp4", "art": "images/art/philly-s01.jpg"},
+{"k": "lv-ph3", "t": "Jang & Tom: Philadelphia Follies · Part 3 of 7", "d": 162, "src": "media/philly_part3of7.mp4", "art": "images/art/philly-s01.jpg"},
+{"k": "lv-ph4", "t": "Jang & Tom: Philadelphia Follies · Part 4 of 7", "d": 161, "src": "media/philly_part4of7.mp4", "art": "images/art/philly-s01.jpg"},
+{"k": "lv-ph5", "t": "Jang & Tom: Philadelphia Follies · Part 5 of 7", "d": 181, "src": "media/philly_part5of7.mp4", "art": "images/art/philly-s01.jpg"},
+{"k": "lv-ph6", "t": "Jang & Tom: Philadelphia Follies · Part 6 of 7", "d": 150, "src": "media/philly_part6of7.mp4", "art": "images/art/philly-s01.jpg"},
+{"k": "lv-ph7", "t": "Jang & Tom: Philadelphia Follies · Part 7 of 7", "d": 181, "src": "media/philly_part7of7.mp4", "art": "images/art/philly-s01.jpg"},
+{"k": "possum"},
+{"k": "lv-tc1", "t": "Jang & Tom: Transcontinental · Part 1 of 4", "d": 291, "src": "media/transcon_part1of4.mp4", "art": "images/scenes/transcon-s01.jpg"},
+{"k": "lv-tc2", "t": "Jang & Tom: Transcontinental · Part 2 of 4", "d": 306, "src": "media/transcon_part2of4.mp4", "art": "images/scenes/transcon-s01.jpg"},
+{"k": "lv-tc3", "t": "Jang & Tom: Transcontinental · Part 3 of 4", "d": 303, "src": "media/transcon_part3of4.mp4", "art": "images/scenes/transcon-s01.jpg"},
+{"k": "lv-tc4", "t": "Jang & Tom: Transcontinental · Part 4 of 4", "d": 293, "src": "media/transcon_part4of4.mp4", "art": "images/scenes/transcon-s01.jpg"},
+{"k": "oldman"},
+{"k": "icefish"},
+{"k": "lv-wm1", "t": "Jang & Tom: Wagon Masters · Part 1 of 6", "d": 186, "src": "media/wagonmasters_part1of6.mp4", "art": "images/jang-and-tom-wagon-masters.jpg"},
+{"k": "lv-wm2", "t": "Jang & Tom: Wagon Masters · Part 2 of 6", "d": 186, "src": "media/wagonmasters_part2of6.mp4", "art": "images/jang-and-tom-wagon-masters.jpg"},
+{"k": "lv-wm3", "t": "Jang & Tom: Wagon Masters · Part 3 of 6", "d": 186, "src": "media/wagonmasters_part3of6.mp4", "art": "images/jang-and-tom-wagon-masters.jpg"},
+{"k": "lv-wm4", "t": "Jang & Tom: Wagon Masters · Part 4 of 6", "d": 186, "src": "media/wagonmasters_part4of6.mp4", "art": "images/jang-and-tom-wagon-masters.jpg"},
+{"k": "lv-wm5", "t": "Jang & Tom: Wagon Masters · Part 5 of 6", "d": 186, "src": "media/wagonmasters_part5of6.mp4", "art": "images/jang-and-tom-wagon-masters.jpg"},
+{"k": "lv-wm6", "t": "Jang & Tom: Wagon Masters · Part 6 of 6", "d": 185, "src": "media/wagonmasters_part6of6.mp4", "art": "images/jang-and-tom-wagon-masters.jpg"},
+{"k": "rocket"},
+{"k": "lv-rs1", "t": "The Rusty Stack · Ch 1: Half Dead, Half Left", "d": 678, "src": "assets/rusty-stack-episodes/episode01.mp4", "art": "images/the-rusty-stack.jpg"},
+{"k": "lv-rs2", "t": "The Rusty Stack · Ch 2: Duct Tape and War Stories", "d": 514, "src": "assets/rusty-stack-episodes/episode02.mp4", "art": "images/the-rusty-stack.jpg"},
+{"k": "lv-wa1", "t": "Wagon Masters (Animated) · Ep 1: Debtors on the Run", "d": 323, "src": "assets/wagon-masters-episodes/episode01.mp4", "art": "assets/wagon-masters-episodes/episode01.jpg"},
+{"k": "lv-wa2", "t": "Wagon Masters (Animated) · Ep 2: Bear Bait and Smallpox Monks", "d": 302, "src": "assets/wagon-masters-episodes/episode02.mp4", "art": "assets/wagon-masters-episodes/episode01.jpg"},
+{"k": "lv-wa3", "t": "Wagon Masters (Animated) · Ep 3: Baby Grace, Bigfeet and the Human Pendulum", "d": 296, "src": "assets/wagon-masters-episodes/episode03.mp4", "art": "assets/wagon-masters-episodes/episode01.jpg"},
+{"k": "lv-wa4", "t": "Wagon Masters (Animated) · Ep 4: Forty Miles of Thirst and a Golden Goodbye", "d": 344, "src": "assets/wagon-masters-episodes/episode04.mp4", "art": "assets/wagon-masters-episodes/episode01.jpg"},
+{"k": "ridge"},
+{"k": "lv-tc1", "t": "Jang & Tom: Transcontinental · Part 1 of 4", "d": 291, "src": "media/transcon_part1of4.mp4", "art": "images/scenes/transcon-s01.jpg"},
+{"k": "lv-tc2", "t": "Jang & Tom: Transcontinental · Part 2 of 4", "d": 306, "src": "media/transcon_part2of4.mp4", "art": "images/scenes/transcon-s01.jpg"},
+{"k": "lv-tc3", "t": "Jang & Tom: Transcontinental · Part 3 of 4", "d": 303, "src": "media/transcon_part3of4.mp4", "art": "images/scenes/transcon-s01.jpg"},
+{"k": "lv-tc4", "t": "Jang & Tom: Transcontinental · Part 4 of 4", "d": 293, "src": "media/transcon_part4of4.mp4", "art": "images/scenes/transcon-s01.jpg"},
+{"k": "possum"},
+{"k": "lv-wa1", "t": "Wagon Masters (Animated) · Ep 1: Debtors on the Run", "d": 323, "src": "assets/wagon-masters-episodes/episode01.mp4", "art": "assets/wagon-masters-episodes/episode01.jpg"},
+{"k": "lv-wa2", "t": "Wagon Masters (Animated) · Ep 2: Bear Bait and Smallpox Monks", "d": 302, "src": "assets/wagon-masters-episodes/episode02.mp4", "art": "assets/wagon-masters-episodes/episode01.jpg"},
+{"k": "lv-wa3", "t": "Wagon Masters (Animated) · Ep 3: Baby Grace, Bigfeet and the Human Pendulum", "d": 296, "src": "assets/wagon-masters-episodes/episode03.mp4", "art": "assets/wagon-masters-episodes/episode01.jpg"},
+{"k": "lv-wa4", "t": "Wagon Masters (Animated) · Ep 4: Forty Miles of Thirst and a Golden Goodbye", "d": 344, "src": "assets/wagon-masters-episodes/episode04.mp4", "art": "assets/wagon-masters-episodes/episode01.jpg"},
+{"k": "oldman"},
+{"k": "icefish"},
+{"k": "lv-fp1", "t": "The First Pulse · Part 1 of 7", "d": 242, "src": "media/firstpulse_part1of7.mp4", "art": "images/the-first-pulse.jpg"},
+{"k": "lv-fp2", "t": "The First Pulse · Part 2 of 7", "d": 237, "src": "media/firstpulse_part2of7.mp4", "art": "images/the-first-pulse.jpg"},
+{"k": "lv-fp3", "t": "The First Pulse · Part 3 of 7", "d": 244, "src": "media/firstpulse_part3of7.mp4", "art": "images/the-first-pulse.jpg"},
+{"k": "lv-fp4", "t": "The First Pulse · Part 4 of 7", "d": 234, "src": "media/firstpulse_part4of7.mp4", "art": "images/the-first-pulse.jpg"},
+{"k": "lv-fp5", "t": "The First Pulse · Part 5 of 7", "d": 243, "src": "media/firstpulse_part5of7.mp4", "art": "images/the-first-pulse.jpg"},
+{"k": "lv-fp6", "t": "The First Pulse · Part 6 of 7", "d": 242, "src": "media/firstpulse_part6of7.mp4", "art": "images/the-first-pulse.jpg"},
+{"k": "lv-fp7", "t": "The First Pulse · Part 7 of 7", "d": 237, "src": "media/firstpulse_part7of7.mp4", "art": "images/the-first-pulse.jpg"},
+{"k": "rocket"},
+{"k": "lv-rs1", "t": "The Rusty Stack · Ch 1: Half Dead, Half Left", "d": 678, "src": "assets/rusty-stack-episodes/episode01.mp4", "art": "images/the-rusty-stack.jpg"},
+{"k": "lv-rs2", "t": "The Rusty Stack · Ch 2: Duct Tape and War Stories", "d": 514, "src": "assets/rusty-stack-episodes/episode02.mp4", "art": "images/the-rusty-stack.jpg"},
+{"k": "lv-ph1", "t": "Jang & Tom: Philadelphia Follies · Part 1 of 7", "d": 165, "src": "media/philly_part1of7.mp4", "art": "images/art/philly-s01.jpg"},
+{"k": "lv-ph2", "t": "Jang & Tom: Philadelphia Follies · Part 2 of 7", "d": 182, "src": "media/philly_part2of7.mp4", "art": "images/art/philly-s01.jpg"},
+{"k": "lv-ph3", "t": "Jang & Tom: Philadelphia Follies · Part 3 of 7", "d": 162, "src": "media/philly_part3of7.mp4", "art": "images/art/philly-s01.jpg"},
+{"k": "lv-ph4", "t": "Jang & Tom: Philadelphia Follies · Part 4 of 7", "d": 161, "src": "media/philly_part4of7.mp4", "art": "images/art/philly-s01.jpg"},
+{"k": "lv-ph5", "t": "Jang & Tom: Philadelphia Follies · Part 5 of 7", "d": 181, "src": "media/philly_part5of7.mp4", "art": "images/art/philly-s01.jpg"},
+{"k": "lv-ph6", "t": "Jang & Tom: Philadelphia Follies · Part 6 of 7", "d": 150, "src": "media/philly_part6of7.mp4", "art": "images/art/philly-s01.jpg"},
+{"k": "lv-ph7", "t": "Jang & Tom: Philadelphia Follies · Part 7 of 7", "d": 181, "src": "media/philly_part7of7.mp4", "art": "images/art/philly-s01.jpg"},
+{"k": "ridge"},
+{"k": "dogs"},
+{"k": "possum"},
+{"k": "lv-wm1", "t": "Jang & Tom: Wagon Masters · Part 1 of 6", "d": 186, "src": "media/wagonmasters_part1of6.mp4", "art": "images/jang-and-tom-wagon-masters.jpg"},
+{"k": "lv-wm2", "t": "Jang & Tom: Wagon Masters · Part 2 of 6", "d": 186, "src": "media/wagonmasters_part2of6.mp4", "art": "images/jang-and-tom-wagon-masters.jpg"},
+{"k": "lv-wm3", "t": "Jang & Tom: Wagon Masters · Part 3 of 6", "d": 186, "src": "media/wagonmasters_part3of6.mp4", "art": "images/jang-and-tom-wagon-masters.jpg"},
+{"k": "lv-wm4", "t": "Jang & Tom: Wagon Masters · Part 4 of 6", "d": 186, "src": "media/wagonmasters_part4of6.mp4", "art": "images/jang-and-tom-wagon-masters.jpg"},
+{"k": "lv-wm5", "t": "Jang & Tom: Wagon Masters · Part 5 of 6", "d": 186, "src": "media/wagonmasters_part5of6.mp4", "art": "images/jang-and-tom-wagon-masters.jpg"},
+{"k": "lv-wm6", "t": "Jang & Tom: Wagon Masters · Part 6 of 6", "d": 185, "src": "media/wagonmasters_part6of6.mp4", "art": "images/jang-and-tom-wagon-masters.jpg"},
+{"k": "lv-ph1", "t": "Jang & Tom: Philadelphia Follies · Part 1 of 7", "d": 165, "src": "media/philly_part1of7.mp4", "art": "images/art/philly-s01.jpg"},
+{"k": "lv-ph2", "t": "Jang & Tom: Philadelphia Follies · Part 2 of 7", "d": 182, "src": "media/philly_part2of7.mp4", "art": "images/art/philly-s01.jpg"},
+{"k": "lv-ph3", "t": "Jang & Tom: Philadelphia Follies · Part 3 of 7", "d": 162, "src": "media/philly_part3of7.mp4", "art": "images/art/philly-s01.jpg"},
+{"k": "lv-ph4", "t": "Jang & Tom: Philadelphia Follies · Part 4 of 7", "d": 161, "src": "media/philly_part4of7.mp4", "art": "images/art/philly-s01.jpg"},
+{"k": "lv-ph5", "t": "Jang & Tom: Philadelphia Follies · Part 5 of 7", "d": 181, "src": "media/philly_part5of7.mp4", "art": "images/art/philly-s01.jpg"},
+{"k": "lv-ph6", "t": "Jang & Tom: Philadelphia Follies · Part 6 of 7", "d": 150, "src": "media/philly_part6of7.mp4", "art": "images/art/philly-s01.jpg"},
+{"k": "lv-ph7", "t": "Jang & Tom: Philadelphia Follies · Part 7 of 7", "d": 181, "src": "media/philly_part7of7.mp4", "art": "images/art/philly-s01.jpg"},
+{"k": "icefish"},
+{"k": "lv-rs1", "t": "The Rusty Stack · Ch 1: Half Dead, Half Left", "d": 678, "src": "assets/rusty-stack-episodes/episode01.mp4", "art": "images/the-rusty-stack.jpg"},
+{"k": "lv-rs2", "t": "The Rusty Stack · Ch 2: Duct Tape and War Stories", "d": 514, "src": "assets/rusty-stack-episodes/episode02.mp4", "art": "images/the-rusty-stack.jpg"},
+{"k": "rocket"},
+{"k": "lv-wm1", "t": "Jang & Tom: Wagon Masters · Part 1 of 6", "d": 186, "src": "media/wagonmasters_part1of6.mp4", "art": "images/jang-and-tom-wagon-masters.jpg"},
+{"k": "lv-wm2", "t": "Jang & Tom: Wagon Masters · Part 2 of 6", "d": 186, "src": "media/wagonmasters_part2of6.mp4", "art": "images/jang-and-tom-wagon-masters.jpg"},
+{"k": "lv-wm3", "t": "Jang & Tom: Wagon Masters · Part 3 of 6", "d": 186, "src": "media/wagonmasters_part3of6.mp4", "art": "images/jang-and-tom-wagon-masters.jpg"},
+{"k": "lv-wm4", "t": "Jang & Tom: Wagon Masters · Part 4 of 6", "d": 186, "src": "media/wagonmasters_part4of6.mp4", "art": "images/jang-and-tom-wagon-masters.jpg"},
+{"k": "lv-wm5", "t": "Jang & Tom: Wagon Masters · Part 5 of 6", "d": 186, "src": "media/wagonmasters_part5of6.mp4", "art": "images/jang-and-tom-wagon-masters.jpg"},
+{"k": "lv-wm6", "t": "Jang & Tom: Wagon Masters · Part 6 of 6", "d": 185, "src": "media/wagonmasters_part6of6.mp4", "art": "images/jang-and-tom-wagon-masters.jpg"},
+{"k": "dogs"},
+{"k": "ridge"},
+{"k": "lv-fp1", "t": "The First Pulse · Part 1 of 7", "d": 242, "src": "media/firstpulse_part1of7.mp4", "art": "images/the-first-pulse.jpg"},
+{"k": "lv-fp2", "t": "The First Pulse · Part 2 of 7", "d": 237, "src": "media/firstpulse_part2of7.mp4", "art": "images/the-first-pulse.jpg"},
+{"k": "lv-fp3", "t": "The First Pulse · Part 3 of 7", "d": 244, "src": "media/firstpulse_part3of7.mp4", "art": "images/the-first-pulse.jpg"},
+{"k": "lv-fp4", "t": "The First Pulse · Part 4 of 7", "d": 234, "src": "media/firstpulse_part4of7.mp4", "art": "images/the-first-pulse.jpg"},
+{"k": "lv-fp5", "t": "The First Pulse · Part 5 of 7", "d": 243, "src": "media/firstpulse_part5of7.mp4", "art": "images/the-first-pulse.jpg"},
+{"k": "lv-fp6", "t": "The First Pulse · Part 6 of 7", "d": 242, "src": "media/firstpulse_part6of7.mp4", "art": "images/the-first-pulse.jpg"},
+{"k": "lv-fp7", "t": "The First Pulse · Part 7 of 7", "d": 237, "src": "media/firstpulse_part7of7.mp4", "art": "images/the-first-pulse.jpg"},
+{"k": "possum"},
+{"k": "lv-wa1", "t": "Wagon Masters (Animated) · Ep 1: Debtors on the Run", "d": 323, "src": "assets/wagon-masters-episodes/episode01.mp4", "art": "assets/wagon-masters-episodes/episode01.jpg"},
+{"k": "lv-wa2", "t": "Wagon Masters (Animated) · Ep 2: Bear Bait and Smallpox Monks", "d": 302, "src": "assets/wagon-masters-episodes/episode02.mp4", "art": "assets/wagon-masters-episodes/episode01.jpg"},
+{"k": "lv-wa3", "t": "Wagon Masters (Animated) · Ep 3: Baby Grace, Bigfeet and the Human Pendulum", "d": 296, "src": "assets/wagon-masters-episodes/episode03.mp4", "art": "assets/wagon-masters-episodes/episode01.jpg"},
+{"k": "lv-wa4", "t": "Wagon Masters (Animated) · Ep 4: Forty Miles of Thirst and a Golden Goodbye", "d": 344, "src": "assets/wagon-masters-episodes/episode04.mp4", "art": "assets/wagon-masters-episodes/episode01.jpg"},
+{"k": "lv-tc1", "t": "Jang & Tom: Transcontinental · Part 1 of 4", "d": 291, "src": "media/transcon_part1of4.mp4", "art": "images/scenes/transcon-s01.jpg"},
+{"k": "lv-tc2", "t": "Jang & Tom: Transcontinental · Part 2 of 4", "d": 306, "src": "media/transcon_part2of4.mp4", "art": "images/scenes/transcon-s01.jpg"},
+{"k": "lv-tc3", "t": "Jang & Tom: Transcontinental · Part 3 of 4", "d": 303, "src": "media/transcon_part3of4.mp4", "art": "images/scenes/transcon-s01.jpg"},
+{"k": "lv-tc4", "t": "Jang & Tom: Transcontinental · Part 4 of 4", "d": 293, "src": "media/transcon_part4of4.mp4", "art": "images/scenes/transcon-s01.jpg"},
+{"k": "icefish"},
+{"k": "oldman"},
+{"k": "rocket"}
 ]};
+/* his own commercial spots, rotated one per station break */
+window.CE_LIVE_SPOTS=[{src:'audio/commercials/jangtom.mp3',art:'images/jang-and-tom-wagon-masters.jpg',d:14},{src:'audio/commercials/worlds.mp3',art:'book-worlds/assets/play-cover.webp',d:11},{src:'audio/commercials/pulse.mp3',art:'images/the-first-pulse.jpg',d:12},{src:'audio/commercials/audiobooks.mp3',art:'images/the-first-pulse.jpg',d:12},{src:'audio/commercials/oldman.mp3',art:'images/old-man-on-the-mountain.jpg',d:13},{src:'audio/commercials/rusty.mp3',art:'images/the-rusty-stack.jpg',d:11},{src:'audio/commercials/kids.mp3',art:'images/jang-and-tom-wagon-masters.jpg',d:11},{src:'audio/commercials/oldmangame.mp3',art:'app/media/oldman-hunt-card.jpg',d:12},{src:'audio/commercials/radio.mp3',art:'app/media/jang-tom-tv.jpg',d:11},{src:'audio/commercials/x.mp3',art:'app/icons/icon-192.png',d:13},{src:'app/media/club-spot.mp3',art:'app/icons/icon-192.png',d:14}];

@@ -82,12 +82,12 @@ function chJump(dir){if(!curInfo||!curInfo.ch)return;var t=au.currentTime,c=curI
 $('#chPrev').onclick=function(){chJump(-1)};$('#chNext').onclick=function(){chJump(1)};
 function eqState(){$('#eq').classList.toggle('on',!au.paused)}au.addEventListener('play',eqState);au.addEventListener('pause',eqState);
 // ---------- live channel + guide ----------
-var SPOTS=[{k:'spot1',t:'Station break',d:14,src:R+'audio/commercials/jangtom.mp3',art:R+'images/jang-and-tom-wagon-masters.jpg'},{k:'spot2',t:'Station break',d:12,src:R+'audio/commercials/worlds.mp3',art:R+'book-worlds/assets/play-cover.webp'},{k:'spot3',t:'Station break',d:12,src:R+'audio/commercials/pulse.mp3',art:R+'images/the-first-pulse.jpg'}];
+var SPOTS=(window.CE_LIVE_SPOTS||[]).map(function(s,i){return {k:'spot'+(i+1),t:'Station break',d:s.d,src:R+s.src,art:R+s.art}});
 // 12-hour loop from ../js/live-data.js (shared with the site's live.html); a station break follows every program, same as before.
 var JT=(window.CE_SHOWS&&CE_SHOWS.jangtom.episodes)||[],jt=function(k){for(var i=0;i<JT.length;i++)if(JT[i].key===k)return JT[i]};
 var SCHED=[];(window.CE_LIVE?CE_LIVE.programs:[{k:'ridge'},{k:'oldman'}]).forEach(function(p,i){var x;
  if(p.k==='oldman')x={k:'oldman',t:'Old Man On The Mountain · Part 1',d:741};else if(p.k==='dogs'&&window.CE_DOGS)x={k:'dogs',t:'Dogs That Chose Me · audiobook',d:CE_DOGS.secs};else if(jt(p.k)){var e=jt(p.k);x={k:p.k,t:'Jang & Tom: '+e.t,d:e.secs}}
- else{x={k:p.k,t:p.t,d:p.d,src:p.src,art:R+p.art,otr:1};CE.TRACKS[p.k]={t:p.t,s:'Old-time radio · public domain · archive.org',src:p.src,art:R+p.art}}
+ else{x={k:p.k,t:p.t,d:p.d,src:R+p.src,art:R+p.art};CE.TRACKS[p.k]={t:p.t,s:'Collier Entertainment · audiobook',src:R+p.src,art:R+p.art}}
  SCHED.push(x,SPOTS[i%SPOTS.length])});
 SPOTS.forEach(function(s){CE.TRACKS[s.k]={t:s.t,s:'Collier Entertainment · station break',src:s.src,art:s.art}});
 var CYC=SCHED.reduce(function(a,s){return a+s.d},0);
@@ -99,14 +99,14 @@ function tune(){var n=nowSlot();live=true;CE.load(SCHED[n.i].k,true,Math.floor(n
 var BAD={},TRY={};function bad(k){return BAD[k]&&Date.now()-BAD[k]<15*60e3}
 function nextLive(){var n=nowSlot();if(!bad(SCHED[n.i].k)){CE.load(SCHED[n.i].k,false,Math.floor(n.off));return}skipFrom(n.i)}
 function skipFrom(i){for(var j=1;j<SCHED.length;j++){var s=SCHED[(i+j)%SCHED.length];if(!bad(s.k)){CE.load(s.k,true,0);return}}}
-// archive.org stream failed: retry twice (same spot), then skip to the next program in the schedule
-au.addEventListener('error',function(){if(!live)return;var k=CE.cur();if(!k||!/^otr/.test(k))return;TRY[k]=(TRY[k]||0)+1;
+// a stream failed: retry twice (same spot), then skip to the next program in the schedule
+au.addEventListener('error',function(){if(!live)return;var k=CE.cur();if(!k||!/^lv-/.test(k))return;TRY[k]=(TRY[k]||0)+1;
  if(TRY[k]<=2){var t=au.currentTime;setTimeout(function(){if(CE.cur()!==k)return;au.load();au.addEventListener('loadedmetadata',function f(){au.removeEventListener('loadedmetadata',f);try{au.currentTime=t||Math.floor(nowSlot().off)}catch(e){}},{once:true});au.play().catch(function(){})},1500*TRY[k]);return}
  TRY[k]=0;BAD[k]=Date.now();CE.toast('📻 That program isn\u2019t coming in. Skipping ahead.');for(var i=0;i<SCHED.length;i++)if(SCHED[i].k===k){skipFrom(i);return}});
 au.addEventListener('pause',function(){if(document.querySelector('.jc-break'))return;});
-var gs=el('<section class="screen" id="guide"><header class="top"><button class="back" data-go="home">‹</button><h2>Channel Guide</h2><span class="onair sm"><i></i>LIVE</span></header><div class="dial-row"><div class="dial" id="dial"><span></span></div><div><b>CE-1 · Collier Entertainment</b><p>One station, always on. Tune in and it plays like the radio: shows, audiobooks and station breaks back to back.</p></div></div><button class="btn wide" id="tuneBtn">📻 Tune in now</button><ol class="sched" id="sched"></ol><p class="fine">A 12-hour loop, live for everyone at the same moment. Times are shown in your time zone. Old-time radio is public-domain recordings streamed from archive.org.</p></section>');
+var gs=el('<section class="screen" id="guide"><header class="top"><button class="back" data-go="home">‹</button><h2>Channel Guide</h2><span class="onair sm"><i></i>LIVE</span></header><div class="dial-row"><div class="dial" id="dial"><span></span></div><div><b>CE-1 · Collier Entertainment</b><p>One station, always on. Tune in and it plays like the radio: shows, audiobooks and station breaks back to back.</p></div></div><button class="btn wide" id="tuneBtn">📻 Tune in now</button><ol class="sched" id="sched"></ol><p class="fine">A 12-hour loop, live for everyone at the same moment. Times are shown in your time zone.</p></section>');
 $('#app').appendChild(gs);
-function renderGuide(){var n=nowSlot(),h='',t=n.start;for(var j=0;j<14;j++){var s=SCHED[(n.i+j)%SCHED.length];var cls=j===0?'now':'';var pct=j===0?Math.round(n.off/s.d*100):0;h+='<li class="'+cls+'"><time>'+(j===0?'NOW':fmtT(t))+'</time><div><b>'+s.t+'</b><span>'+(s.d<60?s.d+' sec':Math.round(s.d/60)+' min')+(s.otr?' · old-time radio':s.src?' · sponsor':'')+'</span>'+(j===0?'<i class="bar"><u style="width:'+pct+'%"></u></i>':'')+'</div></li>';t+=s.d*1000}
+function renderGuide(){var n=nowSlot(),h='',t=n.start;for(var j=0;j<14;j++){var s=SCHED[(n.i+j)%SCHED.length];var cls=j===0?'now':'';var pct=j===0?Math.round(n.off/s.d*100):0;h+='<li class="'+cls+'"><time>'+(j===0?'NOW':fmtT(t))+'</time><div><b>'+s.t+'</b><span>'+(s.d<60?s.d+' sec':Math.round(s.d/60)+' min')+(/^spot/.test(s.k)?' · sponsor':'')+'</span>'+(j===0?'<i class="bar"><u style="width:'+pct+'%"></u></i>':'')+'</div></li>';t+=s.d*1000}
  $('#sched').innerHTML=h;var nx=SCHED[(n.i+1)%SCHED.length];$('#gNow').textContent=SCHED[n.i].t;$('#gNext').textContent=nx.t+' · '+fmtT(n.start+SCHED[n.i].d*1000)}
 renderGuide();setInterval(renderGuide,20000);
 $('#tuneBtn').onclick=function(){staticBurst(.3);tune()};
