@@ -383,3 +383,14 @@ html:not(.calm) .gazette .pkg{transform:rotate(-.4deg)}
 .memnote{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 10px);transform:translateX(-50%);z-index:120;display:flex;align-items:center;gap:6px;max-width:92%;padding:4px 4px 4px 16px;border-radius:24px;border:1px solid #d4af37;background:#2a1f14;color:#f6ead0;font:15px Georgia,serif;box-shadow:0 4px 14px #000a;opacity:1;transition:opacity .5s,transform .5s}
 .memnote.out{opacity:0;transform:translate(-50%,-20px);pointer-events:none}
 .memnote-x{width:44px;height:44px;flex:none;border:0;background:none;color:#cdbf9f;font-size:16px;cursor:pointer}
+
+/* Thorne's Lab home card + screen */
+.th-card{margin:10px 14px 14px;border:1px solid #5fd3a0;border-radius:14px;overflow:hidden;background:linear-gradient(160deg,#0f1f1a,#0a0f0d);box-shadow:0 0 18px #5fd3a033}
+.th-art{display:block;position:relative;width:100%;padding:0;border:0;background:none}.th-art img{display:block;width:100%;aspect-ratio:16/7;object-fit:cover;object-position:75% 50%}
+.th-k{position:absolute;left:12px;bottom:8px;font:700 12px/1 'Courier New',monospace;letter-spacing:.2em;color:#8ff5c6;text-shadow:0 0 6px #000}
+.th-body{padding:12px 14px 14px}.th-body b{font:700 20px Georgia,serif;color:#e8fff4}.th-body p{margin:6px 0 10px;color:#b9d6c9;font-size:15px;line-height:1.35}
+.th-btns{display:flex;flex-wrap:wrap;gap:8px}.th-btns button{min-height:44px;padding:0 14px;border-radius:22px;border:1px solid #5fd3a0;background:#12241d;color:#dfffee;font:600 14px system-ui}
+.th-btns button:first-child{background:linear-gradient(#f0cf63,#c99a2a);color:#1a140d;border:0}
+.th-screen{padding:0 14px 28px}.th-hero{width:100%;border-radius:12px;display:block;margin-bottom:10px}.th-lede{color:#cfd9d3;font-size:15px;line-height:1.4}
+.th-row{display:flex;gap:12px;align-items:center;width:100%;min-height:60px;margin:8px 0;padding:10px 12px;border-radius:12px;border:1px solid #2f5a49;background:#0f1a16;color:#eafff5;text-align:left}
+.th-row i{font-style:normal;font-size:24px;flex:none}.th-row b{display:block;font-size:16px}.th-row small{display:block;color:#a9c4b8;font-size:13px;line-height:1.3}
