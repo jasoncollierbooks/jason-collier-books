@@ -619,9 +619,6 @@ body:not(.home) .nav{background:rgba(10,8,7,.72);backdrop-filter:blur(12px);-web
 .brass-ab .ab-part:disabled:hover,.brass-ab .ab-part:disabled:focus-visible{border-color:rgba(214,160,90,.28);color:#b9a890}
 .brass-weekly{margin:-.35rem 0 .9rem;font-family:"Special Elite",monospace;font-size:.95rem;letter-spacing:.03em;color:#d9a55e}
 @media (max-width:900px){
-  #rusty-stack-animatic .ab-list{grid-template-columns:1fr}
-  #rusty-stack-animatic .ab-part{flex-direction:row;align-items:center;justify-content:space-between;gap:.8rem}
-  #rusty-stack-animatic .ab-t{white-space:nowrap}
 }
 
 /* home: six "more" cards sit in two rows of three */
