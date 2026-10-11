@@ -124,3 +124,6 @@
 @media (min-width:900px){.lcover{left:50%;width:50%}.ribbon{left:50%;margin-left:-7px;right:auto}}
 @media (min-width:900px){.lbook.closed .spread{visibility:hidden}.lbook.closed .lcover{left:25%}.lbook.closed .ribbon{display:none}}
 .peek{position:fixed;right:14px;bottom:108px;width:min(420px,82vw);max-width:none;z-index:20}
+.lbook .season-rule,.lbook .season-ribbon,.lbook .season-corners,.lbook [class^="season-"],.lbook [class*=" season-"]{display:none!important}
+.lbook{z-index:7}
+.deck{z-index:9}
