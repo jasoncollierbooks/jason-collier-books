@@ -71,6 +71,9 @@ window.CE_LIVE={programs:[
 "lic": "http://creativecommons.org/licenses/publicdomain/"
 },
 {
+"k": "rocket"
+},
+{
 "k": "otr8",
 "t": "Sherlock Holmes: The Blue Carbuncle (1948)",
 "d": 1784,
@@ -150,6 +153,9 @@ window.CE_LIVE={programs:[
 "art": "images/otr/wh.jpg",
 "src_page": "https://archive.org/details/TheWhistler1947",
 "lic": "http://creativecommons.org/licenses/publicdomain/"
+},
+{
+"k": "rocket"
 },
 {
 "k": "otr16",
