@@ -16,7 +16,7 @@ var ITEMS={ // key = data-play / data-frame value
  'audiobooks.html#philadelphia-follies':{id:'ab-philly',t:'Jang & Tom: Philadelphia Follies',u:SITE+'audiobooks.html#philadelphia-follies',rate:1},
  'audiobooks.html#transcontinental':{id:'ab-transcon',t:'Jang & Tom: Transcontinental',u:SITE+'audiobooks.html#transcontinental',rate:1},
  'audiobooks.html#first-pulse':{id:'ab-first-pulse',t:'The First Pulse (audiobook)',u:SITE+'audiobooks.html#first-pulse',rate:1},
- 'audiobooks.html#rusty-stack-animatic':{id:'ab-rusty-stack',t:'The Rusty Stack animatic',u:SITE+'audiobooks.html#rusty-stack-animatic',rate:1},
+ 'rusty-adventure.html':{id:'ab-rusty-adventure',t:'The Rusty Stack: Choose Your Own Adventure Audiobook',u:SITE+'rusty-adventure.html',rate:1},
  'past-inspirations.html':{id:'ep-past-inspirations',t:'Past Inspirations',u:SITE+'past-inspirations.html',rate:1},
  'old-man-game/':{id:'game-old-man-hunt',t:'Old Man Hunt',u:SITE+'old-man-game/',rate:1},
  'book-worlds/':{id:'game-book-worlds',t:'Book Worlds',u:SITE+'book-worlds/',rate:1},
@@ -29,7 +29,7 @@ var ITEMS={ // key = data-play / data-frame value
 // Every shared link opens the APP (deep link /app/?open=...); without the app installed it still opens /app in the browser with the item open.
 function appLink(o){return SITE+'app/'+(o?'?open='+encodeURIComponent(o):'')}
 var GBYURL={};(window.CE_GAMES||[]).concat(window.CE_GAMES_MORE||[]).forEach(function(g){if(!GBYURL[g.url])GBYURL[g.url]=g.id});
-Object.keys(ITEMS).forEach(function(k){ITEMS[k].u=appLink(/^(ridge|possum|icefish|rocket|checkers|dogs|oldman)$/.test(k)?'play:'+k:/^game:/.test(k)?k:GBYURL[k]?'game:'+GBYURL[k]:'frame:'+k)});
+Object.keys(ITEMS).forEach(function(k){ITEMS[k].u=appLink(k==='rusty-adventure.html'?'adventure:rusty':/^(ridge|possum|icefish|rocket|checkers|dogs|oldman)$/.test(k)?'play:'+k:/^game:/.test(k)?k:GBYURL[k]?'game:'+GBYURL[k]:'frame:'+k)});
 var APP={id:'app',t:'Collier Entertainment',u:appLink(''),rate:1};
 var BYID={};function reg(it){BYID[it.id]=it;return it}reg(APP);Object.keys(ITEMS).forEach(function(k){reg(ITEMS[k])});
 var srv=null,data={},signedIn=function(){return !!(A&&A.status==='in')};

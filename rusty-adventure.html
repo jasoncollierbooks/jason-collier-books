@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="theme-color" content="#16130f">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Rusty Stack: Choose Your Own Adventure Audiobook | Collier Entertainment</title>
+<meta name="description" content="A narrated choose-your-own-adventure audiobook by Jason Collier: 23 scenes, 8 endings, and you choose the path.">
+<meta property="og:title" content="The Rusty Stack: Choose Your Own Adventure Audiobook | Collier Entertainment">
+<meta property="og:image" content="https://collierentertainment.com/images/the-rusty-stack.jpg">
+<meta property="og:url" content="https://collierentertainment.com/rusty-adventure.html">
+<meta property="og:site_name" content="Collier Entertainment">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://collierentertainment.com/rusty-adventure.html">
+<link rel="icon" href="icons/pages/rusty-stack-32.png?v=tv2" sizes="32x32" type="image/png">
+<link rel="icon" href="icons/pages/rusty-stack-48.png?v=tv2" sizes="48x48" type="image/png">
+<link rel="apple-touch-icon" href="icons/pages/rusty-stack-apple-touch.png?v=tv2" sizes="180x180">
+<link rel="manifest" href="manifest.json?v=tv1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Rye&family=Orbitron:wght@500;700;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&family=IM+Fell+English+SC&family=Special+Elite&family=Josefin+Sans:wght@400;600&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="polish.css">
+<link rel="stylesheet" href="assets/broadcast-theme/site.css">
+<link rel="stylesheet" href="season.css?v=lite2">
+<script src="season.js?v=lite2"></script>
+<script src="app-mode.js?v=2"></script>
+<link rel="stylesheet" href="ce-site.css?v=4">
+<link rel="stylesheet" href="rusty-adventure.css?v=2">
+</head>
+<body class="broadcast-lite page-book">
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand ce-wm" href="index.html" aria-label="Collier Entertainment, home">COLLIER<span>ENTERTAINMENT</span></a>
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><span></span><span></span><span></span></button>
+  <nav id="site-nav" aria-label="Main">
+    <a class="nav-link" href="index.html">Home</a>
+    <a class="nav-link" href="audiobooks.html">Listen</a>
+    <a class="nav-link" href="play.html">Play</a>
+    <a class="nav-link" href="studio.html">Studio</a>
+    <div class="nav-group">
+      <button type="button" class="nav-label on" aria-expanded="false" aria-haspopup="true" aria-controls="menu-read">Read</button>
+      <div class="nav-menu" id="menu-read" role="group" aria-label="Read">
+        <a href="books.html">All Books</a>
+        <a href="jang-and-tom.html">Jang &amp; Tom: Wagon Masters (book)</a>
+        <a href="first-pulse.html">The First Pulse</a>
+        <a href="old-man-on-the-mountain.html">Old Man On The Mountain</a>
+        <a href="rusty-stack.html">The Rusty Stack</a>
+        <a href="novel.html">The Novel</a>
+      </div>
+    </div>
+    <span class="nav-small"><a href="gazette.html">Gazette</a><a href="thorne-lab.html">Thorne’s Lab</a><a href="past-inspirations.html">Past Inspirations</a><a href="art.html">Art</a><a href="about.html">About</a></span>
+
+    <a class="nav-link" href="account.html" style="font-size:15px">Sign in</a>
+</nav>
+</header>
+
+<main class="rca" id="rca">
+<header class="rca-head"><p class="rca-k">⚙ Choose Your Own Adventure Audiobook ⚙</p><h1>The Rusty Stack<small>Choose Your Own Adventure Audiobook</small></h1>
+<p class="rca-sub">Listen as the book is read to you. When a page ends, choose where to turn. Press and hold a choice to peek.</p></header>
+<div class="lbook closed" id="book">
+ <div class="spread" id="spread">
+  <section class="page pl" id="pgL">
+   <figure class="plate"><img id="rcaImg" src="images/the-rusty-stack.jpg" alt="" onerror="this.onerror=null;this.src='images/the-rusty-stack.jpg'"></figure>
+   <p class="kick" id="rcaNum"></p>
+   <h2 id="rcaTitle" class="rca-title">The Rusty Stack</h2>
+   <div class="rca-flags" id="rcaFlags"></div>
+   <span class="pno" id="pnoL"></span>
+  </section>
+  <section class="page pr" id="pgR">
+   <div id="rcaText" class="rca-text"></div>
+   <div id="rcaChoices" class="rca-choices"></div>
+   <span class="pno" id="pnoR"></span>
+  </section>
+ </div>
+ <i class="ribbon" aria-hidden="true"></i>
+ <button class="lcover" id="cover" aria-label="Open the book"><span class="cv-corner a"></span><span class="cv-corner b"></span><span class="cv-corner c"></span><span class="cv-corner d"></span>
+  <span class="cv-frame"><span class="cv-small">Captain's Log of the</span><span class="cv-title">The Rusty<br>Stack</span><span class="cv-rose" aria-hidden="true">✵</span><span class="cv-sub">A Choose Your Own Adventure<br>Audiobook</span><span class="cv-by">Jason Collier</span></span>
+  <span class="cv-clasp" aria-hidden="true"></span><span class="cv-open">Tap to open the book</span></button>
+ <div class="leaves" id="leaves" aria-hidden="true"></div>
+</div>
+<div class="peek" id="peek" aria-hidden="true"><div class="peek-page"><img id="peekImg" alt=""><p id="peekLine"></p><span id="peekNo"></span></div></div>
+<div class="deck" id="deck">
+ <button id="rcaPlay" class="rca-play" aria-label="Play">▶</button>
+ <div class="rca-prog"><div class="rca-bar"><i id="rcaBar"></i></div><span id="rcaTime">0:00</span></div>
+ <button id="rcaMute" class="rca-sm" aria-label="Mute">🔊</button>
+</div>
+<div class="rca-tools"><button id="rcaSkip" class="rca-sm">⏭ Skip narration</button><button id="rcaEndBtn" class="rca-sm">🏆 Endings <span id="rcaCount">0/8</span></button><button id="rcaRestart" class="rca-sm">↺ Restart</button></div>
+<div id="rcaEndings" class="rca-endings" hidden><h2>Endings found: <span id="rcaCount2">0/8</span></h2><div id="rcaEndList"></div><button class="rca-choice" id="rcaEndClose">Back to the book</button></div>
+<audio id="rcaAudio" preload="auto"></audio>
+</main>
+
+
+<footer>
+  <span>© <span id="y">2026</span> <span class="ce-foot-wm">Collier Entertainment</span></span>
+  <span class="visit-count" hidden></span>
+  <span class="foot-links"><a href="https://www.amazon.com/stores/author/B0GDW74Y5S" target="_blank" rel="noopener">Amazon Author Page</a><a href="mailto:outdoorsolution@bellsouth.net">Email</a><a href="https://venmo.com/u/Jason-Collier-40" target="_blank" rel="noopener noreferrer">Tip the trail boss</a></span>
+  <span class="foot-legal"><a href="app/">📲 Get the app</a><a href="privacy.html">Privacy</a><a href="support.html">Support</a><a href="credits.html">Credits</a></span>
+</footer>
+<script src="js/rusty-cyoa-data.js?v=1"></script>
+<script src="js/rusty-cyoa-audio.js?v=1"></script>
+<script src="rusty-adventure.js?v=1" defer></script>
+<script src="main.js?v=pass3" defer></script>
+<script src="links.js" defer></script>
+</body>
+</html>

@@ -38,12 +38,12 @@ $('#listenList').innerHTML=
  item(R+'images/jang-tom-rocket-stove.jpg','The Rocket Stove Rebellion','Jang & Tom radio show · Episode 4 · 13:36 · chapters','data-play="rocket"')+
  item(R+'images/jang-tom-checkers.jpg','The Checkers Championship','Jang & Tom radio show · Episode 5 · 13:34 · new · chapters','data-play="checkers"')+
  item('media/jang-tom-tv.jpg','Jang & Tom Radio Hour','All episodes · the Collier Radio Hour','data-go="jangtom"')+
+ item(R+'images/the-rusty-stack.jpg','The Rusty Stack: Choose Your Own Adventure','Audiobook · you choose what happens next · 8 endings','data-frame="rusty-adventure.html" data-title="The Rusty Stack Adventure"')+
  item(R+'images/dogs/cover-thumb.jpg','Dogs That Chose Me','Audiobook · a short story by Jason Collier · 11:04 · chapters','data-play="dogs"')+
  item(R+'images/old-man-on-the-mountain.jpg','Old Man On The Mountain','Audiobook · app player','data-play="oldman"')+
  item(R+'images/lab/born-twice-og.jpg',"Thorne's Lab Journal",'Dr. Thorne reads all 8 entries · 54:48','data-play="thorne"')+
  item(R+'images/jang-and-tom-wagon-masters.jpg','Jang & Tom audiobooks','Wagon Masters, Philadelphia Follies, Transcontinental','data-frame="audiobooks.html#jang-and-tom" data-title="Jang & Tom"')+
  item(R+'images/the-first-pulse.jpg','The First Pulse','Audiobook · Chapters One & Two in seven parts','data-frame="audiobooks.html#first-pulse" data-title="The First Pulse"')+
- item(R+'images/the-rusty-stack.jpg','The Rusty Stack','Animatic preview','data-frame="audiobooks.html#rusty-stack-animatic" data-title="The Rusty Stack"')+
  item(R+'images/art/philly-s01.jpg','Past Inspirations','Old-time radio and inspirations','data-frame="past-inspirations.html" data-title="Past Inspirations"');
 function card(img,t,s,f){return '<button class="card" data-frame="'+f+'" data-title="'+esc(t)+'"><img loading="lazy" src="'+img+'" alt=""><b>'+esc(t)+'</b><span>'+s+'</span></button>'}
 // Play tab: the same games as the website's Play page, read from ../games.js (CE_GAMES + the More row)
