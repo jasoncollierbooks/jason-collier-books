@@ -104,10 +104,10 @@ function isDev(){try{return localStorage.getItem('ce-dev')==='1'}catch(e){return
 // Pine Knot Club is free: signed in = member. (Dev-only test toggle behind ?dev=1.)
 function isSub(){var A=window.CollierAuth;if(A&&A.status==='in')return true;try{if(isDev()&&localStorage.getItem(SUBK)==='1')return true;if((!A||A.status==='loading')&&+(localStorage.getItem('ce-member')||0)>Date.now())return true}catch(e){}return false}
 var st=$('#subToggle');$('#devToggle').hidden=!isDev();st.checked=isDev()&&localStorage.getItem(SUBK)==='1';st.onchange=function(){try{localStorage.setItem(SUBK,st.checked?'1':'0')}catch(e){}toast(st.checked?'Dev: member mode':'Dev: free mode');if(!st.checked)loadBreaks();tierUI()};
-function loadBreaks(){if(window.JCBreaks||document.getElementById('cbjs'))return;var s=document.createElement('script');s.id='cbjs';s.src='../commercials.js';document.body.appendChild(s)}
+function loadBreaks(){if(window.JCBreaks||document.getElementById('cbjs'))return;var s=document.createElement('script');s.id='cbjs';s.src='../commercials.js?v=56';document.body.appendChild(s)}
 function breakNow(){if(window.CE&&CE.clubSpot&&CE.clubSpot())return true;if(!window.JCBreaks)return false;var ids=Object.keys(JCBreaks.spots);var was=!au.paused;au.pause();var fw=null,fm=[];try{if(!$('#frame').hidden){fw=fr.contentWindow;if(fw.__oldman)fw.__oldman.holdSim(true);fw.document.querySelectorAll('audio,video').forEach(function(m){if(!m.paused){m.pause();fm.push(m)}})}}catch(e){}JCBreaks.open(ids[Math.floor(Math.random()*ids.length)]);var w=setInterval(function(){if(!window.__jcBreakHold&&!document.querySelector('.jc-break, [class*=break-overlay]')){clearInterval(w);try{if(fw&&fw.__oldman)fw.__oldman.holdSim(false);fm.forEach(function(m){m.play().catch(function(){})})}catch(e){}if(was)au.play().catch(function(){})}},700);setTimeout(function(){},0);return true}
-// Club members (signed in): a break about every 8-10 min; free: every 2-3 min
-function gap(){return isSub()?480000+Math.random()*120000:120000+Math.random()*60000}
+// Club members (signed in): a break about every 8-10 min; free: every 5-6 min
+function gap(){return isSub()?480000+Math.random()*120000:300000+Math.random()*60000}
 var useMs=0,nextAt=gap(),lastT=Date.now();
 setInterval(function(){var n=Date.now(),busy=true;if(busy&&document.visibilityState==='visible')useMs+=n-lastT;if(isSub()&&nextAt<480000)nextAt=gap();else if(!isSub()&&nextAt>=480000)nextAt=gap();lastT=n;if(useMs>=nextAt){if(breakNow()){useMs=0;nextAt=gap()}}},1000);
 au.addEventListener('ended',function(){if(!isSub())breakNow()});

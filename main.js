@@ -516,7 +516,7 @@ document.querySelectorAll('.excerpt').forEach((ex, i) => {
     }
   }
   var script = document.createElement("script");
-  script.src = root + "commercials.js";
+  script.src = root + "commercials.js?v=56";
   script.defer = true;
   document.head.appendChild(script);
 })();

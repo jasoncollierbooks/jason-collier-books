@@ -1,7 +1,7 @@
 /* Station breaks: one short sponsor spot on the television.
    BREAK_INTERVAL_MS is the only timing constant. Change it here. */
 (function () {
-  var BREAK_INTERVAL_MS = 4 * 60 * 1000;
+  var BREAK_INTERVAL_MS = 5 * 60 * 1000, BREAK_SPREAD_MS = 60 * 1000; /* free: every 5-6 minutes */
   var STATIC_MS = 850;
   var CARD_MS = 2300;
   var BACK_MS = 1700;
@@ -191,7 +191,7 @@
   var MEMBER_MIN_MS = 8 * 60 * 1000, MEMBER_MAX_MS = 10 * 60 * 1000, MEMBER_SKIP_MS = 3000;
   function newTarget() {
     if (isMember()) return Math.round(MEMBER_MIN_MS + Math.random() * (MEMBER_MAX_MS - MEMBER_MIN_MS));
-    if (!TEST) return BREAK_INTERVAL_MS;
+    if (!TEST) return Math.round(BREAK_INTERVAL_MS + Math.random() * BREAK_SPREAD_MS);
     var fixed = 0;
     try { fixed = parseInt(localStorage.getItem(TEST_MS_KEY), 10) || 0; } catch (e) {}
     if (fixed > 0) return fixed;
