@@ -135,7 +135,7 @@
   var pageNo = document.getElementById("novel-page-no");
   var pile = document.getElementById("novel-stack");
   var caption = document.getElementById("novel-caption");
-  var paper = document.querySelector(".novel-paper");
+  var paper = document.querySelector(".tw-sheet") || document.querySelector(".novel-paper");
   var storage = root.JCNovelStorage;
   var extra = [];
   var lastGood = "";
@@ -147,6 +147,7 @@
   function pages() {
     return SEED.concat(extra);
   }
+  root.JCNovel = { pages: function () { return pages(); }, finish: function () { finishPage(false); } };
 
   function sanitize(list) {
     var out = [];
@@ -268,7 +269,7 @@
       }
       renderPile();
       updateFinish();
-      if (draft) draft.focus();
+      if (draft && draft.getAttribute("data-native") !== "0") draft.focus();
     };
     var run = function () {
       Promise.resolve(storage.saveSharedPage(page)).then(done).catch(done);

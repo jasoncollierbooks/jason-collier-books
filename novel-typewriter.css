@@ -1,0 +1,68 @@
+/* The multi-mind novel as a vintage typewriter */
+.tw{--cols:30;position:relative;max-width:760px;margin:0 auto;padding:0;background:none;border:0;box-shadow:none}
+.tw-window{position:relative;height:min(46vh,420px);overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+ border-radius:14px 14px 0 0;background:radial-gradient(ellipse at 50% 100%,#2a1f14,#0d0a06 75%);scrollbar-width:none;
+ -webkit-mask:linear-gradient(transparent 0,#000 14%);mask:linear-gradient(transparent 0,#000 14%)}
+.tw-window::-webkit-scrollbar{display:none}
+.tw-sheet{position:relative;width:calc(var(--cols) * 1ch + 56px);margin:0 auto;font:400 17px/1.55 "Special Elite","Courier New",monospace;
+ transition:transform .07s linear;will-change:transform;padding-top:38vh}
+.tw-paper{position:relative;padding:26px 28px 18px;color:#1f1a14;min-height:100%;
+ background:#f4ecd8 linear-gradient(90deg,#0000 0,#0000 26px,#c0392b22 26px,#c0392b22 27px,#0000 27px);
+ box-shadow:0 0 0 1px #d8cba8,0 -6px 18px #0008;background-image:radial-gradient(ellipse at 50% 0,#fffaf0,#efe4c9 70%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .25 0 0 0 0 .18 0 0 0 .08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-blend-mode:multiply}
+.tw-head{text-align:center;letter-spacing:.2em;font-size:.82em;margin:0 0 14px;opacity:.75}
+.tw-story p{margin:0 0 .7em;white-space:pre-wrap;word-wrap:break-word;color:#2a241c;text-shadow:0 0 .4px #2a241c}
+.tw-story p:nth-child(4n+2){color:#25201a}.tw-story .tw-pno{text-align:center;opacity:.55;margin:.4em 0}
+.tw-mark{text-align:center;margin:18px 0 8px;font-size:.82em;letter-spacing:.18em;text-transform:uppercase;color:#8a2a1e;opacity:.8}
+.tw-draft{white-space:pre;min-height:3.1em;color:#141009;text-shadow:0 0 .6px #141009}
+.tw-draft div{min-height:1.55em}
+.tw-caret{display:inline-block;width:.62ch;height:1.05em;margin-left:1px;vertical-align:-.15em;background:#8a2a1e;opacity:.75;animation:twb 1s steps(2) infinite}
+@keyframes twb{50%{opacity:0}}
+.tw-measure{position:absolute;visibility:hidden;white-space:pre}
+/* type guide + typebar at the printing point */
+.tw-guide{position:sticky;bottom:0;left:0;right:0;height:0;pointer-events:none;z-index:2}
+.tw-guide:before{content:"";position:absolute;left:50%;bottom:4px;width:22px;height:12px;margin-left:-11px;border:2px solid #c9b07a;border-bottom:0;border-radius:6px 6px 0 0;opacity:.75}
+.tw-bar{position:absolute;left:50%;bottom:-40px;width:4px;height:44px;margin-left:-2px;background:linear-gradient(#e8d39a,#7a6030);border-radius:2px;transform-origin:50% 100%;transform:rotate(70deg);opacity:0}
+.tw-bar.hit{animation:twhit .11s ease-out}
+@keyframes twhit{0%{opacity:1;transform:rotate(70deg)}55%{opacity:1;transform:rotate(0)}100%{opacity:0;transform:rotate(60deg)}}
+.tw-sheet.is-leaving{transform:translateY(-120%)!important;transition:transform .5s ease-in!important}
+.tw-sheet.is-fresh{animation:twfeed .5s ease-out}
+@keyframes twfeed{from{transform:translateY(40%)}}
+/* platen and roller */
+.tw-platen{position:relative;display:flex;align-items:center;height:34px;margin:0 -6px;z-index:3}
+.tw-roller{flex:1;height:30px;border-radius:15px;background:linear-gradient(#3a3a3a,#0d0d0d 45%,#262626 70%,#050505);box-shadow:0 4px 10px #000c,inset 0 2px 1px #ffffff22}
+.tw-knob{width:30px;height:38px;border-radius:9px;background:radial-gradient(circle at 40% 30%,#f6dd8e,#b8862e 55%,#5a3a10);box-shadow:0 3px 6px #000a;flex:0 0 auto}
+.tw-lever{position:absolute;left:-2px;top:-40px;width:64px;height:12px;border:0;border-radius:6px;padding:0;background:linear-gradient(#f6dd8e,#9a7428);transform-origin:100% 50%;transform:rotate(-24deg);box-shadow:0 2px 4px #000a;cursor:pointer}
+.tw-lever:after{content:"";position:absolute;left:-14px;top:-7px;width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 40% 30%,#3a2a1a,#0d0906)}
+.tw-lever.pull{animation:twpull .4s ease-out}
+@keyframes twpull{40%{transform:rotate(-8deg) translateX(18px)}}
+/* body and keys */
+.tw-body{position:relative;padding:16px 10px 18px;border-radius:0 0 22px 22px;margin-top:-6px;
+ background:linear-gradient(180deg,#1d1a17,#0b0a09);box-shadow:inset 0 1px 0 #ffffff14,0 14px 30px #000c;border:1px solid #3a2f22}
+.tw-rule{text-align:center;margin:0 0 10px;font:600 14px "Special Elite","Courier New",monospace;letter-spacing:.14em;color:#d4af37;text-transform:uppercase;opacity:.8}
+.tw-keys{display:flex;flex-direction:column;gap:7px;align-items:center;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
+.tw-row{display:flex;gap:5px;justify-content:center;width:100%}
+.tw-row.r1{padding-left:2%}.tw-row.r2{padding-left:5%}
+.tw-key{flex:0 1 44px;aspect-ratio:1;min-width:0;max-width:52px;padding:0;border-radius:50%;cursor:pointer;
+ background:radial-gradient(circle at 50% 38%,#2c2c2c,#060606 70%);border:3px solid #c9c2b0;
+ box-shadow:0 0 0 2px #1a1a1a,0 5px 0 #000,0 7px 8px #000a,inset 0 2px 2px #ffffff26;
+ color:#f3ecd9;font:700 clamp(13px,4vw,19px)/1 "Special Elite","Courier New",monospace;transition:transform .06s,box-shadow .06s}
+.tw-key span{display:block;pointer-events:none}
+.tw-key.down{transform:translateY(4px);box-shadow:0 0 0 2px #1a1a1a,0 1px 0 #000,0 2px 3px #000a,inset 0 2px 3px #0008}
+.tw-keys:not(.caps) .tw-row:not(.r0) .tw-key:not([data-k=SHIFT]):not([data-k=BACK]):not([data-k=SPACE]):not([data-k=RETURN]) span{text-transform:lowercase}
+.tw-keys.caps .tw-key span{text-transform:uppercase}
+.tw-shift.on{border-color:#d4af37;color:#d4af37}
+.tw-space{flex:0 1 260px;max-width:none;aspect-ratio:auto;height:clamp(30px,9vw,46px);border-radius:24px}
+.tw-return{flex:0 1 70px;max-width:none;aspect-ratio:auto;height:clamp(30px,9vw,46px);border-radius:24px;border-color:#d4af37}
+.tw-back{border-color:#b9876a}
+.tw-native{display:block;margin:14px auto 0;min-height:44px;padding:8px 16px;border-radius:22px;border:1px solid #d4af3766;background:transparent;color:#e8d8a8;font-size:15px;cursor:pointer}
+.tw-hidden-input{position:absolute!important;left:0;right:0;width:100%;opacity:0;pointer-events:none;clip-path:inset(50%);height:auto}
+.tw .novel-draft:not(.tw-hidden-input){display:block;width:100%;margin-top:12px;font:17px/1.5 "Special Elite","Courier New",monospace;background:#f4ecd8;color:#1f1a14;border-radius:8px;padding:10px}
+.tw .novel-meter{color:#e8d8a8;text-align:center;margin:12px 0 0;font-size:15px}
+.tw .novel-meter.flash{animation:twflash .6s}
+@keyframes twflash{30%{color:#ff9b7a}}
+.tw-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (min-width:760px){.tw{--cols:52}.tw-sheet{font-size:19px}.tw-window{height:min(50vh,470px)}.tw-body{padding:22px 34px 24px}.tw-row{gap:9px}.tw-key{max-width:58px}}
+@media (prefers-reduced-motion:reduce){.tw-sheet{transition:none}.tw-caret{animation:none}.tw-bar{display:none}.tw-sheet.is-fresh{animation:none}}
+.tw-key.tw-space{flex:1 1 220px;max-width:280px;aspect-ratio:auto}
+.tw-key.tw-return{flex:0 1 74px;max-width:84px;aspect-ratio:auto}
+.tw{z-index:7}
