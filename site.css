@@ -1,4 +1,0 @@
-/* Shared site styles (matches the app): Collier Entertainment wordmark, phone-size text and 44px buttons */
-.brand.ce-wm{display:inline-flex;flex-direction:column;align-items:flex-start;font-family:Georgia,"Times New Roman",serif;font-weight:700;font-size:1.25rem;line-height:1.05;letter-spacing:.22em;color:#d4af37;text-decoration:none;white-space:nowrap}
-.brand.ce-wm span{display:block;font-size:.52em;letter-spacing:.38em;color:#c9a95e}
-.ce-foot-wm{font-family:Georgia,serif;font-weight:700;letter-spacing:.18em;color:#d4af37}

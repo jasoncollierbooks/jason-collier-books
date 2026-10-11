@@ -1,0 +1,17 @@
+/* Shared site styles (matches the app): Collier Entertainment wordmark, phone-size text and 44px buttons */
+.brand.ce-wm{display:inline-flex;flex-direction:column;align-items:flex-start;font-family:Georgia,"Times New Roman",serif;font-weight:700;font-size:1.25rem;line-height:1.05;letter-spacing:.22em;color:#d4af37;text-decoration:none;white-space:nowrap}
+.brand.ce-wm span{display:block;font-size:.52em;letter-spacing:.38em;color:#c9a95e}
+.ce-foot-wm{font-family:Georgia,serif;font-weight:700;letter-spacing:.18em;color:#d4af37}
+
+/* Phone sizes to match the app: ~17px reading text, 44px tap targets (main.js lifts any smaller body text) */
+@media (max-width: 760px) {
+  body { font-size: 17px; }
+  .btn, a.btn, button, .nav-toggle, .nav-menu a, .nav-link, .foot-links a, .log-btn, .hbtn, .rs-play, .ab-part {
+    min-height: 44px !important; min-width: 44px; box-sizing: border-box;
+  }
+  .btn, a.btn { display: inline-flex; align-items: center; justify-content: center; font-size: 16px; padding-top: .55em; padding-bottom: .55em; }
+  .nav-menu a, .nav-link { display: flex; align-items: center; font-size: 17px; }
+  .foot-links a { display: inline-flex !important; align-items: center; padding: 0 .5em; }
+  footer, footer span, footer a, footer .ce-foot-wm { font-size: 15px !important; }
+  .rs-ep span, .rs-credit, .ab-note, .ab-synopsis, .tip-line, .lab-sub, .hand-note { font-size: 16px; }
+}

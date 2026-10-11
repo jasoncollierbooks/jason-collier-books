@@ -1,6 +1,6 @@
 /* Share the current page. Home uses the site line. Inner pages use the page title. */
 (() => {
-  const HOME_LINE = "Jason Collier — books, audiobooks and games";
+  const HOME_LINE = "Collier Entertainment — books, audiobooks and games";
   function payload() {
     /* Shared links open the app (deep link); without the app it still opens /app in the browser with this page open. */
     const home = document.body.classList.contains("home");
@@ -519,4 +519,22 @@ document.querySelectorAll('.excerpt').forEach((ex, i) => {
   script.src = root + "commercials.js";
   script.defer = true;
   document.head.appendChild(script);
+})();
+
+/* Phones: lift small reading text to app size (~17px body, 13px+ labels). Runs once the page has rendered. */
+(() => {
+  if (!window.matchMedia || !matchMedia("(max-width: 760px)").matches) return;
+  function lift(root) {
+    (root || document).querySelectorAll("main p, main li, main dd, main figcaption, main span, main small, main label, main a").forEach((el) => {
+      if (el.dataset.ceLift) return;
+      const own = [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim().length > 12);
+      if (!own) return;
+      const cs = getComputedStyle(el), fs = parseFloat(cs.fontSize);
+      const label = cs.textTransform === "uppercase" || parseFloat(cs.letterSpacing) > 1.5;
+      const min = label ? 13 : 16.5;
+      if (fs < min) { el.style.fontSize = min + "px"; el.dataset.ceLift = "1"; }
+    });
+  }
+  const run = () => { lift(); setTimeout(lift, 1500); };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run); else run();
 })();
