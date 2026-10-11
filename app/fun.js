@@ -106,11 +106,8 @@ document.addEventListener('click',function(e){if(e.target.closest('[data-soon]')
 var cl=$('#club');cl.appendChild(el('<label class="sub sfx"><input type="checkbox" id="motT"> Lively motion <small>(TV glow, slow hero drift, film grain movement). Off = calm.</small></label>'));var mt=$('#motT');mt.checked=ls('ce-motion')==='lively';mt.onchange=function(){ls('ce-motion',mt.checked?'lively':'calm');document.documentElement.classList.toggle('calm',!mt.checked)};cl.appendChild(el('<label class="sub sfx"><input type="checkbox" id="sfxT"> Button sounds &amp; haptics</label>'));var sx=$('#sfxT');sx.checked=ls('ce-sfx')!=='0';sx.onchange=function(){ls('ce-sfx',sx.checked?'1':'0')};
 // Help & info in settings: Privacy, Support, Credits
 cl.appendChild(el('<div class="appinfo inclub"><h4>Help &amp; info</h4><div class="infolinks"><button data-frame="privacy.html" data-title="Privacy">Privacy</button><button data-frame="support.html" data-title="Support">Support</button><button data-frame="credits.html" data-title="Credits">Credits</button></div></div>'));
-// ---------- Add to Home Screen hint (iPhone Safari, not yet installed) ----------
-(function(){var ios=/iphone|ipad|ipod/i.test(navigator.userAgent),standalone=navigator.standalone||matchMedia('(display-mode: standalone)').matches;
- if(!ios||standalone||ls('ce-a2hs')==='x')return;
- var a=el('<div class="a2hs" role="note"><button class="a2hs-x" aria-label="Close">×</button><b>Put Collier on your Home Screen</b><span>Tap the Share button <i>⬆︎</i> at the bottom of Safari, then <i>Add to Home Screen</i>. It opens full screen like an app, and shows keep playing with the screen locked.</span></div>');
- $('.tv',home).insertAdjacentElement('beforebegin',a);a.querySelector('.a2hs-x').onclick=function(){ls('ce-a2hs','x');a.remove()}})();
+// ---------- Add to Home Screen: small gold pill above the TV (../js/a2hs.js); hidden when installed or dismissed ----------
+(function(){if(!window.CEA2HS)return;var row=el('<div class="a2-row"></div>');$('.tv',home).insertAdjacentElement('beforebegin',row);if(!CEA2HS.mount(row))row.remove()})();
 // ---------- Lock-screen controls: position + chapter skip ----------
 if('mediaSession' in navigator){var ms=navigator.mediaSession;
  function pos(){try{if(au.duration&&isFinite(au.duration))ms.setPositionState({duration:au.duration,playbackRate:au.playbackRate,position:Math.min(au.currentTime,au.duration)})}catch(e){}}

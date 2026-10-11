@@ -1,0 +1,22 @@
+.a2-pill-wrap{display:inline-flex;align-items:center;gap:2px}
+.a2-pill-wrap[hidden]{display:none}
+.a2-pill{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;border-radius:20px;border:0;background:linear-gradient(#f0cf63,#c99a2a);color:#1a140d;font:700 15px Georgia,serif;box-shadow:0 2px 0 #7a5a12;cursor:pointer}
+.a2-pill svg{width:18px;height:18px}
+.a2-dismiss{width:36px;height:36px;border:0;background:none;color:#a8987a;font-size:14px;cursor:pointer}
+.a2-sheet{position:fixed;inset:0;z-index:2147483000;background:rgba(5,4,3,.72);display:flex;align-items:center;justify-content:center;padding:16px;font-family:Georgia,serif}
+.a2-sheet.a2-bottom{align-items:flex-end;padding-bottom:calc(70px + env(safe-area-inset-bottom))}
+.a2-sheet.a2-top{align-items:flex-start;justify-content:flex-end;padding-top:70px}
+.a2-card{position:relative;width:100%;max-width:400px;max-height:calc(100vh - 110px);overflow:auto;background:linear-gradient(#2a1f14,#1a140d);border:1px solid #d4af37;border-radius:18px;padding:20px 18px 16px;color:#f1e6cc;box-shadow:0 14px 40px #000;text-align:center}
+.a2-card h3{margin:6px 0 10px;font-size:21px;color:#f6d67a;font-family:Georgia,serif}
+.a2-card p{font-size:15px;color:#cdbf9f;margin:6px 0;line-height:1.4}
+.a2-icon{width:60px;height:60px;border-radius:14px;box-shadow:0 4px 12px #000a}
+.a2-steps{list-style:none;padding:0;margin:8px 0;text-align:left;counter-reset:s}
+.a2-steps li{display:flex;align-items:center;gap:12px;padding:10px;margin:6px 0;border:1px solid #3d2f1f;border-radius:12px;background:#120d08;font-size:16px;line-height:1.35;counter-increment:s}
+.a2-steps li::before{content:counter(s);flex:0 0 26px;height:26px;border-radius:50%;background:#d4af37;color:#1a140d;font-weight:700;display:flex;align-items:center;justify-content:center}
+.a2-ico{flex:0 0 40px;height:40px;border-radius:10px;background:#f1e6cc;color:#1b6ef3;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700}
+.a2-x{position:absolute;right:6px;top:6px;width:44px;height:44px;border:0;background:none;color:#cdbf9f;font-size:20px;cursor:pointer}
+.a2-ok{margin-top:8px;min-height:44px;padding:0 28px;border-radius:22px;border:0;background:linear-gradient(#f0cf63,#c99a2a);color:#1a140d;font:700 16px Georgia,serif}
+.a2-note{font-size:14px!important}
+.a2-arrow{position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom));transform:translateX(-50%);font-size:40px;color:#f0cf63;text-shadow:0 2px 8px #000;pointer-events:none}
+.a2-top .a2-arrow{top:8px;bottom:auto;left:auto;right:56px;transform:rotate(180deg)}
+html:not(.calm) .a2-arrow{animation:a2b 1.2s ease-in-out infinite}@keyframes a2b{50%{margin-bottom:10px}}
