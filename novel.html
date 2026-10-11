@@ -18,6 +18,7 @@
 <meta name="twitter:image" content="https://collierentertainment.com/assets/broadcast-theme/og-broadcast.jpg">
 <link rel="canonical" href="https://collierentertainment.com/novel.html">
 <link rel="icon" href="icons/pages/novel-32.png?v=tv2" sizes="32x32" type="image/png">
+<link rel="icon" href="images/icons/typewriter.svg" type="image/svg+xml">
 <link rel="icon" href="icons/pages/novel-48.png?v=tv2" sizes="48x48" type="image/png">
 <link rel="apple-touch-icon" href="icons/pages/novel-apple-touch.png?v=tv2" sizes="180x180">
 <link rel="manifest" href="manifest.json?v=tv1">
@@ -28,6 +29,7 @@
 <link rel="stylesheet" href="polish.css">
 <link rel="stylesheet" href="assets/broadcast-theme/site.css">
 <link rel="stylesheet" href="novel.css">
+<link rel="stylesheet" href="novel-typewriter.css?v=1">
 <link rel="stylesheet" href="season.css?v=lite2">
 <script src="season.js?v=lite2"></script>
 <script src="app-mode.js?v=2"></script>
@@ -77,21 +79,29 @@
          and JCNovelStorage.saveSharedPage when a host is connected.
          There is no approval queue. A clean page stacks immediately. -->
     <div class="novel-desk">
-      <div class="novel-machine">
-        <div class="novel-platen" aria-hidden="true">
-          <span class="novel-knob"></span>
-          <span class="novel-scale"></span>
-          <span class="novel-lever"></span>
-          <span class="novel-knob"></span>
+      <div class="novel-machine tw" id="tw">
+        <div class="tw-window" id="tw-window">
+          <div class="tw-sheet" id="tw-sheet">
+            <div class="tw-paper">
+              <p class="tw-head">THE MULTI-MIND NOVEL</p>
+              <div class="tw-story" id="tw-story"></div>
+              <p class="tw-mark" id="novel-page-no">Open page</p>
+              <div class="tw-draft" id="tw-draft" aria-live="off"></div>
+            </div>
+          </div>
+          <div class="tw-guide" aria-hidden="true"><i class="tw-bar" id="tw-bar"></i></div>
         </div>
-        <div class="novel-paper">
-          <p class="novel-kicker-ink" id="novel-page-no">Open page</p>
-          <h2 class="novel-open-title">The page in the machine</h2>
-          <p class="novel-rule">Keep it clean. No curses.</p>
-          <label class="novel-field-label" for="novel-draft">Help write the next page</label>
-          <textarea id="novel-draft" class="novel-draft" rows="7" maxlength="760" placeholder="The next line of the story…" autocomplete="off" spellcheck="true"></textarea>
+        <div class="tw-platen" aria-hidden="true"><span class="tw-knob l"></span><span class="tw-roller"></span><span class="tw-knob r"></span>
+          <button type="button" class="tw-lever" id="tw-return" aria-label="Carriage return"></button></div>
+        <div class="tw-body">
+          <p class="tw-rule">Keep it clean. No curses.</p>
+          <div class="tw-keys" id="tw-keys" role="group" aria-label="Typewriter keys"></div>
+          <button type="button" class="tw-native" id="tw-native">⌨ Use my phone’s keyboard instead</button>
+          <label class="novel-field-label tw-sr" for="novel-draft">Help write the next page</label>
+          <textarea id="novel-draft" class="novel-draft tw-hidden-input" data-native="0" rows="7" maxlength="760" placeholder="The next line of the story…" autocomplete="off" spellcheck="true"></textarea>
           <p class="novel-meter" id="novel-meter" aria-live="polite">Write a little more, then finish the page.</p>
         </div>
+        <div class="novel-paper" hidden></div>
       </div>
 
       <div class="novel-actions">
@@ -124,6 +134,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
 <script src="main.js?v=pass3" defer></script>
-<script src="novel.js" defer></script>
+<script src="novel.js?v=2" defer></script>
+<script src="novel-typewriter.js?v=1" defer></script>
 </body>
 </html>
