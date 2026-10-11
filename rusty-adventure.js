@@ -30,7 +30,7 @@ function showChoices(){
   ended=true;var n=D.nodes[ST.id],h='';
   if(n.ending){FOUND[ST.id]=1;save();count();
     h='<p class="rca-endtag">— '+esc(n.tag)+' —</p><button class="rca-choice" data-act="restart">↺ Start a new voyage<em>Turn back to page 1</em></button><button class="rca-choice" data-act="endings">🏆 Endings found: '+Object.keys(FOUND).length+'/8</button>';}
-  else h='<p class="rca-ask">What do you do?</p>'+n.choices.map(function(c,i){return '<button class="rca-choice" data-i="'+i+'">'+esc(c.label)+'<em>Turn to page '+PAGE[c.target]+'</em><span class="pk" data-peek="'+i+'" aria-label="Peek">👁</span></button>'}).join('');
+  else h='<p class="rca-ask">What do you do?</p>'+n.choices.map(function(c,i){return (c.req&&!ST.flags[c.req]?'<button class="rca-choice gated" data-i="'+i+'">'+esc(c.label)+'<em>Turn the page…</em></button>':'<button class="rca-choice" data-i="'+i+'">'+esc(c.label)+'<em>Turn to page '+PAGE[c.target]+'</em><span class="pk" data-peek="'+i+'" aria-label="Peek">👁</span></button>')}).join('');
   var el=$('rcaChoices');el.innerHTML=h;el.classList.add('on');
 }
 function render(play){
@@ -87,7 +87,7 @@ function peekOn(i){var c=D.nodes[ST.id].choices[i];if(!c)return;var t=c.target,n
   $('peekLine').textContent=n.text[0];$('peekNo').textContent='p. '+PAGE[t];pk.classList.add('on');peeking=true;rustle(1)}
 function peekOff(){clearTimeout(holdT);if(peeking){pk.classList.remove('on');peeking=false;suppress=true;setTimeout(function(){suppress=false},350)}}
 var ch=$('rcaChoices');
-ch.addEventListener('pointerdown',function(e){var b=e.target.closest('[data-i]');if(!b)return;var i=+b.dataset.i;
+ch.addEventListener('pointerdown',function(e){var b=e.target.closest('[data-i]');if(!b)return;if(b.classList.contains('gated'))return;var i=+b.dataset.i;
   if(e.target.closest('[data-peek]')){e.preventDefault();peekOn(i);return}
   holdT=setTimeout(function(){peekOn(i)},380)});
 ['pointerup','pointercancel','pointerleave'].forEach(function(ev){ch.addEventListener(ev,peekOff)});
