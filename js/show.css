@@ -1,0 +1,29 @@
+/* Old-time radio hour show page (CEShow.render). */
+.rshow{--wood1:#5a3519;--wood2:#3a200e;--gold:#e0b84f;--sepia:#f3e3c3;max-width:760px;margin:0 auto;font-family:Georgia,'Times New Roman',serif;color:var(--sepia);text-align:left}
+.rs-cab{position:relative;border-radius:28px 28px 14px 14px;padding:18px 16px 16px;background:repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 3px,transparent 3px 11px),linear-gradient(170deg,#7a4a24,var(--wood1) 40%,var(--wood2));box-shadow:inset 0 2px 0 #a8743f,inset 0 -6px 14px #0008,0 14px 30px #000a;border:2px solid #2a1608}
+.rs-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.rs-kicker{font:700 12px/1.2 'Futura','Avenir Next','Gill Sans',sans-serif;letter-spacing:.3em;text-transform:uppercase;color:var(--gold)}
+.rs-air{display:inline-flex;align-items:center;gap:7px;padding:5px 10px;border:2px solid #7a1d12;border-radius:6px;background:#1c0c08;font:800 12px 'Futura','Avenir Next',sans-serif;letter-spacing:.2em;color:#ff5a3c;text-shadow:0 0 8px #ff3b1f;white-space:nowrap}
+.rs-air i{width:9px;height:9px;border-radius:50%;background:#ff3b1f;box-shadow:0 0 10px #ff3b1f}
+html:not(.calm) .rs-air i{animation:rsBlink 2.4s infinite}@keyframes rsBlink{50%{opacity:.45}}
+.rs-dial{margin:14px 0 12px;border-radius:120px 120px 12px 12px;padding:22px 16px 16px;text-align:center;background:radial-gradient(ellipse at 50% 120%,#f6dfa0,#d9b46a 55%,#a77c34);color:#2a1608;border:3px solid #2a1608;box-shadow:inset 0 0 22px #6b4a1a}
+.rs-dial h2{margin:0;font:700 clamp(30px,8vw,46px)/1.05 'Didot','Bodoni 72',Georgia,serif;letter-spacing:.04em;color:#2a1608}
+.rs-dial p{margin:6px 0 0;font-style:italic;font-size:15px;line-height:1.35;color:#3a220e}
+.rs-season{display:block;margin-top:8px;font:700 11px 'Futura','Avenir Next',sans-serif;letter-spacing:.24em;text-transform:uppercase}
+.rs-grille{height:26px;border-radius:6px;background:repeating-linear-gradient(90deg,#2a1608 0 4px,#8c6a3a 4px 7px);opacity:.9}
+.rs-tonight{margin:16px 0;padding:16px;border:1px solid var(--gold);border-radius:12px;background:#1a0f07e6}
+.rs-tonight small,.rs-list h3{display:block;font:700 11px 'Futura','Avenir Next',sans-serif;letter-spacing:.26em;text-transform:uppercase;color:var(--gold)}
+.rs-tonight b{display:block;margin:6px 0 2px;font:700 24px/1.15 Georgia,serif;color:#fff1cf}
+.rs-tonight p{margin:6px 0 10px;font-size:15px;line-height:1.45;color:#e8d6b2}
+.rs-tonight img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;border:1px solid #6b4a1a;margin-top:12px}
+.rs-play{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 20px;border-radius:22px;border:0;background:linear-gradient(#f0cf63,#c99a2a);color:#1a140d!important;font:700 16px Georgia,serif;box-shadow:0 2px 0 #7a5a12;cursor:pointer;text-decoration:none;white-space:nowrap}
+.rs-list{margin:16px 0 0;padding:14px;border-radius:12px;background:#f3e3c3;color:#2a1608;box-shadow:inset 0 0 30px #c9a86a}
+.rs-list h3{color:#7a4a14;text-align:center;border-bottom:2px double #7a4a14;padding-bottom:8px;margin:0 0 4px}
+.rs-ep{display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:center;padding:12px 2px;border-bottom:1px dotted #8c6a3a}
+.rs-ep:last-child{border-bottom:0}
+.rs-n{font:700 22px 'Didot','Bodoni 72',Georgia,serif;text-align:center;color:#7a4a14}
+.rs-ep b{display:block;font-size:17px;line-height:1.2;color:#2a1608}
+.rs-ep span{display:block;font-size:13.5px;line-height:1.35;color:#5a3e22}
+.rs-ep .rs-play{min-height:38px;padding:0 14px;font-size:14px}
+.rs-ep audio{grid-column:1/-1;width:100%}
+.rs-credit{margin:10px 0 0;font-size:12px;opacity:.75;text-align:center}

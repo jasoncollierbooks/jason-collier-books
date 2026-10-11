@@ -18,6 +18,7 @@ var TRACKS={
  ridge:{t:"The Treasure of Miller's Ridge",s:'Jang & Tom · radio show · '+EP1.len,src:EP1.src,art:'media/jang-tom-tv.jpg',ep:1,
   credit:'Music by Kevin MacLeod (incompetech.com), licensed under Creative Commons: By Attribution 4.0',
   ch:[[0,'Cold open'],[30,'Pine Knot intro'],[114,'Sponsor: I Spy'],[144,'The napkin map & Over Yonder'],[218,'Hugh / Nobody cooks'],[335,"Up Miller's Ridge"],[461,'Loafing'],[527,'The groundhog'],[585,'Old Man Jenkins'],[701,'Sponsor break'],[842,'Treasure on the log'],[888,'Sponsor: The First Pulse'],[935,'Goodnight, Pine Knot']]},
+ possum:(function(){var e=CE_SHOWS.jangtom.episodes[1];return {t:e.t,s:'Jang & Tom · radio show · Episode 2 · '+e.len,src:R+e.src,art:R+e.art,ep:2,credit:CE_SHOWS.jangtom.credit,ch:e.ch}})(),
  oldman:{t:'Old Man On The Mountain',s:'Audiobook · Part 1',src:R+'old-man-audiobook/audio/om01.m4a',art:R+'images/old-man-on-the-mountain.jpg'}};
 var esc=function(s){return s.replace(/&/g,'&amp;')};
 // Books + art
@@ -27,6 +28,8 @@ $('#art').innerHTML=ART.map(function(a){return '<button class="poster sq" data-f
 function item(img,t,s,attrs){return '<button class="item" '+attrs+'><img loading="lazy" src="'+img+'" alt=""><div><b>'+esc(t)+'</b><span>'+s+'</span></div><span class="go">›</span></button>'}
 $('#listenList').innerHTML=
  item('media/jang-tom-tv.jpg',"The Treasure of Miller's Ridge",'Jang & Tom radio show · '+EP1.len+' · chapters & listen-along','data-play="ridge"')+
+ item(R+'images/hero/hero-1.jpg','The Great Possum Caper','Jang & Tom radio show · Episode 2 · 18:21 · chapters','data-play="possum"')+
+ item('media/jang-tom-tv.jpg','Jang & Tom Radio Show','All episodes · the Collier Radio Hour','data-go="jangtom"')+
  item(R+'images/old-man-on-the-mountain.jpg','Old Man On The Mountain','Audiobook · app player','data-play="oldman"')+
  item(R+'images/jang-and-tom-wagon-masters.jpg','Jang & Tom audiobooks','Wagon Masters, Philadelphia Follies, Transcontinental','data-frame="audiobooks.html#jang-and-tom" data-title="Jang & Tom"')+
  item(R+'images/the-first-pulse.jpg','The First Pulse','Audiobook · Chapters One & Two in seven parts','data-frame="audiobooks.html#first-pulse" data-title="The First Pulse"')+
@@ -103,6 +106,7 @@ if(window.CollierAuth)CollierAuth.onChange(clubRefresh);
 window.CE={au:au,load:load,go:go,toast:toast,isSub:isSub,TRACKS:TRACKS,cur:function(){return curT},frame:openFrame};
 // boot
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js',{scope:'./'}).catch(function(){});
+if(window.CEShow)CEShow.render(document.getElementById('jtShow'),{show:'jangtom',root:R,app:true});
 var h=location.hash.slice(1);if(h)go(h);
 setTimeout(function(){var s=$('#splash');s&&s.classList.add('out')},700);
 })();
