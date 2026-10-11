@@ -111,7 +111,7 @@ var h=location.hash.slice(1);if(h)go(h);
 setTimeout(function(){var s=$('#splash');s&&s.classList.add('out')},700);
 })();
 // keep every same-site link inside the app (iframe pages): site nav maps to app tabs, other pages open in the frame, only truly outside links leave
-(function(){var $=function(s){return document.querySelector(s)},fr=document.querySelector('#frame iframe'),go=function(id){window.CE.go(id)},openFrame=function(a,b){window.CE.frame(a,b)};var TAB={'':'home','index.html':'home','books.html':'read','audiobooks.html':'listen','listen.html':'listen','play.html':'play','studio.html':'studio','art.html':'home'};
+(function(){var $=function(s){return document.querySelector(s)},fr=document.querySelector('#frame iframe'),go=function(id){window.CE.go(id)},openFrame=function(a,b){window.CE.frame(a,b)};var TAB={'':'home','index.html':'home','books.html':'read','audiobooks.html':'listen','listen.html':'listen','play.html':'play','studio.html':'studio','art.html':'home','live.html':'guide','jang-tom.html':'jangtom'};
 function route(u){var p=u.pathname.replace(/^\//,'');if(p==='app/'||p.indexOf('app/')===0){$('#frame').hidden=true;fr.src='about:blank';go('home');return}
  if(TAB[p]&&!u.hash&&p!=='studio.html'&&p!=='art.html'){$('#frame').hidden=true;fr.src='about:blank';go(TAB[p]);return}
  var s=p+u.search.replace(/[?&]app=1/,'').replace(/^&/,'?')+u.hash;openFrame(s||'index.html',$('#fTitle').textContent)}
