@@ -823,7 +823,7 @@ function paintStation() {
   el.stBadge.textContent = "Story restored";
   el.stBadge.hidden = !(st.live && closed);
   el.tune.disabled = !st.live;
-  el.tune.textContent = !st.live ? "Coming soon" : closed ? "Tune in again" : "Tune in";
+  el.tune.textContent = !st.live ? "Off the air" : closed ? "Tune in again" : "Tune in";
   const note = document.getElementById("st-note");
   if (note) {
     note.hidden = !st.note;
