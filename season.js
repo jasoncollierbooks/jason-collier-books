@@ -814,6 +814,8 @@
   }
 
   function boot() {
+    /* Toned-down look (no ribbon, minimal cobwebs, no candy-corn trim) on every page */
+    if (document.body) { document.body.setAttribute("data-season-ribbon", "off"); document.body.setAttribute("data-season-lite", ""); }
     if (root.getAttribute("data-season-on") === season) return;
     root.setAttribute("data-season-on", season);
     mountNav();
