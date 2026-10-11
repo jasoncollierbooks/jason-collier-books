@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-title" content="Collier">
 <script>try{if(localStorage.getItem("ce-motion")!=="lively")document.documentElement.classList.add("calm")}catch(e){document.documentElement.classList.add("calm")}</script>
 <link rel="apple-touch-icon" href="icons/icon-180.png"><link rel="icon" href="icons/icon-192.png">
-<link rel="manifest" href="manifest.json"><link rel="stylesheet" href="app.css?v=42"><link rel="stylesheet" href="../commercials.css?v=42"><link rel="stylesheet" href="../js/gazette.css?v=42"><link rel="stylesheet" href="../js/a2hs.css?v=42"><link rel="stylesheet" href="../js/show.css?v=42">
+<link rel="manifest" href="manifest.json"><link rel="stylesheet" href="app.css?v=43"><link rel="stylesheet" href="../commercials.css?v=43"><link rel="stylesheet" href="../js/gazette.css?v=43"><link rel="stylesheet" href="../js/a2hs.css?v=43"><link rel="stylesheet" href="../js/show.css?v=43">
 </head><body>
 <div id="splash"><img src="icons/icon-512.png" alt=""><div class="brand">COLLIER<span>ENTERTAINMENT</span></div></div>
 <main id="app">
@@ -48,11 +48,7 @@
   <button class="poster tall" data-frame="audiobooks.html#philadelphia-follies" data-title="Jang &amp; Tom"><img src="../media/philly_part1of7_poster.jpg" alt=""><b>Philadelphia Follies</b><span>Watch</span></button>
   <button class="poster tall" data-frame="audiobooks.html#transcontinental" data-title="Jang &amp; Tom"><img src="../media/transcon_part1of4_poster.jpg" alt=""><b>Transcontinental</b><span>Watch</span></button>
   <button class="poster tall" data-frame="audiobooks.html#first-pulse" data-title="The First Pulse"><img src="../media/firstpulse_part1of7_poster.jpg" alt=""><b>The First Pulse</b><span>Watch</span></button></div></div>
- <div class="shelf"><h3>Play <small>games</small></h3><div class="rail">
-  <button class="poster wide" data-frame="old-man-game/" data-title="Old Man Hunt"><img src="media/oldman-hunt-card.jpg" alt=""><b>Old Man Hunt</b><span>Horror hunt</span></button>
-  <button class="poster wide" data-frame="book-worlds/" data-title="Book Worlds"><img src="../book-worlds/assets/play-cover.webp" alt=""><b>Book Worlds</b><span>Step inside the books</span></button>
-  <button class="poster wide" data-frame="i-spy.html" data-title="I Spy"><img src="../images/scenes/transcon-s01.jpg" alt=""><b>I Spy</b><span>Find the hidden things</span></button>
-  <button class="poster wide" data-frame="coloring.html" data-title="Coloring"><img src="../coloring/campfire.png" alt=""><b>Coloring</b><span>Color the pages</span></button></div></div>
+ <div class="shelf"><h3>Play <small>games</small></h3><div class="rail" id="homePlay"></div></div>
  <div class="shelf"><h3>Studio <small>paint &amp; art</small></h3></div>
  <div class="paint"><img src="../images/jason-art/painting-lighthouse-at-dusk.jpg" alt="Lighthouse at Dusk by Jason Collier"><div><span class="np">OIL STUDIO</span><h3>Paint like the masters</h3><p>Mix on the palette, load the knife, paint mountains and trees.</p><button class="btn" data-go="studio">🖌 Paint now</button></div></div>
  <div class="shelf"><h3 class="sub-h">Jason's Art</h3><div class="rail" id="art"></div></div>
@@ -102,7 +98,7 @@
  <button data-go="home" class="on"><i>⌂</i>Home</button><button data-go="listen"><i>🎧</i>Listen</button><button data-go="play"><i>🎮</i>Play</button><button data-go="studio"><i>🎨</i>Studio</button><button data-go="read"><i>📖</i>Read</button>
 </nav>
 <audio id="au" preload="metadata"></audio>
-<script src="../js/auth.js?v=42"></script><script src="../js/a2hs.js?v=42"></script><script src="../js/gazette-data.js?v=42"></script><script src="../js/gazette.js?v=42"></script><script src="../games.js?v=42"></script><script src="../js/shows-data.js?v=42"></script><script src="../js/show.js?v=42"></script><script src="../js/live-data.js?v=42"></script><script src="../js/dogs-data.js?v=42"></script><script src="app.js?v=42"></script><script src="fun.js?v=42"></script><script src="social.js?v=42"></script><script src="club.js?v=42"></script><script src="deeplink.js?v=42"></script><script>(function(){var A=window.CollierAuth;if(!A)return;A.onChange(function(){var c=document.getElementById('acctChip'),l=document.getElementById('acctLine'),g=document.querySelector('#acctCard .acct-go'),cta=document.getElementById('ctaLine'),tk=document.getElementById('ticketSub');
+<script src="../js/auth.js?v=43"></script><script src="../js/a2hs.js?v=43"></script><script src="../js/gazette-data.js?v=43"></script><script src="../js/gazette.js?v=43"></script><script src="../games.js?v=43"></script><script src="../js/shows-data.js?v=43"></script><script src="../js/show.js?v=43"></script><script src="../js/live-data.js?v=43"></script><script src="../js/dogs-data.js?v=43"></script><script src="app.js?v=43"></script><script src="fun.js?v=43"></script><script src="social.js?v=43"></script><script src="club.js?v=43"></script><script src="deeplink.js?v=43"></script><script>(function(){var A=window.CollierAuth;if(!A)return;A.onChange(function(){var c=document.getElementById('acctChip'),l=document.getElementById('acctLine'),g=document.querySelector('#acctCard .acct-go'),cta=document.getElementById('ctaLine'),tk=document.getElementById('ticketSub');
 if(A.status==='in'){var e=A.user&&A.user.email||'';c.textContent='Member';c.setAttribute('aria-label','Your account');l.textContent='You\u2019re in! Member as '+e;g.textContent='Account';cta.textContent='You\u2019re a member: fewer commercials, the full studio and offline downloads. Account & email settings →';tk.textContent='Member'}
 else if(A.status==='offline'){c.hidden=true;document.getElementById('acctCard').hidden=true}
 else{c.textContent='Join free';c.setAttribute('aria-label','Join the Club free: sign in');l.textContent='Join free: sign in with your email';g.textContent='Join free'}})})();</script></body></html>
