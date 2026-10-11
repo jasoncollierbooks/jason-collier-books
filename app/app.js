@@ -15,11 +15,12 @@ var ART=['painting-lighthouse-at-dusk','painting-autumn-hillside','painting-wild
 var EP1={src:R+'media/jang-tom-millers-ridge.mp3',len:'16:49',secs:1009};
 window.CE_EP1=EP1;
 var TRACKS={
- ridge:{t:"The Treasure of Miller's Ridge",s:'Jang & Tom · radio show · '+EP1.len,src:EP1.src,art:'media/jang-tom-tv.jpg',ep:1,
+ ridge:{t:"The Treasure of Miller's Ridge",s:'Jang & Tom · radio show · '+EP1.len,src:EP1.src,art:R+'images/jang-tom-millers-ridge.jpg',ep:1,
   credit:'Music by Kevin MacLeod (incompetech.com), licensed under Creative Commons: By Attribution 4.0',
   ch:[[0,'Cold open'],[30,'Pine Knot intro'],[114,'Sponsor: I Spy'],[144,'The napkin map & Over Yonder'],[218,'Hugh / Nobody cooks'],[335,"Up Miller's Ridge"],[461,'Loafing'],[527,'The groundhog'],[585,'Old Man Jenkins'],[701,'Sponsor break'],[842,'Treasure on the log'],[888,'Sponsor: The First Pulse'],[935,'Goodnight, Pine Knot']]},
  possum:(function(){var e=CE_SHOWS.jangtom.episodes[1];return {t:e.t,s:'Jang & Tom · radio show · Episode 2 · '+e.len,src:R+e.src,art:R+e.art,ep:2,credit:CE_SHOWS.jangtom.credit,ch:e.ch}})(),
  icefish:(function(){var e=CE_SHOWS.jangtom.episodes[2];return {t:e.t,s:'Jang & Tom · radio show · Episode 3 · '+e.len,src:R+e.src,art:R+e.art,ep:3,credit:CE_SHOWS.jangtom.credit,ch:e.ch}})(),
+ checkers:(function(){var e=CE_SHOWS.jangtom.episodes[4];return {t:e.t,s:'Jang & Tom · radio show · Episode 5 · '+e.len,src:R+e.src,art:R+e.art,ep:5,credit:CE_SHOWS.jangtom.credit,ch:e.ch}})(),
  rocket:(function(){var e=CE_SHOWS.jangtom.episodes[3];return {t:e.t,s:'Jang & Tom · radio show · Episode 4 · '+e.len,src:R+e.src,art:R+e.art,ep:4,credit:CE_SHOWS.jangtom.credit,ch:e.ch}})(),
  dogs:{t:CE_DOGS.t,s:'Audiobook · Jason Collier · '+CE_DOGS.len,src:R+CE_DOGS.src,art:R+CE_DOGS.art,ch:CE_DOGS.ch},
  thorne:{t:"Thorne's Lab Journal",s:'Dr. Thorne reads the research log · 54:48',src:R+'media/thorne-lab-journal.mp3',art:R+'images/lab/born-twice-og.jpg'},
@@ -31,10 +32,11 @@ $('#books').innerHTML=BOOKS.map(function(b){return b.soon?'<span class="bk"><img
 $('#art').innerHTML=ART.map(function(a){return '<button class="poster sq" data-frame="art.html" data-title="Art"><img loading="lazy" src="'+R+'images/jason-art/'+a+'-thumb.jpg" alt="'+a.replace(/^(painting|sketch)-/,'').replace(/-/g,' ')+' by Jason Collier"><b>'+a.replace(/^(painting|sketch)-/,'').replace(/-/g,' ')+'</b></button>'}).join('');
 function item(img,t,s,attrs){return '<button class="item" '+attrs+'><img loading="lazy" src="'+img+'" alt=""><div><b>'+esc(t)+'</b><span>'+s+'</span></div><span class="go">›</span></button>'}
 $('#listenList').innerHTML=
- item('media/jang-tom-tv.jpg',"The Treasure of Miller's Ridge",'Jang & Tom radio show · '+EP1.len+' · chapters & listen-along','data-play="ridge"')+
- item(R+'images/pine-knot.jpg','The Great Possum Caper','Jang & Tom radio show · Episode 2 · 18:21 · chapters','data-play="possum"')+
+ item(R+'images/jang-tom-millers-ridge.jpg',"The Treasure of Miller's Ridge",'Jang & Tom radio show · '+EP1.len+' · chapters & listen-along','data-play="ridge"')+
+ item(R+'images/jang-tom-possum-caper.jpg','The Great Possum Caper','Jang & Tom radio show · Episode 2 · 18:21 · chapters','data-play="possum"')+
  item(R+'images/jang-tom-ice-fishin.jpg',"The Ice Fishin' Fiasco",'Jang & Tom radio show · Episode 3 · 14:02 · chapters','data-play="icefish"')+
- item(R+'images/jang-tom-rocket-stove.jpg','The Rocket Stove Rebellion','Jang & Tom radio show · Episode 4 · 13:36 · new · chapters','data-play="rocket"')+
+ item(R+'images/jang-tom-rocket-stove.jpg','The Rocket Stove Rebellion','Jang & Tom radio show · Episode 4 · 13:36 · chapters','data-play="rocket"')+
+ item(R+'images/pine-knot.jpg','The Checkers Championship','Jang & Tom radio show · Episode 5 · 13:34 · new · chapters','data-play="checkers"')+
  item('media/jang-tom-tv.jpg','Jang & Tom Radio Show','All episodes · the Collier Radio Hour','data-go="jangtom"')+
  item(R+'images/dogs/cover-thumb.jpg','Dogs That Chose Me','Audiobook · a short story by Jason Collier · 11:04 · chapters','data-play="dogs"')+
  item(R+'images/old-man-on-the-mountain.jpg','Old Man On The Mountain','Audiobook · app player','data-play="oldman"')+
