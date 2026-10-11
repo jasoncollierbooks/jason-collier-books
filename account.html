@@ -274,5 +274,13 @@
   });
 })();
 </script>
+<style>.memnote{position:fixed;left:50%;top:10px;transform:translateX(-50%);z-index:1000;display:flex;align-items:center;gap:6px;max-width:92%;padding:4px 4px 4px 16px;border-radius:24px;border:1px solid #d4af37;background:#2a1f14;color:#f6ead0;font:15px Georgia,serif;box-shadow:0 4px 14px #000a;transition:opacity .5s,transform .5s}.memnote.out{opacity:0;transform:translate(-50%,-20px);pointer-events:none}.memnote-x{width:44px;height:44px;flex:none;border:0;background:none;color:#cdbf9f;font-size:16px;cursor:pointer}</style>
+<script>/* signed-in notice (site): once per sign-in, ~4 s then fades; X closes at once. In the app frame the app shows its own. */
+(function(){var A=window.CollierAuth;if(!A||window.parent!==window)return;var note=null,t=0;
+function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){}}
+function hide(){if(!note)return;clearTimeout(t);note.classList.add("out");var n=note;note=null;setTimeout(function(){n.remove()},550)}
+A.onChange(function(){if(A.status==="out"){ls("ce-memnote",null);return}if(A.status!=="in"||note)return;var id=(A.user&&(A.user.email||A.user.id))||"1";if(ls("ce-memnote")===id)return;ls("ce-memnote",id);
+ note=document.createElement("div");note.className="memnote";note.setAttribute("role","status");note.innerHTML='<span>\u2705 Signed in \u00b7 Pine Knot Club member</span><button class="memnote-x" aria-label="Close">\u2715</button>';
+ note.querySelector(".memnote-x").addEventListener("click",hide);document.body.appendChild(note);t=setTimeout(hide,4000)})})();</script>
 </body>
 </html>

@@ -9,12 +9,22 @@ function signIn(){CE.frame('account.html','Join the Club')}
 var bar=document.createElement('div');bar.className='joinbar';bar.id='joinBar';bar.hidden=true;
 bar.innerHTML='<button class="joinbar-x" aria-label="Hide for now">\u2715</button><small>PINE KNOT CLUB</small><b>Sign in free for full access</b><span>Fewer commercials, the full studio, downloads &amp; more.</span><button class="joinbar-go">Sign in</button>';
 var home=$('#home'),tv=$('.tv',home);tv.parentNode.insertBefore(bar,tv);
-$('.joinbar-x',bar).onclick=function(){ss('ce-joinbar-x','1');bar.hidden=true};
+$('.joinbar-x',bar).addEventListener('click',function(e){e.stopPropagation();ss('ce-joinbar-x','1');bar.hidden=true});
 $('.joinbar-go',bar).onclick=signIn;
 // 2. hints on locked features
 var dl=$('#dl');
+// signed-in notice: once per sign-in (remembered in localStorage), ~4 s then fades; X closes at once
+function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){}}
+var note=null,noteT=0;
+function hideNote(){if(!note)return;clearTimeout(noteT);note.classList.add('out');var n=note;note=null;setTimeout(function(){n.remove()},550)}
+function memberNote(){if(!(A&&A.status==='in'))return;var id=(A.user&&(A.user.email||A.user.id))||'1';if(ls('ce-memnote')===id||note)return;ls('ce-memnote',id);
+ note=document.createElement('div');note.className='memnote';note.setAttribute('role','status');
+ note.innerHTML='<span>\u2705 Signed in \u00b7 Pine Knot Club member</span><button class="memnote-x" aria-label="Close">\u2715</button>';
+ note.querySelector('.memnote-x').addEventListener('click',hideNote);document.body.appendChild(note);noteT=setTimeout(hideNote,4000)}
+CE.memberNote=memberNote;
 function hints(){var m=member(),out=!m&&A&&A.status!=='offline';
- bar.hidden=!out||ss('ce-joinbar-x')==='1';
+ if(A&&A.status==='out')ls('ce-memnote',null);if(A&&A.status==='in')memberNote();
+ bar.hidden=!!m||!out||ss('ce-joinbar-x')==='1';
  document.documentElement.classList.toggle('ce-guest',!!out);
  if(dl&&out&&dl.textContent.indexOf('Downloaded')<0)dl.innerHTML='\u2B07 Download <em class="lockhint">\uD83D\uDD12 free with sign-in</em>';
  else if(dl&&!out&&dl.querySelector('.lockhint'))dl.textContent='\u2B07 Download for offline';
