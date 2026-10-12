@@ -8,7 +8,7 @@ var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches
 var ST;try{ST=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 if(!ST||!D.nodes[ST.id])ST={id:D.start,flags:{}};
 var FOUND;try{FOUND=JSON.parse(localStorage.getItem(EKEY))||{}}catch(e){FOUND={}}
-RStage.mount($('rcaPlate'));
+RStage.mount($('rcaPlate'));RStage.audio(au);
 var muted=false;try{muted=localStorage.getItem('rca-mute')==='1'}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(ST));localStorage.setItem(EKEY,JSON.stringify(FOUND))}catch(e){}}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
@@ -44,7 +44,7 @@ function render(play){
   $('pnoL').textContent=PAGE[ST.id];$('pnoR').textContent=PAGE[ST.id];
   $('rcaChoices').innerHTML='';$('rcaChoices').classList.remove('on');
   flags();save();
-  au.src='media/rusty-cyoa/'+ST.id+'.mp3?v=1';au.muted=muted;$('rcaBar').style.width='0';$('rcaTime').textContent='0:00 / '+fmt(a.dur||0);
+  au.src='media/rusty-cyoa/'+ST.id+'.mp3?v=2';au.muted=muted;$('rcaBar').style.width='0';$('rcaTime').textContent='0:00 / '+fmt(a.dur||0);
   if(play&&started){var p=au.play();if(p&&p.catch)p.catch(function(){setPlay(false);showChoices()})}else setPlay(false);
 }
 var LK=-2;function hl(t){var a=A[ST.id];if(!a)return;var k=-1;for(var i=0;i<a.paras.length;i++)if(t>=a.paras[i]-0.05)k=i;
