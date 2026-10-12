@@ -12,22 +12,21 @@ function src(i,k){return 'images/rusty-cyoa/'+i+'-L'+k+(k?'.webp':'.jpg')}
 function build(host){
   st=el('div','rs-stage');frame=el('div','rs-frame',st);world=el('div','rs-world',frame);
   for(var k=0;k<NP;k++){
-    if(k===1||k===2)HZ.push(el('div','rs-haze rs-haze'+k,world));
+    
     var pl=el('div','rs-pl rs-pl'+k,world),im=el('img','',pl);im.alt='';im.decoding='async';
     im.onerror=(function(k){return function(){this.onerror=null;if(k===0)this.src='images/rusty-cyoa/'+id+'.jpg';else this.style.display='none'}})(k);
     PL.push(pl);IM.push(im);
-    if(k===1)cv=el('canvas','rs-fx',pl);GL.push(el('div','rs-gags',pl))
+    if(k===0)cv=el('canvas','rs-fx',pl);GL.push(el('div','rs-gags',pl))
   }
   lens=el('canvas','rs-lens',frame);flashEl=el('div','rs-flash',frame);
   cap=el('div','rs-cap',frame);toast=el('div','rs-toast',frame);
   var tb=el('div','rs-tbar',frame);
-  var gy=el('button','rs-btn rs-gy',tb);gy.type='button';gy.setAttribute('aria-label','Tilt your phone to look around');gy.textContent='📱';
+  
   var pp=el('button','rs-btn rs-pp',tb);pp.type='button';pp.setAttribute('aria-label','Play or pause');pp.textContent='▶';
   var fs=el('button','rs-btn rs-fs',tb);fs.type='button';fs.setAttribute('aria-label','Theater mode');fs.textContent='⛶';
   pp.onclick=function(e){e.stopPropagation();var b=document.getElementById('rcaPlay');if(b)b.click()};
   fs.onclick=function(e){e.stopPropagation();theater(!st.classList.contains('theater'))};
-  if(!RM&&window.DeviceOrientationEvent&&('ontouchstart' in window))st.classList.add('can-gyro');
-  gy.onclick=function(e){e.stopPropagation();toggleGyro(gy)};
+  
   host.innerHTML='';host.appendChild(st);
   lowFx=(navigator.hardwareConcurrency||4)<=4||Math.min(screen.width,screen.height)<500;
   if(lowFx){W=640;H=360;LW=320;LH=180;st.classList.add('low')}cv.width=W;cv.height=H;cx=cv.getContext('2d');lens.width=LW;lens.height=LH;lx=lens.getContext('2d');
@@ -49,13 +48,13 @@ function clamp(v,a,b){return v<a?a:v>b?b:v}
 function planeAt(x,y,mx){var m=(DEPTH[id]||{}).map;if(!m)return 1;var c={},best=1,bn=0;
   for(var dy=-1;dy<=1;dy++)for(var dx=-1;dx<=1;dx++){var X=clamp(Math.round(x*48-.5)+dx,0,47),Y=clamp(Math.round(y*27-.5)+dy,0,26),v=+m[Y*48+X];c[v]=(c[v]||0)+1;if(c[v]>bn){bn=c[v];best=v}if(mx&&v>mx.v)mx.v=v}
   return mx?mx.v:best}
-function setFocus(k){focusK=k;for(var i=0;i<NP;i++){var b=Math.abs(i-k)*(lowFx?.9:1.25);if(i===0&&k>=1)b=Math.max(b,.8);
+function setFocus(k){focusK=k;return;focusK=k;for(var i=0;i<NP;i++){var b=Math.abs(i-k)*(lowFx?.9:1.25);if(i===0&&k>=1)b=Math.max(b,.8);
   PL[i].style.filter=b>.2?'blur('+b.toFixed(2)+'px)':'none'}
   HZ.forEach(function(h,j){h.style.opacity=(j?.1:.16)})}
 function setCam(c,snap){tgt={x:c[0],y:c[1],z:RM?1.04:c[2]};if(RM){tgt.x=.5;tgt.y=.5}push=0;if(snap||RM)cur={x:tgt.x,y:tgt.y,z:tgt.z}
   setFocus(RM?1:(c[3]!=null?c[3]:planeAt(c[0],c[1])))}
 var ox=0,oy=0;
-function apply(){
+function apply(){for(var k=0;k<NP;k++){PL[k].style.transform='none';PL[k].style.filter='none'}world.style.transform='';return;
   var x=cur.x,y=cur.y,rot=0;
   /* orbit: the eye circles slowly around the focal point, so planes slide past each other */
   var tox=0,toy=0;if(!RM){tox=Math.sin(T*.23)*.9+Math.sin(T*.071)*.4;toy=Math.cos(T*.17)*.5;if(sway)rot=Math.sin(T*.55)*.4}
@@ -85,7 +84,7 @@ var FX={
  steam:function(x,y){return puffs(x,y,'#f4f1ea',.18,8*W/960,34*H/540,1.6)},
  glow:function(x,y,r,col){return{d:function(c){var a=.22+.12*Math.sin(T*2.1+x*9),rr=r*W,g=c.createRadialGradient(x*W,y*H,0,x*W,y*H,rr);g.addColorStop(0,rgba(col,a));g.addColorStop(1,rgba(col,0));c.globalCompositeOperation='lighter';c.fillStyle=g;c.fillRect(x*W-rr,y*H-rr,rr*2,rr*2);c.globalCompositeOperation='source-over'}}},
  flicker:function(x,y,r,col){col=col||'#ffb050';var a=.3;return{u:function(){a+=(R(.15,.5)-a)*.35},d:function(c){var rr=r*W*(1+a*.15),g=c.createRadialGradient(x*W,y*H,0,x*W,y*H,rr);g.addColorStop(0,rgba(col,a));g.addColorStop(1,rgba(col,0));c.globalCompositeOperation='lighter';c.fillStyle=g;c.fillRect(x*W-rr,y*H-rr,rr*2,rr*2);c.globalCompositeOperation='source-over'}}},
- sway:function(){sway=true;return{}},
+ sway:function(){return{}},
  flash:function(x,y,col){var t=R(1,3),on=0;return{C:function(){on=.18},u:function(dt){t-=dt;if(t<0){t=R(2,4.5);if(!synced())on=.14}on=Math.max(0,on-dt)},d:function(c){if(on<=0)return;var rr=40*W/960,g=c.createRadialGradient(x*W,y*H,0,x*W,y*H,rr);g.addColorStop(0,'rgba(255,255,230,.95)');g.addColorStop(.4,rgba(col,.7));g.addColorStop(1,rgba(col,0));c.globalCompositeOperation='lighter';c.fillStyle=g;c.fillRect(x*W-rr,y*H-rr,rr*2,rr*2);c.globalCompositeOperation='source-over'}}},
  sparks:function(x,y,col){col=col||'#ffcc66';var ps=[],t=R(.5,2);return{u:function(dt){t-=dt;if(t<0){t=R(1.5,3.5);for(var i=0;i<14;i++)ps.push({x:x*W,y:y*H,vx:R(-90,90),vy:R(-120,-10),l:R(.4,.9),t:0})}
   for(var i=ps.length-1;i>=0;i--){var p=ps[i];p.t+=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=260*dt;if(p.t>p.l)ps.splice(i,1)}},
@@ -137,7 +136,7 @@ function lensFx(list){if(RM)return [];var has={};list.forEach(function(f){has[f[
   c.globalCompositeOperation='source-over';es=es.filter(function(e){return e.y>-20})}})());
  return out}
 function lensFrame(dt){lx.clearRect(0,0,LW,LH);var d=Math.min(dt,.1);
-  lx.save();lx.translate(-ox*6,-oy*4);for(var i=0;i<lfx.length;i++)lfx[i](lx,d);lx.restore()}
+  lx.save();for(var i=0;i<lfx.length;i++)lfx[i](lx,d);lx.restore()}
 /* ---------- loop ---------- */
 function loop(now){raf=0;var dt=last?(now-last)/1000:0;last=now;
   if(dt>0&&dt<.025){raf=requestAnimationFrame(loop);last=now-dt*1000;return} /* cap ~30-40fps to save battery */
@@ -169,7 +168,7 @@ function hit(g,btn){var gl=btn.parentNode,pk=GL.indexOf(gl),fk=focusK;if(pk>=0&&
   btn.classList.add('found');
   toast.textContent=info[0]+' '+(first?'Found: ':'')+info[1]+' · '+gagCount()+'/'+TOTAL+' gags';toast.classList.remove('on');void toast.offsetWidth;toast.classList.add('on');clearTimeout(hit.t);hit.t=setTimeout(function(){toast.classList.remove('on')},2700);
 }
-function gags(){st.querySelectorAll('.rs-gag').forEach(function(b){b.remove()});(cfg.gags||[]).forEach(function(g){var gl=GL[planeAt(g[1],g[2],{v:0})]||GL[1];var b=el('button','rs-gag'+(GOT[g[0]]?' found':''),gl);b.type='button';
+function gags(){st.querySelectorAll('.rs-gag').forEach(function(b){b.remove()});(cfg.gags||[]).forEach(function(g){var gl=GL[0];var b=el('button','rs-gag'+(GOT[g[0]]?' found':''),gl);b.type='button';
   b.setAttribute('aria-label','Hidden gag: '+(S.gagInfo[g[0]]||['',''])[1]);b.style.left=(g[1]*100)+'%';b.style.top=(g[2]*100)+'%';b.style.width='calc('+(g[3]*200)+'% + 24px)';
   b.addEventListener('click',function(e){e.stopPropagation();hit(g,b)})})}
 /* ---------- public ---------- */
@@ -177,14 +176,14 @@ window.RStage={
  mount:function(host){build(host);gagCount()},
  audio:function(a){AU=a},
  load:function(sid){id=sid;EV=(window.RCA_SFX||{})[sid]||[];evT=0;cfg=S.s[sid]||{cam:[],fx:[],gags:[]};sway=false;
-  IM.forEach(function(im,k){im.style.display='';im.src=src(sid,k)});var dp=DEPTH[sid]||{};HZ.forEach(function(h){h.style.setProperty('--hz',dp.haze||'#b8b0a0')});lfx=lensFx(cfg.fx||[]);
+  IM.forEach(function(im,k){if(k){im.removeAttribute('src');PL[k].style.display='none'}else im.src='images/rusty-cyoa/'+sid+'.jpg'});var dp=DEPTH[sid]||{};HZ.forEach(function(h){h.style.setProperty('--hz',dp.haze||'#b8b0a0')});lfx=lensFx(cfg.fx||[]);
   fx=(cfg.fx||[]).map(function(f){var fn=FX[f[0]];return fn?fn.apply(null,f.slice(1)):{}});
   setCam([.5,.5,RM?1.04:1.14],true);setTimeout(function(){if(id===sid)setCam([.5,.5,1.06])},50);
   gags();cap.textContent='';apply();if(RM){frameFx(0)}kick()},
  para:function(k,text){if(!cfg)return;var c=k>=0&&cfg.cam[k]?cfg.cam[k]:[.5,.5,1.06];setCam(c);cap.textContent=text||'';cap.classList.toggle('on',!!text)},
  play:function(on){st&&st.querySelector('.rs-pp')&&(st.querySelector('.rs-pp').textContent=on?'❚❚':'▶')},
  closeTheater:function(){if(st)theater(false)},
- preload:function(ids){ids.forEach(function(i){for(var k=0;k<NP;k++)new Image().src=src(i,k)})},
+ preload:function(ids){ids.forEach(function(i){for(var k=0;k<NP;k++)k||(new Image().src='images/rusty-cyoa/'+i+'.jpg')})},
  count:gagCount,total:TOTAL
 };
 })();
