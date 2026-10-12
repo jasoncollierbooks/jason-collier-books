@@ -8,6 +8,7 @@ var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches
 var ST;try{ST=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 if(!ST||!D.nodes[ST.id])ST={id:D.start,flags:{}};
 var FOUND;try{FOUND=JSON.parse(localStorage.getItem(EKEY))||{}}catch(e){FOUND={}}
+RStage.mount($('rcaPlate'));RStage.audio(au);
 var muted=false;try{muted=localStorage.getItem('rca-mute')==='1'}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(ST));localStorage.setItem(EKEY,JSON.stringify(FOUND))}catch(e){}}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
@@ -15,7 +16,7 @@ function fmt(t){t=Math.max(0,t|0);return (t/60|0)+':'+('0'+t%60).slice(-2)}
 function img(id){return 'images/rusty-cyoa/'+id+'.jpg'}
 function count(){var n=Object.keys(FOUND).length+'/8';$('rcaCount').textContent=n;$('rcaCount2').textContent=n}
 function flags(){var f=[];if(ST.flags.hawke)f.push('🎯 Hawke joined the crew');if(ST.flags.lena)f.push('🛩 Lena “Lucky” joined the crew');$('rcaFlags').innerHTML=f.map(function(x){return '<span class="rca-flag">'+esc(x)+'</span>'}).join('')}
-function setPlay(p){$('rcaPlay').textContent=p?'❚❚':'▶';$('rcaPlay').setAttribute('aria-label',p?'Pause':'Play')}
+function setPlay(p){$('rcaPlay').textContent=p?'❚❚':'▶';$('rcaPlay').setAttribute('aria-label',p?'Pause':'Play');RStage.play(p)}
 /* where a choice really lands: a route that needs a crewmate you don't have falls through quietly */
 function land(c){return (c.req&&!ST.flags[c.req])?c.fallback:c.target}
 
@@ -31,11 +32,11 @@ function showChoices(){
   if(n.ending){FOUND[ST.id]=1;save();count();
     h='<p class="rca-endtag">— '+esc(n.tag)+' —</p><button class="rca-choice" data-act="restart">↺ Start a new voyage<em>Turn back to page 1</em></button><button class="rca-choice" data-act="endings">🏆 Endings found: '+Object.keys(FOUND).length+'/8</button>';}
   else h='<p class="rca-ask">What do you do?</p>'+n.choices.map(function(c,i){return (c.req&&!ST.flags[c.req]?'<button class="rca-choice gated" data-i="'+i+'">'+esc(c.label)+'<em>Turn the page…</em></button>':'<button class="rca-choice" data-i="'+i+'">'+esc(c.label)+'<em>Turn to page '+PAGE[c.target]+'</em><span class="pk" data-peek="'+i+'" aria-label="Peek">👁</span></button>')}).join('');
-  var el=$('rcaChoices');el.innerHTML=h;el.classList.add('on');
+  var el=$('rcaChoices');el.innerHTML=h;el.classList.add('on');RStage.closeTheater();RStage.para(-1,'');if(!n.ending)RStage.preload(n.choices.map(land));
 }
 function render(play){
   var n=D.nodes[ST.id],a=A[ST.id]||{};ended=false;
-  var im=$('rcaImg');im.onerror=function(){this.onerror=null;this.src='images/the-rusty-stack.jpg'};im.src=img(ST.id);
+  RStage.load(ST.id);
   $('rcaNum').textContent=n.ending?'Ending '+n.num.slice(1):'Scene '+(+n.num);
   $('rcaTitle').textContent=n.title;
   var txt=n.text.slice();if(!n.ending&&txt[txt.length-1]==='What do you do?')txt.pop(); /* asked again above the choices */
@@ -43,11 +44,11 @@ function render(play){
   $('pnoL').textContent=PAGE[ST.id];$('pnoR').textContent=PAGE[ST.id];
   $('rcaChoices').innerHTML='';$('rcaChoices').classList.remove('on');
   flags();save();
-  au.src='media/rusty-cyoa/'+ST.id+'.mp3?v=1';au.muted=muted;$('rcaBar').style.width='0';$('rcaTime').textContent='0:00 / '+fmt(a.dur||0);
+  au.src='media/rusty-cyoa/'+ST.id+'.mp3?v=2';au.muted=muted;$('rcaBar').style.width='0';$('rcaTime').textContent='0:00 / '+fmt(a.dur||0);
   if(play&&started){var p=au.play();if(p&&p.catch)p.catch(function(){setPlay(false);showChoices()})}else setPlay(false);
 }
-function hl(t){var a=A[ST.id];if(!a)return;var k=-1;for(var i=0;i<a.paras.length;i++)if(t>=a.paras[i]-0.05)k=i;
-  var ps=$('rcaText').children;for(var j=0;j<ps.length;j++)ps[j].classList.toggle('now',j===k)}
+var LK=-2;function hl(t){var a=A[ST.id];if(!a)return;var k=-1;for(var i=0;i<a.paras.length;i++)if(t>=a.paras[i]-0.05)k=i;
+  var ps=$('rcaText').children;for(var j=0;j<ps.length;j++)ps[j].classList.toggle('now',j===k);if(k!==LK){LK=k;RStage.para(k,k>=0&&ps[k]?ps[k].textContent:'')}}
 au.addEventListener('timeupdate',function(){var d=au.duration||1;$('rcaBar').style.width=(100*au.currentTime/d)+'%';$('rcaTime').textContent=fmt(au.currentTime)+' / '+fmt(d);hl(au.currentTime)});
 au.addEventListener('play',function(){setPlay(true)});au.addEventListener('pause',function(){setPlay(false)});
 au.addEventListener('ended',function(){setPlay(false);hl(-1);if(!ended)showChoices()});
