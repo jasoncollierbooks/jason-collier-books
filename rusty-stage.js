@@ -51,25 +51,25 @@ function planeAt(x,y,mx){var m=(DEPTH[id]||{}).map;if(!m)return 1;var c={},best=
   return mx?mx.v:best}
 function setFocus(k){focusK=k;for(var i=0;i<NP;i++){var b=Math.abs(i-k)*(lowFx?.9:1.25);if(i===0&&k>=1)b=Math.max(b,.8);
   PL[i].style.filter=b>.2?'blur('+b.toFixed(2)+'px)':'none'}
-  HZ.forEach(function(h,j){h.style.opacity=((k>=2?.26:k===1?.17:.07)*(j?.6:1)).toFixed(2)})}
+  HZ.forEach(function(h,j){h.style.opacity=(j?.1:.16)})}
 function setCam(c,snap){tgt={x:c[0],y:c[1],z:RM?1.04:c[2]};if(RM){tgt.x=.5;tgt.y=.5}push=0;if(snap||RM)cur={x:tgt.x,y:tgt.y,z:tgt.z}
   setFocus(RM?1:(c[3]!=null?c[3]:planeAt(c[0],c[1])))}
 var ox=0,oy=0;
 function apply(){
-  var z=Math.max(1.02,cur.z+push),x=cur.x,y=cur.y,rot=0;
+  var x=cur.x,y=cur.y,rot=0;
   /* orbit: the eye circles slowly around the focal point, so planes slide past each other */
   var tox=0,toy=0;if(!RM){tox=Math.sin(T*.23)*.9+Math.sin(T*.071)*.4;toy=Math.cos(T*.17)*.5;if(sway)rot=Math.sin(T*.55)*.4}
   tox+=gyro.x*1.6;toy+=gyro.y*1.2;ox+=(tox-ox)*.08;oy+=(toy-oy)*.08;
   var pf=PD[focusK]||.42,travel=(cur.x-.5);
   for(var k=0;k<NP;k++){
     var d=PD[k]-pf;
-    var s=z*(1+(z-1)*PD[k]*.55)*(1.05+.07*PD[k]);         /* dolly: nearer planes grow faster as we push in */
+    var s=1.1+.04*PD[k];                                  /* fixed framing: only enough overscan for the planes to slide */
     var tx=.5-x*s,ty=.5-y*s;
-    tx+=-(ox*.022+travel*.05)*d*(1+PD[k]);ty+=-oy*.016*d*(1+PD[k]);  /* parallax around the focus plane */
+    tx+=-(ox*.03+travel*.07)*d*(1+PD[k]);ty+=-oy*.02*d*(1+PD[k]);  /* parallax around the focus plane */
     if(k===0){tx=clamp(tx,1-s,0);ty=clamp(ty,1-s,0)}else{tx=clamp(tx,1-s-.03,.03);ty=clamp(ty,1-s-.02,.02)}
     PL[k].style.transform='translate3d('+(tx*100).toFixed(3)+'%,'+(ty*100).toFixed(3)+'%,0) scale('+s.toFixed(4)+')'+(rot&&k>1?' rotate('+(rot*(1+d)).toFixed(3)+'deg)':'');
   }
-  world.style.transform=rot?'rotate('+(rot*.5).toFixed(3)+'deg) scale(1.01)':'';
+  world.style.transform=rot?'rotate('+(rot*.5).toFixed(3)+'deg)':'';
 }
 
 /* ---------- ambient fx ---------- */
@@ -141,7 +141,7 @@ function lensFrame(dt){lx.clearRect(0,0,LW,LH);var d=Math.min(dt,.1);
 /* ---------- loop ---------- */
 function loop(now){raf=0;var dt=last?(now-last)/1000:0;last=now;
   if(dt>0&&dt<.025){raf=requestAnimationFrame(loop);last=now-dt*1000;return} /* cap ~30-40fps to save battery */
-  T+=Math.min(dt,.1);push=Math.min(.09,push+Math.min(dt,.1)*.006);var k=1-Math.exp(-Math.min(dt,.1)/.85);cur.x+=(tgt.x-cur.x)*k;cur.y+=(tgt.y-cur.y)*k;cur.z+=(tgt.z-cur.z)*k;
+  T+=Math.min(dt,.1);var k=1-Math.exp(-Math.min(dt,.1)/.85);cur.x+=(tgt.x-cur.x)*k;cur.y+=(tgt.y-cur.y)*k;cur.z+=(tgt.z-cur.z)*k;
   sfxTick();apply();frameFx(dt);lensFrame(dt);kick()}
 function kick(){if(raf||RM)return;if(document.hidden||!visible){last=0;return}raf=requestAnimationFrame(loop)}
 /* ---------- gags ---------- */
