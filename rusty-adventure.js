@@ -5,6 +5,7 @@ var D=window.RUSTY_CYOA,A=window.RUSTY_CYOA_AUDIO||{},$=function(i){return docum
 var PAGE={s01:1,s02:4,s03:7,e1:9,s04:10,s05:13,e2:15,s06:17,s07:20,s08:23,e3:25,s09:27,s10:30,e4:31,s11:33,s12:36,s13:40,s14:43,e5:45,s15:47,s16:50,s17:54,s18:58,s19:61,e6:63,s20:65,s21:69,s22:73,s23:77,e7:82,e8:88};
 var KEY='rca-progress',EKEY='rca-endings',au=$('rcaAudio'),started=false,ended=false,busy=false;
 var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(navigator.connection&&navigator.connection.saveData)document.documentElement.classList.add('rca-still');
 var ST;try{ST=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 if(!ST||!D.nodes[ST.id])ST={id:D.start,flags:{}};
 var FOUND;try{FOUND=JSON.parse(localStorage.getItem(EKEY))||{}}catch(e){FOUND={}}
@@ -13,7 +14,7 @@ var muted=false;try{muted=localStorage.getItem('rca-mute')==='1'}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(ST));localStorage.setItem(EKEY,JSON.stringify(FOUND))}catch(e){}}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function fmt(t){t=Math.max(0,t|0);return (t/60|0)+':'+('0'+t%60).slice(-2)}
-function img(id){return 'images/rusty-cyoa/'+id+'.jpg?v=3'}
+var REDO={s08:1,s13:1,s17:1,e3:1,e8:1};function img(id){return 'images/rusty-cyoa/'+id+'.jpg?v='+(REDO[id]?4:3)}
 function count(){var n=Object.keys(FOUND).length+'/8';$('rcaCount').textContent=n;$('rcaCount2').textContent=n}
 function flags(){var f=[];if(ST.flags.hawke)f.push('🎯 Hawke joined the crew');if(ST.flags.lena)f.push('🛩 Lena “Lucky” joined the crew');$('rcaFlags').innerHTML=f.map(function(x){return '<span class="rca-flag">'+esc(x)+'</span>'}).join('')}
 function setPlay(p){$('rcaPlay').textContent=p?'❚❚':'▶';$('rcaPlay').setAttribute('aria-label',p?'Pause':'Play');RStage.play(p)}
@@ -37,6 +38,13 @@ function showChoices(){
 function render(play){
   var n=D.nodes[ST.id],a=A[ST.id]||{};ended=false;
   RStage.load(ST.id);
+  /* presentation: picture eases in on each new page; endings get a title card over the art */
+  var pl=$('rcaPlate'),oc=pl.querySelector('.rca-endcard');if(oc)oc.remove();
+  if(!RM){pl.classList.remove('enter');void pl.offsetWidth;pl.classList.add('enter')}
+  document.body.classList.toggle('rca-is-ending',!!n.ending);
+  if(n.ending){var ec=document.createElement('div');ec.className='rca-endcard';ec.setAttribute('aria-hidden','true');
+    ec.innerHTML='<small>Ending '+esc(n.num.slice(1))+' of 8</small><b>'+esc(n.title)+'</b><i>'+esc(n.tag)+'</i>';pl.appendChild(ec);
+    setTimeout(function(){ec.classList.add('away')},RM?6000:4200)}
   $('rcaNum').textContent=n.ending?'Ending '+n.num.slice(1):'Scene '+(+n.num);
   $('rcaTitle').textContent=n.title;
   var txt=n.text.slice();if(!n.ending&&txt[txt.length-1]==='What do you do?')txt.pop(); /* asked again above the choices */
@@ -77,8 +85,10 @@ $('rcaMute').textContent=muted?'🔇':'🔊';
 function restart(){ST.flags={};go(D.start)}
 $('rcaRestart').onclick=function(){if(confirm('Start the voyage over from page 1? Endings you found stay found.'))restart()};
 function endings(){var h='';Object.keys(D.nodes).filter(function(k){return D.nodes[k].ending}).forEach(function(k){var n=D.nodes[k];
-  h+=FOUND[k]?'<div class="rca-e got"><img src="'+img(k)+'" onerror="this.onerror=null;this.src=\'images/the-rusty-stack.jpg\'" alt=""><span><b>'+esc(n.title)+'</b><small>Page '+PAGE[k]+' · '+esc(n.tag)+'</small></span></div>':'<div class="rca-e"><i>?</i><span><b>Ending '+n.num.slice(1)+'</b><small>Not found yet</small></span></div>'});
-  $('rcaEndList').innerHTML=h;count();$('rcaEndings').hidden=false;$('rcaEndings').scrollIntoView({behavior:'smooth'})}
+  h+=FOUND[k]?'<button type="button" class="rca-g got" data-end="'+k+'"><span class="rca-g-art"><img src="'+img(k)+'" onerror="this.onerror=null;this.src=\'images/the-rusty-stack.jpg\'" alt="" loading="lazy"></span><span class="rca-g-cap"><small>Ending '+n.num.slice(1)+' · page '+PAGE[k]+'</small><b>'+esc(n.title)+'</b><em>'+esc(n.tag)+'</em></span></button>'
+   :'<div class="rca-g"><span class="rca-g-art"><img src="'+img(k)+'" alt="" loading="lazy"><i>?</i></span><span class="rca-g-cap"><small>Ending '+n.num.slice(1)+'</small><b>Not found yet</b><em>Keep exploring</em></span></div>'});
+  $('rcaEndList').innerHTML=h;count();$('rcaEndings').hidden=false;$('rcaEndings').scrollIntoView({behavior:RM?'auto':'smooth'})}
+$('rcaEndList').addEventListener('click',function(e){var b=e.target.closest('[data-end]');if(!b)return;started=true;$('rcaEndings').hidden=true;go(b.dataset.end)});
 $('rcaEndBtn').onclick=endings;$('rcaEndClose').onclick=function(){$('rcaEndings').hidden=true};
 
 /* peek: press and hold a choice (or touch the eye) to lift the corner of the page it turns to */

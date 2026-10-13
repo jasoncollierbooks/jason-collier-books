@@ -6,7 +6,7 @@ var TOTAL=Object.keys(S.gagInfo).length;
 var st,frame,world,PL=[],IM=[],HZ=[],cv,cx,gl,flashEl,toast,cap,lens,lx,W=960,H=540,LW=480,LH=270;
 var DEPTH=window.RCA_DEPTH||{},NP=1,PD=[0,.42,.72,1];  /* plane depth: 0 sky/far, .42 subject, .72 near props, 1 lens-side */
 var id=null,cfg=null,fx=[],lfx=[],tgt={x:.5,y:.5,z:1.06},cur={x:.5,y:.5,z:1.06},T=0,last=0,raf=0,visible=true,sway=false,lowFx=false;
-var VID=null,SD=!!(navigator.connection&&navigator.connection.saveData),MOTION=!RM&&!SD,VV=1;
+var VID=null,SD=!!(navigator.connection&&navigator.connection.saveData),MOTION=!RM&&!SD,VV=1,REDO={s08:1,s13:1,s17:1,e3:1,e8:1}; /* repainted Oct 13: new still v4, new loop v2 */
 var GL=[],focusK=1,gyro={on:false,x:0,y:0},push=0;
 function el(t,c,p){var e=document.createElement(t);if(c)e.className=c;if(p)p.appendChild(e);return e}
 function src(i,k){return 'images/rusty-cyoa/'+i+'-L'+k+(k?'.webp':'.jpg')}
@@ -181,15 +181,15 @@ window.RStage={
  mount:function(host){build(host);gagCount()},
  audio:function(a){AU=a},
  load:function(sid){id=sid;EV=(window.RCA_SFX||{})[sid]||[];evT=0;cfg=S.s[sid]||{cam:[],fx:[],gags:[]};sway=false;
-  IM.forEach(function(im,k){if(k){im.removeAttribute('src');PL[k].style.display='none'}else im.src='images/rusty-cyoa/'+sid+'.jpg?v=3'});
-  if(VID){VID.classList.remove('on');VID.pause();if(MOTION){VID.src='media/rusty-cyoa/living/'+sid+'.mp4?v='+VV;VID.load();vsync()}else VID.removeAttribute('src')}var dp=DEPTH[sid]||{};HZ.forEach(function(h){h.style.setProperty('--hz',dp.haze||'#b8b0a0')});lfx=[]; /* no soft lens blobs over the painting */
+  IM.forEach(function(im,k){if(k){im.removeAttribute('src');PL[k].style.display='none'}else im.src='images/rusty-cyoa/'+sid+'.jpg?v='+(REDO[sid]?4:3)});
+  if(VID){VID.classList.remove('on');VID.pause();if(MOTION){VID.src='media/rusty-cyoa/living/'+sid+'.mp4?v='+(REDO[sid]?VV+1:VV);VID.load();vsync()}else VID.removeAttribute('src')}var dp=DEPTH[sid]||{};HZ.forEach(function(h){h.style.setProperty('--hz',dp.haze||'#b8b0a0')});lfx=[]; /* no soft lens blobs over the painting */
   fx=(cfg.fx||[]).map(function(f){var fn=FX[f[0]];return fn?fn.apply(null,f.slice(1)):{}});
   setCam([.5,.5,RM?1.04:1.14],true);setTimeout(function(){if(id===sid)setCam([.5,.5,1.06])},50);
   gags();cap.textContent='';apply();if(RM){frameFx(0)}kick()},
  para:function(k,text){if(!cfg)return;var c=k>=0&&cfg.cam[k]?cfg.cam[k]:[.5,.5,1.06];setCam(c);cap.textContent=text||'';cap.classList.toggle('on',!!text)},
  play:function(on){st&&st.querySelector('.rs-pp')&&(st.querySelector('.rs-pp').textContent=on?'❚❚':'▶')},
  closeTheater:function(){if(st)theater(false)},
- preload:function(ids){ids.forEach(function(i){for(var k=0;k<NP;k++)k||(new Image().src='images/rusty-cyoa/'+i+'.jpg?v=3')})},
+ preload:function(ids){ids.forEach(function(i){for(var k=0;k<NP;k++)k||(new Image().src='images/rusty-cyoa/'+i+'.jpg?v='+(REDO[i]?4:3))})},
  count:gagCount,total:TOTAL
 };
 })();
