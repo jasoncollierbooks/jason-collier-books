@@ -302,15 +302,15 @@
         <div>
           <p class="excerpt-label">Audiobook &middot; a short story by Jason Collier</p>
           <h2 id="dogs-h" class="ab-h">Dogs That Chose Me</h2>
-          <p class="ab-note">Elias never chose a dog. From a lonely farm boy on a rainy porch to an old man on an autumn evening, the dogs always found him, and the first one never really left. 11 minutes 4 seconds.</p>
+          <p class="ab-note">Elias never chose a dog. From a lonely farm boy on a rainy porch to an old man on an autumn evening, the dogs always found him, and the first one never really left. 9 minutes 33 seconds.</p>
         </div>
       </div>
       <figure class="dogs-slide" style="margin:12px 0 0;position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#120d08">
         <img id="dogsSlide" src="images/dogs/cover.jpg" alt="Dogs That Chose Me" style="width:100%;height:100%;object-fit:cover;transition:opacity .6s">
       </figure>
-      <audio id="dogsAudio" controls preload="none" src="media/dogs-that-chose-me.mp3" style="width:100%;margin:12px 0" aria-label="Dogs That Chose Me, audiobook"></audio>
+      <audio id="dogsAudio" controls preload="none" src="media/dogs-that-chose-me.mp3?v=2" style="width:100%;margin:12px 0" aria-label="Dogs That Chose Me, audiobook"></audio>
       <ol class="dogs-ch" id="dogsCh" style="list-style:none;padding:0;margin:0;columns:1"></ol>
-      <script src="js/dogs-data.js?v=1"></script>
+      <script src="js/dogs-data.js?v=2"></script>
       <script>(function(){var D=window.CE_DOGS,au=document.getElementById('dogsAudio'),img=document.getElementById('dogsSlide'),ol=document.getElementById('dogsCh'),cur='';
        function mm(s){return Math.floor(s/60)+':'+('0'+s%60).slice(-2)}
        ol.innerHTML=D.ch.map(function(c){return '<li><button type="button" data-t="'+c[0]+'" style="display:flex;gap:12px;width:100%;min-height:44px;align-items:center;text-align:left;background:none;border:0;border-bottom:1px dotted rgba(228,208,164,.3);color:inherit;font:inherit;cursor:pointer"><i style="font-style:normal;opacity:.7;min-width:3em">'+mm(c[0])+'</i><span>'+c[1]+'</span></button></li>'}).join('');
