@@ -44,7 +44,7 @@ function render(play){
   $('pnoL').textContent=PAGE[ST.id];$('pnoR').textContent=PAGE[ST.id];
   $('rcaChoices').innerHTML='';$('rcaChoices').classList.remove('on');
   flags();save();
-  au.src='media/rusty-cyoa/'+ST.id+'.mp3?v=2';au.muted=muted;$('rcaBar').style.width='0';$('rcaTime').textContent='0:00 / '+fmt(a.dur||0);
+  au.src='media/rusty-cyoa/'+ST.id+'.mp3?v=3';au.muted=muted;$('rcaBar').style.width='0';$('rcaTime').textContent='0:00 / '+fmt(a.dur||0);
   if(play&&started){var p=au.play();if(p&&p.catch)p.catch(function(){setPlay(false);showChoices()})}else setPlay(false);
 }
 var LK=-2;function hl(t){var a=A[ST.id];if(!a)return;var k=-1;for(var i=0;i<a.paras.length;i++)if(t>=a.paras[i]-0.05)k=i;
