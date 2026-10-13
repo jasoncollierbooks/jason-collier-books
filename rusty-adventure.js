@@ -13,7 +13,7 @@ var muted=false;try{muted=localStorage.getItem('rca-mute')==='1'}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(ST));localStorage.setItem(EKEY,JSON.stringify(FOUND))}catch(e){}}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function fmt(t){t=Math.max(0,t|0);return (t/60|0)+':'+('0'+t%60).slice(-2)}
-function img(id){return 'images/rusty-cyoa/'+id+'.jpg'}
+function img(id){return 'images/rusty-cyoa/'+id+'.jpg?v=3'}
 function count(){var n=Object.keys(FOUND).length+'/8';$('rcaCount').textContent=n;$('rcaCount2').textContent=n}
 function flags(){var f=[];if(ST.flags.hawke)f.push('🎯 Hawke joined the crew');if(ST.flags.lena)f.push('🛩 Lena “Lucky” joined the crew');$('rcaFlags').innerHTML=f.map(function(x){return '<span class="rca-flag">'+esc(x)+'</span>'}).join('')}
 function setPlay(p){$('rcaPlay').textContent=p?'❚❚':'▶';$('rcaPlay').setAttribute('aria-label',p?'Pause':'Play');RStage.play(p)}

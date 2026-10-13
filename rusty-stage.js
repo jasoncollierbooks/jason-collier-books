@@ -4,8 +4,9 @@ var S=window.RCA_STAGE||{s:{},gagInfo:{}},RM=window.matchMedia&&matchMedia('(pre
 var GKEY='rca-gags',GOT={};try{GOT=JSON.parse(localStorage.getItem(GKEY))||{}}catch(e){}
 var TOTAL=Object.keys(S.gagInfo).length;
 var st,frame,world,PL=[],IM=[],HZ=[],cv,cx,gl,flashEl,toast,cap,lens,lx,W=960,H=540,LW=480,LH=270;
-var DEPTH=window.RCA_DEPTH||{},NP=4,PD=[0,.42,.72,1];  /* plane depth: 0 sky/far, .42 subject, .72 near props, 1 lens-side */
+var DEPTH=window.RCA_DEPTH||{},NP=1,PD=[0,.42,.72,1];  /* plane depth: 0 sky/far, .42 subject, .72 near props, 1 lens-side */
 var id=null,cfg=null,fx=[],lfx=[],tgt={x:.5,y:.5,z:1.06},cur={x:.5,y:.5,z:1.06},T=0,last=0,raf=0,visible=true,sway=false,lowFx=false;
+var VID=null,SD=!!(navigator.connection&&navigator.connection.saveData),MOTION=!RM&&!SD,VV=1;
 var GL=[],focusK=1,gyro={on:false,x:0,y:0},push=0;
 function el(t,c,p){var e=document.createElement(t);if(c)e.className=c;if(p)p.appendChild(e);return e}
 function src(i,k){return 'images/rusty-cyoa/'+i+'-L'+k+(k?'.webp':'.jpg')}
@@ -14,9 +15,11 @@ function build(host){
   for(var k=0;k<NP;k++){
     
     var pl=el('div','rs-pl rs-pl'+k,world),im=el('img','',pl);im.alt='';im.decoding='async';
-    im.onerror=(function(k){return function(){this.onerror=null;if(k===0)this.src='images/rusty-cyoa/'+id+'.jpg';else this.style.display='none'}})(k);
+    im.onerror=(function(k){return function(){this.onerror=null;if(k===0)this.src='images/the-rusty-stack.jpg';else this.style.display='none'}})(k);
     PL.push(pl);IM.push(im);
-    if(k===0)cv=el('canvas','rs-fx',pl);GL.push(el('div','rs-gags',pl))
+    if(k===0){VID=el('video','rs-vid',pl);VID.muted=true;VID.defaultMuted=true;VID.loop=true;VID.playsInline=true;VID.setAttribute('playsinline','');VID.setAttribute('muted','');VID.setAttribute('aria-hidden','true');VID.preload='auto';VID.disablePictureInPicture=true;
+      VID.addEventListener('playing',function(){VID.classList.add('on')});VID.addEventListener('error',function(){VID.classList.remove('on')});
+      cv=el('canvas','rs-fx',pl)}GL.push(el('div','rs-gags',pl))
   }
   lens=el('canvas','rs-lens',frame);flashEl=el('div','rs-flash',frame);
   cap=el('div','rs-cap',frame);toast=el('div','rs-toast',frame);
@@ -30,8 +33,8 @@ function build(host){
   host.innerHTML='';host.appendChild(st);
   lowFx=(navigator.hardwareConcurrency||4)<=4||Math.min(screen.width,screen.height)<500;
   if(lowFx){W=640;H=360;LW=320;LH=180;st.classList.add('low')}cv.width=W;cv.height=H;cx=cv.getContext('2d');lens.width=LW;lens.height=LH;lx=lens.getContext('2d');
-  if('IntersectionObserver' in window)new IntersectionObserver(function(es){visible=es[0].isIntersecting;kick()}).observe(st);
-  document.addEventListener('visibilitychange',kick);
+  if('IntersectionObserver' in window)new IntersectionObserver(function(es){visible=es[0].isIntersecting;kick();vsync()}).observe(st);
+  document.addEventListener('visibilitychange',function(){kick();vsync()});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')theater(false)});
 }
 function onTilt(e){if(e.gamma==null)return;gyro.x=clamp(e.gamma/25,-1,1);gyro.y=clamp((e.beta-45)/25,-1,1)}
@@ -142,6 +145,8 @@ function loop(now){raf=0;var dt=last?(now-last)/1000:0;last=now;
   if(dt>0&&dt<.025){raf=requestAnimationFrame(loop);last=now-dt*1000;return} /* cap ~30-40fps to save battery */
   T+=Math.min(dt,.1);var k=1-Math.exp(-Math.min(dt,.1)/.85);cur.x+=(tgt.x-cur.x)*k;cur.y+=(tgt.y-cur.y)*k;cur.z+=(tgt.z-cur.z)*k;
   sfxTick();apply();frameFx(dt);lensFrame(dt);kick()}
+/* the moving picture: play only while the page is on screen and visible */
+function vsync(){if(!VID||!VID.getAttribute('src'))return;if(document.hidden||!visible){VID.pause();return}var p=VID.play();if(p&&p.catch)p.catch(function(){})}
 function kick(){if(raf||RM)return;if(document.hidden||!visible){last=0;return}raf=requestAnimationFrame(loop)}
 /* ---------- gags ---------- */
 var ACX;function ac(){if(!ACX){var C=window.AudioContext||window.webkitAudioContext;if(C)ACX=new C}if(ACX&&ACX.state==='suspended')ACX.resume();return ACX}
@@ -176,14 +181,15 @@ window.RStage={
  mount:function(host){build(host);gagCount()},
  audio:function(a){AU=a},
  load:function(sid){id=sid;EV=(window.RCA_SFX||{})[sid]||[];evT=0;cfg=S.s[sid]||{cam:[],fx:[],gags:[]};sway=false;
-  IM.forEach(function(im,k){if(k){im.removeAttribute('src');PL[k].style.display='none'}else im.src='images/rusty-cyoa/'+sid+'.jpg'});var dp=DEPTH[sid]||{};HZ.forEach(function(h){h.style.setProperty('--hz',dp.haze||'#b8b0a0')});lfx=lensFx(cfg.fx||[]);
+  IM.forEach(function(im,k){if(k){im.removeAttribute('src');PL[k].style.display='none'}else im.src='images/rusty-cyoa/'+sid+'.jpg?v=3'});
+  if(VID){VID.classList.remove('on');VID.pause();if(MOTION){VID.src='media/rusty-cyoa/living/'+sid+'.mp4?v='+VV;VID.load();vsync()}else VID.removeAttribute('src')}var dp=DEPTH[sid]||{};HZ.forEach(function(h){h.style.setProperty('--hz',dp.haze||'#b8b0a0')});lfx=[]; /* no soft lens blobs over the painting */
   fx=(cfg.fx||[]).map(function(f){var fn=FX[f[0]];return fn?fn.apply(null,f.slice(1)):{}});
   setCam([.5,.5,RM?1.04:1.14],true);setTimeout(function(){if(id===sid)setCam([.5,.5,1.06])},50);
   gags();cap.textContent='';apply();if(RM){frameFx(0)}kick()},
  para:function(k,text){if(!cfg)return;var c=k>=0&&cfg.cam[k]?cfg.cam[k]:[.5,.5,1.06];setCam(c);cap.textContent=text||'';cap.classList.toggle('on',!!text)},
  play:function(on){st&&st.querySelector('.rs-pp')&&(st.querySelector('.rs-pp').textContent=on?'❚❚':'▶')},
  closeTheater:function(){if(st)theater(false)},
- preload:function(ids){ids.forEach(function(i){for(var k=0;k<NP;k++)k||(new Image().src='images/rusty-cyoa/'+i+'.jpg')})},
+ preload:function(ids){ids.forEach(function(i){for(var k=0;k<NP;k++)k||(new Image().src='images/rusty-cyoa/'+i+'.jpg?v=3')})},
  count:gagCount,total:TOTAL
 };
 })();
