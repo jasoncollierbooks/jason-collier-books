@@ -38,7 +38,7 @@ $('#listenList').innerHTML=
  item(R+'images/jang-tom-ice-fishin.jpg',"The Ice Fishin' Fiasco",'Jang & Tom radio show · Episode 3 · 14:02 · chapters','data-play="icefish"')+
  item(R+'images/jang-tom-rocket-stove.jpg','The Rocket Stove Rebellion','Jang & Tom radio show · Episode 4 · 13:36 · chapters','data-play="rocket"')+
  item(R+'images/jang-tom-checkers.jpg','The Checkers Championship','Jang & Tom radio show · Episode 5 · 13:34 · chapters','data-play="checkers"')+
- item(R+'images/jang-tom-christmas-spectacle.jpg','The Christmas Spectacle','Jang & Tom radio show · Episode 6 · 13:28 · new · chapters','data-play="xmas"')+
+ item(R+'images/jang-tom-christmas-spectacle.jpg','The Christmas Light Caper','Jang & Tom radio show · Episode 6 · 13:28 · new · chapters','data-play="xmas"')+
  item('media/jang-tom-tv.jpg','Jang & Tom Radio Hour','All episodes · the Collier Radio Hour','data-go="jangtom"')+
  item(R+'images/the-rusty-stack.jpg','The Rusty Stack: Choose Your Own Adventure','Audiobook · you choose what happens next · 8 endings','data-frame="rusty-adventure.html" data-title="The Rusty Stack Adventure"')+
  item(R+'images/dogs/cover-thumb.jpg','Dogs That Chose Me','Audiobook · a short story by Jason Collier · 9:33 · chapters','data-play="dogs"')+

@@ -20,7 +20,7 @@ ads:[{h:"PLAY THE WAGON TRAIN!",b:"Lead the wagon train yourself: oxen, debt col
 
 {lead:{h:"PRIZE POSSUM ESCAPES AGAIN",d:"Mrs. Whittaker offers $20 reward; Jang has a plan",b:["Precious, the prize possum of Mrs. Whittaker, has once again left home without permission. A reward of twenty dollars is offered.","Mr. Jang says he has a plan. Mr. Tom says he will get his net. Neighbors are advised to secure their koi."]},
 shorts:[{h:"Net Located",b:"Mr. Tom's net was in the shed behind the other net."},{h:"Plan Unclear",b:"Mr. Jang declined to share details \u201cfor security reasons.\u201d"}],
-ads:[{h:"OUT NOW!",b:"The Christmas Spectacle, the new Jang & Tom. Half-price lights, a one-eyed Santa and one switch that blacks out the whole holler.",c:"Hear episode six",go:"ep6"},{h:"COLOR THE PAGES",b:"Pictures from the books, ready to color with a tap.",c:"Start coloring",go:"coloring"}]},
+ads:[{h:"OUT NOW!",b:"The Christmas Light Caper, the new Jang & Tom. Half-price lights, a one-eyed Santa and one switch that blacks out the whole holler.",c:"Hear episode six",go:"ep6"},{h:"COLOR THE PAGES",b:"Pictures from the books, ready to color with a tap.",c:"Start coloring",go:"coloring"}]},
 
 {lead:{h:"JANG FOUND IN KOI POND HOLDING GOLDFISH",d:"Possum chase ends with a splash in Mrs. Whittaker's yard",b:["The pursuit of Precious the possum came to a wet end Tuesday when Mr. Jang, hanging from a drainpipe, lost his grip.","He was found standing in the koi pond holding a goldfish, which he described as \u201ca decoy.\u201d Precious was later returned safely in Mr. Tom's burlap sack."]},
 shorts:[{h:"Goldfish Unharmed",b:"The goldfish has been returned to the pond and is said to be \u201cembarrassed.\u201d"},{h:"Drainpipe Report",b:"Mrs. Whittaker's drainpipe is bent but in good spirits."},{h:"Reward Paid",b:"Twenty dollars, minus pond damages: four dollars."}],
@@ -60,7 +60,7 @@ ads:[{h:"WARM UP WITH A STORY",b:"Animated audiobooks: Wagon Masters, Philadelph
 
 {lead:{h:"BURLAP SACK HONORED",d:"Tom's sack credited with safe return of Precious",b:["The town council has thanked Mr. Tom's burlap sack for its part in returning Precious the possum to Mrs. Whittaker.","\u201cIt's a good sack,\u201d said Mr. Tom. Mr. Jang argued that he should share the credit, since he was in the pond at the time, \u201cguarding the perimeter.\u201d"]},
 shorts:[{h:"Possum Napping",b:"Precious is home and reported \u201cextremely asleep.\u201d"},{h:"Koi Pond Restocked",b:"Mrs. Whittaker has added a fence. And a sign. And a second fence."}],
-ads:[{h:"NEW ON JANG & TOM",b:"The Christmas Spectacle is out now.",c:"Hear episode six",go:"ep6"},{h:"ALL THE GAMES",b:"Born Twice, The First Pulse, The Rusty Stack and more.",c:"Pick a game",go:"play"}]},
+ads:[{h:"NEW ON JANG & TOM",b:"The Christmas Light Caper is out now.",c:"Hear episode six",go:"ep6"},{h:"ALL THE GAMES",b:"Born Twice, The First Pulse, The Rusty Stack and more.",c:"Pick a game",go:"play"}]},
 
 {lead:{h:"HUBCAP HALF DECLARED ANTIQUE",d:"Tom's truck missing piece found on ridge",b:["The half hubcap found on Miller's Ridge belongs to Mr. Tom's truck, which lost it some years ago. Mr. Jang has declared it an antique.","\u201cIt's been in the ground. That's what antiques do,\u201d he said. Mr. Tom has put it back on the truck, where it rattles."]},
 shorts:[{h:"Rattle Report",b:"The truck now rattles in two places, a new record."},{h:"Ugliest Freight Hauler?",b:"Mr. Tom wants it known that the Rusty Stack is uglier. Probably."}],
