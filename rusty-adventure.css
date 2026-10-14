@@ -192,9 +192,8 @@ html.rs-lock,html.rs-lock body{overflow:hidden}
 .plate::before,.plate::after{content:"";position:absolute;width:26px;height:26px;border:3px solid #c9a24a;pointer-events:none;z-index:5;filter:drop-shadow(0 1px 1px #000a)}
 .plate::before{top:-3px;left:-3px;border-right:0;border-bottom:0;border-radius:6px 0 0 0}
 .plate::after{bottom:-3px;right:-3px;border-left:0;border-top:0;border-radius:0 0 6px 0}
-/* stills breathe slowly (Ken Burns) until the moving version fades in over them */
-@keyframes rcaKB{0%{transform:scale(1.0) translate(0,0)}100%{transform:scale(1.07) translate(-1.5%,-1%)}}
-html:not(.rca-still) .rs-pl0 img{animation:rcaKB 16s ease-in-out infinite alternate;transform-origin:50% 45%}
+/* pictures stay still; life comes from effects, sounds, gags, and moving loops over them */
+html .rs-pl0 img{animation:none;transform:none}
 /* each new page: the picture develops in */
 @keyframes rcaEnter{0%{opacity:.15;transform:scale(.965);filter:sepia(.8) brightness(.6)}100%{opacity:1;transform:none;filter:none}}
 .plate.enter .rs-frame{animation:rcaEnter .9s cubic-bezier(.2,.7,.2,1) both}
