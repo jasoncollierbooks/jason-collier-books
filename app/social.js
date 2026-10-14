@@ -8,6 +8,7 @@ var ITEMS={ // key = data-play / data-frame value
  'ridge':{id:'ep-millers-ridge',t:"The Treasure of Miller's Ridge",u:SITE+'audiobooks.html#jang-and-tom-radio',rate:1},
  'possum':{id:'ep-possum-caper',t:'The Great Possum Caper',u:SITE+'audiobooks.html#great-possum-caper',rate:1},
  'icefish':{id:'ep-ice-fishin',t:"The Ice Fishin' Fiasco",u:SITE+'audiobooks.html#ice-fishin-fiasco',rate:1},
+ 'xmas':{id:'ep-xmas',t:'The Christmas Spectacle',u:SITE+'audiobooks.html#christmas-spectacle',rate:1},
  'checkers':{id:'ep-checkers',t:'The Checkers Championship',u:SITE+'audiobooks.html#checkers-championship',rate:1},
  'rocket':{id:'ep-rocket-stove',t:'The Rocket Stove Rebellion',u:SITE+'audiobooks.html#rocket-stove-rebellion',rate:1},
  'dogs':{id:'ab-dogs',t:'Dogs That Chose Me',u:SITE+'audiobooks.html#dogs-that-chose-me',rate:1},
@@ -29,7 +30,7 @@ var ITEMS={ // key = data-play / data-frame value
 // Every shared link opens the APP (deep link /app/?open=...); without the app installed it still opens /app in the browser with the item open.
 function appLink(o){return SITE+'app/'+(o?'?open='+encodeURIComponent(o):'')}
 var GBYURL={};(window.CE_GAMES||[]).concat(window.CE_GAMES_MORE||[]).forEach(function(g){if(!GBYURL[g.url])GBYURL[g.url]=g.id});
-Object.keys(ITEMS).forEach(function(k){ITEMS[k].u=appLink(k==='rusty-adventure.html'?'adventure:rusty':/^(ridge|possum|icefish|rocket|checkers|dogs|oldman)$/.test(k)?'play:'+k:/^game:/.test(k)?k:GBYURL[k]?'game:'+GBYURL[k]:'frame:'+k)});
+Object.keys(ITEMS).forEach(function(k){ITEMS[k].u=appLink(k==='rusty-adventure.html'?'adventure:rusty':/^(ridge|possum|icefish|rocket|checkers|xmas|dogs|oldman)$/.test(k)?'play:'+k:/^game:/.test(k)?k:GBYURL[k]?'game:'+GBYURL[k]:'frame:'+k)});
 var APP={id:'app',t:'Collier Entertainment',u:appLink(''),rate:1};
 var BYID={};function reg(it){BYID[it.id]=it;return it}reg(APP);Object.keys(ITEMS).forEach(function(k){reg(ITEMS[k])});
 var srv=null,data={},signedIn=function(){return !!(A&&A.status==='in')};
