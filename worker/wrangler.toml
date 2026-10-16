@@ -1,0 +1,17 @@
+name = "collier-api"
+main = "src/index.js"
+compatibility_date = "2024-09-23"
+workers_dev = false
+
+[[routes]]
+pattern = "api.collierentertainment.com/*"
+zone_name = "collierentertainment.com"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "collier-users"
+database_id = "b158ce3b-6efe-40ea-a51c-dffb5baab025"
+
+[vars]
+SITE = "https://collierentertainment.com"
+EMAIL_FROM = "Collier Entertainment <signin@mail.collierentertainment.com>"

@@ -22,6 +22,7 @@ var TRACKS={
  icefish:(function(){var e=CE_SHOWS.jangtom.episodes[2];return {t:e.t,s:'Jang & Tom · radio show · Episode 3 · '+e.len,src:R+e.src,art:R+e.art,ep:3,credit:CE_SHOWS.jangtom.credit,ch:e.ch}})(),
  checkers:(function(){var e=CE_SHOWS.jangtom.episodes[4];return {t:e.t,s:'Jang & Tom · radio show · Episode 5 · '+e.len,src:R+e.src,art:R+e.art,ep:5,credit:CE_SHOWS.jangtom.credit,ch:e.ch}})(),
  xmas:(function(){var e=CE_SHOWS.jangtom.episodes[5];return {t:e.t,s:'Jang & Tom · radio show · Episode 6 · '+e.len,src:R+e.src,art:R+e.art,ep:6,credit:CE_SHOWS.jangtom.credit,ch:e.ch}})(),
+ cookie:(function(){var e=CE_SHOWS.jangtom.episodes[6];return {t:e.t,s:'Jang & Tom · radio show · Episode 7 · '+e.len,src:R+e.src,art:R+e.art,ep:7,credit:CE_SHOWS.jangtom.credit,ch:e.ch}})(),
  rocket:(function(){var e=CE_SHOWS.jangtom.episodes[3];return {t:e.t,s:'Jang & Tom · radio show · Episode 4 · '+e.len,src:R+e.src,art:R+e.art,ep:4,credit:CE_SHOWS.jangtom.credit,ch:e.ch}})(),
  dogs:{t:CE_DOGS.t,s:'Audiobook · Jason Collier · '+CE_DOGS.len,src:R+CE_DOGS.src,art:R+CE_DOGS.art,ch:CE_DOGS.ch},
  thorne:{t:"Thorne's Lab Journal",s:'Dr. Thorne reads the research log · 54:48',src:R+'media/thorne-lab-journal.mp3',art:R+'images/lab/born-twice-og.jpg'},
@@ -38,7 +39,8 @@ $('#listenList').innerHTML=
  item(R+'images/jang-tom-ice-fishin.jpg',"The Ice Fishin' Fiasco",'Jang & Tom radio show · Episode 3 · 14:02 · chapters','data-play="icefish"')+
  item(R+'images/jang-tom-rocket-stove.jpg','The Rocket Stove Rebellion','Jang & Tom radio show · Episode 4 · 13:36 · chapters','data-play="rocket"')+
  item(R+'images/jang-tom-checkers.jpg','The Checkers Championship','Jang & Tom radio show · Episode 5 · 13:34 · chapters','data-play="checkers"')+
- item(R+'images/jang-tom-christmas-spectacle.jpg','The Christmas Light Caper','Jang & Tom radio show · Episode 6 · 13:28 · new · chapters','data-play="xmas"')+
+ item(R+'images/jang-tom-christmas-spectacle.jpg','The Christmas Light Caper','Jang & Tom radio show · Episode 6 · 13:28 · chapters','data-play="xmas"')+
+ item(R+'images/pine-knot.jpg','The Cookie Conspiracy','Jang & Tom radio show · Episode 7 · 11:46 · new · chapters','data-play="cookie"')+
  item('media/jang-tom-tv.jpg','Jang & Tom Radio Hour','All episodes · the Collier Radio Hour','data-go="jangtom"')+
  item(R+'images/the-rusty-stack.jpg','The Rusty Stack: Choose Your Own Adventure','Audiobook · you choose what happens next · 8 endings','data-frame="rusty-adventure.html" data-title="The Rusty Stack Adventure"')+
  item(R+'images/dogs/cover-thumb.jpg','Dogs That Chose Me','Audiobook · a short story by Jason Collier · 9:33 · chapters','data-play="dogs"')+
