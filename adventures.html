@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="theme-color" content="#16130f">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choose Your Own Adventure | Collier Entertainment</title>
+<meta name="description" content="Two narrated choose-your-own-adventure books: The Rusty Stack and The Seeders. You pick the path.">
+<meta property="og:title" content="Choose Your Own Adventure | Collier Entertainment">
+<meta property="og:description" content="Two narrated choose-your-own-adventure books: The Rusty Stack and The Seeders. You pick the path.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://collierentertainment.com/images/games/adventures.jpg">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="450">
+<meta property="og:url" content="https://collierentertainment.com/adventures.html">
+<meta property="og:site_name" content="Collier Entertainment">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Choose Your Own Adventure | Collier Entertainment">
+<meta name="twitter:description" content="Two narrated choose-your-own-adventure books: The Rusty Stack and The Seeders. You pick the path.">
+<meta name="twitter:image" content="https://collierentertainment.com/images/games/adventures.jpg">
+<link rel="canonical" href="https://collierentertainment.com/adventures.html">
+<link rel="icon" href="icons/pages/play-32.png?v=tv2" sizes="32x32" type="image/png">
+<link rel="icon" href="icons/pages/play-48.png?v=tv2" sizes="48x48" type="image/png">
+<link rel="apple-touch-icon" href="icons/pages/play-apple-touch.png?v=tv2" sizes="180x180">
+<link rel="manifest" href="manifest.json?v=tv1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Rye&family=Orbitron:wght@500;700;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&family=IM+Fell+English+SC&family=Special+Elite&family=Josefin+Sans:wght@400;600&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="polish.css">
+<link rel="stylesheet" href="assets/broadcast-theme/site.css">
+<link rel="stylesheet" href="season.css?v=lite2">
+<script src="season.js?v=lite2"></script>
+<script src="app-mode.js?v=2"></script>
+<style>
+.games-lede{margin:0 0 1.2rem}
+.adv-grid{display:grid;grid-template-columns:1fr;gap:1.4rem;margin:0 0 2rem}
+@media(min-width:860px){.adv-grid{grid-template-columns:1fr 1fr;gap:1.5rem}}
+.game-card{display:flex;flex-direction:column;border:1px solid var(--line,rgba(228,208,164,.3));border-radius:10px;overflow:hidden;background:rgba(10,8,6,.72);color:inherit;text-decoration:none;box-shadow:0 10px 24px rgba(0,0,0,.45);transition:border-color .2s}
+.game-card:hover,.game-card:focus-visible{border-color:rgba(255,138,42,.6)}
+.game-card img{display:block;width:100%;aspect-ratio:16/9;height:auto;object-fit:cover;border-bottom:1px solid rgba(228,208,164,.25)}
+.game-body{display:flex;flex-direction:column;gap:.4rem;padding:1.15rem 1.25rem 1.35rem;flex:1}
+.game-body .kicker{margin:0;font-size:.8rem}
+.game-title{font-family:Cinzel,Georgia,serif;font-weight:700;font-size:clamp(1.6rem,2.4vw,2rem);line-height:1.15;color:#fbf6ee}
+.game-text{margin:0!important;padding:0!important;max-width:none!important;text-indent:0;font-size:1.12rem;line-height:1.45;color:#e8dcc4}
+.adv-facts{margin:0;font-family:"Josefin Sans","Gill Sans",sans-serif;letter-spacing:.12em;text-transform:uppercase;font-size:.78rem;color:#e4d0a4}
+.adv-play{display:inline-flex;align-items:center;margin-top:.85rem;padding:.7rem 1.3rem;border-radius:999px;background:linear-gradient(#f3d470,#c99a2a);color:#1a140d;font-weight:700;font-family:"Josefin Sans","Gill Sans",sans-serif;letter-spacing:.06em;text-transform:uppercase;font-size:.95rem;align-self:flex-start;box-shadow:0 6px 16px rgba(0,0,0,.35)}
+.game-card:hover .adv-play,.game-card:focus-visible .adv-play{background:linear-gradient(#ffe08a,#d7aa3a)}
+</style>
+<link rel="stylesheet" href="ce-site.css?v=4">
+</head>
+<body class="broadcast-lite">
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand ce-wm" href="index.html" aria-label="Collier Entertainment, home">COLLIER<span>ENTERTAINMENT</span></a>
+  <a class="pwa-home" href="index.html" aria-label="Home"><svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18"><path fill="currentColor" d="M12 3.2 3 11h2v9h5v-6h4v6h5v-9h2L12 3.2z"/></svg></a>
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><span></span><span></span><span></span></button>
+  <nav id="site-nav" aria-label="Main">
+    <a class="nav-link" href="index.html">Home</a>
+    <a class="nav-link" href="audiobooks.html">Listen</a>
+    <a class="nav-link" href="play.html">Play</a>
+    <a class="nav-link on" aria-current="page" href="adventures.html">Adventures</a>
+    <a class="nav-link" href="studio.html">Studio</a>
+    <div class="nav-group">
+      <button type="button" class="nav-label" aria-expanded="false" aria-haspopup="true" aria-controls="menu-read">Read</button>
+      <div class="nav-menu" id="menu-read" role="group" aria-label="Read">
+        <a href="books.html">All Books</a>
+        <a href="jang-and-tom.html">Jang &amp; Tom: Wagon Masters (book)</a>
+        <a href="first-pulse.html">The First Pulse</a>
+        <a href="old-man-on-the-mountain.html">Old Man On The Mountain</a>
+        <a href="rusty-stack.html">The Rusty Stack</a>
+        <a href="novel.html">The Novel</a>
+      </div>
+    </div>
+    <span class="nav-small"><a href="gazette.html">Gazette</a><a href="thorne-lab.html">Thorne’s Lab</a><a href="past-inspirations.html">Past Inspirations</a><a href="art.html">Art</a><a href="about.html">About</a></span>
+
+    <a class="nav-link" href="account.html" style="font-size:15px">Sign in</a>
+</nav>
+</header>
+
+<main id="top">
+<section class="ab-page">
+  <div class="ab-page-inner">
+    <header class="page-head">
+      <h1>Choose Your Own Adventure</h1>
+      <p>The old paperbacks asked you to hold your place with a thumb and choose. These two do the same thing out loud. You pick the path, and the story goes with you.</p>
+    </header>
+    <div class="adv-grid">
+      <a class="game-card reveal" href="rusty-adventure.html">
+        <img src="images/games/rusty-stack.jpg" alt="The Rusty Stack, a patched freight airship in a stormy sky" width="800" height="450" loading="lazy">
+        <span class="game-body"><span class="kicker">Narrated adventure</span><span class="game-title">The Rusty Stack</span><span class="game-text">The ugliest freight hauler in the sky is one cough from the ground. When the scene ends, you choose what the ship does next.</span><span class="adv-facts">23 scenes · 8 endings · narrated</span><span class="adv-play">▶ Play</span></span>
+      </a>
+      <a class="game-card reveal" href="seeders/">
+        <img src="images/games/seeders.jpg" alt="The Seeders, a vast ship over a glowing planet" width="800" height="450" loading="lazy">
+        <span class="game-body"><span class="kicker">Narrated adventure</span><span class="game-title">The Seeders</span><span class="game-text">Someone left a seed in a warm sea a hundred thousand years ago. Tonight they came back for the crop.</span><span class="adv-facts">4 viewpoints · 12 endings · narrated</span><span class="adv-play">▶ Play</span></span>
+      </a>
+    </div>
+    <p>More games are on <a href="play.html">Play</a>. <a href="index.html">Home</a></p>
+    <p class="tip-line">If the trail was worth it — <a href="https://venmo.com/u/Jason-Collier-40" target="_blank" rel="noopener noreferrer">tip the trail boss</a>.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <span>© <span id="y">2026</span> <span class="ce-foot-wm">Collier Entertainment</span></span>
+  <span class="visit-count" hidden></span>
+  <span class="foot-links"><a href="https://www.amazon.com/stores/author/B0GDW74Y5S" target="_blank" rel="noopener">Amazon Author Page</a><a href="mailto:outdoorsolution@bellsouth.net">Email</a><a href="https://venmo.com/u/Jason-Collier-40" target="_blank" rel="noopener noreferrer">Tip the trail boss</a></span>
+  <span class="foot-legal"><a href="app/">📲 Get the app</a><a href="privacy.html">Privacy</a><a href="support.html">Support</a><a href="credits.html">Credits</a></span>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script src="main.js?v=pass3" defer></script>
+<script src="links.js" defer></script>
+</body>
+</html>
