@@ -1,8 +1,7 @@
 /* App mode. When a site page is shown inside the Collier Entertainment app
    (the app's in-app viewer, a ?app=1 link, or an installed home-screen app),
    outside links (Amazon, X, the games, anything off this site) open in the
-   phone's own browser, and the Venmo tip link is hidden. On the normal
-   website nothing changes. */
+   phone's own browser. On the normal website nothing changes. */
 (function () {
   var app = false;
   try { if (/[?&]app=1(&|#|$)/.test(location.search)) app = true; } catch (e) {}
@@ -18,7 +17,7 @@
   var root = document.documentElement;
   root.classList.add("ce-app");
   var css = document.createElement("style");
-  css.textContent = '.ce-app a[href*="venmo.com"],.ce-app .tip-line,.ce-app .web-only{display:none!important}';
+  css.textContent = '.ce-app .web-only{display:none!important}';
   (document.head || root).appendChild(css);
 
   // Inside the app's viewer frame: hide the website's own header, menu, home buttons and footer nav,

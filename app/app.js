@@ -62,7 +62,7 @@ var cur='home';
 function go(id){if(!document.getElementById(id))return;$$('.screen').forEach(function(s){s.classList.toggle('active',s.id===id)});$$('.tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.go===id)});cur=id;history.replaceState(null,'','#'+id)}
 // frame
 var fr=$('#fr');
-// in-app pages get ?app=1 so app-mode.js opens outside links in the browser and hides the Venmo tip
+// in-app pages get ?app=1 so app-mode.js opens outside links in the browser
 function appUrl(u){var i=u.indexOf('#'),h=i<0?'':u.slice(i),p=i<0?u:u.slice(0,i);return p+(p.indexOf('?')<0?'?':'&')+'app=1'+h}
 function openFrame(u,t){fr.src=/^https?:\/\//.test(u)?u:R+appUrl(u);$('#fTitle').textContent=t||'';$('#fSave').hidden=u.indexOf('studio')!==0;$('#frame').hidden=false;if(!au.paused)au.pause()}
 $('#fClose').onclick=function(){$('#frame').hidden=true;fr.src='about:blank'};

@@ -13,7 +13,7 @@
   .nav-menu a, .nav-link { display: flex; align-items: center; font-size: 17px; }
   .foot-links a { display: inline-flex !important; align-items: center; padding: 0 .5em; }
   footer, footer span, footer a, footer .ce-foot-wm { font-size: 15px !important; }
-  .rs-ep span, .rs-credit, .ab-note, .ab-synopsis, .tip-line, .lab-sub, .hand-note { font-size: 16px; }
+  .rs-ep span, .rs-credit, .ab-note, .ab-synopsis, .lab-sub, .hand-note { font-size: 16px; }
 }
 
 /* Main menu = the app's tabs (Home, Listen, Play, Studio, Read) + small links */
