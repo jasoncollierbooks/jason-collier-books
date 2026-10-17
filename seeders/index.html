@@ -131,7 +131,32 @@ h2.scene{font:800 clamp(27px,6.4vw,38px)/1.1 Georgia,serif;margin:18px 0 10px;co
   padding:10px 16px;border-radius:999px;font:700 14px "Avenir Next","Segoe UI",system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;transition:transform .4s,opacity .4s;white-space:nowrap;cursor:pointer;opacity:0;visibility:hidden;max-width:92%;overflow:hidden;text-overflow:ellipsis}
 .toast.show{transform:translate(-50%,0);opacity:1;visibility:visible}
 .foot{font-size:12px;color:#5f8a7c;text-align:center;margin-top:24px;letter-spacing:.1em}
-@media (max-width:560px){body{padding:0}.device{border-radius:0;height:100vh;height:100dvh;padding:10px 10px 8px}.key{min-height:56px;font-size:11px}.key .lbl{display:none}.key .ic{font-size:24px}}
+.howto-home{display:flex;width:100%;align-items:center;justify-content:center;gap:8px;margin-top:16px;
+  border:2px solid var(--glow2);background:rgba(255,211,107,.14);color:var(--glow2);
+  border-radius:14px;padding:14px 16px;cursor:pointer;
+  font:800 clamp(16px,4vw,19px)/1 "Avenir Next","Segoe UI",system-ui,sans-serif;
+  letter-spacing:.12em;text-transform:uppercase;box-shadow:0 0 18px rgba(255,211,107,.18)}
+.howto-home:hover,.howto-home:focus-visible{background:rgba(255,211,107,.28);outline:none}
+.key{min-width:0}
+.key .lbl{text-align:center;line-height:1.05}
+#kHowto .lbl{font-size:11px;letter-spacing:.03em}
+#howtoOv{z-index:6}
+#howtoOv.show{align-items:center;justify-content:center;overflow:hidden;padding:12px}
+#howtoOv .howto-card{margin:0;width:min(560px,100%);max-height:100%;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.howto-scroll{overflow-y:auto;min-height:0;flex:1 1 auto;-webkit-overflow-scrolling:touch}
+.howto-card h4{margin:2px 0 8px;font:800 13px/1.2 "Avenir Next","Segoe UI",system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:var(--glow2)}
+.howto-card p,.howto-card li p{min-height:0;font-size:clamp(16px,3.8vw,18px);line-height:1.5;margin:0 0 12px}
+.howto-card video{width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:#000;border-radius:12px;display:block;margin:0 0 14px;box-shadow:0 0 0 1px #1f5a47}
+.goals{list-style:none;margin:0 0 8px;padding:0;display:flex;flex-direction:column;gap:8px}
+.goal{display:flex;gap:10px;align-items:flex-start;border:1px solid #1f5a47;border-radius:12px;padding:10px 12px;background:rgba(93,255,196,.04)}
+.goal .tick{flex:none;width:22px;height:22px;margin-top:1px;border:2px solid #3d6b5c;border-radius:6px;display:grid;place-items:center;font:800 14px/1 "Avenir Next","Segoe UI",system-ui,sans-serif;color:#03110c}
+.goal.done{border-color:var(--glow)}
+.goal.done .tick{background:var(--glow);border-color:var(--glow)}
+.goal p{margin:0}
+.gprog{margin-top:5px;color:var(--glow2);font-size:13px;letter-spacing:.03em;line-height:1.35}
+.playtime{color:var(--dim)!important;font-size:clamp(15px,3.6vw,16px)!important}
+.howto-card .row{flex:none;position:static;margin-top:8px;padding-top:0;background:none}
+@media (max-width:560px){body{padding:0}.device{border-radius:0;height:100vh;height:100dvh;padding:10px 10px 8px}.keys{gap:4px;padding:10px 0 2px}.key{min-height:56px;font-size:11px;border-radius:12px}.key .lbl{display:none}.key .ic{font-size:22px}#howtoOv.show{padding:8px}#howtoOv .howto-card{padding:16px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
@@ -141,6 +166,21 @@ h2.scene{font:800 clamp(27px,6.4vw,38px)/1.1 Georgia,serif;margin:18px 0 10px;co
   <div class="screen">
     <div class="view" id="view" aria-live="polite"></div>
     <div class="overlay" id="overlay"><div class="gcard" id="gcard"></div></div>
+    <div class="overlay" id="howtoOv" aria-hidden="true">
+      <div class="gcard howto-card" id="howtoCard" role="dialog" aria-modal="true" aria-labelledby="howtoTitle">
+        <div class="howto-scroll">
+          <div class="k">Field guide</div>
+          <h3 id="howtoTitle">How to Play</h3>
+          <video id="howtoVid" controls preload="none" poster="howto-poster.png" src="howto.mp4" playsinline></video>
+          <h4>How to play</h4>
+          <p>Tap a viewpoint card to start a story. The Guide reads each scene aloud; the Voice key turns narration off and on. At the end of a scene, tap a choice and the story goes that way. Restart replays the story you're in from the top, and Home goes back to the story cards. Progress saves on this device.</p>
+          <h4>Your goals</h4>
+          <ol class="goals" id="howtoGoals"></ol>
+          <p class="playtime">One path takes about 5 minutes, and finishing everything takes about 1.5–2 hours.</p>
+        </div>
+        <div class="row"><button class="btn" type="button" id="closeHowto" data-testid="close-howto">Close</button></div>
+      </div>
+    </div>
     <div class="toast" id="toast"></div>
   </div>
   <div class="keys">
@@ -149,6 +189,7 @@ h2.scene{font:800 clamp(27px,6.4vw,38px)/1.1 Georgia,serif;margin:18px 0 10px;co
     <button class="key" id="kEnd" data-testid="endings"><span class="ic">◎</span><span class="lbl">Endings</span></button>
     <button class="key" id="kSound" data-testid="sound"><span class="ic">♪</span><span class="lbl">Voice</span></button>
     <button class="key" id="kRestart" data-testid="restart"><span class="ic">↺</span><span class="lbl">Restart</span></button>
+    <button class="key" id="kHowto" data-testid="howto-key" title="How to Play" aria-label="How to Play"><span class="ic">?</span><span class="lbl">How to Play</span></button>
   </div>
 </div>
 <script src="story.js"></script>
@@ -160,7 +201,7 @@ const HUE={astronomer:['#1a2a55','#d9a441'],worker:['#3a1c0e','#ff8a3d'],crew:['
 let S, st, audio=null, newLore=new Set();
 const $=id=>document.getElementById(id), view=$('view');
 function load(){try{return Object.assign({endings:[],lore:[],flags:[],seen:[],sound:true,cur:null},JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){return {endings:[],lore:[],flags:[],seen:[],sound:true,cur:null}}}
-function save(){localStorage.setItem(KEY,JSON.stringify(st))}
+function save(){localStorage.setItem(KEY,JSON.stringify(st));if($('howtoOv').classList.contains('show'))renderGoals()}
 const has=f=>st.flags.includes(f);
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const paras=t=>t.split(/\n\s*\n/).map(p=>'<p>'+esc(p)+'</p>').join('');
@@ -172,6 +213,7 @@ function nextClip(){
   const a=new Audio('audio/'+queue.shift()+'.mp3'); audio=a;
   a.addEventListener('ended',()=>{if(audio===a)nextClip()});
   a.addEventListener('error',()=>{if(audio===a)nextClip()});
+  a.addEventListener('playing',()=>{if(audio===a)pauseNarrationForVideo()});
   a.play().catch(()=>{});
 }
 function playAudio(id){   // scene narration, then any ripple paragraphs that are showing
@@ -183,6 +225,7 @@ function playLoreAudio(l){
   if(audio&&!audio.paused){audio.pause();pausedScene=audio}
   const a=new Audio('audio/lore-'+l+'.mp3'); loreAudio=a;
   a.addEventListener('error',()=>{if(loreAudio===a)loreAudio=null});
+  a.addEventListener('playing',()=>{if(loreAudio===a)pauseNarrationForVideo()});
   a.play().catch(()=>{});
 }
 function closeLore(){stopLoreAudio();$('overlay').classList.remove('show');if(pausedScene&&st.sound&&audio===pausedScene)pausedScene.play().catch(()=>{});pausedScene=null}
@@ -204,11 +247,13 @@ function home(){
     <div class="dont">DON'T TAKE IT PERSONALLY</div>
     <div class="intro"><p>Good evening. You are holding a field guide to the harvest of Earth, compiled with care by people who were there, and by some who were very much larger than people.</p>
     <p>A hundred thousand years ago, someone left a seed in a warm sea. Tonight, they have come back for the crop. Choose whose eyes to borrow.</p></div>
+    <button class="howto-home" type="button" id="howtoHome" data-testid="howto">How to Play</button>
     <div class="vpgrid">${vps}</div>
     <div class="ripplenote">✦ What you do in one story ripples into the others. Ripples found: <b style="color:var(--glow2)">${st.flags.length} / 6</b> · Endings: <b style="color:var(--glow2)">${st.endings.length} / ${S.endings.length}</b> · Guide entries: <b style="color:var(--glow2)">${st.lore.length} / ${Object.keys(S.lore).length}</b></div>
     ${st.cur?'':''}
     <div class="foot">From an original premise by Jason Collier · <a href="https://collierentertainment.com/play.html" style="color:#8fd9bd">Collier Entertainment · more games</a></div></div>`;
   view.querySelectorAll('.vp').forEach(b=>b.onclick=()=>{const v=S.viewpoints.find(x=>x.id===b.dataset.vp);go(v.start)});
+  $('howtoHome').onclick=()=>openHowto($('howtoHome'));
   top();
 }
 /* ---------- scene ---------- */
@@ -284,10 +329,73 @@ function endings(){
   top();
 }
 function back(){st.cur?go(st.cur):home()}
+/* ---------- how to play ---------- */
+const HOWTO_KEY='seeders.howtoSeen';
+const WHO={astronomer:'Varga',worker:'Dani',crew:'Rosa',matriarch:'the Matriarch'};
+let heldScene=null, heldLore=null, howtoOpener=null;
+function howtoSeen(){try{return localStorage.getItem(HOWTO_KEY)==='1'}catch(e){return true}}
+function markHowtoSeen(){try{localStorage.setItem(HOWTO_KEY,'1')}catch(e){}}
+function hasProgress(s){return !!(s&&(s.cur||(s.endings&&s.endings.length)||(s.lore&&s.lore.length)||(s.flags&&s.flags.length)||(s.seen&&s.seen.length)))}
+function howtoVideoPlaying(){const v=$('howtoVid');return !!(v&&$('howtoOv').classList.contains('show')&&!v.paused&&!v.ended)}
+function duckNarration(){
+  if(audio&&!audio.paused){audio.pause();heldScene=audio}
+  if(loreAudio&&!loreAudio.paused){loreAudio.pause();heldLore=loreAudio}
+}
+function pauseNarrationForVideo(){if(howtoVideoPlaying())duckNarration()}
+function resumeNarrationAfterVideo(){
+  const s=heldScene,l=heldLore; heldScene=null; heldLore=null;
+  if(!st||!st.sound) return;
+  if(l&&loreAudio===l) l.play().catch(()=>{});
+  else if(s&&audio===s) s.play().catch(()=>{});
+}
+function vpEnds(id){const ends=S.endings.filter(e=>S.scenes[e]&&S.scenes[e].viewpoint===id);return {got:ends.filter(e=>st.endings.includes(e)).length,total:ends.length}}
+function vpPlayed(id){return st.seen.some(sid=>S.scenes[sid]&&S.scenes[sid].viewpoint===id)||st.endings.some(eid=>S.scenes[eid]&&S.scenes[eid].viewpoint===id)}
+function goalItem(key,done,have,need,text,prog){
+  return `<li class="goal${done?' done':''}" data-goal="${key}" data-done="${done?1:0}" data-have="${have}" data-need="${need}"><span class="tick" aria-hidden="true">${done?'✓':''}</span><div><p>${text}</p><div class="gprog">${prog}</div></div></li>`;
+}
+function renderGoals(){
+  const n=S.viewpoints.length, played=S.viewpoints.filter(v=>vpPlayed(v.id)).length;
+  const who=S.viewpoints.map(v=>`${WHO[v.id]||esc(v.title)}${vpPlayed(v.id)?' ✓':''}`).join(' · ');
+  const endBits=S.viewpoints.map(v=>{const c=vpEnds(v.id);return `${WHO[v.id]||esc(v.title)} ${c.got}/${c.total}`}).join(' · ');
+  const loreN=Object.keys(S.lore).length, sides=S.viewpoints.filter(v=>{const c=vpEnds(v.id);return c.total&&c.got>=c.total}).length;
+  const glow=newLore.size?` · ${newLore.size} new glowing`:'';
+  $('howtoGoals').innerHTML=[
+    goalItem('viewpoints',played>=n,played,n,'1. Play all four viewpoints (Varga, Dani, Rosa, the Matriarch).',`${played} / ${n} · ${who}`),
+    goalItem('endings',st.endings.length>=S.endings.length,st.endings.length,S.endings.length,'2. Find all 12 endings, 3 per viewpoint; choose differently to find others.',`${st.endings.length} / ${S.endings.length} · ${endBits}`),
+    goalItem('lore',st.lore.length>=loreN,st.lore.length,loreN,'3. Unlock all 18 Guide entries, which unlock as you make choices; a new one glows.',`${st.lore.length} / ${loreN}${glow}`),
+    goalItem('ripples',st.flags.length>=6,st.flags.length,6,'4. Trigger all 6 ripples, where a choice in one story changes another (example: as the Matriarch, choose to listen, and the Astronomer\'s laser scene gains a gold paragraph and a gold choice). Gold always means a ripple.',`${st.flags.length} / 6`),
+    goalItem('story',sides>=n,sides,n,'5. Piece together the whole story of the harvest from every side.',`${sides} / ${n} viewpoints complete`)
+  ].join('');
+}
+function openHowto(opener){
+  if(!S||!st) return;
+  renderGoals(); markHowtoSeen();
+  $('howtoOv').classList.add('show'); $('howtoOv').setAttribute('aria-hidden','false');
+  howtoOpener=opener||null;
+  try{$('closeHowto').focus({preventScroll:true})}catch(e){$('closeHowto').focus()}
+}
+function closeHowto(){
+  const v=$('howtoVid'); if(v){try{v.pause()}catch(e){}}
+  $('howtoOv').classList.remove('show'); $('howtoOv').setAttribute('aria-hidden','true');
+  resumeNarrationAfterVideo();
+  if(howtoOpener&&howtoOpener.focus){try{howtoOpener.focus()}catch(e){}}
+  howtoOpener=null;
+}
+$('closeHowto').onclick=closeHowto;
+$('howtoOv').onclick=e=>{if(e.target.id==='howtoOv')closeHowto()};
+$('howtoVid').addEventListener('play',duckNarration);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('howtoOv').classList.contains('show')){e.preventDefault();closeHowto()}});
 $('kHome').onclick=home; $('kLore').onclick=lorePanel; $('kEnd').onclick=endings;
 $('kSound').onclick=()=>{st.sound=!st.sound;save();setKeys();if(!st.sound)stopAudio();else if(st.cur)playAudio(st.cur);toast(st.sound?'♪ Narration on':'Narration off')};
 $('kRestart').onclick=()=>{const c=st.cur&&S.scenes[st.cur];if(c){const v=S.viewpoints.find(x=>x.id===c.viewpoint);go(v.start)}else home()};
-function start(data){S=data;st=load();setKeys();badge();window.__seeders={S,get st(){return st},go,home,get audio(){return audio},get loreAudio(){return loreAudio},get queue(){return queue}};st.cur?go(st.cur):home()}
+$('kHowto').onclick=()=>{if($('howtoOv').classList.contains('show'))closeHowto();else openHowto($('kHowto'))};
+function start(data){
+  S=data; st=load(); setKeys(); badge();
+  window.__seeders={S,get st(){return st},go,home,get audio(){return audio},get loreAudio(){return loreAudio},get queue(){return queue}};
+  const fresh=!howtoSeen()&&!hasProgress(st);
+  st.cur?go(st.cur):home();
+  if(fresh) openHowto($('kHowto'));
+}
 fetch('story.json').then(r=>{if(!r.ok)throw 0;return r.json()}).then(start).catch(()=>start(window.STORY_FALLBACK));
 })();
 </script>
