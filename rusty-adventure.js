@@ -49,6 +49,9 @@ function render(play){
   $('rcaTitle').textContent=n.title;
   var txt=n.text.slice();if(!n.ending&&txt[txt.length-1]==='What do you do?')txt.pop(); /* asked again above the choices */
   $('rcaText').innerHTML=txt.map(function(p,i){return '<p data-p="'+i+'">'+esc(p)+'</p>'}).join('');
+  if(n.ending){var card=document.createElement('a');card.className='rca-books';card.href='books.html';
+    card.innerHTML='<span class="rca-books-art" aria-hidden="true"><img src="images/the-rusty-stack.jpg" alt=""><img src="images/the-first-pulse.jpg" alt=""></span><span class="rca-books-line">Liked this? Read the books.</span>';
+    $('rcaText').appendChild(card)}
   $('pnoL').textContent=PAGE[ST.id];$('pnoR').textContent=PAGE[ST.id];
   $('rcaChoices').innerHTML='';$('rcaChoices').classList.remove('on');
   flags();save();

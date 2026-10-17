@@ -256,6 +256,12 @@ html .rs-pl0 img{animation:none;transform:none}
  .rca-endcard i{font-size:18px}
 }
 @media (prefers-reduced-motion:reduce){html .rs-pl0 img{animation:none}.plate.enter .rs-frame,.rca-endcard{animation:none}}
+/* small invitation under an ending, on the page, clear of the voyage buttons */
+.rca-books{display:flex;align-items:center;gap:10px;margin:14px 2px 8px;padding:8px 12px 8px 8px;text-decoration:none;color:#3b250c;border:1px solid #c4a46a;border-radius:10px;background:linear-gradient(180deg,#fffaf0,#f3e6c8);box-shadow:0 1px 0 #b89b62}
+.rca-books:hover,.rca-books:focus-visible{background:#fffdf6;outline:2px solid #8a6a32;outline-offset:2px}
+.rca-books-art{display:flex;flex:none;gap:6px}
+.rca-books-art img{width:34px;height:50px;object-fit:cover;border-radius:2px;border:1px solid #8a6a32;box-shadow:1px 2px 4px #00000022}
+.rca-books-line{flex:1;min-width:0;font:700 18px/1.25 'Cormorant Garamond',Georgia,serif}
 .rca-endings{scroll-margin-top:110px}
 .rca-endcard{padding:18px 12px 10px}
 .rca-endcard b{font-size:clamp(22px,2.6vw,30px)}
