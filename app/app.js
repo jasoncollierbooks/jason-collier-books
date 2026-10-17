@@ -12,7 +12,7 @@ var ART=['painting-lighthouse-at-dusk','painting-autumn-hillside','painting-wild
 //   src  = path to the new mp3, len = its length as m:ss, secs = its length in seconds.
 // Everything on the page (hero, cards, Listen list, channel guide) reads from here.
 // If the new cut moves things around, also update the chapter times (ch) below and app/captions.json.
-var EP1={src:R+'media/jang-tom-millers-ridge.mp3',len:'16:49',secs:1009};
+var EP1={src:R+'media/jang-tom-millers-ridge.mp3',len:'16:47',secs:1007};
 window.CE_EP1=EP1;
 var TRACKS={
  ridge:{t:"The Treasure of Miller's Ridge",s:'Jang & Tom · radio show · '+EP1.len,src:EP1.src,art:R+'images/jang-tom-millers-ridge.jpg',ep:1,
@@ -35,10 +35,10 @@ $('#art').innerHTML=ART.map(function(a){return '<button class="poster sq" data-f
 function item(img,t,s,attrs){return '<button class="item" '+attrs+'><img loading="lazy" src="'+img+'" alt=""><div><b>'+esc(t)+'</b><span>'+s+'</span></div><span class="go">›</span></button>'}
 $('#listenList').innerHTML=
  item(R+'images/jang-tom-millers-ridge.jpg',"The Treasure of Miller's Ridge",'Jang & Tom radio show · '+EP1.len+' · chapters & listen-along','data-play="ridge"')+
- item(R+'images/jang-tom-possum-caper.jpg','The Great Possum Caper','Jang & Tom radio show · Episode 2 · 18:21 · chapters','data-play="possum"')+
- item(R+'images/jang-tom-ice-fishin.jpg',"The Ice Fishin' Fiasco",'Jang & Tom radio show · Episode 3 · 14:02 · chapters','data-play="icefish"')+
- item(R+'images/jang-tom-rocket-stove.jpg','The Rocket Stove Rebellion','Jang & Tom radio show · Episode 4 · 13:36 · chapters','data-play="rocket"')+
- item(R+'images/jang-tom-checkers.jpg','The Checkers Championship','Jang & Tom radio show · Episode 5 · 13:34 · chapters','data-play="checkers"')+
+ item(R+'images/jang-tom-possum-caper.jpg','The Great Possum Caper','Jang & Tom radio show · Episode 2 · 18:25 · chapters','data-play="possum"')+
+ item(R+'images/jang-tom-ice-fishin.jpg',"The Ice Fishin' Fiasco",'Jang & Tom radio show · Episode 3 · 14:00 · chapters','data-play="icefish"')+
+ item(R+'images/jang-tom-rocket-stove.jpg','The Rocket Stove Rebellion','Jang & Tom radio show · Episode 4 · 13:35 · chapters','data-play="rocket"')+
+ item(R+'images/jang-tom-checkers.jpg','The Checkers Championship','Jang & Tom radio show · Episode 5 · 13:24 · chapters','data-play="checkers"')+
  item(R+'images/jang-tom-christmas-spectacle.jpg','The Christmas Light Caper','Jang & Tom radio show · Episode 6 · 13:28 · chapters','data-play="xmas"')+
  item(R+'images/pine-knot.jpg','The Cookie Conspiracy','Jang & Tom radio show · Episode 7 · 11:46 · new · chapters','data-play="cookie"')+
  item('media/jang-tom-tv.jpg','Jang & Tom Radio Hour','All episodes · the Collier Radio Hour','data-go="jangtom"')+
