@@ -8,7 +8,7 @@ ads:[{h:"HEAR IT ALL!",b:"The Treasure of Miller's Ridge, the complete radio sho
 
 {lead:{h:"WHO RUNS OVER YONDER? TOWN STILL UNSURE",d:"Customers report \u2018Nobody\u2019 cooks the best ribs in the county",b:["Confusion continued at Over Yonder barbecue this week after a customer asked who the cook was and was told, \u201cNobody.\u201d","Proprietor Hugh confirms Nobody has been cooking for thirty years. Mr. Jang, who asked, was reportedly escorted out by Hugh, a point on which Mr. Jang remains unclear."]},
 shorts:[{h:"Ribs Still Excellent",b:"Diners agree Nobody's ribs remain the finest in the county."},{h:"Mr. Jang Turns Red",b:"Witnesses describe the color as \u201cripe tomato.\u201d"}],
-ads:[{h:"A WORD FROM OUR SPONSOR",b:"Hear the whole \u2018Hugh / Nobody cooks\u2019 routine in the Jang & Tom radio show.",c:"Listen",go:"ep"},{h:"I SPY!",b:"Lost something? Find five hidden things in pictures from the books.",c:"Play I Spy",go:"ispy"}]},
+ads:[{h:"A WORD FROM OUR SPONSOR",b:"Hear the whole \u2018Hugh / Nobody cooks\u2019 routine in the Jang & Tom radio show.",c:"Listen",go:"ep"},{h:"SHARP EYE SEARCH!",b:"Lost something? Find five hidden things in pictures from the books.",c:"Play Sharp Eye Search",go:"ispy"}]},
 
 {lead:{h:"COFFEE SO THICK THE SPOON STOOD UP",d:"Local man patches roof with breakfast",b:["Mr. Tom confirmed this week that his morning coffee was used to patch his roof last spring. \u201cIt held through two storms,\u201d he said.","Mr. Jang, a frequent guest, calls the brew \u201ca danger to spoons.\u201d Mr. Tom calls it \u201cgood coffee.\u201d"]},
 shorts:[{h:"Spoon Recovered",b:"The spoon was freed with a hammer at approximately 10 a.m."},{h:"Kitchen Table Report",b:"Mr. Tom was at his own table, with his own coffee, with his own eyes open. That counts as three answers."},{h:"Roof Holding",b:"No leaks reported."}],
@@ -40,7 +40,7 @@ ads:[{h:"FIRST PULSE",b:"Something older than the stars. The animated audiobook 
 
 {lead:{h:"CANDY BAR MYSTERY DEEPENS",d:"Treat hidden under flour sack \u2018ain't there no more\u2019",b:["A half candy bar hidden by Mr. Tom under the flour sack in his pantry has gone missing. Mr. Jang was the only other person who knew of the hiding place.","Asked about it, Mr. Jang replied, \u201cWhat candy bar?\u201d Investigators consider this suspicious."]},
 shorts:[{h:"Sandwich Offered in Peace",b:"Mr. Tom made Mr. Jang a peanut butter and jelly sandwich anyway. Cut diagonal."},{h:"Flour Sack Cleared",b:"The flour sack has been ruled out as a suspect."}],
-ads:[{h:"FIND THE HIDDEN THINGS",b:"I Spy. Better at finding things than Tom's pantry.",c:"Play I Spy",go:"ispy"},{h:"THE BOOKS",b:"Jang & Tom, The First Pulse, Old Man On The Mountain.",c:"See the books",go:"books"}]},
+ads:[{h:"FIND THE HIDDEN THINGS",b:"Sharp Eye Search. Better at finding things than Tom's pantry.",c:"Play Sharp Eye Search",go:"ispy"},{h:"THE BOOKS",b:"Jang & Tom, The First Pulse, Old Man On The Mountain.",c:"See the books",go:"books"}]},
 
 {lead:{h:"TOM TELLS TURTLE STORY; TOWN RESPONDS",d:"\u2018It's better when it's longer,\u2019 says storyteller",b:["Mr. Tom treated listeners to his story about going down to the creek, where he saw a turtle sitting on a log. The log was a regular log. Then he went home.","\u201cThat's the whole story,\u201d Mr. Tom confirmed. A longer version is reportedly in the works."]},
 shorts:[{h:"Turtle Comments",b:"The turtle declined to comment and returned to the log."},{h:"Log Remains Regular",b:"No changes to the log reported."},{h:"Fishing Report",b:"Tom caught nothing, and enjoyed it."}],
@@ -56,7 +56,7 @@ ads:[{h:"STEP INSIDE THE STORY",b:"Book Worlds: the Keeper, the brass key, the w
 
 {lead:{h:"ICE FISHING SEASON: JANG \u2018HAS A HOLE IN MIND\u2019",d:"Tom brings two chairs, one thermos",b:["With cold weather coming, Mr. Jang has announced an ice-fishing expedition. He says he \u201chas a hole in mind.\u201d","Mr. Tom will supply chairs and coffee. Experts remind citizens to check the ice. Mr. Jang reminds experts that he is an expert."]},
 shorts:[{h:"Thermos Coffee",b:"Mr. Tom's coffee is expected to freeze last."},{h:"Fish Warned",b:"Local fish have been notified."}],
-ads:[{h:"WARM UP WITH A STORY",b:"Animated audiobooks: Wagon Masters, Philadelphia Follies, Transcontinental.",c:"Listen",go:"audiobooks"},{h:"I SPY",b:"Look close. Five things are hiding.",c:"Play",go:"ispy"}]},
+ads:[{h:"WARM UP WITH A STORY",b:"Animated audiobooks: Wagon Masters, Philadelphia Follies, Transcontinental.",c:"Listen",go:"audiobooks"},{h:"SHARP EYE SEARCH",b:"Look close. Five things are hiding.",c:"Play",go:"ispy"}]},
 
 {lead:{h:"BURLAP SACK HONORED",d:"Tom's sack credited with safe return of Precious",b:["The town council has thanked Mr. Tom's burlap sack for its part in returning Precious the possum to Mrs. Whittaker.","\u201cIt's a good sack,\u201d said Mr. Tom. Mr. Jang argued that he should share the credit, since he was in the pond at the time, \u201cguarding the perimeter.\u201d"]},
 shorts:[{h:"Possum Napping",b:"Precious is home and reported \u201cextremely asleep.\u201d"},{h:"Koi Pond Restocked",b:"Mrs. Whittaker has added a fence. And a sign. And a second fence."}],
@@ -84,7 +84,7 @@ ads:[{h:"MEET THEM IN PERSON",b:"Well, on the radio. The Jang & Tom show.",c:"Li
 
 {lead:{h:"FEED STORE NOTICE BOARD FULL OF MAPS",d:"Napkin cartography craze sweeps Pine Knot",b:["Since the Miller's Ridge affair, residents have been pinning napkin maps to the feed store notice board. Most lead to Over Yonder.","Mr. Hoskins asks that maps be pinned with thumbtacks, not ketchup. Hugh reports business has never been better."]},
 shorts:[{h:"Ketchup Shortage",b:"Over Yonder is out of ketchup. Suspects are many."},{h:"Map Found Leading Nowhere",b:"Experts believe it leads to Nobody, who cooks."}],
-ads:[{h:"FIND IT FIRST",b:"I Spy: hidden things in scenes from the books.",c:"Play",go:"ispy"},{h:"THE FIRST PULSE",b:"You are leftover light. Drift. Tap a world.",c:"Play",go:"firstpulse"}]},
+ads:[{h:"FIND IT FIRST",b:"Sharp Eye Search: hidden things in scenes from the books.",c:"Play",go:"ispy"},{h:"THE FIRST PULSE",b:"You are leftover light. Drift. Tap a world.",c:"Play",go:"firstpulse"}]},
 
 {lead:{h:"TOWN PICNIC: JANG IN CHARGE OF \u2018LOGISTICS\u2019",d:"Tom in charge of everything else",b:["The fall picnic will be held Saturday at the creek. Mr. Jang has named himself head of logistics, which he says means \u201cstanding and pointing.\u201d","Mr. Tom will bring the food, the blankets, the chairs, the coffee and Mr. Jang."]},
 shorts:[{h:"Pie Safe Warning",b:"Mr. Jang was once found inside a pie safe. Pies will be guarded."},{h:"Turtle Invited",b:"The turtle from Mr. Tom's story will attend, on its log."}],
@@ -92,7 +92,7 @@ ads:[{h:"PAINT THE CREEK",b:"Water: pull, then blend down. Try it in the Oil Stu
 
 {lead:{h:"GROUNDHOG SEEN WITH SECOND SHOVEL",d:"Hardware store reports unexplained loss",b:["The Miller's Ridge groundhog has been sighted carrying a second shovel, believed taken from the hardware store's back porch.","Mr. Tom has asked for his good shovel back and has offered a trade: one candy bar. Unfortunately, the candy bar is missing."]},
 shorts:[{h:"Shovel Watch",b:"Residents are urged to keep shovels indoors."},{h:"Mr. Jang Offers Help",b:"\u201cThis is between me and the groundhog,\u201d he says. Again."}],
-ads:[{h:"HEAR WHERE IT STARTED",b:"The Treasure of Miller's Ridge, the full radio show.",c:"Listen",go:"ep"},{h:"GAMES FOR EVERYONE",b:"Coloring, I Spy, Book Worlds and more.",c:"Pick a game",go:"play"}]},
+ads:[{h:"HEAR WHERE IT STARTED",b:"The Treasure of Miller's Ridge, the full radio show.",c:"Listen",go:"ep"},{h:"GAMES FOR EVERYONE",b:"Coloring, Sharp Eye Search, Book Worlds and more.",c:"Pick a game",go:"play"}]},
 
 {lead:{h:"JANG & TOM TO HEAD WEST \u2018SOMEDAY\u2019",d:"California \u2018not yet\u2019, says Jang",b:["Asked whether they have ever been to California, Mr. Tom said no. Mr. Jang added, \u201cNot yet, Tom. Not yet.\u201d","Readers who cannot wait may find the boys leading a wagon train in the book Wagon Masters, a comic western about two handsome devils."]},
 shorts:[{h:"Oxen Unavailable",b:"Mr. Tom offered his truck. It rattles."},{h:"Sacramento Notified",b:"Sacramento has not replied."}],
