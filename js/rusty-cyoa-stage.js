@@ -1,4 +1,4 @@
-/* Living-art direction for The Rusty Stack CYOA. Coordinates are fractions of the image (x,y); z = zoom.
+/* Living-art direction for The Rusty Stack adventure. Coordinates are fractions of the image (x,y); z = zoom.
    cam[i] = camera target while paragraph i is narrated (index -1 / title = establishing shot).
    fx = ambient effects drawn over the art. gags = tappable hidden jokes (id shared across pages). */
 window.RCA_STAGE={
