@@ -47,8 +47,7 @@ $('#listenList').innerHTML=
  item(R+'images/old-man-on-the-mountain.jpg','Old Man On The Mountain','Audiobook · app player','data-play="oldman"')+
  item(R+'images/lab/born-twice-og.jpg',"Thorne's Lab Journal",'Dr. Thorne reads all 8 entries · 54:48','data-play="thorne"')+
  item(R+'images/jang-and-tom-wagon-masters.jpg','Jang & Tom audiobooks','Wagon Masters, Philadelphia Follies, Transcontinental','data-frame="audiobooks.html#jang-and-tom" data-title="Jang & Tom"')+
- item(R+'images/the-first-pulse.jpg','The First Pulse','Audiobook · Chapters One & Two in seven parts','data-frame="audiobooks.html#first-pulse" data-title="The First Pulse"')+
- item(R+'images/art/philly-s01.jpg','Past Inspirations','Old-time radio and inspirations','data-frame="past-inspirations.html" data-title="Past Inspirations"');
+ item(R+'images/the-first-pulse.jpg','The First Pulse','Audiobook · Chapters One & Two in seven parts','data-frame="audiobooks.html#first-pulse" data-title="The First Pulse"');
 function card(img,t,s,f){return '<button class="card" data-frame="'+f+'" data-title="'+esc(t)+'"><img loading="lazy" src="'+img+'" alt=""><b>'+esc(t)+'</b><span>'+s+'</span></button>'}
 // Play tab: the same games as the website's Play page, read from ../games.js (CE_GAMES + the More row)
 var PLAY=(window.CE_GAMES||[]).map(function(g){return [g.t,g.k,g.url,R+'images/games/'+g.id+'.jpg',g.d,g.id]}).concat((window.CE_GAMES_MORE||[]).map(function(g){return [g.t,g.k,g.url,R+g.img,g.d,g.id]}));
@@ -100,7 +99,7 @@ function isDev(){try{return localStorage.getItem('ce-dev')==='1'}catch(e){return
 // Pine Knot Club is free: signed in = member. (Dev-only test toggle behind ?dev=1.)
 function isSub(){var A=window.CollierAuth;if(A&&A.status==='in')return true;try{if(isDev()&&localStorage.getItem(SUBK)==='1')return true;if((!A||A.status==='loading')&&+(localStorage.getItem('ce-member')||0)>Date.now())return true}catch(e){}return false}
 var st=$('#subToggle');if(st){$('#devToggle').hidden=!isDev();st.checked=isDev()&&localStorage.getItem(SUBK)==='1';st.onchange=function(){try{localStorage.setItem(SUBK,st.checked?'1':'0')}catch(e){}toast(st.checked?'Dev: member mode':'Dev: free mode');if(!st.checked)loadBreaks()};}
-function loadBreaks(){if(window.JCBreaks||document.getElementById('cbjs'))return;var s=document.createElement('script');s.id='cbjs';s.src='../commercials.js?v=56';document.body.appendChild(s)}
+function loadBreaks(){if(window.JCBreaks||document.getElementById('cbjs'))return;var s=document.createElement('script');s.id='cbjs';s.src='../commercials.js?v=57';document.body.appendChild(s)}
 function breakNow(){if(window.CE&&CE.clubSpot&&CE.clubSpot())return true;if(!window.JCBreaks)return false;var ids=Object.keys(JCBreaks.spots);var was=!au.paused;au.pause();var fw=null,fm=[];try{if(!$('#frame').hidden){fw=fr.contentWindow;if(fw.__oldman)fw.__oldman.holdSim(true);fw.document.querySelectorAll('audio,video').forEach(function(m){if(!m.paused){m.pause();fm.push(m)}})}}catch(e){}JCBreaks.open(ids[Math.floor(Math.random()*ids.length)]);var w=setInterval(function(){if(!window.__jcBreakHold&&!document.querySelector('.jc-break, [class*=break-overlay]')){clearInterval(w);try{if(fw&&fw.__oldman)fw.__oldman.holdSim(false);fm.forEach(function(m){m.play().catch(function(){})})}catch(e){}if(was)au.play().catch(function(){})}},700);setTimeout(function(){},0);return true}
 // Station breaks: about every 5-6 minutes for everyone
 function gap(){return 300000+Math.random()*60000}

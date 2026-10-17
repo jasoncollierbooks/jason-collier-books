@@ -144,14 +144,6 @@
       skipOn: ["audiobooks.html", "old-man-audiobook"],
       buttons: [{ label: "Listen free", href: "audiobooks.html" }]
     },
-    radio: {
-      title: "The Radio Hour",
-      look: "is-bw",
-      dial: true,
-      audio: "audio/commercials/radio.mp3",
-      skipOn: ["past-inspirations.html"],
-      buttons: [{ label: "Tune in", href: "past-inspirations.html#radio" }]
-    },
     kids: {
       title: "Sharp Eye Search & Coloring",
       look: "is-color",
@@ -181,7 +173,6 @@
     "coloring.html",
     "audiobooks.html",
     "old-man-audiobook",
-    "past-inspirations.html",
     "book-worlds",
     "old-man-game",
     "studio.html"
