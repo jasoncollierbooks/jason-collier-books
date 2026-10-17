@@ -47,13 +47,13 @@ function fetchAll(){if(!API)return Promise.resolve();var ids=Object.keys(BYID);
  if(+(ls('ce-rx-off')||0)>Date.now()){srv=false;return Promise.resolve()}
  return fetch(API+'/reactions?ids='+ids.join(','),{credentials:'include',headers:A.headers?A.headers():{}}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(j){srv=true;data=j||{}}).catch(function(){srv=false;ls('ce-rx-off',Date.now()+6*3600e3)})}
 function post(path,body){return fetch(API+path,{method:'POST',credentials:'include',headers:A.headers?A.headers({'Content-Type':'application/json'}):{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(function(r){if(!r.ok)throw r.status;return r.json()})}
-function hint(){if(srv&&!signedIn())toast('Saved on this phone. Sign in to count your vote.');else if(!srv)toast('Saved on this phone.')}
+function hint(){toast('Saved on this phone.')}
 function toggleLike(id){var on=!liked(id);ls('ce-like-'+id,on?'1':null);
  if(srv&&signedIn()){var d=data[id]=data[id]||{likes:0};d.liked=on;d.likes=Math.max(0,(d.likes||0)+(on?1:-1));paint();post('/like',{id:id,on:on}).then(function(j){d.likes=j.likes;d.liked=j.liked;paint()}).catch(function(){toast('Couldn\u2019t reach the server. Saved on this phone.')})}
  else{paint();if(on)hint()}}
 function setRate(id,n){ls('ce-rate-'+id,String(n));
  if(srv&&signedIn()){post('/rate',{id:id,stars:n}).then(function(j){data[id]=Object.assign(data[id]||{},j);paint();toast('Thanks for rating!')}).catch(function(){toast('Saved on this phone.')})}
- else{paint();if(srv)toast('Thanks! Saved on this phone. Sign in to count your vote.');else toast('Thanks! Your rating is saved on this phone.')}}
+ else{paint();toast('Thanks! Your rating is saved on this phone.')}}
 // ---- share
 function shareText(it){var v=it.id==='app'?'Watch':/^(ep|ab)-/.test(it.id)?'Listen to':/^game-/.test(it.id)?'Play':it.id==='studio'?'Paint in':/^art-/.test(it.id)?'See':'Check out';return it.id==='app'?'Watch Jang & Tom on Collier Entertainment':v+' '+it.t+' on Collier Entertainment'}
 function share(it){var d={title:it.t,text:shareText(it),url:it.u};
@@ -80,7 +80,7 @@ function decorate(){
 var sheet=document.createElement('div');sheet.id='rxSheet';sheet.className='rx-sheet';sheet.hidden=true;document.body.appendChild(sheet);
 function openSheet(id,opts){var it=BYID[id];if(!it)return;opts=opts||{};
  sheet.innerHTML='<div class="rx-card" role="dialog" aria-modal="true" aria-label="Rate '+esc(it.t)+'"><button class="rx-x" data-rx-close aria-label="Close">\u2715</button><small class="rx-kicker">'+(opts.kicker||'RATE &amp; SHARE')+'</small><h3>'+esc(it.t)+'</h3>'+(opts.msg?'<p>'+opts.msg+'</p>':'')+'<div class="rx-big">'+starsHTML(id)+'</div><div class="rx-acts">'+(id==='app'?'':heartHTML(id))+'<button class="rx-btn" data-rx-share="'+id+'">\u2934 Share</button></div>'+
- (srv===true&&!signedIn()?'<p class="rx-note">Your vote is saved on this phone. <button class="rx-link" data-frame="account.html" data-title="Account" data-rx-close>Sign in</button> to count it.</p>':(srv===false?'<p class="rx-note">Saved on this phone for now. Saved on this phone.</p>':''))+
+ (!signedIn()||srv===false?'<p class="rx-note">Saved on this phone.</p>':'')+
  (opts.later?'<div class="rx-later"><button class="rx-btn ghost" data-rx-close>Not now</button><button class="rx-btn ghost" data-rx-never>Don\u2019t ask again</button></div>':'')+'</div>';
  sheet.hidden=false;paint()}
 function closeSheet(){sheet.hidden=true;sheet.innerHTML=''}
@@ -88,13 +88,13 @@ function closeSheet(){sheet.hidden=true;sheet.innerHTML=''}
 function playerRow(){var c=$('#player .ctl2');if(!c||$('#rxPl'))return;c.insertAdjacentHTML('afterend','<div class="rx-pl" id="rxPl"></div>')}
 function playerSet(k){playerRow();var it=ITEMS[k],r=$('#rxPl');if(!r)return;if(!it){r.innerHTML='';return}r.innerHTML=heartHTML(it.id)+'<span class="rx-plstars">'+starsHTML(it.id)+'</span><span class="rx-share" role="button" tabindex="0" data-rx-share="'+it.id+'" aria-label="Share">\u2934 Share</span>';paint()}
 // home share + studio share
-function extras(){var cta=$('.club-cta');if(cta&&!$('#rxApp'))cta.insertAdjacentHTML('beforebegin','<div class="rx-appbar" id="rxApp"><div><b>Enjoying Collier Entertainment?</b><span>Tell a friend or leave a rating.</span></div><button class="rx-btn" data-rx-share="app">\u2934 Share app</button><button class="rx-btn ghost" data-rx-open="app">\u2606 Rate</button></div>');
+function extras(){var anchor=$('.getbooks');if(anchor&&!$('#rxApp'))anchor.insertAdjacentHTML('beforebegin','<div class="rx-appbar" id="rxApp"><div><b>Enjoying Collier Entertainment?</b><span>Tell a friend or leave a rating.</span></div><button class="rx-btn" data-rx-share="app">\u2934 Share app</button><button class="rx-btn ghost" data-rx-open="app">\u2606 Rate</button></div>');
  var sc=$('#studio .studio-card');if(sc&&!$('#rxStudio')){reg({id:'studio',t:'the Collier Oil Studio',u:appLink('tab:studio')});reg({id:'art-painting-lighthouse-at-dusk',t:'Lighthouse at Dusk by Jason Collier',u:appLink('frame:art.html')});
   $('#openStudio',sc).insertAdjacentHTML('afterend','<div class="rx-row big" id="rxStudio">'+heartHTML('art-painting-lighthouse-at-dusk')+'<span class="rx-share" role="button" tabindex="0" data-rx-share="studio">\u2934 Share the studio</span></div>')}}
 // events (capture, so the card itself doesn't open)
 function act(e){var t=e.target.closest&&e.target.closest('[data-rx-like],[data-rx-star],[data-rx-share],[data-rx-open],[data-rx-close],[data-rx-never]');
  if(!t){if(e.target===sheet)closeSheet();return}
- if(t.hasAttribute('data-rx-close')&&t.dataset.frame){closeSheet();return} // let the app open sign-in
+ if(t.hasAttribute('data-rx-close')&&t.dataset.frame){e.preventDefault();e.stopPropagation();closeSheet();return}
  e.preventDefault();e.stopPropagation();
  if(t.dataset.rxLike)toggleLike(t.dataset.rxLike);
  else if(t.dataset.rxStar){var g=t.closest('[data-rx-stars]').dataset.rxStars;setRate(g,+t.dataset.rxStar);if(g==='app'){ls('ce-rateapp','done');if(!sheet.hidden)setTimeout(closeSheet,900)}}

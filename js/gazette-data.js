@@ -1,6 +1,6 @@
 /* The Pine Knot Gazette: 30 made-up front pages, one per day (picked by date, repeats every 30 days).
    All news is invented fun from the Jang & Tom radio shows. Ads point to real Collier Entertainment pages.
-   ad.go: ep | bookworlds | oldman | ispy | coloring | studio | audiobooks | books | club | play | listen | firstpulse */
+   ad.go: ep | bookworlds | oldman | ispy | coloring | studio | audiobooks | books | play | listen | firstpulse */
 window.PK_GAZETTE = [
 {lead:{h:"GROUNDHOG MAKES OFF WITH TOM'S GOOD SHOVEL",d:"Miller's Ridge treasure dig yields six holes, three nails",b:["A treasure hunt on Miller's Ridge ended yesterday with the loss of one good shovel to a local groundhog, witnesses report.","Mr. Jang, who led the expedition with a napkin map, says the animal \u201cwas clearly a professional.\u201d Mr. Tom, who owned the shovel, says he \u201cwas just standing there.\u201d The groundhog could not be reached for comment."]},
 shorts:[{h:"Napkin Map Identified",b:"The famous treasure map has been confirmed as directions to Over Yonder barbecue. The X was ketchup."},{h:"Half a Hubcap Recovered",b:"Mr. Tom reports finding the other half of his truck. He is \u201cpleased, mostly.\u201d"},{h:"Weather",b:"Crisp. Leaves turning gold on the ridge. Good digging weather, if you still own a shovel."}],
@@ -12,7 +12,7 @@ ads:[{h:"A WORD FROM OUR SPONSOR",b:"Hear the whole \u2018Hugh / Nobody cooks\u2
 
 {lead:{h:"COFFEE SO THICK THE SPOON STOOD UP",d:"Local man patches roof with breakfast",b:["Mr. Tom confirmed this week that his morning coffee was used to patch his roof last spring. \u201cIt held through two storms,\u201d he said.","Mr. Jang, a frequent guest, calls the brew \u201ca danger to spoons.\u201d Mr. Tom calls it \u201cgood coffee.\u201d"]},
 shorts:[{h:"Spoon Recovered",b:"The spoon was freed with a hammer at approximately 10 a.m."},{h:"Kitchen Table Report",b:"Mr. Tom was at his own table, with his own coffee, with his own eyes open. That counts as three answers."},{h:"Roof Holding",b:"No leaks reported."}],
-ads:[{h:"PAINT LIKE THE MASTERS",b:"The Collier Oil Studio. Mix real colors, load the palette knife, paint a mountain before supper.",c:"Open the studio",go:"studio"},{h:"JOIN THE PINE KNOT CLUB",b:"Free! Just sign in. Fewer commercials and the full studio.",c:"Join free",go:"club"}]},
+ads:[{h:"PAINT LIKE THE MASTERS",b:"The Collier Oil Studio. Mix real colors, load the palette knife, paint a mountain before supper.",c:"Open the studio",go:"studio"}]},
 
 {lead:{h:"LOAFING RULES CLARIFIED AT LAST",d:"Sitting is loafing; standing is supervising, says management",b:["After a long debate on Miller's Ridge, Mr. Jang has issued the official Pine Knot loafing rules.","Sitting is loafing. Standing is supervising, if Jang does it, and standing around if Tom does it. Leaning is \u201cthe worst kind of loafing there is.\u201d Mr. Tom has asked for the rules in writing. Mr. Jang says writing is a kind of loafing."]},
 shorts:[{h:"Management Defended",b:"\u201cThat's the beauty of management,\u201d says Mr. Jang, resting his supervisor."},{h:"Shovel Union Formed",b:"Membership: one. Mr. Tom."}],
@@ -32,7 +32,7 @@ ads:[{h:"HEAR JENKINS HIMSELF",b:"\u2018Slowly I turned\u2026\u2019 The full sto
 
 {lead:{h:"\u2018SLOWLY I TURNED\u2019: JENKINS TELLS ALL",d:"Forty-year-old groundhog grudge revealed",b:["Old Man Jenkins this week revealed why he does not care for Miller's Ridge. Forty years ago he knelt there to propose to a gal named Opal, when a groundhog popped out.","Here the interview ended, as Mr. Jenkins got carried away and Mr. Jang got bopped. Mr. Jenkins later apologized."]},
 shorts:[{h:"Opal Said Yes",b:"Sources confirm Opal did say yes, eventually."},{h:"Same Groundhog?",b:"Mr. Tom wonders if it is the same groundhog. Experts say no. Mr. Tom is not convinced."}],
-ads:[{h:"PAINT THE RIDGE",b:"Palette-knife mountains and fan-brush trees in the Oil Studio.",c:"Paint now",go:"studio"},{h:"PINE KNOT CLUB",b:"Members get fewer commercials. Membership is free.",c:"Join free",go:"club"}]},
+ads:[{h:"PAINT THE RIDGE",b:"Palette-knife mountains and fan-brush trees in the Oil Studio.",c:"Paint now",go:"studio"}]},
 
 {lead:{h:"GENERAL HOSKINS' GOLD: FACT OR FEED STORE?",d:"Historians puzzled by Jang's account of 1864",b:["According to Mr. Jang, General Beauregard P. Hoskins came through these hills in 1864 with a mule cart full of gold and buried it \u201cwhere no one will ever find it.\u201d","Mr. Hoskins of the feed store says he has never heard of the general. Mr. Jang says that is exactly what a Hoskins would say."]},
 shorts:[{h:"Mule Cart Not Found",b:"Searchers found a wheelbarrow. It belonged to Mr. Tom."},{h:"Feed Store Sale",b:"Seed corn, two for one. No gold accepted."}],
@@ -48,7 +48,7 @@ ads:[{h:"TUNE IN",b:"The Jang & Tom radio show, free on the Collier Entertainmen
 
 {lead:{h:"METAL DETECTOR'S OWNER LEARNS OF LOAN",d:"Cousin to be \u2018cut in\u2019 for a share, \u2018probably small\u2019",b:["The metal detector carried by Mr. Jang on Miller's Ridge belongs to his cousin, who did not know it was borrowed.","\u201cHe will when we cut him in for a share of the gold,\u201d Mr. Jang explained. Since the gold was three nails, the cousin's share is believed to be one nail."]},
 shorts:[{h:"Detector Beeps at Everything",b:"Including nails, a hubcap and Mr. Tom's belt buckle."},{h:"Garage Reopened",b:"The cousin has added a lock."}],
-ads:[{h:"OLD MAN HUNT",b:"Hang your trail cameras. Something is out there.",c:"Play",go:"oldman"},{h:"FREE CLUB",b:"Sign in once, enjoy fewer interruptions.",c:"Join free",go:"club"}]},
+ads:[{h:"OLD MAN HUNT",b:"Hang your trail cameras. Something is out there.",c:"Play",go:"oldman"}]},
 
 {lead:{h:"JANG PLANS \u2018BIGGEST ADVENTURE YET\u2019",d:"Tom sighs, reaches for hat",b:["Mr. Jang announced on Monday that Pine Knot is about to witness its biggest adventure yet. He declined to say what it is.","Mr. Tom sighed. He was already reaching for his hat. Observers note he always sighs, but he always goes."]},
 shorts:[{h:"Hat Located",b:"On Mr. Tom's head."},{h:"Adventure Insurance",b:"No company in the county will write a policy."}],
@@ -68,7 +68,7 @@ ads:[{h:"THE RUSTY STACK",b:"The ugliest freight hauler in the sky. Play the gam
 
 {lead:{h:"SIX HOLES LEFT ON RIDGE; COUNCIL CONCERNED",d:"Groundhog suspected of digging two more",b:["The town council will discuss the holes on Miller's Ridge at Tuesday's meeting. Mr. Jang dug the plans; Mr. Tom dug the holes.","A seventh and eighth hole have since appeared. The groundhog is believed responsible, possibly using Mr. Tom's good shovel."]},
 shorts:[{h:"Fill-In Volunteers Wanted",b:"Bring your own shovel. Do not lend it to anyone."},{h:"Ridge Closed to Napkins",b:"Napkin maps are banned until further notice."}],
-ads:[{h:"PAINT A RIDGE",b:"Mountains with the palette knife, snow on the peaks, done by supper.",c:"Paint now",go:"studio"},{h:"FREE CLUB",b:"Pine Knot Club members get fewer commercials and the full studio.",c:"Join free",go:"club"}]},
+ads:[{h:"PAINT A RIDGE",b:"Mountains with the palette knife, snow on the peaks, done by supper.",c:"Paint now",go:"studio"}]},
 
 {lead:{h:"FRIENDSHIP DECLARED \u2018REAL TREASURE\u2019",d:"Day's haul counted on a log at sundown",b:["After a long day on Miller's Ridge, the treasure was counted: six holes, three rusty nails, one very angry groundhog and half a hubcap.","Then Mr. Tom produced a peanut butter and jelly sandwich, cut diagonal. \u201cReckon that's the only kind of treasure we ever find,\u201d he said. \u201cAnd we find it every day.\u201d"]},
 shorts:[{h:"Same Time Tomorrow",b:"Confirmed. Big adventure waiting."},{h:"Leaves Turn Gold",b:"The only gold found on the ridge this week."}],
@@ -88,7 +88,7 @@ ads:[{h:"FIND IT FIRST",b:"I Spy: hidden things in scenes from the books.",c:"Pl
 
 {lead:{h:"TOWN PICNIC: JANG IN CHARGE OF \u2018LOGISTICS\u2019",d:"Tom in charge of everything else",b:["The fall picnic will be held Saturday at the creek. Mr. Jang has named himself head of logistics, which he says means \u201cstanding and pointing.\u201d","Mr. Tom will bring the food, the blankets, the chairs, the coffee and Mr. Jang."]},
 shorts:[{h:"Pie Safe Warning",b:"Mr. Jang was once found inside a pie safe. Pies will be guarded."},{h:"Turtle Invited",b:"The turtle from Mr. Tom's story will attend, on its log."}],
-ads:[{h:"PAINT THE CREEK",b:"Water: pull, then blend down. Try it in the Oil Studio.",c:"Paint now",go:"studio"},{h:"JOIN THE CLUB",b:"Free. Just sign in.",c:"Join free",go:"club"}]},
+ads:[{h:"PAINT THE CREEK",b:"Water: pull, then blend down. Try it in the Oil Studio.",c:"Paint now",go:"studio"}]},
 
 {lead:{h:"GROUNDHOG SEEN WITH SECOND SHOVEL",d:"Hardware store reports unexplained loss",b:["The Miller's Ridge groundhog has been sighted carrying a second shovel, believed taken from the hardware store's back porch.","Mr. Tom has asked for his good shovel back and has offered a trade: one candy bar. Unfortunately, the candy bar is missing."]},
 shorts:[{h:"Shovel Watch",b:"Residents are urged to keep shovels indoors."},{h:"Mr. Jang Offers Help",b:"\u201cThis is between me and the groundhog,\u201d he says. Again."}],
@@ -104,7 +104,7 @@ ads:[{h:"THE FIRST PULSE",b:"A science fiction tale about something older than t
 
 {lead:{h:"SPELLING BEE ENDS IN ARGUMENT OVER \u2018YONDER\u2019",d:"Is it a place, a direction or a barbecue joint?",b:["The school spelling bee was halted when a student was asked to spell \u201cyonder\u201d and asked, \u201cWhich one?\u201d","Mr. Jang, in the audience, offered to explain. The bee was then canceled for the day. Hugh sent ribs."]},
 shorts:[{h:"Winner Declared",b:"Nobody. Who, it turns out, also cooks."},{h:"Teacher Resting",b:"Not loafing. Resting."}],
-ads:[{h:"COLOR TIME",b:"Pictures from the books. Pick a color. Tap.",c:"Color",go:"coloring"},{h:"PINE KNOT CLUB",b:"Free with sign-in. Fewer commercials.",c:"Join free",go:"club"}]},
+ads:[{h:"COLOR TIME",b:"Pictures from the books. Pick a color. Tap.",c:"Color",go:"coloring"}]},
 
 {lead:{h:"HAUNTED MOUNTAIN STORIES TOLD AT FEED STORE",d:"Tom will not go up after dark",b:["Old-timers at the feed store traded stories this week about the old man on the mountain. Mr. Tom left early.","\u201cI ain't scared,\u201d he said from his truck. \u201cI just like being home.\u201d Mr. Jang stayed until the stories got good, then left faster."]},
 shorts:[{h:"Lanterns Sold Out",b:"Hoskins reports a run on lanterns."},{h:"Trail Cameras",b:"One caught a deer. One caught Mr. Jang, running."}],
@@ -120,5 +120,5 @@ ads:[{h:"WHO'S ON FIRST? HUGH!",b:"The routine that started it all, on the Jang 
 
 {lead:{h:"GOODNIGHT, PINE KNOT",d:"Another day ends a little tired, a little dirty",b:["And so ends another day in Pine Knot. The boys came home a little tired, a little dirty, and perfectly happy with the treasure they already had.","Tomorrow, Mrs. Whittaker's possum may escape again. Mr. Jang will have a plan. Mr. Tom will get his net."]},
 shorts:[{h:"Night, Y'all",b:"From all of us at the Gazette."},{h:"Candy Bar Update",b:"\u201cWhat candy bar?\u201d"}],
-ads:[{h:"BEDTIME LISTENING",b:"Audiobooks and the Jang & Tom show, free in the app.",c:"Listen",go:"listen"},{h:"BOOKS TO HOLD",b:"Jason Collier's books on Amazon.",c:"See the books",go:"books"},{h:"FREE CLUB",b:"Sign in, get fewer commercials.",c:"Join free",go:"club"}]}
+ads:[{h:"BEDTIME LISTENING",b:"Audiobooks and the Jang & Tom show, free in the app.",c:"Listen",go:"listen"},{h:"BOOKS TO HOLD",b:"Jason Collier's books on Amazon.",c:"See the books",go:"books"}]}
 ];
