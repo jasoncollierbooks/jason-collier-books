@@ -15,12 +15,12 @@
 <meta name="apple-mobile-web-app-title" content="Collier">
 <script>try{if(localStorage.getItem("ce-motion")!=="lively")document.documentElement.classList.add("calm")}catch(e){document.documentElement.classList.add("calm")}</script>
 <link rel="apple-touch-icon" href="icons/icon-180.png"><link rel="icon" href="icons/icon-192.png">
-<link rel="manifest" href="manifest.json"><link rel="stylesheet" href="app.css?v=62"><link rel="stylesheet" href="../commercials.css?v=62"><link rel="stylesheet" href="../js/gazette.css?v=62"><link rel="stylesheet" href="../js/a2hs.css?v=62"><link rel="stylesheet" href="../js/show.css?v=62">
+<link rel="manifest" href="manifest.json"><link rel="stylesheet" href="app.css?v=63"><link rel="stylesheet" href="../commercials.css?v=63"><link rel="stylesheet" href="../js/gazette.css?v=63"><link rel="stylesheet" href="../js/a2hs.css?v=63"><link rel="stylesheet" href="../js/show.css?v=63">
 </head><body>
 <div id="splash"><img src="icons/icon-512.png" alt=""><div class="brand">COLLIER<span>ENTERTAINMENT</span></div></div>
 <main id="app">
 <section class="screen active" id="home">
- <header class="top chan"><div class="logo">COLLIER<span>ENTERTAINMENT</span></div><span class="onair"><i></i>ON AIR</span><button class="acct-chip" id="acctChip" data-frame="account.html" data-title="Account" aria-label="Sign in">Sign in</button></header>
+ <header class="top chan"><div class="logo">COLLIER<span>ENTERTAINMENT</span></div><span class="onair"><i></i>ON AIR</span></header>
  <div class="tv">
   <div class="tv-cab-top"><span class="tv-plate">COLLIER</span></div>
   <div class="tv-screen"><img src="media/jang-tom-tv.jpg" alt="Jang and Tom, painted"><div class="scan"></div><div class="glow"></div>
@@ -55,7 +55,6 @@
  <div class="shelf"><h3>Studio <small>paint &amp; art</small></h3></div>
  <div class="paint"><img src="../images/jason-art/painting-lighthouse-at-dusk.jpg" alt="Lighthouse at Dusk by Jason Collier"><div><span class="np">OIL STUDIO</span><h3>Paint like the masters</h3><p>Mix on the palette, load the knife, paint mountains and trees.</p><button class="btn" data-go="studio">🖌 Paint now</button></div></div>
  <div class="shelf"><h3 class="sub-h">Jason's Art</h3><div class="rail" id="art"></div></div>
- <button class="club-cta" data-go="club"><i class="soon-pill free-pill">FREE</i><b>Pine Knot Club</b><span id="ctaLine">Join the Club free, just sign in. Fewer commercials, the full Oil Studio and offline downloads →</span></button>
  <div class="getbooks"><h4>Get the books</h4><div id="books" class="books"></div></div>
  <div class="appinfo" id="appInfo"><h4>Help &amp; info</h4><div class="infolinks"><button data-frame="privacy.html" data-title="Privacy">Privacy</button><button data-frame="support.html" data-title="Support">Support</button><button data-frame="credits.html" data-title="Credits">Credits</button></div><p>Collier Entertainment · <a href="mailto:outdoorsolution@bellsouth.net">outdoorsolution@bellsouth.net</a></p></div>
 </section>
@@ -70,18 +69,6 @@
 <section class="screen" id="read"><header class="top"><h2>Read</h2></header><div id="readList" class="list"></div></section>
 <section class="screen" id="thorne"><header class="top"><button class="back" data-go="home">‹</button><h2>Thorne’s Lab</h2></header><div class="th-screen"><img class="th-hero" src="../images/lab/born-twice-banner.jpg" alt=""><p class="th-lede">The research log of Dr. Elias Thorne, physicist. Personal Laboratory, Princeton, New Jersey, 1982. Jason Collier’s work in progress: new entries appear as the log grows.</p><button class="th-row" data-play="thorne"><i>🎙️</i><span><b>Listen to the Journal</b><small>Dr. Thorne reads all 8 entries · 54:48</small></span></button><button class="th-row" data-frame="thorne-lab.html#log" data-title="Thorne’s Lab"><i>📓</i><span><b>Read the Research Log</b><small>Turn the notebook pages; each entry can be read aloud</small></span></button><button class="th-row" data-frame="https://delta-branch-breeze-daisy.grok.me/" data-title="Born Twice"><i>🚀</i><span><b>Play Born Twice</b><small>The companion game: grow a living starship in a 1982 laboratory, then fly it across a real solar chart</small></span></button><button class="th-row" data-frame="thorne-lab.html#terminal" data-title="Thorne’s Lab"><i>💻</i><span><b>Lab Terminal</b><small>Type at Dr. Thorne’s 1982 lab computer</small></span></button><button class="th-row" data-frame="thorne-lab.html#instruments" data-title="Thorne’s Lab"><i>📟</i><span><b>Bench Instruments</b><small>Play with the oscilloscope and Geiger counter</small></span></button><button class="th-row" data-frame="thorne-lab.html" data-title="Thorne’s Lab"><i>🔬</i><span><b>Enter the Lab</b><small>The whole Thorne’s Lab page</small></span></button><h3 class="sec">Related</h3><button class="th-row" data-frame="first-pulse.html" data-title="The First Pulse"><i>📖</i><span><b>The First Pulse</b><small>Jason Collier’s science-fiction novel, whose page links to the lab</small></span></button><button class="th-row" data-frame="https://fern-valley-glow-reef.grok.me/" data-title="The First Pulse"><i>✨</i><span><b>Play The First Pulse</b><small>The companion game: drift as leftover light and step inside its universe</small></span></button></div></section>
 <section class="screen" id="jangtom"><header class="top"><button class="back" data-go="listen">‹</button><h2>Jang &amp; Tom</h2></header><div id="jtShow" style="padding:0 12px 24px"></div></section>
-<section class="screen" id="club"><header class="top"><button class="back" data-go="home">‹</button><h2>Pine Knot Club</h2></header>
- <div class="club-hero"><div class="ticket"><small>ADMIT ONE</small><b>PINE KNOT CLUB</b><span id="ticketSub">Free with sign-in</span></div><h1>Pine Knot Club<br><em>Free with sign-in</em></h1><p>No cost, no card. Sign in with your email and you're a member.</p></div>
- <div class="acct-card" id="acctCard"><b id="acctLine">Join free: sign in with your email</b><button class="acct-go btn" data-frame="account.html" data-title="Account">Join free</button></div>
- <h3 class="sec">Member perks</h3><div class="perkgrid">
- <div><i>📻</i><b>Fewer commercials</b><span>About one short break every 8 to 10 minutes, and none between episodes</span></div>
- <div><i>🎨</i><b>The full Oil Studio</b><span>Half-mix, the hand drawer, 72 historical colors, Save to Photos</span></div>
- <div><i>⬇️</i><b>Offline downloads</b><span>Take Jang &amp; Tom on the road</span></div>
- <div><i>✉️</i><b>News, if you want it</b><span>Optional email about new episodes, books and events, about once a month</span></div></div>
- <h3 class="sec">Free vs Club</h3><table class="tiers"><tr><th></th><th>Free</th><th>Club (free with sign-in)</th></tr><tr><td>Commercials</td><td>every 5–6 min</td><td>fewer: every 8–10 min</td></tr><tr><td>Oil Studio</td><td>basic (full studio free once a day)</td><td>full: Half-mix, hand, 72 colors, Save to Photos</td></tr><tr><td>Offline downloads</td><td>–</td><td>✓</td></tr></table>
- <label class="sub" id="devToggle" hidden><input type="checkbox" id="subToggle"> Dev only: pretend I'm signed in <small>(this phone only)</small></label>
- <p class="fine">The Club is free. Nothing is for sale.</p>
-</section>
 </main>
 <div id="mini" hidden><img src="media/jang-tom-tv.jpg" alt=""><div class="mt"><b id="miniT"></b><span id="miniS"></span></div><button id="miniPP" aria-label="Play or pause">▶</button></div>
 <div id="player" class="sheet" hidden>
@@ -98,7 +85,4 @@
  <button data-go="home" class="on"><i>⌂</i>Home</button><button data-go="listen"><i>🎧</i>Listen</button><button data-go="play"><i>🎮</i>Play</button><button data-go="studio"><i>🎨</i>Studio</button><button data-go="read"><i>📖</i>Read</button>
 </nav>
 <audio id="au" preload="metadata"></audio>
-<script src="../js/auth.js?v=62"></script><script src="../js/a2hs.js?v=62"></script><script src="../js/gazette-data.js?v=62"></script><script src="../js/gazette.js?v=62"></script><script src="../games.js?v=62"></script><script src="../js/shows-data.js?v=62"></script><script src="../js/show.js?v=62"></script><script src="../js/live-data.js?v=62"></script><script src="../js/dogs-data.js?v=62"></script><script src="app.js?v=62"></script><script src="fun.js?v=62"></script><script src="social.js?v=62"></script><script src="club.js?v=62"></script><script src="deeplink.js?v=62"></script><script>(function(){var A=window.CollierAuth;if(!A)return;A.onChange(function(){var c=document.getElementById('acctChip'),l=document.getElementById('acctLine'),g=document.querySelector('#acctCard .acct-go'),cta=document.getElementById('ctaLine'),tk=document.getElementById('ticketSub');
-if(A.status==='in'){var e=A.user&&A.user.email||'';c.textContent='Member';c.setAttribute('aria-label','Your account');l.textContent='You\u2019re in! Member as '+e;g.textContent='Account';cta.textContent='You\u2019re a member: fewer commercials, the full studio and offline downloads. Account & email settings →';tk.textContent='Member'}
-else if(A.status==='offline'){c.hidden=true;document.getElementById('acctCard').hidden=true}
-else{c.textContent='Join free';c.setAttribute('aria-label','Join the Club free: sign in');l.textContent='Join free: sign in with your email';g.textContent='Join free'}})})();</script></body></html>
+<script src="../js/a2hs.js?v=63"></script><script src="../js/gazette-data.js?v=63"></script><script src="../js/gazette.js?v=63"></script><script src="../games.js?v=63"></script><script src="../js/shows-data.js?v=63"></script><script src="../js/show.js?v=63"></script><script src="../js/live-data.js?v=63"></script><script src="../js/dogs-data.js?v=63"></script><script src="app.js?v=63"></script><script src="fun.js?v=63"></script><script src="social.js?v=63"></script><script src="deeplink.js?v=63"></script></body></html>
