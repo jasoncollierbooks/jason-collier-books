@@ -115,7 +115,16 @@
       alt: "Cover of The Rusty Stack Adventures by Jason Collier",
       audio: "audio/commercials/rusty.mp3",
       skipOn: ["rusty-stack.html"],
-      buttons: [{ label: "Read it free", href: "rusty-stack.html" }]
+      buttons: [{ label: "Lead the Adventure", href: "rusty-stack.html" }]
+    },
+    seeders: {
+      title: "The Seeders",
+      look: "is-cool",
+      image: "images/games/seeders.jpg",
+      alt: "Painted scene from The Seeders, a narrated pick-your-path adventure",
+      audio: "audio/commercials/seeders.mp3",
+      skipOn: ["/seeders", "adventures.html"],
+      buttons: [{ label: "Play free", href: "seeders/" }]
     },
     worlds: {
       title: "Book Worlds",
@@ -143,14 +152,6 @@
       audio: "audio/commercials/audiobooks.mp3",
       skipOn: ["audiobooks.html", "old-man-audiobook"],
       buttons: [{ label: "Listen free", href: "audiobooks.html" }]
-    },
-    radio: {
-      title: "The Radio Hour",
-      look: "is-bw",
-      dial: true,
-      audio: "audio/commercials/radio.mp3",
-      skipOn: ["past-inspirations.html"],
-      buttons: [{ label: "Tune in", href: "past-inspirations.html#radio" }]
     },
     kids: {
       title: "Sharp Eye Search & Coloring",
@@ -181,7 +182,6 @@
     "coloring.html",
     "audiobooks.html",
     "old-man-audiobook",
-    "past-inspirations.html",
     "book-worlds",
     "old-man-game",
     "studio.html"

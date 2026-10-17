@@ -12,7 +12,7 @@ var ART=['painting-lighthouse-at-dusk','painting-autumn-hillside','painting-wild
 //   src  = path to the new mp3, len = its length as m:ss, secs = its length in seconds.
 // Everything on the page (hero, cards, Listen list, channel guide) reads from here.
 // If the new cut moves things around, also update the chapter times (ch) below and app/captions.json.
-var EP1={src:R+'media/jang-tom-millers-ridge.mp3',len:'16:49',secs:1009};
+var EP1={src:R+'media/jang-tom-millers-ridge.mp3',len:'16:47',secs:1007};
 window.CE_EP1=EP1;
 var TRACKS={
  ridge:{t:"The Treasure of Miller's Ridge",s:'Jang & Tom · radio show · '+EP1.len,src:EP1.src,art:R+'images/jang-tom-millers-ridge.jpg',ep:1,
@@ -35,10 +35,10 @@ $('#art').innerHTML=ART.map(function(a){return '<button class="poster sq" data-f
 function item(img,t,s,attrs){return '<button class="item" '+attrs+'><img loading="lazy" src="'+img+'" alt=""><div><b>'+esc(t)+'</b><span>'+s+'</span></div><span class="go">›</span></button>'}
 $('#listenList').innerHTML=
  item(R+'images/jang-tom-millers-ridge.jpg',"The Treasure of Miller's Ridge",'Jang & Tom radio show · '+EP1.len+' · chapters & listen-along','data-play="ridge"')+
- item(R+'images/jang-tom-possum-caper.jpg','The Great Possum Caper','Jang & Tom radio show · Episode 2 · 18:21 · chapters','data-play="possum"')+
- item(R+'images/jang-tom-ice-fishin.jpg',"The Ice Fishin' Fiasco",'Jang & Tom radio show · Episode 3 · 14:02 · chapters','data-play="icefish"')+
- item(R+'images/jang-tom-rocket-stove.jpg','The Rocket Stove Rebellion','Jang & Tom radio show · Episode 4 · 13:36 · chapters','data-play="rocket"')+
- item(R+'images/jang-tom-checkers.jpg','The Checkers Championship','Jang & Tom radio show · Episode 5 · 13:34 · chapters','data-play="checkers"')+
+ item(R+'images/jang-tom-possum-caper.jpg','The Great Possum Caper','Jang & Tom radio show · Episode 2 · 18:25 · chapters','data-play="possum"')+
+ item(R+'images/jang-tom-ice-fishin.jpg',"The Ice Fishin' Fiasco",'Jang & Tom radio show · Episode 3 · 13:55 · chapters','data-play="icefish"')+
+ item(R+'images/jang-tom-rocket-stove.jpg','The Rocket Stove Rebellion','Jang & Tom radio show · Episode 4 · 13:35 · chapters','data-play="rocket"')+
+ item(R+'images/jang-tom-checkers.jpg','The Checkers Championship','Jang & Tom radio show · Episode 5 · 13:24 · chapters','data-play="checkers"')+
  item(R+'images/jang-tom-christmas-spectacle.jpg','The Christmas Light Caper','Jang & Tom radio show · Episode 6 · 13:28 · chapters','data-play="xmas"')+
  item(R+'images/pine-knot.jpg','The Cookie Conspiracy','Jang & Tom radio show · Episode 7 · 11:46 · new · chapters','data-play="cookie"')+
  item('media/jang-tom-tv.jpg','Jang & Tom Radio Hour','All episodes · the Collier Radio Hour','data-go="jangtom"')+
@@ -47,8 +47,7 @@ $('#listenList').innerHTML=
  item(R+'images/old-man-on-the-mountain.jpg','Old Man On The Mountain','Audiobook · app player','data-play="oldman"')+
  item(R+'images/lab/born-twice-og.jpg',"Thorne's Lab Journal",'Dr. Thorne reads all 8 entries · 54:48','data-play="thorne"')+
  item(R+'images/jang-and-tom-wagon-masters.jpg','Jang & Tom audiobooks','Wagon Masters, Philadelphia Follies, Transcontinental','data-frame="audiobooks.html#jang-and-tom" data-title="Jang & Tom"')+
- item(R+'images/the-first-pulse.jpg','The First Pulse','Audiobook · Chapters One & Two in seven parts','data-frame="audiobooks.html#first-pulse" data-title="The First Pulse"')+
- item(R+'images/art/philly-s01.jpg','Past Inspirations','Old-time radio and inspirations','data-frame="past-inspirations.html" data-title="Past Inspirations"');
+ item(R+'images/the-first-pulse.jpg','The First Pulse','Audiobook · Chapters One & Two in seven parts','data-frame="audiobooks.html#first-pulse" data-title="The First Pulse"');
 function card(img,t,s,f){return '<button class="card" data-frame="'+f+'" data-title="'+esc(t)+'"><img loading="lazy" src="'+img+'" alt=""><b>'+esc(t)+'</b><span>'+s+'</span></button>'}
 // Play tab: the same games as the website's Play page, read from ../games.js (CE_GAMES + the More row)
 var PLAY=(window.CE_GAMES||[]).map(function(g){return [g.t,g.k,g.url,R+'images/games/'+g.id+'.jpg',g.d,g.id]}).concat((window.CE_GAMES_MORE||[]).map(function(g){return [g.t,g.k,g.url,R+g.img,g.d,g.id]}));
@@ -100,7 +99,7 @@ function isDev(){try{return localStorage.getItem('ce-dev')==='1'}catch(e){return
 // Pine Knot Club is free: signed in = member. (Dev-only test toggle behind ?dev=1.)
 function isSub(){var A=window.CollierAuth;if(A&&A.status==='in')return true;try{if(isDev()&&localStorage.getItem(SUBK)==='1')return true;if((!A||A.status==='loading')&&+(localStorage.getItem('ce-member')||0)>Date.now())return true}catch(e){}return false}
 var st=$('#subToggle');if(st){$('#devToggle').hidden=!isDev();st.checked=isDev()&&localStorage.getItem(SUBK)==='1';st.onchange=function(){try{localStorage.setItem(SUBK,st.checked?'1':'0')}catch(e){}toast(st.checked?'Dev: member mode':'Dev: free mode');if(!st.checked)loadBreaks()};}
-function loadBreaks(){if(window.JCBreaks||document.getElementById('cbjs'))return;var s=document.createElement('script');s.id='cbjs';s.src='../commercials.js?v=56';document.body.appendChild(s)}
+function loadBreaks(){if(window.JCBreaks||document.getElementById('cbjs'))return;var s=document.createElement('script');s.id='cbjs';s.src='../commercials.js?v=57';document.body.appendChild(s)}
 function breakNow(){if(window.CE&&CE.clubSpot&&CE.clubSpot())return true;if(!window.JCBreaks)return false;var ids=Object.keys(JCBreaks.spots);var was=!au.paused;au.pause();var fw=null,fm=[];try{if(!$('#frame').hidden){fw=fr.contentWindow;if(fw.__oldman)fw.__oldman.holdSim(true);fw.document.querySelectorAll('audio,video').forEach(function(m){if(!m.paused){m.pause();fm.push(m)}})}}catch(e){}JCBreaks.open(ids[Math.floor(Math.random()*ids.length)]);var w=setInterval(function(){if(!window.__jcBreakHold&&!document.querySelector('.jc-break, [class*=break-overlay]')){clearInterval(w);try{if(fw&&fw.__oldman)fw.__oldman.holdSim(false);fm.forEach(function(m){m.play().catch(function(){})})}catch(e){}if(was)au.play().catch(function(){})}},700);setTimeout(function(){},0);return true}
 // Station breaks: about every 5-6 minutes for everyone
 function gap(){return 300000+Math.random()*60000}
