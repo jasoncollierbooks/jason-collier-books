@@ -77,7 +77,7 @@ function ui(){var on=!a.paused&&!a.ended;b.setAttribute("aria-pressed",on);ico.i
 b.addEventListener("click",function(){if(a.paused){var p=a.play();if(p&&p.catch)p.catch(ui)}else a.pause()});
 ["play","pause","ended","timeupdate"].forEach(function(e){a.addEventListener(e,ui)})})();</script>
       <nav class="lab-jump reveal" aria-label="In the lab">
-        <a href="#log">Read the log</a><a href="#terminal">Lab terminal</a><a href="i-spy.html">Play I Spy</a><a href="#instruments">Bench instruments</a>
+        <a href="#log">Read the log</a><a href="#terminal">Lab terminal</a><a href="sharp-eye-search.html">Play Sharp Eye Search</a><a href="#instruments">Bench instruments</a>
       </nav>
     </div>
 
@@ -193,9 +193,9 @@ b.addEventListener("click",function(){if(a.paused){var p=a.play();if(p&&p.catch)
 
 <!-- ============ I-SPY TEASER ============ -->
 <section class="lab-ispy-teaser" id="ispy" aria-labelledby="ispy-h">
-  <a class="ispy-teaser" href="i-spy.html">
+  <a class="ispy-teaser" href="sharp-eye-search.html">
     <span class="ispy-teaser-img"><img src="images/scenes/transcon-s46.jpg" alt="" loading="lazy"><span class="lens" aria-hidden="true"></span></span>
-    <span class="ispy-teaser-text"><span class="lab-kicker">Picture game</span><strong id="ispy-h">I Spy</strong><em>Pick a picture from the site and find ten hidden things. A new list every round.</em><span class="btn btn-phosphor">Play I Spy →</span></span>
+    <span class="ispy-teaser-text"><span class="lab-kicker">Picture game</span><strong id="ispy-h">Sharp Eye Search</strong><em>Pick a picture from the site and find ten hidden things. A new list every round.</em><span class="btn btn-phosphor">Play Sharp Eye Search →</span></span>
   </a>
 </section>
 </main>

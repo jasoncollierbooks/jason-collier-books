@@ -8,7 +8,7 @@ window.CE_GAMES = [
  {id:'rusty-stack',t:'The Rusty Stack',k:'Companion game · airship adventure',url:'https://kite-bolt-fleet-honey.grok.me/',d:'Docks, a chained fortress, Crimson Fang interceptors and a rust-bucket airship that looks half-dead on purpose. Found in the same game hub as Jang & Tom.'},
  {id:'born-twice',t:'Born Twice',k:'Thorne\u2019s Lab · companion game',url:'https://delta-branch-breeze-daisy.grok.me/',d:'Grow a living starship in a 1982 laboratory, then fly it across a real solar chart. Some vessels work. Some wake up hungry.'},
  {id:'first-pulse',t:'The First Pulse',k:'Companion game',url:'https://fern-valley-glow-reef.grok.me/',d:'You are leftover light. Drift, tap a world, and step inside the universe of The First Pulse.'},
- {id:'i-spy',t:'I Spy',k:'Picture game',url:'i-spy.html',d:'Find five hidden things in scenes from the books. Good for all ages.'},
+ {id:'i-spy',t:'Sharp Eye Search',k:'Picture game',url:'sharp-eye-search.html',d:'Find five hidden things in scenes from the books. Good for all ages.'},
  {id:'coloring',t:'Coloring',k:'Color the pages',url:'coloring.html',d:'Pick a picture from the books, pick a color and tap to fill. Print them too.'}
 ];
 /* The "More" row on play.html (shown as cards in the app too). img is relative to the site root. */

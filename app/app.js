@@ -17,7 +17,7 @@ window.CE_EP1=EP1;
 var TRACKS={
  ridge:{t:"The Treasure of Miller's Ridge",s:'Jang & Tom · radio show · '+EP1.len,src:EP1.src,art:R+'images/jang-tom-millers-ridge.jpg',ep:1,
   credit:'Music by Kevin MacLeod (incompetech.com), licensed under Creative Commons: By Attribution 4.0',
-  ch:[[0,'Cold open'],[30,'Pine Knot intro'],[114,'Sponsor: I Spy'],[144,'The napkin map & Over Yonder'],[218,'Hugh / Nobody cooks'],[335,"Up Miller's Ridge"],[461,'Loafing'],[527,'The groundhog'],[585,'Old Man Jenkins'],[701,'Sponsor break'],[842,'Treasure on the log'],[888,'Sponsor: The First Pulse'],[935,'Goodnight, Pine Knot']]},
+  ch:[[0,'Cold open'],[30,'Pine Knot intro'],[114,'Sponsor: Sharp Eye Search'],[144,'The napkin map & Over Yonder'],[218,'Hugh / Nobody cooks'],[335,"Up Miller's Ridge"],[461,'Loafing'],[527,'The groundhog'],[585,'Old Man Jenkins'],[701,'Sponsor break'],[842,'Treasure on the log'],[888,'Sponsor: The First Pulse'],[935,'Goodnight, Pine Knot']]},
  possum:(function(){var e=CE_SHOWS.jangtom.episodes[1];return {t:e.t,s:'Jang & Tom · radio show · Episode 2 · '+e.len,src:R+e.src,art:R+e.art,ep:2,credit:CE_SHOWS.jangtom.credit,ch:e.ch}})(),
  icefish:(function(){var e=CE_SHOWS.jangtom.episodes[2];return {t:e.t,s:'Jang & Tom · radio show · Episode 3 · '+e.len,src:R+e.src,art:R+e.art,ep:3,credit:CE_SHOWS.jangtom.credit,ch:e.ch}})(),
  checkers:(function(){var e=CE_SHOWS.jangtom.episodes[4];return {t:e.t,s:'Jang & Tom · radio show · Episode 5 · '+e.len,src:R+e.src,art:R+e.art,ep:5,credit:CE_SHOWS.jangtom.credit,ch:e.ch}})(),
@@ -66,14 +66,8 @@ var fr=$('#fr');
 function appUrl(u){var i=u.indexOf('#'),h=i<0?'':u.slice(i),p=i<0?u:u.slice(0,i);return p+(p.indexOf('?')<0?'?':'&')+'app=1'+h}
 function openFrame(u,t){if(/account\.html(?:$|[?#])/.test(String(u).split('/').pop()||u))return;fr.src=/^https?:\/\//.test(u)?u:R+appUrl(u);$('#fTitle').textContent=t||'';$('#fSave').hidden=u.indexOf('studio')!==0;$('#frame').hidden=false;if(!au.paused)au.pause()}
 $('#fClose').onclick=function(){$('#frame').hidden=true;fr.src='about:blank'};
-var FULLK='ce-full-studio-day';function today(){return new Date().toDateString()}
-function fullStudio(){return isSub()||localStorage.getItem(FULLK)===today()}
-function tierUI(){var t=$('#studioTier');if(!t)return;if(isSub())t.innerHTML='<b>Full studio</b> unlocked.';else if(fullStudio())t.innerHTML='<b>Free taste:</b> full studio unlocked for today.';else t.innerHTML='<b>Free:</b> basic brushes and the starter palette.<br><button id="tryFull">Try the full studio free today</button>';var tb=$('#tryFull');if(tb)tb.onclick=function(){localStorage.setItem(FULLK,today());tierUI();toast('Full studio unlocked for today');openFrame('studio.html','Oil Studio')}}
 $('#openStudio').onclick=function(){openFrame('studio.html','Oil Studio')};
-fr.addEventListener('load',function(){try{var d=fr.contentDocument;if(!d||!d.getElementById('studio-canvas')||fullStudio())return;var st=d.createElement('style');st.textContent='.ce-club{position:relative;opacity:.55}.ce-club::after{content:"CLUB";position:absolute;top:-6px;right:-4px;background:#c9a227;color:#1a140d;font:800 9px sans-serif;padding:2px 4px;border-radius:4px;opacity:1}';d.head.appendChild(st);
-var sel=['#studio-half','#studio-colors-open','#studio-hand > summary'];sel.forEach(function(q){var x=d.querySelector(q);if(x)x.classList.add('ce-club')});
-d.addEventListener('click',function(ev){if(ev.target.closest&&ev.target.closest('.ce-club')){ev.preventDefault();ev.stopPropagation()}},true)}catch(e){}});
-$('#fSave').onclick=function(){if(!fullStudio()){toast('Save to Photos isn\'t available right now. Try the full studio free today.');return}try{var c=fr.contentDocument.getElementById('studio-canvas');c.toBlob(function(bl){var f=new File([bl],'my-oil-painting.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],title:'My oil painting'}).catch(function(){})}else{var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=f.name;a.click();toast('Painting saved')}})}catch(e){toast('Open a painting first')}};
+$('#fSave').onclick=function(){try{var c=fr.contentDocument.getElementById('studio-canvas');c.toBlob(function(bl){var f=new File([bl],'my-oil-painting.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],title:'My oil painting'}).catch(function(){})}else{var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=f.name;a.click();toast('Painting saved')}})}catch(e){toast('Open a painting first')}};
 document.addEventListener('click',function(e){var el=e.target.closest('[data-club],[data-go],[data-play],[data-frame]');if(!el)return;if(el.dataset.club||el.dataset.go==='club'||el.dataset.frame==='#club'||/account\.html/.test(el.dataset.frame||''))return;
  if(el.dataset.go)go(el.dataset.go);else if(el.dataset.play)load(el.dataset.play,true);else openFrame(el.dataset.frame,el.dataset.title)});
 // toast
@@ -99,23 +93,23 @@ if('mediaSession' in navigator){var ms=navigator.mediaSession;ms.setActionHandle
 // offline download
 var AC='collier-audio-v1';
 function dlState(){var b=$('#dl');if(!b||!('caches' in window)){if(b)b.hidden=true;return}caches.open(AC).then(function(c){return c.match(new URL(TRACKS[curT].src,location).href)}).then(function(r){b.textContent=r?'✓ Downloaded':'⬇ Download for offline'})}
-$('#dl').onclick=function(){if(!isSub()){toast('Offline downloads aren\'t available right now.');return}var b=this,u=new URL(TRACKS[curT].src,location).href;b.textContent='Downloading…';caches.open(AC).then(function(c){return c.add(u)}).then(function(){b.textContent='✓ Downloaded';toast('Saved for offline listening')}).catch(function(){b.textContent='⬇ Download for offline';toast('Download failed')})};
-// commercials (free tier): reuse the site's break system; Club preview turns it off
+$('#dl').onclick=function(){var b=this,u=new URL(TRACKS[curT].src,location).href;b.textContent='Downloading…';caches.open(AC).then(function(c){return c.add(u)}).then(function(){b.textContent='✓ Downloaded';toast('Saved for offline listening')}).catch(function(){b.textContent='⬇ Download for offline';toast('Download failed')})};
+// station breaks: reuse the site's break system
 var SUBK='ce-app-subscriber';try{var qd=new URLSearchParams(location.search).get('dev');if(qd==='1')localStorage.setItem('ce-dev','1');else if(qd==='0'){localStorage.removeItem('ce-dev');localStorage.removeItem(SUBK)}}catch(e){}
 function isDev(){try{return localStorage.getItem('ce-dev')==='1'}catch(e){return false}}
 // Pine Knot Club is free: signed in = member. (Dev-only test toggle behind ?dev=1.)
 function isSub(){var A=window.CollierAuth;if(A&&A.status==='in')return true;try{if(isDev()&&localStorage.getItem(SUBK)==='1')return true;if((!A||A.status==='loading')&&+(localStorage.getItem('ce-member')||0)>Date.now())return true}catch(e){}return false}
-var st=$('#subToggle');if(st){$('#devToggle').hidden=!isDev();st.checked=isDev()&&localStorage.getItem(SUBK)==='1';st.onchange=function(){try{localStorage.setItem(SUBK,st.checked?'1':'0')}catch(e){}toast(st.checked?'Dev: member mode':'Dev: free mode');if(!st.checked)loadBreaks();tierUI()};}
+var st=$('#subToggle');if(st){$('#devToggle').hidden=!isDev();st.checked=isDev()&&localStorage.getItem(SUBK)==='1';st.onchange=function(){try{localStorage.setItem(SUBK,st.checked?'1':'0')}catch(e){}toast(st.checked?'Dev: member mode':'Dev: free mode');if(!st.checked)loadBreaks()};}
 function loadBreaks(){if(window.JCBreaks||document.getElementById('cbjs'))return;var s=document.createElement('script');s.id='cbjs';s.src='../commercials.js?v=56';document.body.appendChild(s)}
 function breakNow(){if(window.CE&&CE.clubSpot&&CE.clubSpot())return true;if(!window.JCBreaks)return false;var ids=Object.keys(JCBreaks.spots);var was=!au.paused;au.pause();var fw=null,fm=[];try{if(!$('#frame').hidden){fw=fr.contentWindow;if(fw.__oldman)fw.__oldman.holdSim(true);fw.document.querySelectorAll('audio,video').forEach(function(m){if(!m.paused){m.pause();fm.push(m)}})}}catch(e){}JCBreaks.open(ids[Math.floor(Math.random()*ids.length)]);var w=setInterval(function(){if(!window.__jcBreakHold&&!document.querySelector('.jc-break, [class*=break-overlay]')){clearInterval(w);try{if(fw&&fw.__oldman)fw.__oldman.holdSim(false);fm.forEach(function(m){m.play().catch(function(){})})}catch(e){}if(was)au.play().catch(function(){})}},700);setTimeout(function(){},0);return true}
-// Club members (signed in): a break about every 8-10 min; free: every 5-6 min
-function gap(){return isSub()?480000+Math.random()*120000:300000+Math.random()*60000}
+// Station breaks: about every 5-6 minutes for everyone
+function gap(){return 300000+Math.random()*60000}
 var useMs=0,nextAt=gap(),lastT=Date.now();
-setInterval(function(){var n=Date.now(),busy=true;if(busy&&document.visibilityState==='visible')useMs+=n-lastT;if(isSub()&&nextAt<480000)nextAt=gap();else if(!isSub()&&nextAt>=480000)nextAt=gap();lastT=n;if(useMs>=nextAt){if(breakNow()){useMs=0;nextAt=gap()}}},1000);
-au.addEventListener('ended',function(){if(!isSub())breakNow()});
+setInterval(function(){var n=Date.now(),busy=true;if(busy&&document.visibilityState==='visible')useMs+=n-lastT;lastT=n;if(useMs>=nextAt){if(breakNow()){useMs=0;nextAt=gap()}}},1000);
+au.addEventListener('ended',function(){breakNow()});
 var _load=load;load=function(k,o,f){if(curT&&curT!==k&&!au.paused){au.pause()}_load(k,o,f)};
-loadBreaks();window.__ceBreak=breakNow;tierUI();
-function clubRefresh(){tierUI();document.documentElement.classList.toggle('ce-member',isSub());window.CE&&CE.onClub&&CE.onClub()}
+loadBreaks();window.__ceBreak=breakNow;
+function clubRefresh(){document.documentElement.classList.toggle('ce-member',isSub());window.CE&&CE.onClub&&CE.onClub()}
 if(window.CollierAuth)CollierAuth.onChange(clubRefresh);
 window.CE={au:au,load:load,go:go,toast:toast,isSub:isSub,TRACKS:TRACKS,cur:function(){return curT},frame:openFrame};
 // boot

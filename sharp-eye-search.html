@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="theme-color" content="#16130f">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sharp Eye Search | Collier Entertainment</title>
+<meta name="description" content="A picture game: find five hidden things in scenes from the books of Jason Collier.">
+<meta property="og:title" content="Sharp Eye Search | Collier Entertainment">
+<meta property="og:image" content="https://collierentertainment.com/images/scenes/transcon-s46.jpg">
+<meta property="og:url" content="https://collierentertainment.com/sharp-eye-search.html">
+<meta property="og:site_name" content="Collier Entertainment">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://collierentertainment.com/sharp-eye-search.html">
+<link rel="icon" href="icons/pages/i-spy-32.png?v=tv2" sizes="32x32" type="image/png">
+<link rel="icon" href="icons/pages/i-spy-48.png?v=tv2" sizes="48x48" type="image/png">
+<link rel="apple-touch-icon" href="icons/pages/i-spy-apple-touch.png?v=tv2" sizes="180x180">
+<link rel="manifest" href="manifest.json?v=tv1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Rye&family=Orbitron:wght@500;700;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&family=IM+Fell+English+SC&family=Special+Elite&family=Josefin+Sans:wght@400;600&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="polish.css">
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Courier+Prime:wght@400;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lab.css">
+<link rel="stylesheet" href="assets/broadcast-theme/site.css">
+<link rel="stylesheet" href="season.css?v=lite2">
+<script src="season.js?v=lite2"></script>
+<script src="app-mode.js?v=2"></script>
+<link rel="stylesheet" href="ce-site.css?v=4">
+</head>
+<body class="broadcast-lite page-lab page-ispy">
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand ce-wm" href="index.html" aria-label="Collier Entertainment, home">COLLIER<span>ENTERTAINMENT</span></a>
+  <a class="pwa-home" href="index.html" aria-label="Home"><svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18"><path fill="currentColor" d="M12 3.2 3 11h2v9h5v-6h4v6h5v-9h2L12 3.2z"/></svg></a>
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><span></span><span></span><span></span></button>
+  <nav id="site-nav" aria-label="Main">
+    <a class="nav-link" href="index.html">Home</a>
+    <a class="nav-link" href="audiobooks.html">Listen</a>
+    <a class="nav-link on" href="play.html">Play</a>
+    <a class="nav-link" href="adventures.html">Adventures</a>
+    <a class="nav-link" href="studio.html">Studio</a>
+    <div class="nav-group">
+      <button type="button" class="nav-label" aria-expanded="false" aria-haspopup="true" aria-controls="menu-read">Read</button>
+      <div class="nav-menu" id="menu-read" role="group" aria-label="Read">
+        <a href="books.html">All Books</a>
+        <a href="jang-and-tom.html">Jang &amp; Tom: Wagon Masters (book)</a>
+        <a href="first-pulse.html">The First Pulse</a>
+        <a href="old-man-on-the-mountain.html">Old Man On The Mountain</a>
+        <a href="rusty-stack.html">The Rusty Stack</a>
+        <a href="novel.html">The Novel</a>
+      </div>
+    </div>
+    <span class="nav-small"><a href="gazette.html">Gazette</a><a href="thorne-lab.html">Thorne’s Lab</a><a href="past-inspirations.html">Past Inspirations</a><a href="art.html">Art</a><a href="about.html">About</a></span>
+
+</nav>
+</header>
+
+<main id="top">
+<!-- ============ I-SPY ============ -->
+<section class="ispy-page" id="ispy">
+  <div class="ispy-inner">
+    <header class="ispy-head">
+      <p class="lab-kicker">Picture game</p>
+      <h1 class="ispy-h1">Sharp Eye Search</h1>
+      <p>Pick a picture from the site. You get five things to find, chosen at random, so every round is different. Tap each one in the picture.</p>
+    </header>
+    <div class="ispy-gallery" id="ispy-gallery"></div>
+
+    <div class="ispy-game" id="ispy-game" hidden>
+      <div class="ispy-hud" role="status">
+        <a class="hud-btn hud-home" href="index.html" aria-label="Home"><svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18"><path fill="currentColor" d="M12 3.2 3 11h2v9h5v-6h4v6h5v-9h2L12 3.2z"/></svg></a>
+        <button type="button" id="is-back" class="hud-btn">← Pictures</button>
+        <span class="hud-box"><b id="is-found">0</b>/<span id="is-of">5</span> found</span>
+        <span class="hud-box">⏱ <b id="is-time">0:00</b></span>
+        <span class="hud-box">Score <b id="is-score">0</b></span>
+        <button type="button" id="is-hint" class="hud-btn">Hint (−50)</button>
+        <button type="button" id="is-new" class="hud-btn">New list</button>
+        <button type="button" id="is-mute" class="hud-btn" aria-pressed="false">Sound on</button>
+        <span class="zoom-ctl"><button type="button" id="is-zout" class="hud-btn" aria-label="Zoom out">−</button><button type="button" id="is-zin" class="hud-btn" aria-label="Zoom in">+</button></span>
+      </div>
+      <div class="ispy-wrap">
+        <div class="ispy-stage">
+          <div class="ispy-view" id="ispy-view">
+            <div class="ispy-pic" id="ispy-pic">
+              <img id="ispy-img" alt="" draggable="false">
+              <div class="ispy-marks" id="ispy-marks" aria-hidden="true"></div>
+            </div>
+          </div>
+          <div class="ispy-win" id="ispy-win" hidden>
+            <div class="ispy-win-card">
+              <p class="lab-kicker">You spied them all</p>
+              <h3 id="ispy-win-h">All five found</h3>
+              <p id="ispy-win-text"></p>
+              <button type="button" id="is-again" class="btn btn-phosphor">Play again</button>
+              <button type="button" id="is-other" class="hud-btn">Another picture</button>
+            </div>
+          </div>
+        </div>
+        <aside class="ispy-list" aria-label="Things to find">
+          <p class="ispy-list-h">I spy with my little eye…</p>
+          <ol id="ispy-items"></ol>
+          <p class="ispy-credit-line" id="ispy-credit"></p>
+        </aside>
+      </div>
+    </div>
+    <p class="ispy-foot">Pictures are Grok image art made for Jason’s Jang &amp; Tom books. More pictures may be added.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <span>© <span id="y">2026</span> <span class="ce-foot-wm">Collier Entertainment</span></span>
+  <span class="visit-count" hidden></span>
+  <span class="foot-links"><a href="https://www.amazon.com/stores/author/B0GDW74Y5S" target="_blank" rel="noopener">Amazon Author Page</a><a href="mailto:outdoorsolution@bellsouth.net">Email</a></span>
+  <span class="foot-legal"><a href="app/">📲 Get the app</a><a href="privacy.html">Privacy</a><a href="support.html">Support</a><a href="credits.html">Credits</a></span>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script src="main.js?v=pass3" defer></script>
+<script src="ispy-audio.js" defer></script>
+<script src="ispy.js" defer></script>
+</body>
+</html>
