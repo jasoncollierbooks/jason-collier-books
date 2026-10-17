@@ -1,4 +1,4 @@
-/* The Rusty Stack: Choose Your Own Adventure Audiobook. An open book that reads itself aloud;
+/* The Rusty Stack: Lead the Adventure Audiobook. An open book that reads itself aloud;
    choices appear when each page's narration ends. Hold a choice to peek at the page it turns to. */
 (function(){
 var D=window.RUSTY_CYOA,A=window.RUSTY_CYOA_AUDIO||{},$=function(i){return document.getElementById(i)};

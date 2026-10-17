@@ -1,4 +1,4 @@
-/* Rusty Stack CYOA "living art": camera moves per narrated paragraph, depth parallax, ambient fx, hidden gags. */
+/* Rusty Stack living art: camera moves per narrated paragraph, depth parallax, ambient fx, hidden gags. */
 (function(){
 var S=window.RCA_STAGE||{s:{},gagInfo:{}},RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 var GKEY='rca-gags',GOT={};try{GOT=JSON.parse(localStorage.getItem(GKEY))||{}}catch(e){}
