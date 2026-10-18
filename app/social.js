@@ -74,7 +74,7 @@ function decorate(){
  $$('[data-play],[data-frame]').forEach(function(b){if(b.dataset.rxDone||!b.matches('.poster,.item,.card,.gcard'))return;var key=b.dataset.rxKey||b.dataset.play||b.dataset.frame,it=ITEMS[key],art=null;
   if(!it&&b.closest('#art')){var im=$('img',b),n=(im&&im.getAttribute('src')||'').replace(/.*\/|-thumb\.jpg$/g,'');if(!n)return;it=reg({id:'art-'+n,t:(im.alt||n),u:appLink('frame:art.html')});art=1}
   if(!it)return;b.dataset.rxDone=1;
-  var row='<span class="rx-row">'+heartHTML(it.id)+(it.rate?'<span class="rx-chip" role="button" tabindex="0" data-rx-open="'+it.id+'" data-rx-chip="'+it.id+'"></span>':'')+'<span class="rx-share" role="button" tabindex="0" data-rx-share="'+it.id+'" aria-label="Share">\u2934 Share</span></span>';
+  var row='<span class="rx-row">'+heartHTML(it.id)+(it.rate?'<span class="rx-chip" role="button" tabindex="0" data-rx-open="'+it.id+'" data-rx-chip="'+it.id+'"></span>':'')+'<span class="rx-share" role="button" tabindex="0" data-rx-share="'+it.id+'" aria-label="Share">\u2934<em> Share</em></span></span>';
   var host=b.matches('.item,.gcard')?$('div',b):b;host.insertAdjacentHTML('beforeend',row)})}
 // detail sheet (rating + like + share)
 var sheet=document.createElement('div');sheet.id='rxSheet';sheet.className='rx-sheet';sheet.hidden=true;document.body.appendChild(sheet);

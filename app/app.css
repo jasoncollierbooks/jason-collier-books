@@ -407,3 +407,12 @@ html:not(.calm) .gazette .pkg{transform:rotate(-.4deg)}
 .th-screen h3.sec{margin:18px 0 8px}
 
 .poster.seeall{display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:120px;border:1px solid #d4af37;border-radius:12px;background:#1d150d}.poster.seeall b{font-size:20px;color:#f0cf63}
+
+/* Poster cards: one action line, equal card heights in a rail (tall cards are 140px, so Share goes icon-only there) */
+.poster.tall{display:flex;flex-direction:column;align-items:flex-start}
+.poster.tall .rx-row{margin-top:auto!important;padding-top:8px}
+.poster .rx-row{flex-wrap:nowrap!important;gap:4px}
+.rx-share em{font-style:normal}
+.poster.tall .rx-heart,.poster.tall .rx-chip,.poster.tall .rx-share{padding:0 8px;min-width:34px;font-size:13px}
+.poster.tall .rx-chip{flex:0 1 auto;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.poster.tall .rx-share em{display:none}
