@@ -14,7 +14,7 @@ import { cinchGame } from "./tactile.js";
 import { BOUNDS, OVERLOOKS, PLACES, PLACE_IDS, VIEWS, heightAt, placeAt, trailBetween, trailDist } from "./terrain.js";
 import { collide, occlusion, trunksNear, crownDepth, crownClearY } from "./forest.js";
 import { clamp, damp, dampAngle, fmtClock, hash2, lerp, smooth, wrapPi } from "./util.js";
-import { LINES, armThought, preloadThoughts, setVoiceMuteCheck, speakCaption, speakThought, stopThought, voiceCatalogReady, voiceReady } from "./thoughts.js";
+import { LINES, armThought, preloadThoughts, setVoiceMuteCheck, speakCaption, speakThought, stopThought, voiceCatalogReady, voiceReady, warmVoices } from "./thoughts.js?v=2";
 
 const SAVE_KEY = "oldman-v2-save";
 const canvas = document.getElementById("view");
@@ -230,9 +230,9 @@ function showTitle() {
       <div class="tload" id="tLoad"><div class="loadtrack"><i class="loadbar-fill"></i></div><small class="loadbar-msg">Loading the mountain…</small></div>
      </div>`,
   );
-  c.querySelector("#tNew").onclick = () => { A.unlockAudio(); freshGame(); intro(); };
+  c.querySelector("#tNew").onclick = () => { A.unlockAudio(); warmVoices(); freshGame(); intro(); };
   const cont = c.querySelector("#tContinue");
-  if (cont) cont.onclick = () => { A.unlockAudio(); if (load()) startPlay(); else { freshGame(); intro(); } };
+  if (cont) cont.onclick = () => { A.unlockAudio(); warmVoices(); if (load()) startPlay(); else { freshGame(); intro(); } };
   c.querySelector("#tHome").addEventListener("pointerup", (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -282,6 +282,7 @@ function startPlay() {
   A.ensureAmbience();
   X.init();
   preloadThoughts();
+  warmVoices();
   hud.setLine(S.line || "", T.now);
   if (!S.line) G.say(S, "The truck ticks as it cools. The trail starts behind it, up through the spruce.");
 }

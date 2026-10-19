@@ -8,6 +8,9 @@ const WHISPER = new Set(["close", "still", "smell"]);
 const buffers = {};
 const bytes = {};
 const captionIndex = new Map();
+const urls = {};
+const pending = {};
+let warmed = false;
 let loadP = null;
 let catalogReady = false;
 let current = null;
@@ -43,14 +46,43 @@ export function preloadThoughts() {
         const name = `cap-${String(i).padStart(3, "0")}`;
         jobs.push([name, `./assets/voice/${name}.mp3`]);
       });
-      return Promise.all(jobs.map(([key, url]) => fetch(url)
-        .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(r.status)))
-        .then((b) => { bytes[key] = b; })
-        .catch(() => {})));
+      // Clips download on demand (and in the background once play starts), not with the title screen.
+      for (const [key, url] of jobs) urls[key] = url;
+      if (warmed) startWarm();
     })
     .then(() => decodeReady())
     .catch((e) => { catalogReady = true; console.warn("voice catalog", e?.message || e); });
   return loadP;
+}
+
+function fetchClip(key) {
+  if (bytes[key]) return Promise.resolve();
+  if (pending[key]) return pending[key];
+  const url = urls[key];
+  if (!url) return Promise.resolve();
+  pending[key] = fetch(url)
+    .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(r.status)))
+    .then((b) => { bytes[key] = b; })
+    .catch(() => {});
+  return pending[key];
+}
+
+function startWarm() {
+  const keys = Object.keys(urls).filter((k) => !bytes[k] && !pending[k]);
+  let next = 0;
+  const lane = () => {
+    if (next >= keys.length) return Promise.resolve();
+    const k = keys[next++];
+    return fetchClip(k).then(lane);
+  };
+  for (let n = 0; n < 3; n++) lane();
+}
+
+/** Once the hunt starts, fetch the remaining voice clips quietly in the background. */
+export function warmVoices() {
+  if (warmed) return;
+  warmed = true;
+  if (catalogReady) startWarm();
 }
 
 function decodeReady() {
@@ -117,6 +149,12 @@ function pump() {
   const job = queue[0];
   const audio = getCtx();
   const audible = job.sound && soundOn();
+  if (audible && audio && !bytes[job.key] && urls[job.key] && !job.fetched) {
+    if (job.fetching) return;
+    job.fetching = true;
+    fetchClip(job.key).then(() => { job.fetching = false; job.fetched = true; if (queue[0] === job && !current) pump(); });
+    return;
+  }
   if (audible && audio && bytes[job.key] && !buffers[job.key] && !job.decoding) {
     job.decoding = true;
     const resume = audio.state === "suspended" ? audio.resume() : Promise.resolve();
