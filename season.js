@@ -574,9 +574,27 @@
     function seedConfetti(z) {
       return { x: rand(z.left, z.right), y: rand(z.top, z.bottom), s: rand(3, 5.5), vy: rand(28, 52), sway: rand(10, 22), spin: rand(-2.2, 2.2), rot: rand(0, 6), t: rand(0, 5), color: pick(golds), a: rand(0.75, 0.95) };
     }
+    /* Titles, text and pictures the bat must never fly across (vertical spans in the viewport). */
+    function titleBands() {
+      var out = [], els = document.querySelectorAll("h1, h2, h3, h4, p, li, img, video, audio, button, .btn, .kicker, .eyebrow, [class*='kicker'], [class*='masthead'], .gz-head, header.nav, .nav");
+      for (var k = 0; k < els.length; k++) {
+        var r = els[k].getBoundingClientRect();
+        if (r.width && r.height && r.bottom > -20 && r.top < h + 20) out.push([r.top - 12, r.bottom + 12]);
+      }
+      return out;
+    }
+    function laneClear(y, half, bands) {
+      for (var k = 0; k < bands.length; k++) if (y + half > bands[k][0] && y - half < bands[k][1]) return false;
+      return true;
+    }
     function spawnBat() {
-      var dir = Math.random() < 0.5 ? 1 : -1;
-      return { x: dir > 0 ? -20 : w + 20, y: rand(h * 0.08, Math.min(h * 0.34, 220)), s: rand(1.15, 1.55), vx: rand(28, 46) * dir, phase: rand(0, 6), a: rand(0.8, 0.95) };
+      var dir = Math.random() < 0.5 ? 1 : -1, s = rand(1.15, 1.55), bands = titleBands(), lo = h * 0.08, hi = Math.min(h * 0.34, 220);
+      if (hi < h * 0.5) hi = h * 0.5;
+      for (var tries = 0; tries < 12; tries++) {
+        var y = rand(lo, hi);
+        if (laneClear(y, 22 * s, bands)) return { x: dir > 0 ? -20 : w + 20, y: y, s: s, vx: rand(28, 46) * dir, phase: rand(0, 6), a: rand(0.8, 0.95), fade: 1 };
+      }
+      return null;
     }
     function drawLeaf(p) {
       ctx.save();
@@ -759,12 +777,16 @@
       if (season === "halloween") {
         if (!bat) {
           batWait -= dt;
-          if (batWait <= 0) bat = spawnBat();
+          if (batWait <= 0) { bat = spawnBat(); if (!bat) batWait = 3; }
         } else {
           bat.x += bat.vx * dt;
           bat.y += Math.sin(time * 1.3 + bat.phase) * 10 * dt;
-          if (bat.x < -30 || bat.x > w + 30) { bat = null; batWait = rand(7, 12); }
-          else drawBat(bat, time);
+          /* If scrolling brings a title into its path, the bat fades away instead of crossing it. */
+          bat.chk = (bat.chk || 0) - dt;
+          if (bat.chk <= 0) { bat.chk = 0.2; if (!laneClear(bat.y, 22 * bat.s, titleBands())) bat.leaving = true; }
+          if (bat.leaving) bat.fade -= dt * 4;
+          if (bat.x < -30 || bat.x > w + 30 || bat.fade <= 0) { bat = null; batWait = rand(7, 12); }
+          else { var a0 = bat.a; bat.a = a0 * Math.max(0, bat.fade); drawBat(bat, time); bat.a = a0; }
         }
       }
       if (season === "christmas") {

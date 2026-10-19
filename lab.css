@@ -222,7 +222,7 @@
 /* responsive */
 @media (max-width:1000px){
   .lab-hero-inner,.term-inner{grid-template-columns:1fr}
-  .notebook{grid-template-columns:1fr}
+  .notebook{grid-template-columns:minmax(0,1fr)}
   .log-index{position:static}
   .log-index ol{display:none}
   .log-index-h{display:none}

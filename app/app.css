@@ -416,3 +416,5 @@ html:not(.calm) .gazette .pkg{transform:rotate(-.4deg)}
 .poster.tall .rx-heart,.poster.tall .rx-chip,.poster.tall .rx-share{padding:0 8px;min-width:34px;font-size:13px}
 .poster.tall .rx-chip{flex:0 1 auto;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .poster.tall .rx-share em{display:none}
+/* Mini player showing: every screen gets extra bottom room so its last row clears the player. */
+body:has(#mini:not([hidden])) .screen{padding-bottom:calc(150px + env(safe-area-inset-bottom))}

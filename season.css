@@ -516,3 +516,12 @@ html.season-halloween body[data-season-lite] .season-accent { width: 3rem; heigh
 html.season-halloween body[data-season-lite] .season-ledge { justify-content: flex-end; animation: none; opacity: .7; }
 html.season-halloween body[data-season-lite] .season-ledge svg { width: .8rem; height: .8rem; }
 html.season-halloween body[data-season-lite] .season-ledge svg:nth-child(n+2) { display: none; }
+
+/* The fixed fog band along the bottom must never hide the last lines of a page:
+   pad the page by the band's height whenever the band is on screen. */
+body:has(> .season-fog) { padding-bottom: calc(3.2rem + env(safe-area-inset-bottom, 0px)); }
+
+/* Desktop: the seasonal accent beside the wordmark gets its own room so it never touches the first menu tab. */
+@media (min-width: 761px) {
+  html[class*="season-"] .nav .brand { margin-right: 2.3rem; }
+}

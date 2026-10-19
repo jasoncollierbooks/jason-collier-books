@@ -546,7 +546,7 @@ body:not(.home) .nav{background:rgba(10,8,7,.72);backdrop-filter:blur(12px);-web
 .ab-jump a{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;text-decoration:none;padding:.6rem 1rem;border:1px solid rgba(244,236,225,.25);border-radius:999px;color:var(--ink)}
 .ab-jump a:hover{border-color:var(--fire2);color:var(--fire2)}
 .ab-book{margin-top:clamp(3rem,6vw,4.5rem);scroll-margin-top:5rem}
-.ab-book-head{display:grid;grid-template-columns:120px 1fr;gap:1.4rem;align-items:center;margin-bottom:1.4rem}
+.ab-book-head{display:grid;grid-template-columns:120px minmax(0,1fr);gap:1.4rem;align-items:center;margin-bottom:1.4rem}
 .ab-cover{width:100%;border-radius:3px;box-shadow:0 20px 40px -16px #000}
 .ab-h{line-height:1;margin:.2rem 0 .8rem}
 .ab-h small{display:inline-block;font-size:.45em;letter-spacing:.18em;margin-left:.4rem}
@@ -575,7 +575,8 @@ body:not(.home) .nav{background:rgba(10,8,7,.72);backdrop-filter:blur(12px);-web
 .ab-west .ab-n{font-family:"Cinzel",serif;font-weight:700}
 .ab-west .ab-part.on .ab-n::before{color:var(--fire)}
 .audiobook[hidden]{display:none}
-@media (max-width:640px){.ab-book-head{grid-template-columns:80px 1fr;gap:1rem}.ab-tabs button{flex:1 1 100%;text-align:left}}
+.ab-book-head h2{overflow-wrap:break-word;-webkit-hyphens:auto;hyphens:auto}
+@media (max-width:640px){.ab-book-head{grid-template-columns:80px minmax(0,1fr);gap:1rem}.ab-tabs button{flex:1 1 100%;text-align:left}}
 .page-about .about{padding-top:clamp(7rem,12vw,9rem);border-top:0}
 .page-art .own{padding-top:clamp(7rem,12vw,9rem);border-top:0}
 .more-grid{grid-template-columns:repeat(6,1fr)}
