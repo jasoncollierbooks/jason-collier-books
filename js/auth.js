@@ -7,7 +7,7 @@
   var A = window.CollierAuth = {
     API: API, user: null, isMember: false, status: "loading",
     onChange: function (fn) { subs.push(fn); if (A.status !== "loading") fn(A); },
-    start: function (email, ret, updates) { return post("/auth/start", { email: email, "return": ret || location.pathname + location.search, updates: !!updates }); },
+    start: function (email, ret) { return post("/auth/start", { email: email, "return": ret || location.pathname + location.search }); },
     /* 6-digit code from the email (for the iPhone home-screen app, where the emailed link opens Safari). */
     verify: function (email, code) {
       return post("/auth/verify", { email: email, code: code }).then(function (u) {
@@ -19,7 +19,6 @@
     refresh: function () { return check(); },
     /* Extra headers for API calls: the saved session token, if any (fallback when cookies don't stick). */
     headers: function (h) { h = h || {}; var t = token(); if (t) h.Authorization = "Bearer " + t; return h; },
-    setUpdates: function (on) { return post("/account/updates", { on: !!on }); },
     logout: function () { return post("/auth/logout").then(function () { clearToken(); set(null, "out"); }); },
     deleteAccount: function () { return post("/account/delete").then(function () { clearToken(); set(null, "out"); }); }
   };
