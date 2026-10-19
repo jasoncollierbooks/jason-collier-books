@@ -15,7 +15,7 @@ function render(el,o){o=o||{};var R=o.root||'',S=build(R),CYC=S.reduce(function(
  el.innerHTML='<div class="rshow"><div class="rs-cab"><div class="rs-top"><span class="rs-kicker">CE-1 · The Collier Radio Hour</span><span class="rs-air"><i></i>ON THE AIR</span></div>'+
   '<div class="rs-dial"><h2>Live Radio</h2><p>One station, always on: Jang &amp; Tom and Jason Collier\u2019s audiobooks, live for everyone at the same moment.</p><span class="rs-season" id="lvNow">…</span></div><div class="rs-grille"></div>'+
   '<div class="rs-tonight"><small>Now Playing</small><b id="lvT">…</b><p id="lvS"></p><button class="rs-play" id="lvBtn">\u25B6 Tune in</button><img id="lvA" alt=""></div>'+
-  '<div class="rs-list"><h3>The Schedule</h3><div id="lvList"></div></div><p class="rs-credit">All programs and station breaks are Collier Entertainment originals. Times are in your time zone.</p></div></div>';
+  '<div class="rs-list"><h3>The Schedule</h3><div id="lvList"></div></div><p class="rs-credit">All programs and station breaks are Collier Entertainment originals. Jang &amp; Tom music by Kevin MacLeod (incompetech.com), licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> \u00b7 <a href="credits.html">Credits</a>. Times are in your time zone.</p></div></div>';
  var $=function(id){return el.querySelector('#'+id)};
  function guide(){var n=slot(),t=n.start,h='',c=0;for(var j=0;c<16;j++){var s=S[(n.i+j)%S.length];if(s.spot&&j){t+=s.d*1000;continue}
   h+='<div class="rs-ep"><span class="rs-n" style="font-size:14px">'+(j?fmt(t):'NOW')+'</span><div><b>'+e(s.t)+'</b><span>'+(s.spot?'Station break':Math.round(s.d/60)+' min')+'</span></div><span></span></div>';t+=s.d*1000;c++}
