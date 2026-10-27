@@ -1,4 +1,4 @@
-/* The Rusty Stack cartoon. Each scene plays its clip, then the page and choices. */
+/* The Rusty Stack cartoon. Each scene plays its clip, then the choices. No script prose. */
 (function(){
 var D=window.RUSTY_CYOA,Clip=window.RCAClip,$=function(i){return document.getElementById(i)};
 var PAGE={s01:1,s02:4,s03:7,e1:9,s04:10,s05:13,e2:15,s06:17,s07:20,s08:23,e3:25,s09:27,s10:30,e4:31,s11:33,s12:36,s13:40,s14:43,e5:45,s15:47,s16:50,s17:54,s18:58,s19:61,e6:63,s20:65,s21:69,s22:73,s23:77,e7:82,e8:88};
@@ -17,7 +17,7 @@ function count(){var n=Object.keys(FOUND).length+'/8';$('rcaCount').textContent=
 function flags(){var f=[];if(ST.flags.hawke)f.push('🎯 Hawke joined the crew');if(ST.flags.lena)f.push('🛩 Lena “Lucky” joined the crew');$('rcaFlags').innerHTML=f.map(function(x){return '<span class="rca-flag">'+esc(x)+'</span>'}).join('')}
 function land(c){return (c.req&&!ST.flags[c.req])?c.fallback:c.target}
 function hideRead(){$('rcaRead').hidden=true}
-function hideCard(){var c=$('rcaScreen').querySelector('.rca-endcard');if(c)c.remove()}
+function hideCard(){var c=document.querySelector('.rca-endcard');if(c)c.remove()}
 function showTap(){$('rcaTap').hidden=false}
 function hideTap(){$('rcaTap').hidden=true}
 function armSkip(){$('rcaSkip').disabled=false}
@@ -32,30 +32,16 @@ function onTime(){
 function paint(n){
   $('rcaNum').textContent=n.ending?'Ending '+n.num.slice(1):'Scene '+(+n.num);
   $('rcaTitle').textContent=n.title;
-  var txt=n.text.slice();
-  if(!n.ending&&txt[txt.length-1]==='What do you do?')txt.pop();
-  $('rcaText').innerHTML=txt.map(function(p,i){return '<p data-p="'+i+'">'+esc(p)+'</p>'}).join('');
-  if(n.ending){var card=document.createElement('a');card.className='rca-books';card.href='books.html';
-    card.innerHTML='<span class="rca-books-art" aria-hidden="true"><img src="images/the-rusty-stack.jpg" alt=""><img src="images/the-first-pulse.jpg" alt=""></span><span class="rca-books-line">Liked this? Read the books.</span>';
-    $('rcaText').appendChild(card)}
   flags();
   document.body.classList.toggle('rca-is-ending',!!n.ending);
-}
-function showCard(n){
-  hideCard();
-  var ec=document.createElement('div');
-  ec.className='rca-endcard';
-  ec.setAttribute('aria-hidden','true');
-  ec.innerHTML='<small>Ending '+esc(n.num.slice(1))+' of 8</small><b>'+esc(n.title)+'</b><i>'+esc(n.tag)+'</i>';
-  $('rcaScreen').appendChild(ec);
 }
 function showChoices(){
   var n=D.nodes[ST.id],h;
   if(n.ending){
-    FOUND[ST.id]=1;save();count();showCard(n);
-    h='<p class="rca-endtag">— '+esc(n.tag)+' —</p><button type="button" class="rca-choice" data-act="restart">↺ Start a new voyage<em>Turn back to page 1</em></button><button type="button" class="rca-choice" data-act="endings">🏆 Endings found: '+Object.keys(FOUND).length+'/8</button>';
+    FOUND[ST.id]=1;save();count();
+    h='<div class="rca-endcard"><small>Ending '+esc(n.num.slice(1))+' of 8</small><b>'+esc(n.title)+'</b><i>'+esc(n.tag)+'</i></div><button type="button" class="rca-choice" data-act="restart">↺ Start a new voyage</button><button type="button" class="rca-choice" data-act="endings">🏆 Endings found: '+Object.keys(FOUND).length+'/8</button>';
   }else{
-    h='<p class="rca-ask">What do you do?</p>'+n.choices.map(function(c,i){
+    h=n.choices.map(function(c,i){
       return (c.req&&!ST.flags[c.req])
         ?'<button type="button" class="rca-choice gated" data-i="'+i+'">'+esc(c.label)+'<em>Turn the page…</em></button>'
         :'<button type="button" class="rca-choice" data-i="'+i+'">'+esc(c.label)+'<em>Turn to page '+PAGE[c.target]+'</em></button>';

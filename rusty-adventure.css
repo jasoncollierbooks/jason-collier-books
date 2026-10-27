@@ -27,17 +27,13 @@
 .clip-btn:disabled{opacity:.45;cursor:default}
 #rcaMute{margin-left:auto}
 .clip-time{flex:none;font:600 14px/1 'Courier New',monospace;font-variant-numeric:tabular-nums;color:#f3e6c4}
-.rca-endcard{position:absolute;z-index:3;left:0;right:0;bottom:92px;padding:28px 16px 12px;text-align:center;color:#fff3d0;pointer-events:none;background:linear-gradient(transparent,#000c 45%,#000e)}
-.rca-endcard small{display:block;font:700 13px 'Courier New',monospace;letter-spacing:.22em;text-transform:uppercase;color:#d4af37}
-.rca-endcard b{display:block;font:900 clamp(22px,4vw,32px)/1.15 Cinzel,serif;margin:6px 0;text-shadow:0 2px 8px #000}
-.rca-endcard i{display:block;font:italic 600 18px 'Cormorant Garamond',Georgia,serif;color:#f0dca0}
-.rca-read{margin-top:14px;padding:18px 16px 8px;border-radius:12px;color:#2b1d0e;background:#f1e4c3 radial-gradient(ellipse at 50% 40%,#f7edd2 0%,#ecdcb5 72%,#dcc697 100%);box-shadow:0 10px 24px #0006}
+.rca-read{margin-top:14px}
 .rca-read[hidden]{display:none}
-.rca-text p{font-family:'Cormorant Garamond',Georgia,serif;font-size:22px;line-height:1.5;margin:0 0 .7em}
-.rca-text p:first-child:first-letter{font-family:Cinzel,serif;float:left;font-size:3em;line-height:.85;padding:4px 6px 0 0;color:#7a3d10}
 .rca-choices{display:block}
-.rca-ask{font:700 14px 'Courier New',monospace;letter-spacing:.16em;color:#7a5520;text-transform:uppercase;margin:12px 0 8px;text-align:center;border-top:1px solid #b89b6288;padding-top:12px}
-.rca-endtag{font-family:Cinzel,serif;font-size:22px;color:#5a3a12;text-align:center;margin:10px 0 14px}
+.rca-endcard{margin:0 0 12px;padding:16px 14px 12px;text-align:center;color:#fff3d0;border:1px solid #d4af37;border-radius:12px;background:#1c140c}
+.rca-endcard small{display:block;font:700 13px 'Courier New',monospace;letter-spacing:.22em;text-transform:uppercase;color:#d4af37}
+.rca-endcard b{display:block;font:900 clamp(22px,4vw,32px)/1.15 Cinzel,serif;margin:6px 0;color:#f0cf63}
+.rca-endcard i{display:block;font:italic 600 18px 'Cormorant Garamond',Georgia,serif;color:#f0dca0}
 .rca-choice{position:relative;display:block;width:100%;text-align:left;margin:0 0 10px;padding:14px 16px;min-height:60px;border-radius:8px;border:2px solid #8a6a32;background:#fff6dc;color:#2b1d0e;font:600 20px/1.35 'Cormorant Garamond',Georgia,serif;cursor:pointer;box-shadow:0 2px 0 #b89b62;touch-action:manipulation}
 .rca-choice em{display:block;font:italic 600 16px 'Cormorant Garamond',Georgia,serif;color:#7a5520;margin-top:4px}
 .rca-choice:active{transform:translateY(1px)}
@@ -59,21 +55,15 @@
 .rca-g-cap small{display:block;font:700 13px 'Courier New',monospace;letter-spacing:.12em;color:#d4af37;text-transform:uppercase}
 .rca-g-cap b{display:block;font:700 18px/1.25 Cinzel,serif;margin:5px 0 3px}
 .rca-g-cap em{display:block;font:italic 600 16px 'Cormorant Garamond',Georgia,serif;opacity:.85}
-.rca-books{display:flex;align-items:center;gap:10px;margin:14px 0 8px;padding:8px 12px 8px 8px;text-decoration:none;color:#3b250c;border:1px solid #c4a46a;border-radius:10px;background:linear-gradient(180deg,#fffaf0,#f3e6c8)}
-.rca-books-art{display:flex;flex:none;gap:6px}
-.rca-books-art img{width:34px;height:50px;object-fit:cover;border-radius:2px;border:1px solid #8a6a32}
-.rca-books-line{flex:1;min-width:0;font:700 18px/1.25 'Cormorant Garamond',Georgia,serif}
 .clip-btn:focus-visible,.tap:focus-visible,.rca-choice:focus-visible,.rca-sm:focus-visible,.rca-g:focus-visible{outline:2px solid #f0cf63;outline-offset:2px}
 @media (min-width:640px){
   #rcaEndList{grid-template-columns:1fr 1fr}
-  .rca-text p{font-size:24px;line-height:1.55}
   .rca-choice{font-size:22px;min-height:72px}
 }
 @media (min-width:900px){#rcaEndList{grid-template-columns:repeat(4,1fr)}}
 @media (max-width:759px){
   .rca{padding:108px 10px 36px}
   .rca-k{display:none}
-  .rca-text p{font-size:21px}
   .clip-btn{padding:8px 12px}
 }
 @media (prefers-reduced-motion:reduce){
