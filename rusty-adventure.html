@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="theme-color" content="#16130f">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Rusty Stack: Lead the Adventure Audiobook | Collier Entertainment</title>
-<meta name="description" content="A narrated Lead the Adventure audiobook by Jason Collier: 23 scenes, 8 endings, and you choose the path.">
-<meta property="og:title" content="The Rusty Stack: Lead the Adventure Audiobook | Collier Entertainment">
-<meta property="og:image" content="https://collierentertainment.com/images/the-rusty-stack.jpg">
+<title>The Rusty Stack: Choose Your Own Cartoon | Collier Entertainment</title>
+<meta name="description" content="The animated Rusty Stack adventure. Watch each scene, then choose the path. 23 scenes, 8 endings.">
+<meta property="og:title" content="The Rusty Stack: Choose Your Own Cartoon | Collier Entertainment">
+<meta property="og:image" content="https://collierentertainment.com/media/rusty-cyoa/posters/s01.jpg">
 <meta property="og:url" content="https://collierentertainment.com/rusty-adventure.html">
 <meta property="og:site_name" content="Collier Entertainment">
 <meta name="twitter:card" content="summary_large_image">
@@ -26,7 +26,7 @@
 <script src="season.js?v=lite3"></script>
 <script src="app-mode.js?v=2"></script>
 <link rel="stylesheet" href="ce-site.css?v=5">
-<link rel="stylesheet" href="rusty-adventure.css?v=10">
+<link rel="stylesheet" href="rusty-adventure.css?v=11">
 </head>
 <body class="broadcast-lite page-book">
 <div class="grain" aria-hidden="true"></div>
@@ -57,38 +57,35 @@
 </header>
 
 <main class="rca" id="rca">
-<header class="rca-head"><p class="rca-k">⚙ Lead the Adventure Audiobook ⚙</p><h1>The Rusty Stack<small>Lead the Adventure Audiobook</small></h1>
-<p class="rca-sub">Listen as the book is read to you. When a page ends, choose where to turn. Press and hold a choice to peek.</p></header>
-<div class="lbook closed" id="book">
- <div class="spread" id="spread">
-  <section class="page pl" id="pgL">
-   <figure class="plate" id="rcaPlate"></figure>
-   <p class="kick" id="rcaNum"></p>
-   <h2 id="rcaTitle" class="rca-title">The Rusty Stack</h2>
-   <div class="rca-flags" id="rcaFlags"></div>
-   <span class="pno" id="pnoL"></span>
-  </section>
-  <section class="page pr" id="pgR">
-   <div id="rcaText" class="rca-text"></div>
-   <div id="rcaChoices" class="rca-choices"></div>
-   <span class="pno" id="pnoR"></span>
-  </section>
+<header class="rca-head"><p class="rca-k">⚙ Animated adventure ⚙</p><h1>The Rusty Stack<small>Choose your own cartoon</small></h1>
+<p class="rca-sub">Watch the scene, then choose what the crew does next. Eight endings. One of them is true.</p></header>
+<article class="reel" id="reel">
+ <p class="kick" id="rcaNum"></p>
+ <h2 id="rcaTitle" class="rca-title">The Rusty Stack</h2>
+ <div class="rca-flags" id="rcaFlags"></div>
+ <div class="screen" id="rcaScreen">
+  <img class="poster" id="rcaPoster" alt="" width="1280" height="720" draggable="false">
+  <video id="rcaVideo" playsinline webkit-playsinline preload="none" disablepictureinpicture aria-label="Scene cartoon"></video>
+  <button type="button" class="tap" id="rcaTap" hidden><i aria-hidden="true">▶</i>Tap to play</button>
+  <div class="clip-ui">
+   <div class="clip-meta">
+    <div class="clip-bar" aria-hidden="true"><i id="rcaBar"></i></div>
+    <span class="clip-time" id="rcaTime">0:00</span>
+   </div>
+   <div class="clip-controls">
+    <button type="button" class="clip-btn" id="rcaReplay">↺ Replay</button>
+    <button type="button" class="clip-btn clip-skip" id="rcaSkip">Skip</button>
+    <button type="button" class="clip-btn" id="rcaMute" aria-label="Mute" aria-pressed="false">🔊</button>
+   </div>
+  </div>
  </div>
- <i class="ribbon" aria-hidden="true"></i>
- <button class="lcover" id="cover" aria-label="Open the book"><span class="cv-corner a"></span><span class="cv-corner b"></span><span class="cv-corner c"></span><span class="cv-corner d"></span>
-  <span class="cv-frame"><span class="cv-small">Captain's Log of the</span><span class="cv-title">The Rusty<br>Stack</span><span class="cv-rose" aria-hidden="true">✵</span><span class="cv-sub">A Lead the Adventure<br>Audiobook</span><span class="cv-by">Jason Collier</span></span>
-  <span class="cv-clasp" aria-hidden="true"></span><span class="cv-open">Tap to open the book</span></button>
- <div class="leaves" id="leaves" aria-hidden="true"></div>
-</div>
-<div class="peek" id="peek" aria-hidden="true"><div class="peek-page"><img id="peekImg" alt=""><p id="peekLine"></p><span id="peekNo"></span></div></div>
-<div class="deck" id="deck">
- <button id="rcaPlay" class="rca-play" aria-label="Play">▶</button>
- <div class="rca-prog"><div class="rca-bar"><i id="rcaBar"></i></div><span id="rcaTime">0:00</span></div>
- <button id="rcaMute" class="rca-sm" aria-label="Mute">🔊</button>
-</div>
-<div class="rca-tools"><button id="rcaSkip" class="rca-sm">⏭ Skip narration</button><button id="rcaEndBtn" class="rca-sm">🏆 Endings <span id="rcaCount">0/8</span></button><button id="rcaRestart" class="rca-sm">↺ Restart</button><span class="rca-sm rs-gagc" title="Tap funny things hidden in the pictures">🔍 Gags <span id="rsGagCount">0/0</span></span></div>
-<div id="rcaEndings" class="rca-endings" hidden><h2>Endings found: <span id="rcaCount2">0/8</span></h2><div id="rcaEndList"></div><button class="rca-choice" id="rcaEndClose">Back to the book</button></div>
-<audio id="rcaAudio" preload="auto"></audio>
+ <div id="rcaRead" class="rca-read" hidden>
+  <div id="rcaText" class="rca-text"></div>
+  <div id="rcaChoices" class="rca-choices"></div>
+ </div>
+</article>
+<div class="rca-tools"><button type="button" id="rcaEndBtn" class="rca-sm">🏆 Endings <span id="rcaCount">0/8</span></button><button type="button" id="rcaRestart" class="rca-sm">↺ Restart</button></div>
+<div id="rcaEndings" class="rca-endings" hidden><h2>Endings found: <span id="rcaCount2">0/8</span></h2><div id="rcaEndList"></div><button type="button" class="rca-choice" id="rcaEndClose">Back to the story</button></div>
 </main>
 
 
@@ -99,12 +96,8 @@
   <span class="foot-legal"><a href="app/">📲 Get the app</a><a href="privacy.html">Privacy</a><a href="support.html">Support</a><a href="credits.html">Credits</a></span>
 </footer>
 <script src="js/rusty-cyoa-data.js?v=1"></script>
-<script src="js/rusty-cyoa-audio.js?v=2"></script>
-<script src="js/rusty-cyoa-stage.js?v=1"></script>
-<script src="js/rusty-cyoa-depth.js?v=1"></script>
-<script src="js/rusty-cyoa-sfx.js?v=2"></script>
-<script src="rusty-stage.js?v=8"></script>
-<script src="rusty-adventure.js?v=9" defer></script>
+<script src="js/rusty-cyoa-stage.js?v=2"></script>
+<script src="rusty-adventure.js?v=10"></script>
 <script src="main.js?v=pass3" defer></script>
 <script src="links.js" defer></script>
 </body>
