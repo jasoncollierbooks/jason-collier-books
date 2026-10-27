@@ -18,7 +18,7 @@ var ITEMS={ // key = data-play / data-frame value
  'audiobooks.html#philadelphia-follies':{id:'ab-philly',t:'Jang & Tom: Philadelphia Follies',u:SITE+'audiobooks.html#philadelphia-follies',rate:1},
  'audiobooks.html#transcontinental':{id:'ab-transcon',t:'Jang & Tom: Transcontinental',u:SITE+'audiobooks.html#transcontinental',rate:1},
  'audiobooks.html#first-pulse':{id:'ab-first-pulse',t:'The First Pulse (audiobook)',u:SITE+'audiobooks.html#first-pulse',rate:1},
- 'rusty-adventure.html':{id:'ab-rusty-adventure',t:'The Rusty Stack: Lead the Adventure Audiobook',u:SITE+'rusty-adventure.html',rate:1},
+ 'rusty-adventure.html':{id:'ab-rusty-adventure',t:'The Rusty Stack cartoon',u:SITE+'rusty-adventure.html',rate:1},
  'old-man-game/':{id:'game-old-man-hunt',t:'Old Man Hunt',u:SITE+'old-man-game/',rate:1},
  'book-worlds/':{id:'game-book-worlds',t:'Book Worlds',u:SITE+'book-worlds/',rate:1},
  'i-spy.html':{id:'game-i-spy',t:'Sharp Eye Search',u:SITE+'sharp-eye-search.html',rate:1},

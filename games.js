@@ -1,7 +1,7 @@
 /* Every game on the site, used by the app's Play tab (play.html lists the same games in plain HTML).
    url: same-site path, or a full https:// link for games hosted elsewhere. */
 window.CE_GAMES = [
- {id:'adventures',t:'Lead the Adventure',k:'Branching books · narrated',url:'adventures.html',d:'Two books where you choose the next page. The Rusty Stack has 23 scenes and 8 endings. The Seeders has 4 viewpoints and 12 endings. Both are read aloud.'},
+ {id:'adventures',t:'Lead the Adventure',k:'Cartoon and narrated',url:'adventures.html',d:'The Rusty Stack is a cartoon: watch the scene, then choose. 23 scenes, 8 endings. The Seeders is read aloud: 4 viewpoints, 12 endings.'},
  {id:'book-worlds',t:'Book Worlds',k:'Jang & Tom ride along',url:'book-worlds/',d:'Walk the California Trail as the Keeper, a drifter with a brass skeleton key. Tune the broadcast cabinet and push back the Nonimaginaires leaking into the story.'},
  {id:'old-man-hunt',t:'Old Man Hunt',k:'A horror hunt · for older players',url:'old-man-game/',d:'Seven days on the mountain, based on the novel. Hang your trail cameras, keep the fire going and hold your nerve.'},
  {id:'jang-and-tom',t:'Jang & Tom: The Wagon Train',k:'Companion game · Wagon Masters',url:'https://kite-bolt-fleet-honey.grok.me/',d:'Lead the wagon train yourself: oxen, debt collectors, Billy the goat and a wagon that lost a fight with a tornado. The book is the prize in Sacramento.'},

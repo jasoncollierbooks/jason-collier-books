@@ -70,3 +70,5 @@
   .screen video{transition:none}
   .rca-choice:active,.rca-g.got:active{transform:none}
 }
+.ce-framed .rca{padding-top:16px;padding-bottom:28px}
+.ce-framed footer{display:none}
