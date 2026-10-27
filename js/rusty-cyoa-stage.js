@@ -1,102 +1,48 @@
-/* Living-art direction for The Rusty Stack adventure. Coordinates are fractions of the image (x,y); z = zoom.
-   cam[i] = camera target while paragraph i is narrated (index -1 / title = establishing shot).
-   fx = ambient effects drawn over the art. gags = tappable hidden jokes (id shared across pages). */
-window.RCA_STAGE={
-gagInfo:{
- goat:['🐐','Goat with a balloon','bleat','float'],
- picnic:['🧺','Picnic-table propeller','whirr','spin'],
- poetry:['📖','Rico’s poetry book','page','wiggle'],
- balloon:['🎈','The runaway red balloon','pop','float'],
- parrot:['🦜','Clockwork parrot','squawk','wiggle'],
- kettle:['🫖','Tea time on the pirate ship','whistle','wiggle'],
- wanted:['📜','Spacey’s wanted poster','page','wiggle'],
- crown:['👑','The Duke’s flying crown','chime','spin'],
- bird:['🐦','Hawke’s carved bird','tweet','float'],
- skull:['☠️','“Here be madness”','chime','wiggle'],
- teacup:['☕','Tea during a broadcast war','clink','wiggle'],
- bucket:['🪣','Something in the mop bucket','squelch','wiggle'],
- cigar:['🚬','The cigar that never lit','chime','spin'],
- mug:['🍺','The flying mug','clink','spin'],
- farm:['🐐','The flying goat farm','bleat','float'],
- porthole:['🔭','Bye-bye, Rusty Stack','chime','wiggle']
-},
-s:{
-s01:{cam:[[.7,.76,1.6],[.38,.45,1.35],[.76,.42,1.6],[.64,.17,1.55],[.62,.17,1.9],[.27,.33,1.7],[.62,.2,1.45],[.6,.3,1.25],[.5,.5,1.05]],
- fx:[['clouds'],['smoke',.07,.06],['glow',.7,.8,.08,'#ff3a1a'],['sway'],['steam',.94,.6]],
- gags:[['picnic',.9,.42,.06],['balloon',.42,.15,.04]]},
-s02:{cam:[[.33,.42,1.6],[.5,.45,1.65],[.33,.38,1.8],[.5,.4,1.8],[.1,.48,1.6],[.75,.45,1.5],[.33,.45,1.5],[.5,.48,1.55],[.5,.5,1.1]],
- fx:[['clouds'],['flash',.89,.38,'#ffb040'],['sparks',.89,.38],['sway']],
- gags:[['parrot',.18,.13,.06]]},
-s03:{cam:[[.35,.55,1.6],[.72,.18,1.6],[.72,.2,1.8],[.74,.62,1.7],[.5,.5,1.1]],
- fx:[['clouds'],['smoke',.36,.05],['steam',.84,.7],['sway']],
- gags:[['picnic',.88,.9,.08],['kettle',.83,.75,.05]]},
-s04:{cam:[[.55,.72,1.6],[.78,.15,1.8],[.62,.32,1.8],[.42,.33,1.8],[.55,.72,2]],
- fx:[['flicker',.15,.25,.09],['eyes',[[.43,.72],[.47,.74],[.52,.72],[.56,.73],[.6,.71],[.65,.72],[.71,.7]]],['drip',.6,.78],['dust']],
- gags:[]},
-s05:{cam:[[.8,.6,1.6],[.67,.48,1.8],[.22,.45,1.7],[.4,.35,1.8],[.8,.62,1.8],[.22,.42,1.7],[.25,.5,1.4],[.75,.2,1.6],[.5,.5,1.1]],
- fx:[['clouds'],['flicker',.13,.12,.05],['steam',.48,.82],['sway'],['dust']],
- gags:[['kettle',.48,.88,.05]]},
-s06:{cam:[[.78,.18,1.6],[.48,.33,1.7],[.48,.35,2],[.3,.55,1.7],[.5,.5,1.1]],
- fx:[['clouds'],['prop',.28,.12,.12],['sway']],
- gags:[]},
-s07:{cam:[[.66,.27,1.9],[.3,.35,1.6],[.5,.45,1.7],[.5,.5,1.1]],
- fx:[['flicker',.18,.68,.1],['dust']],
- gags:[['wanted',.65,.25,.07]]},
-s08:{cam:[[.72,.58,1.7],[.5,.45,1.1],[.38,.6,1.8],[.28,.4,1.7],[.33,.25,1.6],[.38,.58,1.9],[.5,.5,1.15],[.5,.5,1.05]],
- fx:[['flicker',.05,.5,.1],['flicker',.95,.5,.07,'#ff7a20'],['eyes',[[.2,.35],[.25,.3],[.3,.4],[.22,.45],[.33,.32],[.27,.5]]],['drip',.25,.55],['drip',.32,.5],['dust']],
- gags:[['poetry',.82,.62,.05],['crown',.38,.1,.05]]},
-s09:{cam:[[.6,.25,1.7],[.75,.85,1.7],[.45,.62,1.7],[.6,.25,1.8],[.45,.45,1.3],[.85,.3,1.5],[.6,.25,1.6],[.85,.3,1.3],[.5,.5,1.1]],
- fx:[['arc',.45,.62,.25],['sparks',.45,.65],['dust'],['smoke',.4,.05]],
- gags:[]},
-s10:{cam:[[.35,.35,1.4],[.62,.55,1.7],[.85,.25,1.7],[.5,.5,1.1]],
- fx:[['clouds'],['glow',.4,.75,.15,'#40b0ff'],['smoke',.62,.35],['sway']],
- gags:[['balloon',.6,.06,.04]]},
-s11:{cam:[[.2,.35,1.7],[.55,.62,1.8],[.53,.6,1.6],[.82,.38,1.5],[.28,.53,1.9],[.5,.5,1.1]],
- fx:[['clouds'],['debris',.55,.6],['sway']],
- gags:[]},
-s12:{cam:[[.5,.5,1.1],[.25,.15,1.6],[.6,.5,1.8],[.38,.45,1.8],[.6,.48,1.7],[.78,.22,1.7],[.5,.5,1.1]],
- fx:[['clouds'],['sway'],['steam',.13,.5]],
- gags:[]},
-s13:{cam:[[.6,.3,1.2],[.45,.35,1.4],[.33,.25,1.8],[.45,.35,1.8],[.33,.25,1.7],[.88,.3,1.5],[.68,.2,1.6],[.33,.27,1.9],[.72,.4,1.8],[.33,.27,1.8],[.68,.2,1.4],[.5,.5,1.1]],
- fx:[['arc',.2,.2,.18],['flash',.93,.46,'#ffb040'],['sparks',.93,.46],['clouds'],['sway']],
- gags:[]},
-s14:{cam:[[.5,.5,1.1],[.42,.42,1.7],[.25,.45,1.7],[.42,.42,1.7],[.25,.45,1.6],[.6,.66,1.8],[.25,.45,1.8],[.25,.48,2],[.25,.45,1.6],[.42,.4,1.6],[.57,.4,1.5],[.5,.5,1.1]],
- fx:[['flicker',.07,.74,.08],['clouds'],['dust']],
- gags:[['bird',.57,.48,.05],['farm',.55,.15,.08],['poetry',.82,.56,.05]]},
-s15:{cam:[[.5,.5,1.1],[.3,.75,1.7],[.65,.5,1.5],[.88,.82,1.7],[.5,.5,1.1]],
- fx:[['rain'],['lightning'],['smoke',.18,.6,'#222'],['glow',.42,.8,.03,'#ff2020']],
- gags:[]},
-s16:{cam:[[.75,.15,1.6],[.8,.35,1.7],[.12,.3,1.7],[.75,.2,1.5],[.78,.8,1.6],[.32,.3,1.6],[.32,.3,1.8],[.47,.28,2],[.32,.3,1.7],[.27,.55,1.8],[.8,.35,1.7],[.5,.5,1.1]],
- fx:[['lightning','#b080ff'],['glow',.47,.28,.06,'#b060ff'],['glow',.27,.55,.04,'#b060ff'],['sparks',.75,.85,'#9fb8ff'],['rain']],
- gags:[]},
-s17:{cam:[[.62,.18,1.4],[.7,.5,1.6],[.43,.43,1.8],[.7,.48,1.8],[.43,.43,1.8],[.5,.5,1.1]],
- fx:[['flicker',.12,.3,.1],['dust'],['smoke',.6,.1]],
- gags:[]},
-s18:{cam:[[.88,.45,1.7],[.3,.5,1.6],[.6,.75,1.6],[.5,.5,1.1]],
- fx:[['flicker',.05,.2,.04],['flicker',.6,.5,.04],['rain']],
- gags:[]},
-s19:{cam:[[.3,.4,1.6],[.62,.3,1.7],[.75,.45,1.5],[.7,.4,1.4],[.75,.45,1.5],[.62,.3,1.6],[.5,.5,1.15],[.5,.45,1.2],[.92,.18,1.8],[.5,.5,1.1]],
- fx:[['flicker',.6,.72,.05],['flicker',.85,.1,.04],['dust']],
- gags:[['goat',.92,.2,.06],['poetry',.53,.2,.05],['mug',.12,.65,.05]]},
-s20:{cam:[[.2,.7,1.6],[.6,.6,1.5],[.2,.25,1.5],[.6,.6,1.7],[.5,.5,1.1]],
- fx:[['vortex',.6,.15],['lightning'],['rain'],['debris',.6,.6]],
- gags:[['skull',.18,.75,.07]]},
-s21:{cam:[[.25,.3,1.6],[.42,.55,1.8],[.5,.5,1.1]],
- fx:[['arc',.88,.45,.15],['arc',.42,.55,.1],['eyes',[[.2,.27],[.23,.27],[.3,.25],[.33,.25],[.25,.6]]],['lightning']],
- gags:[]},
-s22:{cam:[[.4,.7,1.6],[.55,.3,1.5],[.85,.35,1.6],[.5,.5,1.1]],
- fx:[['clouds'],['flash',.25,.35,'#ffb040'],['flash',.83,.4,'#ffb040'],['glow',.6,.3,.12,'#c080ff'],['sway']],
- gags:[]},
-s23:{cam:[[.32,.3,1.7],[.12,.28,1.8],[.12,.3,1.8],[.12,.3,1.6],[.48,.55,1.9],[.5,.5,1.1]],
- fx:[['glow',.48,.55,.06,'#b060ff'],['flicker',.06,.65,.06],['steam',.67,.52],['flash',.12,.3,'#ffb040']],
- gags:[['teacup',.67,.6,.045]]},
-e1:{cam:[[.3,.45,1.4],[.6,.45,1.6]],fx:[['flicker',.08,.55,.06],['eyes',[[.6,.43],[.62,.43]]],['drip',.6,.6]],gags:[['porthole',.82,.2,.08]]},
-e2:{cam:[[.45,.4,1.3],[.3,.5,1.5]],fx:[['eyes',[[.15,.6],[.25,.65],[.3,.75],[.4,.7],[.22,.85]]],['drip',.35,.6],['steam',.3,.1],['clouds']],gags:[['poetry',.7,.27,.05]]},
-e3:{cam:[[.3,.4,1.3],[.6,.5,1.4]],fx:[['clouds'],['smoke',.82,.08],['bob']],gags:[['farm',.3,.15,.06],['goat',.62,.2,.05]]},
-e4:{cam:[[.6,.5,1.3],[.12,.85,1.7]],fx:[['eyes',[[.11,.87],[.14,.87]]],['dust']],gags:[['bucket',.12,.85,.07]]},
-e5:{cam:[[.45,.3,1.4],[.82,.3,1.6]],fx:[['smoke',.12,.15,'#222'],['clouds']],gags:[]},
-e6:{cam:[[.25,.62,1.5],[.7,.4,1.3]],fx:[['embers'],['smoke',.6,.5,'#311'],['sway']],gags:[]},
-e7:{cam:[[.45,.42,1.4],[.85,.85,1.7]],fx:[['vortex',.8,.15],['lightning'],['rain']],gags:[['cigar',.88,.88,.07],['poetry',.12,.85,.07]]},
-e8:{cam:[[.85,.25,1.7],[.85,.3,1.5],[.6,.45,1.8],[.42,.45,1.8],[.53,.42,1.8],[.12,.4,1.8],[.6,.4,1.2],[.5,.5,1.05]],
- fx:[['clouds'],['dust'],['glow',.83,.38,.12,'#ffd27a']],gags:[['goat',.76,.63,.04],['poetry',.42,.45,.04]]}
-}};
+/* Cartoon stage for The Rusty Stack. One clip is requested at a time, and only when it plays. */
+window.RCAClip=(function(){
+  var v, still, muted=false;
+  function clip(id){return 'media/rusty-cyoa/clips/'+id+'.mp4?v=1'}
+  function poster(id){return 'media/rusty-cyoa/posters/'+id+'.jpg?v=1'}
+  function init(video,posterImg){
+    v=video;still=posterImg;
+    v.preload='none';
+    v.controls=false;
+    v.playsInline=true;
+    v.setAttribute('playsinline','');
+    v.setAttribute('webkit-playsinline','');
+    v.disablePictureInPicture=true;
+    v.addEventListener('playing',function(){v.classList.add('is-on')});
+    v.addEventListener('emptied',function(){v.classList.remove('is-on')});
+  }
+  function arm(id){
+    if(v.getAttribute('data-id')!==id){
+      v.pause();
+      v.classList.remove('is-on');
+      v.removeAttribute('data-loaded');
+      v.setAttribute('data-id',id);
+    }
+    var src=poster(id);
+    v.poster=src;
+    if(still)still.src=src;
+  }
+  /* Sets the file URL and starts playback. Call from a tap so sound is allowed. */
+  function play(){
+    var id=v.getAttribute('data-id');
+    if(v.getAttribute('data-loaded')!==id){
+      v.preload='none';
+      v.src=clip(id);
+      v.setAttribute('data-loaded',id);
+    }else{
+      try{v.currentTime=0}catch(e){}
+    }
+    v.muted=muted;
+    v.volume=1;
+    return v.play();
+  }
+  function pause(){try{v.pause()}catch(e){}}
+  function mute(m){muted=!!m;if(v)v.muted=muted;return muted}
+  function isMuted(){return muted}
+  function el(){return v}
+  function on(ev,fn){v.addEventListener(ev,fn)}
+  return {init:init,arm:arm,play:play,pause:pause,mute:mute,isMuted:isMuted,poster:poster,el:el,on:on};
+})();

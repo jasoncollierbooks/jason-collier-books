@@ -114,8 +114,8 @@
       image: "images/the-rusty-stack.jpg",
       alt: "Cover of The Rusty Stack Adventures by Jason Collier",
       audio: "audio/commercials/rusty.mp3",
-      skipOn: ["rusty-stack.html"],
-      buttons: [{ label: "Lead the Adventure", href: "rusty-stack.html" }]
+      skipOn: ["rusty-stack.html", "rusty-adventure.html"],
+      buttons: [{ label: "Play the cartoon", href: "rusty-adventure.html" }]
     },
     seeders: {
       title: "The Seeders",
