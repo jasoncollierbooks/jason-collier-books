@@ -41,7 +41,6 @@ window.CE_LIVE={programs:[
 {"k": "lv-wm5", "t": "Jang & Tom: Wagon Masters · Part 5 of 6", "d": 186, "src": "media/wagonmasters_part5of6.mp4", "art": "images/jang-and-tom-wagon-masters.jpg"},
 {"k": "lv-wm6", "t": "Jang & Tom: Wagon Masters · Part 6 of 6", "d": 185, "src": "media/wagonmasters_part6of6.mp4", "art": "images/jang-and-tom-wagon-masters.jpg"},
 {"k": "rocket"},
-{"k": "lv-rca", "t": "The Rusty Stack · the true path (listen)", "d": 1522, "src": "media/rusty-cyoa/true-path.mp3?v=2", "art": "media/rusty-cyoa/posters/s01.jpg"},
 {"k": "checkers"},
 {"k": "lv-thorne", "t": "Thorne's Lab Journal", "d": 3288, "src": "media/thorne-lab-journal.mp3", "art": "images/lab/born-twice-og.jpg"},
 {"k": "ridge"},

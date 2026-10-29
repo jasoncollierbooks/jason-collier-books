@@ -5,7 +5,8 @@ var BOOKS=[
  {t:'Jang & Tom: Wagon Masters',img:'images/jang-and-tom-wagon-masters.jpg',buy:'https://www.amazon.com/dp/B0HFCF11YP',page:'jang-and-tom.html'},
  {t:'The First Pulse',img:'images/the-first-pulse.jpg',buy:'https://www.amazon.com/dp/B0GD4W3159',page:'first-pulse.html'},
  {t:'Old Man On The Mountain',img:'images/old-man-on-the-mountain.jpg',buy:'https://www.amazon.com/dp/B0HDJWYNNJ',page:'old-man-on-the-mountain.html'},
- {t:'The Rusty Stack',img:'images/the-rusty-stack.jpg',page:'rusty-stack.html',soon:1}];
+ {t:'The Rusty Stack',img:'images/the-rusty-stack.jpg',buy:'https://www.amazon.com/dp/B0HPDZTVQ1',page:'rusty-stack.html',sub:'About the book · Buy on Amazon'},
+ {t:'Jang and Tom: Trail Adventure',img:'images/jang-and-tom-trail-adventure.jpg',buy:'https://www.amazon.com/s?k=Jang+and+Tom+Trail+Adventure+Jason+Collier&i=stripbooks',page:'books.html#trail-adventure',sub:'Choose-your-path paperback · Buy on Amazon'}];
 var ART=['painting-lighthouse-at-dusk','painting-autumn-hillside','painting-wildflower-meadow','sketch-longhorn-in-the-grass','sketch-the-raven','sketch-the-wanderer'];
 // ===== EPISODE 1 AUDIO SLOT =====
 // When the fixed Episode 1 ("Jang" / "Collier" fixes) is ready, change ONLY these values:
@@ -33,6 +34,7 @@ document.querySelectorAll('.ep1-len').forEach(function(e){e.textContent=EP1.len}
 $('#books').innerHTML=BOOKS.map(function(b){return b.soon?'<span class="bk"><img src="'+R+b.img+'" alt="">'+esc(b.t)+'</span>':'<a class="bk" target="_blank" rel="noopener" href="'+b.buy+'"><img loading="lazy" src="'+R+b.img+'" alt="">'+esc(b.t)+'</a>'}).join('');
 $('#art').innerHTML=ART.map(function(a){return '<button class="poster sq" data-frame="art.html" data-title="Art"><img loading="lazy" src="'+R+'images/jason-art/'+a+'-thumb.jpg" alt="'+a.replace(/^(painting|sketch)-/,'').replace(/-/g,' ')+' by Jason Collier"><b>'+a.replace(/^(painting|sketch)-/,'').replace(/-/g,' ')+'</b></button>'}).join('');
 function item(img,t,s,attrs){return '<button class="item" '+attrs+'><img loading="lazy" src="'+img+'" alt=""><div><b>'+esc(t)+'</b><span>'+s+'</span></div><span class="go">›</span></button>'}
+function buyItem(img,t,s,url){return '<a class="item" style="color:inherit;text-decoration:none;box-sizing:border-box" href="'+url+'" target="_blank" rel="noopener"><img loading="lazy" src="'+img+'" alt=""><div><b>'+esc(t)+'</b><span>'+s+'</span></div><span class="go">↗</span></a>'}
 $('#listenList').innerHTML=
  item(R+'images/jang-tom-millers-ridge.jpg',"The Treasure of Miller's Ridge",'Jang & Tom radio show · '+EP1.len+' · chapters & listen-along','data-play="ridge"')+
  item(R+'images/jang-tom-possum-caper.jpg','The Great Possum Caper','Jang & Tom radio show · Episode 2 · 18:25 · chapters','data-play="possum"')+
@@ -43,6 +45,7 @@ $('#listenList').innerHTML=
  item(R+'images/pine-knot.jpg','The Cookie Conspiracy','Jang & Tom radio show · Episode 7 · 11:46 · new · chapters','data-play="cookie"')+
  item('media/jang-tom-tv.jpg','Jang & Tom Radio Hour','All episodes · the Collier Radio Hour','data-go="jangtom"')+
  item(R+'media/rusty-cyoa/posters/s01.jpg','The Rusty Stack','Cartoon · watch the scene, then choose · 8 endings','data-frame="rusty-adventure.html" data-title="The Rusty Stack Adventure"')+
+ buyItem(R+'images/the-rusty-stack.jpg','The Rusty Stack: the book','Buy on Amazon · 6×9 paperback with 25 airship mazes','https://www.amazon.com/dp/B0HPDZTVQ1')+
  item(R+'images/dogs/cover-thumb.jpg','Dogs That Chose Me','Audiobook · a short story by Jason Collier · 9:33 · chapters','data-play="dogs"')+
  item(R+'images/old-man-on-the-mountain.jpg','Old Man On The Mountain','Audiobook · app player','data-play="oldman"')+
  item(R+'images/lab/born-twice-og.jpg',"Thorne's Lab Journal",'Dr. Thorne reads all 8 entries · 54:48','data-play="thorne"')+
@@ -55,7 +58,7 @@ $('#playList').innerHTML=PLAY.map(function(g){return '<button class="gcard" data
 $('#playList').className='glist';
 // Home Play row: the same full list and order as the Play tab, then See all
 (function(){var hp=document.getElementById('homePlay');if(!hp)return;hp.innerHTML=PLAY.map(function(g){return '<button class="poster wide" data-rx-key="game:'+g[5]+'" data-frame="'+g[2]+'" data-title="'+esc(g[0])+'"><img loading="lazy" src="'+g[3]+'" alt=""><b>'+esc(g[0])+'</b><span>'+esc(g[1])+'</span></button>'}).join('')+'<button class="poster wide seeall" data-go="play"><b>See all \u203A</b><span>'+PLAY.length+' games &amp; more</span></button>'})();
-$('#readList').innerHTML=BOOKS.map(function(b){return item(R+b.img,b.t,b.page==='rusty-stack.html'?'About the book':'Book page, chapters & audiobook','data-frame="'+b.page+'" data-title="'+esc(b.t)+'"')+(b.page==='rusty-stack.html'?item(R+'media/rusty-cyoa/posters/s01.jpg','The Rusty Stack cartoon','Watch the scene, then choose · 8 endings','data-frame="rusty-adventure.html" data-title="The Rusty Stack Adventure"'):'')}).join('')+item(R+'images/icons/typewriter.svg','The Novel','The multi-mind novel, read in the app','data-frame="novel.html" data-title="The Novel"');
+$('#readList').innerHTML=BOOKS.map(function(b){return item(R+b.img,b.t,b.sub||'Book page, chapters & audiobook','data-frame="'+b.page+'" data-title="'+esc(b.t)+'"')+(b.page==='rusty-stack.html'?item(R+'media/rusty-cyoa/posters/s01.jpg','The Rusty Stack cartoon','Watch the scene, then choose · 8 endings','data-frame="rusty-adventure.html" data-title="The Rusty Stack Adventure"'):'')}).join('')+item(R+'images/icons/typewriter.svg','The Novel','The multi-mind novel, read in the app','data-frame="novel.html" data-title="The Novel"');
 // tabs
 var cur='home';
 function go(id){if(!document.getElementById(id))return;$$('.screen').forEach(function(s){s.classList.toggle('active',s.id===id)});$$('.tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.go===id)});cur=id;history.replaceState(null,'','#'+id)}
@@ -99,7 +102,7 @@ function isDev(){try{return localStorage.getItem('ce-dev')==='1'}catch(e){return
 // Pine Knot Club is free: signed in = member. (Dev-only test toggle behind ?dev=1.)
 function isSub(){var A=window.CollierAuth;if(A&&A.status==='in')return true;try{if(isDev()&&localStorage.getItem(SUBK)==='1')return true;if((!A||A.status==='loading')&&+(localStorage.getItem('ce-member')||0)>Date.now())return true}catch(e){}return false}
 var st=$('#subToggle');if(st){$('#devToggle').hidden=!isDev();st.checked=isDev()&&localStorage.getItem(SUBK)==='1';st.onchange=function(){try{localStorage.setItem(SUBK,st.checked?'1':'0')}catch(e){}toast(st.checked?'Dev: member mode':'Dev: free mode');if(!st.checked)loadBreaks()};}
-function loadBreaks(){if(window.JCBreaks||document.getElementById('cbjs'))return;var s=document.createElement('script');s.id='cbjs';s.src='../commercials.js?v=57';document.body.appendChild(s)}
+function loadBreaks(){if(window.JCBreaks||document.getElementById('cbjs'))return;var s=document.createElement('script');s.id='cbjs';s.src='../commercials.js?v=58';document.body.appendChild(s)}
 function breakNow(){if(window.CE&&CE.clubSpot&&CE.clubSpot())return true;if(!window.JCBreaks)return false;var ids=Object.keys(JCBreaks.spots);var was=!au.paused;au.pause();var fw=null,fm=[];try{if(!$('#frame').hidden){fw=fr.contentWindow;if(fw.__oldman)fw.__oldman.holdSim(true);fw.document.querySelectorAll('audio,video').forEach(function(m){if(!m.paused){m.pause();fm.push(m)}})}}catch(e){}JCBreaks.open(ids[Math.floor(Math.random()*ids.length)]);var w=setInterval(function(){if(!window.__jcBreakHold&&!document.querySelector('.jc-break, [class*=break-overlay]')){clearInterval(w);try{if(fw&&fw.__oldman)fw.__oldman.holdSim(false);fm.forEach(function(m){m.play().catch(function(){})})}catch(e){}if(was)au.play().catch(function(){})}},700);setTimeout(function(){},0);return true}
 // Station breaks: about every 5-6 minutes for everyone
 function gap(){return 300000+Math.random()*60000}

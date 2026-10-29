@@ -1,409 +1,97 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>The Seeders — An Interactive Guide</title>
-<meta name="theme-color" content="#05140f">
-<meta name="description" content="The Seeders: an interactive guide to the harvest of Earth. A narrated Lead the Adventure with four viewpoints, twelve endings and painted moving pictures. From an original premise by Jason Collier.">
-<link rel="canonical" href="https://collierentertainment.com/seeders/">
-<meta property="og:title" content="The Seeders — An Interactive Guide">
-<meta property="og:description" content="Someone left a seed in a warm sea. Tonight they came back for the crop. A narrated Lead the Adventure from Collier Entertainment.">
-<meta property="og:image" content="https://collierentertainment.com/seeders/images/a1.jpg">
+<meta name="theme-color" content="#16130f">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Seeders: Coming Soon | Collier Entertainment</title>
+<meta name="description" content="The Seeders by Jason Collier: a choose-your-path science-fiction adventure. Coming soon in paperback, with an animated version on the way.">
+<meta property="og:title" content="The Seeders: Coming Soon | Collier Entertainment">
+<meta property="og:image" content="https://collierentertainment.com/seeders/seeders-cover.jpg">
 <meta property="og:url" content="https://collierentertainment.com/seeders/">
-<meta property="og:type" content="website">
+<meta property="og:site_name" content="Collier Entertainment">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="images/m1.jpg">
+<link rel="canonical" href="https://collierentertainment.com/seeders/">
+<link rel="icon" href="../icons/pages/books-32.png?v=tv2" sizes="32x32" type="image/png">
+<link rel="icon" href="../icons/pages/books-48.png?v=tv2" sizes="48x48" type="image/png">
+<link rel="apple-touch-icon" href="../icons/pages/books-apple-touch.png?v=tv2" sizes="180x180">
+<link rel="manifest" href="../manifest.json?v=tv1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&family=Josefin+Sans:wght@400;600&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="../polish.css">
+<link rel="stylesheet" href="../assets/broadcast-theme/site.css">
+<link rel="stylesheet" href="../season.css?v=lite3">
+<script src="../season.js?v=lite3"></script>
+<script src="../app-mode.js?v=2"></script>
+<link rel="stylesheet" href="../ce-site.css?v=5">
 <style>
-:root{
-  --glow:#5dffc4; --glow2:#ffd36b; --ink:#d9fff0; --dim:#7fb8a4; --screen:#03110c;
-  --case1:#2a3a35; --case2:#121b18; --danger:#ff7a6b;
-}
-*{box-sizing:border-box}
-html,body{margin:0;height:100%;background:radial-gradient(ellipse at 50% 20%,#1b2a3a 0%,#07090f 60%,#020305 100%);color:var(--ink);
-  font-family:"Avenir Next","Segoe UI",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
-body{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:clamp(0px,2vw,24px)}
-/* ---------- the device ---------- */
-.device{position:relative;width:min(760px,100%);height:min(980px,100vh);display:flex;flex-direction:column;
-  background:linear-gradient(160deg,var(--case1),var(--case2) 55%,#0b100e);border-radius:34px;padding:18px 18px 14px;
-  box-shadow:0 0 0 2px #3c4f48 inset,0 0 0 6px #0b0f0e inset,0 30px 80px rgba(0,0,0,.7),0 0 120px rgba(93,255,196,.08)}
-.device:before{content:"";position:absolute;inset:6px;border-radius:30px;pointer-events:none;
-  background:linear-gradient(180deg,rgba(255,255,255,.07),transparent 18%,transparent 80%,rgba(255,255,255,.03))}
-.topbar{display:flex;align-items:center;gap:10px;padding:2px 10px 12px;font-size:12px;letter-spacing:.3em;color:#9fc7b9;text-transform:uppercase}
-.led{width:10px;height:10px;border-radius:50%;background:var(--glow);box-shadow:0 0 10px var(--glow);animation:pulse 2.4s infinite}
-.brand{font-weight:700}.brand b{color:var(--glow)}
-.topbar .spacer{flex:1}
-.grille{display:flex;gap:4px}.grille i{width:22px;height:3px;border-radius:2px;background:#0a0f0d;box-shadow:0 1px 0 #3a4a44}
-@keyframes pulse{50%{opacity:.35}}
-.screen{position:relative;flex:1;min-height:0;border-radius:18px;background:var(--screen);overflow:hidden;
-  box-shadow:0 0 0 3px #000 inset,0 0 40px rgba(93,255,196,.15) inset,0 0 24px rgba(93,255,196,.12)}
-.screen:after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:18px;
-  background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px),radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.55));mix-blend-mode:multiply}
-.view{position:absolute;inset:0;overflow-y:auto;padding:18px clamp(14px,3.5vw,30px) 28px;scroll-behavior:smooth}
-.view::-webkit-scrollbar{width:6px}.view::-webkit-scrollbar-thumb{background:#1d4a3b;border-radius:3px}
-.keys{display:flex;gap:8px;justify-content:space-between;padding:14px 4px 2px}
-.key{flex:1;min-height:52px;border:none;border-radius:14px;cursor:pointer;color:#cfeee2;font:600 13px/1.1 "Avenir Next","Segoe UI",system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;
-  background:linear-gradient(180deg,#34463f,#1a2420);box-shadow:0 3px 0 #070a09,0 0 0 1px #4a5f57 inset;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;position:relative}
-.key:active{transform:translateY(2px);box-shadow:0 1px 0 #070a09,0 0 0 1px #4a5f57 inset}
-.key .ic{font-size:20px;line-height:1}
-.key .badge{position:absolute;top:6px;right:10px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--glow2);color:#1a1200;font-size:11px;line-height:18px;display:none}
-.key.on{color:var(--glow);text-shadow:0 0 8px var(--glow)}
-/* ---------- content ---------- */
-.fade{animation:fadein .6s ease both}
-@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-h1.title{font:800 clamp(34px,8vw,58px)/1 Georgia,"Times New Roman",serif;margin:10px 0 4px;color:var(--glow);text-shadow:0 0 18px rgba(93,255,196,.5);letter-spacing:.02em}
-.sub{color:var(--dim);font-size:clamp(15px,3.6vw,18px);letter-spacing:.25em;text-transform:uppercase;margin-bottom:18px}
-.dont{display:inline-block;margin:6px 0 18px;padding:8px 16px;border:2px solid var(--glow2);color:var(--glow2);border-radius:10px;
-  font:800 clamp(16px,4vw,22px)/1 "Avenir Next","Segoe UI",system-ui,sans-serif;letter-spacing:.12em;transform:rotate(-2deg);animation:wobble 4s ease-in-out infinite}
-@keyframes wobble{50%{transform:rotate(1.5deg) scale(1.03)}}
-.intro{font-size:clamp(19px,4.4vw,23px);line-height:1.55;color:#c9efe1}
-.vpgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
-@media (max-width:520px){.vpgrid{grid-template-columns:1fr}}
-.vp{position:relative;text-align:left;border:1px solid #1f5a47;background:linear-gradient(160deg,rgba(93,255,196,.10),rgba(93,255,196,.02));
-  color:var(--ink);border-radius:16px;padding:16px;cursor:pointer;font:inherit;min-height:150px;overflow:hidden;transition:transform .2s,box-shadow .2s}
-.vp:hover,.vp:focus-visible{transform:translateY(-2px);box-shadow:0 0 24px rgba(93,255,196,.25);outline:none}
-.vp .glyph{font-size:34px;filter:drop-shadow(0 0 8px var(--glow));display:inline-block;animation:bob 3s ease-in-out infinite}
-.vp:nth-child(2) .glyph{animation-delay:-.7s}.vp:nth-child(3) .glyph{animation-delay:-1.4s}.vp:nth-child(4) .glyph{animation-delay:-2.1s}
-@keyframes bob{50%{transform:translateY(-5px) rotate(4deg)}}
-.vp h3{margin:6px 0 4px;font:700 clamp(21px,4.6vw,24px)/1.15 Georgia,serif;color:var(--glow)}
-.vp p{margin:0;font-size:clamp(16px,3.8vw,18px);line-height:1.4;color:#b8ddd0}
-.vp .prog{margin-top:10px;font-size:13px;letter-spacing:.12em;color:var(--glow2);text-transform:uppercase}
-.ripplenote{margin-top:16px;font-size:16px;color:var(--dim);line-height:1.45}
-/* scene */
-.crumb{display:flex;align-items:center;gap:8px;font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
-.crumb .dot{width:8px;height:8px;border-radius:50%;background:var(--glow)}
-.pic{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:16/9;background:#000;box-shadow:0 0 0 1px #1f5a47,0 10px 30px rgba(0,0,0,.6)}
-.pic video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s}.pic video.on{opacity:1}
-.pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;animation:kenburns 22s ease-in-out infinite alternate}
-@keyframes kenburns{from{transform:scale(1.02)}to{transform:scale(1.12) translate(-1.5%,-1%)}}
-.ph{position:absolute;inset:0;display:flex;align-items:flex-end;padding:14px}
-.ph .stars{position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 30%,#fff8,transparent),radial-gradient(1px 1px at 70% 20%,#fff6,transparent),
-  radial-gradient(1.5px 1.5px at 45% 60%,#fff7,transparent),radial-gradient(1px 1px at 85% 70%,#fff5,transparent),radial-gradient(1px 1px at 10% 80%,#fff6,transparent);animation:twinkle 5s infinite alternate}
-.ph .sail{position:absolute;width:70%;height:70%;left:15%;top:-10%;border-radius:50% 50% 45% 55%;opacity:.35;filter:blur(2px);
-  background:conic-gradient(from 200deg,transparent,rgba(255,211,107,.6),transparent 30%,rgba(93,255,196,.45),transparent 60%);animation:drift 14s ease-in-out infinite alternate}
-@keyframes twinkle{to{opacity:.4}} @keyframes drift{to{transform:translate(6%,8%) rotate(8deg) scale(1.1)}}
-.ph .cap{position:relative;font-size:12.5px;line-height:1.4;color:#d5efe6cc;background:rgba(0,0,0,.45);padding:8px 10px;border-radius:8px;max-height:70%;overflow:hidden}
-.ph .cap b{color:var(--glow2);letter-spacing:.15em;font-size:11px}
-h2.scene{font:800 clamp(27px,6.4vw,38px)/1.1 Georgia,serif;margin:18px 0 10px;color:#f2fff9;text-shadow:0 0 14px rgba(93,255,196,.35)}
-.narr p{font-size:clamp(20px,4.7vw,24px);line-height:1.58;margin:0 0 .8em;color:#d3f5e8}
-.ripple{border-left:4px solid var(--glow2);padding:4px 0 4px 14px;margin:6px 0 16px}
-.ripple .tag{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--glow2);margin-bottom:4px}
-.ripple p{color:#ffe9b5}
-.choices{display:flex;flex-direction:column;gap:12px;margin-top:20px}
-.choice{text-align:left;border:1px solid #2b7a60;background:rgba(93,255,196,.06);color:var(--ink);border-radius:14px;padding:16px 18px 16px 50px;
-  font:600 clamp(19px,4.5vw,22px)/1.35 "Avenir Next","Segoe UI",system-ui,sans-serif;cursor:pointer;position:relative;transition:background .2s,transform .15s}
-.choice:before{content:"▸";position:absolute;left:18px;top:50%;transform:translateY(-50%);color:var(--glow);font-size:22px}
-.choice:hover,.choice:focus-visible{background:rgba(93,255,196,.16);outline:none;transform:translateX(3px)}
-.choice.locked{border-color:var(--glow2);background:rgba(255,211,107,.08)}
-.choice.locked:before{content:"✦";color:var(--glow2)}
-.choice small{display:block;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--glow2);margin-top:4px;font-weight:600}
-.lorechips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
-.chip{border:1px dashed #2b7a60;border-radius:999px;padding:7px 14px;color:var(--glow);background:none;font:600 14px "Avenir Next","Segoe UI",system-ui,sans-serif;cursor:pointer;letter-spacing:.06em}
-.chip.new{border-style:solid;border-color:var(--glow2);color:var(--glow2);animation:pulse 1.6s infinite}
-.endcard{margin:22px 0 8px;padding:18px;border-radius:16px;text-align:center;border:2px solid var(--glow2);background:radial-gradient(circle at 50% 0,rgba(255,211,107,.18),transparent 70%)}
-.endcard .lab{font-size:13px;letter-spacing:.35em;color:var(--glow2);text-transform:uppercase}
-.endcard .nm{font:800 clamp(24px,6vw,32px)/1.2 Georgia,serif;color:#fff3cf;margin:6px 0}
-.endcard .ct{color:var(--dim);font-size:16px}
-.readbooks{display:flex;align-items:center;gap:12px;margin:14px 0 2px;padding:10px 12px;border-radius:14px;border:1px solid #1f5a47;background:rgba(93,255,196,.06);color:var(--ink);text-decoration:none}
-.readbooks:hover,.readbooks:focus-visible{border-color:var(--glow);box-shadow:0 0 16px rgba(93,255,196,.22);outline:none}
-.readbooks .covers{display:flex;gap:6px;flex:none}
-.readbooks img{width:34px;height:50px;object-fit:cover;border-radius:3px;box-shadow:0 4px 10px rgba(0,0,0,.5)}
-.readbooks .copy{flex:1;min-width:0;font:700 16px/1.3 Georgia,serif;color:#e7fff6}
-.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-.btn{flex:1;min-width:150px;border:none;border-radius:14px;padding:16px;font:700 18px "Avenir Next","Segoe UI",system-ui,sans-serif;cursor:pointer;color:#03110c;background:var(--glow);box-shadow:0 0 18px rgba(93,255,196,.35)}
-.btn.alt{background:none;color:var(--glow);border:1px solid var(--glow);box-shadow:none}
-/* panels */
-.panelhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.panelhead h2{font:800 clamp(26px,6vw,34px)/1 Georgia,serif;color:var(--glow);margin:0}
-.count{color:var(--glow2);letter-spacing:.2em;font-size:13px;text-transform:uppercase}
-.entry{border:1px solid #1f5a47;border-radius:14px;padding:14px 16px;margin-bottom:10px;background:rgba(93,255,196,.04)}
-.entry.lockd{opacity:.45;border-style:dashed}
-.entry h4{margin:0 0 6px;font:700 19px/1.2 "Avenir Next","Segoe UI",system-ui,sans-serif;color:var(--glow);letter-spacing:.08em}
-.entry p{margin:0;font-size:clamp(18px,4.2vw,20px);line-height:1.5;color:#c9ecdf}
-.entry .vp-tag{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
-/* guide entry overlay */
-.overlay{position:absolute;inset:0;background:rgba(1,8,5,.88);display:none;align-items:center;justify-content:center;padding:18px;z-index:5}
-.overlay.show{display:flex}
-.gcard{width:100%;max-width:560px;border-radius:18px;border:2px solid var(--glow);padding:22px;background:radial-gradient(circle at 50% -20%,rgba(93,255,196,.25),#03110c 70%);
-  box-shadow:0 0 40px rgba(93,255,196,.3);animation:zoomin .45s cubic-bezier(.2,1.4,.4,1) both}
-@keyframes zoomin{from{transform:scale(.6) rotate(-4deg);opacity:0}}
-.gcard .k{font-size:12px;letter-spacing:.35em;color:var(--glow2);text-transform:uppercase}
-.gcard h3{font:800 clamp(24px,6vw,32px)/1.15 Georgia,serif;color:var(--glow);margin:8px 0 12px}
-.gcard p{font-size:clamp(19px,4.6vw,22px);line-height:1.55;margin:0 0 16px;min-height:4em}
-.gcard .anim{height:70px;position:relative;margin:4px 0 14px;overflow:hidden;border-radius:10px;background:rgba(0,0,0,.35)}
-.anim .blob{position:absolute;border-radius:50%;filter:blur(1px)}
-.toast{position:absolute;left:50%;bottom:14px;transform:translate(-50%,140%);z-index:4;background:#1c2a10;border:1px solid var(--glow2);color:var(--glow2);
-  padding:10px 16px;border-radius:999px;font:700 14px "Avenir Next","Segoe UI",system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;transition:transform .4s,opacity .4s;white-space:nowrap;cursor:pointer;opacity:0;visibility:hidden;max-width:92%;overflow:hidden;text-overflow:ellipsis}
-.toast.show{transform:translate(-50%,0);opacity:1;visibility:visible}
-.foot{font-size:12px;color:#5f8a7c;text-align:center;margin-top:24px;letter-spacing:.1em}
-.howto-home{display:flex;width:100%;align-items:center;justify-content:center;gap:8px;margin-top:16px;
-  border:2px solid var(--glow2);background:rgba(255,211,107,.14);color:var(--glow2);
-  border-radius:14px;padding:14px 16px;cursor:pointer;
-  font:800 clamp(16px,4vw,19px)/1 "Avenir Next","Segoe UI",system-ui,sans-serif;
-  letter-spacing:.12em;text-transform:uppercase;box-shadow:0 0 18px rgba(255,211,107,.18)}
-.howto-home:hover,.howto-home:focus-visible{background:rgba(255,211,107,.28);outline:none}
-.key{min-width:0}
-.key .lbl{text-align:center;line-height:1.05}
-#kHowto .lbl{font-size:11px;letter-spacing:.03em}
-#howtoOv{z-index:6}
-#howtoOv.show{align-items:center;justify-content:center;overflow:hidden;padding:12px}
-#howtoOv .howto-card{margin:0;width:min(560px,100%);max-height:100%;min-height:0;display:flex;flex-direction:column;overflow:hidden}
-.howto-scroll{overflow-y:auto;min-height:0;flex:1 1 auto;-webkit-overflow-scrolling:touch}
-.howto-card h4{margin:2px 0 8px;font:800 13px/1.2 "Avenir Next","Segoe UI",system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:var(--glow2)}
-.howto-card p,.howto-card li p{min-height:0;font-size:clamp(16px,3.8vw,18px);line-height:1.5;margin:0 0 12px}
-.howto-card video{width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:#000;border-radius:12px;display:block;margin:0 0 14px;box-shadow:0 0 0 1px #1f5a47}
-.goals{list-style:none;margin:0 0 8px;padding:0;display:flex;flex-direction:column;gap:8px}
-.goal{display:flex;gap:10px;align-items:flex-start;border:1px solid #1f5a47;border-radius:12px;padding:10px 12px;background:rgba(93,255,196,.04)}
-.goal .tick{flex:none;width:22px;height:22px;margin-top:1px;border:2px solid #3d6b5c;border-radius:6px;display:grid;place-items:center;font:800 14px/1 "Avenir Next","Segoe UI",system-ui,sans-serif;color:#03110c}
-.goal.done{border-color:var(--glow)}
-.goal.done .tick{background:var(--glow);border-color:var(--glow)}
-.goal p{margin:0}
-.gprog{margin-top:5px;color:var(--glow2);font-size:13px;letter-spacing:.03em;line-height:1.35}
-.playtime{color:var(--dim)!important;font-size:clamp(15px,3.6vw,16px)!important}
-.howto-card .row{flex:none;position:static;margin-top:8px;padding-top:0;background:none}
-@media (max-width:560px){body{padding:0}.device{border-radius:0;height:100vh;height:100dvh;padding:10px 10px 8px}.keys{gap:4px;padding:10px 0 2px}.key{min-height:56px;font-size:11px;border-radius:12px}.key .lbl{display:none}.key .ic{font-size:22px}#howtoOv.show{padding:8px}#howtoOv .howto-card{padding:16px}}
-@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+.seed-tease{max-width:1040px;margin:0 auto;padding:clamp(96px,12vw,140px) clamp(18px,4vw,40px) 70px;display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(24px,5vw,56px);align-items:center}
+.seed-tease .seed-cover{position:relative;border-radius:6px;overflow:hidden;box-shadow:0 0 0 1px #5dffc455,0 0 60px #5dffc433,0 30px 60px #000a}
+.seed-tease .seed-cover img{display:block;width:100%;height:auto}
+.seed-k{font:600 .8rem/1 "Josefin Sans",sans-serif;letter-spacing:.35em;text-transform:uppercase;color:#5dffc4;text-shadow:0 0 12px #5dffc488;margin:0 0 .8rem}
+.seed-tease h1{font:600 clamp(2.6rem,7vw,4.4rem)/1 "Cormorant Garamond",serif;margin:0 0 .4rem;color:#e9fff6;letter-spacing:.04em}
+.seed-tease h1 small{display:block;font:600 .95rem/1.4 "Josefin Sans",sans-serif;letter-spacing:.3em;text-transform:uppercase;color:#ffd36b;margin-top:.6rem}
+.seed-tease p{font-size:1.12rem;line-height:1.65;color:#d6ece4}
+.seed-facts{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0 1.4rem;padding:0;list-style:none}
+.seed-facts li{border:1px solid #5dffc466;border-radius:999px;padding:.35rem .8rem;font-size:.9rem;color:#bff5e2;background:#03110c99}
+.seed-soon{display:inline-block;border:2px solid #ffd36b;color:#ffd36b;border-radius:10px;padding:.5rem 1rem;font:700 .95rem/1 "Josefin Sans",sans-serif;letter-spacing:.2em;text-transform:uppercase;transform:rotate(-2deg);margin-bottom:1.2rem}
+@media (max-width:760px){.seed-tease{grid-template-columns:1fr}.seed-tease .seed-cover{max-width:300px;margin:0 auto}}
 </style>
 </head>
-<body>
-<div class="device" id="device">
-  <div class="topbar"><span class="led"></span><span class="brand">The <b>Seeders</b> Guide</span><span class="spacer"></span><span class="grille"><i></i><i></i><i></i><i></i></span></div>
-  <div class="screen">
-    <div class="view" id="view" aria-live="polite"></div>
-    <div class="overlay" id="overlay"><div class="gcard" id="gcard"></div></div>
-    <div class="overlay" id="howtoOv" aria-hidden="true">
-      <div class="gcard howto-card" id="howtoCard" role="dialog" aria-modal="true" aria-labelledby="howtoTitle">
-        <div class="howto-scroll">
-          <div class="k">Field guide</div>
-          <h3 id="howtoTitle">How to Play</h3>
-          <video id="howtoVid" controls preload="none" poster="howto-poster.png" src="howto.mp4" playsinline></video>
-          <h4>How to play</h4>
-          <p>Tap a viewpoint card to start a story. The Guide reads each scene aloud; the Voice key turns narration off and on. At the end of a scene, tap a choice and the story goes that way. Restart replays the story you're in from the top, and Home goes back to the story cards. Progress saves on this device.</p>
-          <h4>Your goals</h4>
-          <ol class="goals" id="howtoGoals"></ol>
-          <p class="playtime">One path takes about 5 minutes, and finishing everything takes about 1.5–2 hours.</p>
-        </div>
-        <div class="row"><button class="btn" type="button" id="closeHowto" data-testid="close-howto">Close</button></div>
+<body class="broadcast-lite page-books page-seeders" data-season-ribbon="off">
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand ce-wm" href="../index.html" aria-label="Collier Entertainment, home">COLLIER<span>ENTERTAINMENT</span></a>
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><span></span><span></span><span></span></button>
+  <nav id="site-nav" aria-label="Main">
+    <a class="nav-link" href="../index.html">Home</a>
+    <a class="nav-link" href="../audiobooks.html">Listen</a>
+    <a class="nav-link" href="../play.html">Play</a>
+    <a class="nav-link" href="../studio.html">Studio</a>
+    <div class="nav-group">
+      <button type="button" class="nav-label" aria-expanded="false" aria-haspopup="true" aria-controls="menu-read">Read</button>
+      <div class="nav-menu" id="menu-read" role="group" aria-label="Read">
+        <a href="../gazette.html">Pine Knot Gazette</a>
+        <a href="../books.html">All Books</a>
+        <a href="../jang-and-tom.html">Jang &amp; Tom: Wagon Masters (book)</a>
+        <a href="../first-pulse.html">The First Pulse</a>
+        <a href="../old-man-on-the-mountain.html">Old Man On The Mountain</a>
+        <a href="../rusty-stack.html">The Rusty Stack</a>
+        <a href="../books.html#trail-adventure">Jang &amp; Tom: Trail Adventure</a>
+        <a href="../novel.html">The Novel</a>
       </div>
     </div>
-    <div class="toast" id="toast"></div>
-  </div>
-  <div class="keys">
-    <button class="key" id="kHome" data-testid="home"><span class="ic">⌂</span><span class="lbl">Home</span></button>
-    <button class="key" id="kLore" data-testid="lore"><span class="ic">✶</span><span class="lbl">Guide</span><span class="badge" id="loreBadge"></span></button>
-    <button class="key" id="kEnd" data-testid="endings"><span class="ic">◎</span><span class="lbl">Endings</span></button>
-    <button class="key" id="kSound" data-testid="sound"><span class="ic">♪</span><span class="lbl">Voice</span></button>
-    <button class="key" id="kRestart" data-testid="restart"><span class="ic">↺</span><span class="lbl">Restart</span></button>
-    <button class="key" id="kHowto" data-testid="howto-key" title="How to Play" aria-label="How to Play"><span class="ic">?</span><span class="lbl">How to Play</span></button>
-  </div>
-</div>
-<script src="story.js"></script>
-<script>
-(function(){
-const KEY='seeders.v1';
-const GLYPH={astronomer:'🔭',worker:'⚙️',crew:'🚀',matriarch:'✺'};
-const HUE={astronomer:['#1a2a55','#d9a441'],worker:['#3a1c0e','#ff8a3d'],crew:['#06243a','#57d0ff'],matriarch:['#2a0f2f','#ffd36b']};
-let S, st, audio=null, newLore=new Set();
-const $=id=>document.getElementById(id), view=$('view');
-function load(){try{return Object.assign({endings:[],lore:[],flags:[],seen:[],sound:true,cur:null},JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){return {endings:[],lore:[],flags:[],seen:[],sound:true,cur:null}}}
-function save(){localStorage.setItem(KEY,JSON.stringify(st));if($('howtoOv').classList.contains('show'))renderGoals()}
-const has=f=>st.flags.includes(f);
-const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const paras=t=>t.split(/\n\s*\n/).map(p=>'<p>'+esc(p)+'</p>').join('');
-let queue=[], loreAudio=null, pausedScene=null;
-function stopAudio(){queue=[];pausedScene=null;if(audio){audio.pause();audio=null}stopLoreAudio()}
-function stopLoreAudio(){if(loreAudio){loreAudio.pause();loreAudio=null}}
-function nextClip(){
-  if(!queue.length){audio=null;return}
-  const a=new Audio('audio/'+queue.shift()+'.mp3'); audio=a;
-  a.addEventListener('ended',()=>{if(audio===a)nextClip()});
-  a.addEventListener('error',()=>{if(audio===a)nextClip()});
-  a.addEventListener('playing',()=>{if(audio===a)pauseNarrationForVideo()});
-  a.play().catch(()=>{});
-}
-function playAudio(id){   // scene narration, then any ripple paragraphs that are showing
-  stopAudio(); if(!st.sound) return;
-  const sc=S.scenes[id]; queue=[id].concat(sc?sc.variants.filter(v=>has(v.flag)).map(v=>id+'-'+v.flag):[]); nextClip();
-}
-function playLoreAudio(l){
-  stopLoreAudio(); if(!st.sound) return;
-  if(audio&&!audio.paused){audio.pause();pausedScene=audio}
-  const a=new Audio('audio/lore-'+l+'.mp3'); loreAudio=a;
-  a.addEventListener('error',()=>{if(loreAudio===a)loreAudio=null});
-  a.addEventListener('playing',()=>{if(loreAudio===a)pauseNarrationForVideo()});
-  a.play().catch(()=>{});
-}
-function closeLore(){stopLoreAudio();$('overlay').classList.remove('show');if(pausedScene&&st.sound&&audio===pausedScene)pausedScene.play().catch(()=>{});pausedScene=null}
-function motionOK(){return !(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)}
-function toast(msg,fn){const t=$('toast');t.textContent=msg;t.onclick=fn||null;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),3800)}
-function badge(){const b=$('loreBadge');b.textContent=newLore.size;b.style.display=newLore.size?'block':'none'}
-function setKeys(){$('kSound').classList.toggle('on',st.sound)}
-function top(){view.scrollTop=0}
+    <span class="nav-small"><a href="../about.html">About</a></span>
 
-/* ---------- home ---------- */
-function home(){
-  stopAudio(); st.cur=null; save();
-  const vps=S.viewpoints.map(v=>{
-    const ends=S.endings.filter(e=>S.scenes[e].viewpoint===v.id), got=ends.filter(e=>st.endings.includes(e)).length;
-    return `<button class="vp" data-testid="vp-${v.id}" data-vp="${v.id}"><span class="glyph">${GLYPH[v.id]||'✦'}</span><h3>${esc(v.title)}</h3><p>${esc(v.blurb)}</p><div class="prog">${got} / ${ends.length} endings found</div></button>`}).join('');
-  view.innerHTML=`<div class="fade" data-screen="home">
-    <div class="sub">An Interactive Guide</div>
-    <h1 class="title">The Seeders</h1>
-    <div class="dont">DON'T TAKE IT PERSONALLY</div>
-    <div class="intro"><p>Good evening. You are holding a field guide to the harvest of Earth, compiled with care by people who were there, and by some who were very much larger than people.</p>
-    <p>A hundred thousand years ago, someone left a seed in a warm sea. Tonight, they have come back for the crop. Choose whose eyes to borrow.</p></div>
-    <button class="howto-home" type="button" id="howtoHome" data-testid="howto">How to Play</button>
-    <div class="vpgrid">${vps}</div>
-    <div class="ripplenote">✦ What you do in one story ripples into the others. Ripples found: <b style="color:var(--glow2)">${st.flags.length} / 6</b> · Endings: <b style="color:var(--glow2)">${st.endings.length} / ${S.endings.length}</b> · Guide entries: <b style="color:var(--glow2)">${st.lore.length} / ${Object.keys(S.lore).length}</b></div>
-    ${st.cur?'':''}
-    <div class="foot">From an original premise by Jason Collier · <a href="https://collierentertainment.com/play.html" style="color:#8fd9bd">Collier Entertainment · more games</a></div></div>`;
-  view.querySelectorAll('.vp').forEach(b=>b.onclick=()=>{const v=S.viewpoints.find(x=>x.id===b.dataset.vp);go(v.start)});
-  $('howtoHome').onclick=()=>openHowto($('howtoHome'));
-  top();
-}
-/* ---------- scene ---------- */
-function go(id){
-  const sc=S.scenes[id]; if(!sc) return home();
-  st.cur=id; if(!st.seen.includes(id)) st.seen.push(id);
-  const unlocked=[]; sc.lore.forEach(l=>{if(!st.lore.includes(l)){st.lore.push(l);unlocked.push(l);newLore.add(l)}});
-  const variants=sc.variants.filter(v=>has(v.flag));
-  sc.sets.forEach(f=>{if(!has(f))st.flags.push(f)});
-  let firstEnd=false; if(sc.ending&&!st.endings.includes(id)){st.endings.push(id);firstEnd=true}
-  save(); badge();
-  const vp=S.viewpoints.find(v=>v.id===sc.viewpoint)||{title:''};
-  const [c1,c2]=HUE[sc.viewpoint]||['#06243a','#5dffc4'];
-  const choices=sc.choices.filter(c=>!c.requires||has(c.requires)).map((c,i)=>
-    `<button class="choice${c.requires?' locked':''}" data-testid="choice" data-to="${c.to}">${esc(c.text)}${c.requires?'<small>A ripple from another story</small>':''}</button>`).join('');
-  const rip=variants.map(v=>`<div class="ripple"><div class="tag">✦ Ripple from another story</div>${paras(v.text)}</div>`).join('');
-  const chips=sc.lore.map(l=>`<button class="chip${unlocked.includes(l)?' new':''}" data-lore="${l}">✶ ${esc(S.lore[l].title)}</button>`).join('');
-  const end=sc.ending?`<div class="endcard" data-testid="ending" data-ending="${id}"><div class="lab">Ending ${S.endings.indexOf(id)+1} of ${S.endings.length}${firstEnd?' · New!':''}</div><div class="nm">${esc(sc.title)}</div><div class="ct">You have found ${st.endings.length} of ${S.endings.length} endings.</div></div>
-    <a class="readbooks" href="../books.html"><span class="covers" aria-hidden="true"><img src="../images/the-first-pulse.jpg" alt=""><img src="../images/the-rusty-stack.jpg" alt=""></span><span class="copy">Liked this? Read the books.</span></a>
-    <div class="row"><button class="btn" data-testid="again" id="again">Choose another story</button><button class="btn alt" id="seeEnd">Endings</button></div>`:'';
-  view.innerHTML=`<article class="fade" data-screen="scene" data-scene="${id}">
-    <div class="crumb"><span class="dot"></span>${esc(vp.title)} · ${esc(id.toUpperCase())}</div>
-    <div class="pic">
-      <div class="ph" style="background:radial-gradient(ellipse at 30% 20%,${c2}55,transparent 60%),linear-gradient(160deg,${c1},#020406)">
-        <div class="stars"></div><div class="sail"></div><div class="cap"><b>ART TO COME</b><br>${esc(sc.art)}</div></div>
-      <img alt="${esc(sc.title)}" src="images/${id}.jpg" onerror="this.remove()">
-      ${motionOK()?`<video class="mov" data-testid="moving" src="images/${id}.mp4" poster="images/${id}.jpg" autoplay muted loop playsinline preload="auto" aria-hidden="true" onerror="this.remove()"></video>`:''}
-    </div>
-    <h2 class="scene">${esc(sc.title)}</h2>
-    <div class="narr">${paras(sc.narration)}${rip}</div>
-    ${end}
-    <div class="choices">${choices}</div>
-    <div class="lorechips">${chips}</div></article>`;
-  const mv=view.querySelector('video.mov');
-  if(mv){mv.addEventListener('playing',()=>mv.classList.add('on'),{once:true});mv.addEventListener('error',()=>mv.remove());
-    mv.play().catch(()=>{});}
-  view.querySelectorAll('.choice').forEach(b=>b.onclick=()=>go(b.dataset.to));
-  view.querySelectorAll('.chip').forEach(b=>b.onclick=()=>showLore(b.dataset.lore));
-  if(sc.ending){$('again').onclick=home;$('seeEnd').onclick=endings}
-  if(unlocked.length) toast('✶ New Guide entry: '+S.lore[unlocked[0]].title,()=>showLore(unlocked[0]));
-  playAudio(id); top();
-}
-/* ---------- guide entry popup (quirky animated) ---------- */
-function showLore(l){
-  const e=S.lore[l]; newLore.delete(l); badge();
-  const cols=['#5dffc4','#ffd36b','#57d0ff','#ff8a7a'];
-  let blobs=''; for(let i=0;i<7;i++){const s=10+((i*37+l.length*13)%34);blobs+=`<span class="blob" style="width:${s}px;height:${s}px;left:${(i*14+l.length*7)%92}%;top:${(i*23)%60}%;background:${cols[(i+l.length)%4]};animation:drift ${3+i%4}s ease-in-out ${-i}s infinite alternate, pulse ${2+i%3}s infinite"></span>`}
-  $('gcard').innerHTML=`<div class="k">✶ Guide entry</div><h3>${esc(e.title)}</h3><div class="anim">${blobs}</div><p id="typed"></p><div class="row"><button class="btn" id="closeG" data-testid="close-lore">Close</button></div>`;
-  $('overlay').classList.add('show');
-  const p=$('typed'); let i=0; clearInterval(p._t);
-  p._t=setInterval(()=>{i+=3;p.textContent=e.text.slice(0,i);if(i>=e.text.length)clearInterval(p._t)},16);
-  $('closeG').onclick=()=>{clearInterval(p._t);closeLore()};
-  playLoreAudio(l);
-}
-$('overlay').onclick=e=>{if(e.target.id==='overlay')closeLore()};
-/* ---------- panels ---------- */
-function lorePanel(){
-  stopAudio(); newLore.clear(); badge();
-  const ids=Object.keys(S.lore);
-  view.innerHTML=`<div class="fade" data-screen="lore"><div class="panelhead"><h2>The Guide</h2><span class="count">${st.lore.length} / ${ids.length}</span></div>
-  ${ids.map(l=>st.lore.includes(l)?`<div class="entry" data-lore="${l}"><h4>✶ ${esc(S.lore[l].title)}</h4><p>${esc(S.lore[l].text)}</p></div>`:`<div class="entry lockd"><h4>✶ ? ? ?</h4><p>This entry has not been written yet. Keep reading.</p></div>`).join('')}
-  <div class="row"><button class="btn alt" id="back">Back</button></div></div>`;
-  $('back').onclick=back; top();
-}
-function endings(){
-  stopAudio();
-  view.innerHTML=`<div class="fade" data-screen="endings"><div class="panelhead"><h2>Endings</h2><span class="count">${st.endings.length} / ${S.endings.length}</span></div>
-  ${S.endings.map((e,i)=>{const sc=S.scenes[e],vp=S.viewpoints.find(v=>v.id===sc.viewpoint);
-    return st.endings.includes(e)?`<div class="entry"><div class="vp-tag">${GLYPH[sc.viewpoint]} ${esc(vp.title)}</div><h4>${i+1}. ${esc(sc.title)}</h4></div>`:`<div class="entry lockd"><div class="vp-tag">${GLYPH[sc.viewpoint]} ${esc(vp.title)}</div><h4>${i+1}. Not yet found</h4></div>`}).join('')}
-  <div class="entry"><h4>✦ Ripples</h4><p>${st.flags.length} of 6 cross-story ripples set. Some endings only appear after you have changed things in another story.</p></div>
-  <div class="row"><button class="btn alt" id="back">Back</button><button class="btn alt" id="wipe" data-testid="wipe">Erase all progress</button></div></div>`;
-  $('back').onclick=back;
-  $('wipe').onclick=()=>{if(confirm('Erase all endings, Guide entries and ripples?')){const snd=st.sound;st={endings:[],lore:[],flags:[],seen:[],sound:snd,cur:null};save();newLore.clear();badge();home()}};
-  top();
-}
-function back(){st.cur?go(st.cur):home()}
-/* ---------- how to play ---------- */
-const HOWTO_KEY='seeders.howtoSeen';
-const WHO={astronomer:'Varga',worker:'Dani',crew:'Rosa',matriarch:'the Matriarch'};
-let heldScene=null, heldLore=null, howtoOpener=null;
-function howtoSeen(){try{return localStorage.getItem(HOWTO_KEY)==='1'}catch(e){return true}}
-function markHowtoSeen(){try{localStorage.setItem(HOWTO_KEY,'1')}catch(e){}}
-function hasProgress(s){return !!(s&&(s.cur||(s.endings&&s.endings.length)||(s.lore&&s.lore.length)||(s.flags&&s.flags.length)||(s.seen&&s.seen.length)))}
-function howtoVideoPlaying(){const v=$('howtoVid');return !!(v&&$('howtoOv').classList.contains('show')&&!v.paused&&!v.ended)}
-function duckNarration(){
-  if(audio&&!audio.paused){audio.pause();heldScene=audio}
-  if(loreAudio&&!loreAudio.paused){loreAudio.pause();heldLore=loreAudio}
-}
-function pauseNarrationForVideo(){if(howtoVideoPlaying())duckNarration()}
-function resumeNarrationAfterVideo(){
-  const s=heldScene,l=heldLore; heldScene=null; heldLore=null;
-  if(!st||!st.sound) return;
-  if(l&&loreAudio===l) l.play().catch(()=>{});
-  else if(s&&audio===s) s.play().catch(()=>{});
-}
-function vpEnds(id){const ends=S.endings.filter(e=>S.scenes[e]&&S.scenes[e].viewpoint===id);return {got:ends.filter(e=>st.endings.includes(e)).length,total:ends.length}}
-function vpPlayed(id){return st.seen.some(sid=>S.scenes[sid]&&S.scenes[sid].viewpoint===id)||st.endings.some(eid=>S.scenes[eid]&&S.scenes[eid].viewpoint===id)}
-function goalItem(key,done,have,need,text,prog){
-  return `<li class="goal${done?' done':''}" data-goal="${key}" data-done="${done?1:0}" data-have="${have}" data-need="${need}"><span class="tick" aria-hidden="true">${done?'✓':''}</span><div><p>${text}</p><div class="gprog">${prog}</div></div></li>`;
-}
-function renderGoals(){
-  const n=S.viewpoints.length, played=S.viewpoints.filter(v=>vpPlayed(v.id)).length;
-  const who=S.viewpoints.map(v=>`${WHO[v.id]||esc(v.title)}${vpPlayed(v.id)?' ✓':''}`).join(' · ');
-  const endBits=S.viewpoints.map(v=>{const c=vpEnds(v.id);return `${WHO[v.id]||esc(v.title)} ${c.got}/${c.total}`}).join(' · ');
-  const loreN=Object.keys(S.lore).length, sides=S.viewpoints.filter(v=>{const c=vpEnds(v.id);return c.total&&c.got>=c.total}).length;
-  const glow=newLore.size?` · ${newLore.size} new glowing`:'';
-  $('howtoGoals').innerHTML=[
-    goalItem('viewpoints',played>=n,played,n,'1. Play all four viewpoints (Varga, Dani, Rosa, the Matriarch).',`${played} / ${n} · ${who}`),
-    goalItem('endings',st.endings.length>=S.endings.length,st.endings.length,S.endings.length,'2. Find all 12 endings, 3 per viewpoint; choose differently to find others.',`${st.endings.length} / ${S.endings.length} · ${endBits}`),
-    goalItem('lore',st.lore.length>=loreN,st.lore.length,loreN,'3. Unlock all 18 Guide entries, which unlock as you make choices; a new one glows.',`${st.lore.length} / ${loreN}${glow}`),
-    goalItem('ripples',st.flags.length>=6,st.flags.length,6,'4. Trigger all 6 ripples, where a choice in one story changes another (example: as the Matriarch, choose to listen, and the Astronomer\'s laser scene gains a gold paragraph and a gold choice). Gold always means a ripple.',`${st.flags.length} / 6`),
-    goalItem('story',sides>=n,sides,n,'5. Piece together the whole story of the harvest from every side.',`${sides} / ${n} viewpoints complete`)
-  ].join('');
-}
-function openHowto(opener){
-  if(!S||!st) return;
-  renderGoals(); markHowtoSeen();
-  $('howtoOv').classList.add('show'); $('howtoOv').setAttribute('aria-hidden','false');
-  howtoOpener=opener||null;
-  try{$('closeHowto').focus({preventScroll:true})}catch(e){$('closeHowto').focus()}
-}
-function closeHowto(){
-  const v=$('howtoVid'); if(v){try{v.pause()}catch(e){}}
-  $('howtoOv').classList.remove('show'); $('howtoOv').setAttribute('aria-hidden','true');
-  resumeNarrationAfterVideo();
-  if(howtoOpener&&howtoOpener.focus){try{howtoOpener.focus()}catch(e){}}
-  howtoOpener=null;
-}
-$('closeHowto').onclick=closeHowto;
-$('howtoOv').onclick=e=>{if(e.target.id==='howtoOv')closeHowto()};
-$('howtoVid').addEventListener('play',duckNarration);
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('howtoOv').classList.contains('show')){e.preventDefault();closeHowto()}});
-$('kHome').onclick=home; $('kLore').onclick=lorePanel; $('kEnd').onclick=endings;
-$('kSound').onclick=()=>{st.sound=!st.sound;save();setKeys();if(!st.sound)stopAudio();else if(st.cur)playAudio(st.cur);toast(st.sound?'♪ Narration on':'Narration off')};
-$('kRestart').onclick=()=>{const c=st.cur&&S.scenes[st.cur];if(c){const v=S.viewpoints.find(x=>x.id===c.viewpoint);go(v.start)}else home()};
-$('kHowto').onclick=()=>{if($('howtoOv').classList.contains('show'))closeHowto();else openHowto($('kHowto'))};
-function start(data){
-  S=data; st=load(); setKeys(); badge();
-  window.__seeders={S,get st(){return st},go,home,get audio(){return audio},get loreAudio(){return loreAudio},get queue(){return queue}};
-  const fresh=!howtoSeen()&&!hasProgress(st);
-  st.cur?go(st.cur):home();
-  if(fresh) openHowto($('kHowto'));
-}
-fetch('story.json').then(r=>{if(!r.ok)throw 0;return r.json()}).then(start).catch(()=>start(window.STORY_FALLBACK));
-})();
-</script>
+</nav>
+</header>
+
+<main id="top">
+<section class="seed-tease" aria-labelledby="seed-h">
+  <div class="seed-cover"><img src="seeders-cover.jpg" alt="Cover of The Seeders by Jason Collier: a glowing crystal seed laced with alien circuitry" width="832" height="1257"></div>
+  <div>
+    <p class="seed-k">👽 Science fiction · You choose the path</p>
+    <h1 id="seed-h">The Seeders<small>by Jason Collier</small></h1>
+    <span class="seed-soon">Coming soon</span>
+    <p>Long before anyone was here to remember it, something planted life on Earth. Now the ones who planted it have come back to see what grew. Pick a point of view, make the hard calls, and find out what the visitors really want.</p>
+    <ul class="seed-facts"><li>4 points of view</li><li>12 endings</li><li>Alien ships, worlds &amp; species</li><li>Mazes in the back</li></ul>
+    <p>The Seeders is on its way as a 6&times;9 paperback, and a new animated version is in the works. Until then, Jason&rsquo;s other books are on Amazon now.</p>
+    <div class="cta-row"><a class="btn btn-fire" href="../books.html">See the books on Amazon</a> <a class="btn btn-line" href="../adventures.html">Watch the Rusty Stack cartoon</a></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <span>© <span id="y">2026</span> <span class="ce-foot-wm">Collier Entertainment</span></span>
+  <span class="visit-count" hidden></span>
+  <span class="foot-links"><a href="https://www.amazon.com/stores/author/B0GDW74Y5S" target="_blank" rel="noopener">Amazon Author Page</a><a href="mailto:outdoorsolution@bellsouth.net">Email</a></span>
+  <span class="foot-legal"><a href="../app/">📲 Get the app</a><a href="../privacy.html">Privacy</a><a href="../support.html">Support</a><a href="../credits.html">Credits</a></span>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script src="../main.js?v=pass3" defer></script>
 </body>
 </html>

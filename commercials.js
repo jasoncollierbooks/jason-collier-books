@@ -112,19 +112,10 @@
       title: "The Rusty Stack",
       look: "is-brass",
       image: "images/the-rusty-stack.jpg",
-      alt: "Cover of The Rusty Stack Adventures by Jason Collier",
+      alt: "Cover of The Rusty Stack by Jason Collier",
       audio: "audio/commercials/rusty.mp3",
       skipOn: ["rusty-stack.html", "rusty-adventure.html"],
-      buttons: [{ label: "Play the cartoon", href: "rusty-adventure.html" }]
-    },
-    seeders: {
-      title: "The Seeders",
-      look: "is-cool",
-      image: "images/games/seeders.jpg",
-      alt: "Painted scene from The Seeders, a narrated pick-your-path adventure",
-      audio: "audio/commercials/seeders.mp3",
-      skipOn: ["/seeders", "adventures.html"],
-      buttons: [{ label: "Play free", href: "seeders/" }]
+      buttons: [{ label: "Get it on Amazon", href: "https://www.amazon.com/dp/B0HPDZTVQ1", external: true }, { label: "Play the cartoon", href: "rusty-adventure.html" }]
     },
     worlds: {
       title: "Book Worlds",
