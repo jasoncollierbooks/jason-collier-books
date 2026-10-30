@@ -6,7 +6,7 @@ var BOOKS=[
  {t:'The First Pulse',img:'images/the-first-pulse.jpg',buy:'https://www.amazon.com/dp/B0GD4W3159',page:'first-pulse.html'},
  {t:'Old Man On The Mountain',img:'images/old-man-on-the-mountain.jpg',buy:'https://www.amazon.com/dp/B0HDJWYNNJ',page:'old-man-on-the-mountain.html'},
  {t:'The Rusty Stack',img:'images/the-rusty-stack.jpg',buy:'https://www.amazon.com/dp/B0HPDZTVQ1',page:'rusty-stack.html',sub:'About the book · Buy on Amazon'},
- {t:'Jang and Tom: Trail Adventure',img:'images/jang-and-tom-trail-adventure.jpg',buy:'https://www.amazon.com/s?k=Jang+and+Tom+Trail+Adventure+Jason+Collier&i=stripbooks',page:'books.html#trail-adventure',sub:'Choose-your-path paperback · Buy on Amazon'}];
+ {t:'Jang and Tom: Trail Adventure',img:'images/jang-and-tom-trail-adventure.jpg',buy:'https://www.amazon.com/dp/B0HPS2W3KP',page:'books.html#trail-adventure',sub:'Choose-your-path paperback · Buy on Amazon'}];
 var ART=['painting-lighthouse-at-dusk','painting-autumn-hillside','painting-wildflower-meadow','sketch-longhorn-in-the-grass','sketch-the-raven','sketch-the-wanderer'];
 // ===== EPISODE 1 AUDIO SLOT =====
 // When the fixed Episode 1 ("Jang" / "Collier" fixes) is ready, change ONLY these values:
