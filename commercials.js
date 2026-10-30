@@ -115,7 +115,7 @@
       alt: "Cover of The Rusty Stack by Jason Collier",
       audio: "audio/commercials/rusty.mp3",
       skipOn: ["rusty-stack.html", "rusty-adventure.html"],
-      buttons: [{ label: "Get it on Amazon", href: "https://www.amazon.com/dp/B0HPDZTVQ1", external: true }, { label: "Play the cartoon", href: "rusty-adventure.html" }]
+      buttons: [{ label: "Get it on Amazon", href: "https://www.amazon.com/dp/B0HPDZTVQ1", external: true }, { label: "Kindle edition", href: "https://www.amazon.com/dp/B0HPRLQ67M", external: true }, { label: "Play the cartoon", href: "rusty-adventure.html" }]
     },
     worlds: {
       title: "Book Worlds",
