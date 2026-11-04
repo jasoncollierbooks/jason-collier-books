@@ -44,7 +44,7 @@ $('#listenList').innerHTML=
  item(R+'images/jang-tom-christmas-spectacle.jpg','The Christmas Light Caper','Jang & Tom radio show · Episode 6 · 13:28 · chapters','data-play="xmas"')+
  item(R+'images/pine-knot.jpg','The Cookie Conspiracy','Jang & Tom radio show · Episode 7 · 11:46 · new · chapters','data-play="cookie"')+
  item('media/jang-tom-tv.jpg','Jang & Tom Radio Hour','All episodes · the Collier Radio Hour','data-go="jangtom"')+
- item(R+'media/rusty-cyoa/posters/s01.jpg','The Rusty Stack','Cartoon · watch the scene, then choose · 8 endings','data-frame="rusty-adventure.html" data-title="The Rusty Stack Adventure"')+
+ item(R+'media/rusty-cyoa/posters/s1.jpg','The Rusty Stack','Cartoon · watch, then choose · 4 endings','data-frame="rusty-adventure.html" data-title="The Rusty Stack Adventure"')+
  buyItem(R+'images/the-rusty-stack.jpg','The Rusty Stack: the book','Buy on Amazon · 6×9 paperback with 25 airship mazes','https://www.amazon.com/dp/B0HPDZTVQ1')+
  buyItem(R+'images/the-rusty-stack.jpg','The Rusty Stack: Kindle edition','Buy on Amazon · read it on Kindle','https://www.amazon.com/dp/B0HPRLQ67M')+
  item(R+'images/dogs/cover-thumb.jpg','Dogs That Chose Me','Audiobook · a short story by Jason Collier · 9:33 · chapters','data-play="dogs"')+
@@ -59,7 +59,7 @@ $('#playList').innerHTML=PLAY.map(function(g){return '<button class="gcard" data
 $('#playList').className='glist';
 // Home Play row: the same full list and order as the Play tab, then See all
 (function(){var hp=document.getElementById('homePlay');if(!hp)return;hp.innerHTML=PLAY.map(function(g){return '<button class="poster wide" data-rx-key="game:'+g[5]+'" data-frame="'+g[2]+'" data-title="'+esc(g[0])+'"><img loading="lazy" src="'+g[3]+'" alt=""><b>'+esc(g[0])+'</b><span>'+esc(g[1])+'</span></button>'}).join('')+'<button class="poster wide seeall" data-go="play"><b>See all \u203A</b><span>'+PLAY.length+' games &amp; more</span></button>'})();
-$('#readList').innerHTML=BOOKS.map(function(b){return item(R+b.img,b.t,b.sub||'Book page, chapters & audiobook','data-frame="'+b.page+'" data-title="'+esc(b.t)+'"')+(b.page==='rusty-stack.html'?item(R+'media/rusty-cyoa/posters/s01.jpg','The Rusty Stack cartoon','Watch the scene, then choose · 8 endings','data-frame="rusty-adventure.html" data-title="The Rusty Stack Adventure"')+buyItem(R+'images/the-rusty-stack.jpg','The Rusty Stack: Kindle edition','Buy on Amazon · read it on Kindle',b.kindle):'')}).join('')+item(R+'images/icons/typewriter.svg','The Novel','The multi-mind novel, read in the app','data-frame="novel.html" data-title="The Novel"');
+$('#readList').innerHTML=BOOKS.map(function(b){return item(R+b.img,b.t,b.sub||'Book page, chapters & audiobook','data-frame="'+b.page+'" data-title="'+esc(b.t)+'"')+(b.page==='rusty-stack.html'?item(R+'media/rusty-cyoa/posters/s1.jpg','The Rusty Stack cartoon','Watch, then choose · 4 endings','data-frame="rusty-adventure.html" data-title="The Rusty Stack Adventure"')+buyItem(R+'images/the-rusty-stack.jpg','The Rusty Stack: Kindle edition','Buy on Amazon · read it on Kindle',b.kindle):'')}).join('')+item(R+'images/icons/typewriter.svg','The Novel','The multi-mind novel, read in the app','data-frame="novel.html" data-title="The Novel"');
 // tabs
 var cur='home';
 function go(id){if(!document.getElementById(id))return;$$('.screen').forEach(function(s){s.classList.toggle('active',s.id===id)});$$('.tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.go===id)});cur=id;history.replaceState(null,'','#'+id)}

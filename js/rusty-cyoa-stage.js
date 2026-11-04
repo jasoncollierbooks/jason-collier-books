@@ -1,8 +1,8 @@
 /* Cartoon stage for The Rusty Stack. One clip is requested at a time, and only when it plays. */
 window.RCAClip=(function(){
   var v, still, muted=false;
-  function clip(id){return 'media/rusty-cyoa/clips/'+id+'.mp4?v=1'}
-  function poster(id){return 'media/rusty-cyoa/posters/'+id+'.jpg?v=1'}
+  function clip(id){return 'media/rusty-cyoa/clips/'+id+'.mp4?v=2'}
+  function poster(id){return 'media/rusty-cyoa/posters/'+id+'.jpg?v=2'}
   function init(video,posterImg){
     v=video;still=posterImg;
     v.preload='none';
