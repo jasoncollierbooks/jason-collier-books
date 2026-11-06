@@ -1,7 +1,7 @@
 /* The Rusty Stack cartoon. Each scene plays its clip, then the choices. No script prose. */
 (function(){
 var D=window.RUSTY_CYOA,Clip=window.RCAClip,$=function(i){return document.getElementById(i)};
-var KEY='rca-progress',EKEY='rs-ep01-endings',RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+var KEY='rca-progress',EKEY='rs-ep02-endings',RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 var TOTAL=Object.keys(D.nodes).filter(function(k){return D.nodes[k].ending}).length;
 var ST;try{ST=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 if(!ST||!D.nodes[ST.id])ST={id:D.start};
