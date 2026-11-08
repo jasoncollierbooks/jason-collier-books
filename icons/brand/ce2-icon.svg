@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#121d3d"/><stop offset="1" stop-color="#060a17"/></linearGradient>
+    <radialGradient id="hl" cx="50%" cy="0%" r="70%"><stop offset="0" stop-color="#6fdcf2" stop-opacity=".16"/><stop offset="1" stop-color="#6fdcf2" stop-opacity="0"/></radialGradient>
+    <linearGradient id="ink" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#c9defa"/></linearGradient>
+    <linearGradient id="orb" gradientUnits="userSpaceOnUse" x1="170" y1="760" x2="860" y2="260"><stop offset="0" stop-color="#5ad8f0" stop-opacity="0"/><stop offset=".3" stop-color="#5ad8f0"/><stop offset="1" stop-color="#a08fff"/></linearGradient>
+    <radialGradient id="dot"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#d9d2ff"/><stop offset="1" stop-color="#a08fff" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <rect width="1024" height="1024" fill="url(#hl)"/>
+  <!-- orbit: one smooth arc around the monogram, never crossing it -->
+  <path d="M 186.2 698.1 A 375 375 0 0 0 836.8 324.5" fill="none" stroke="url(#orb)" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="836.8" cy="324.5" r="34" fill="url(#dot)"/>
+  <circle cx="836.8" cy="324.5" r="11" fill="#ffffff"/>
+  <!-- CE monogram, optically centered -->
+  <g transform="translate(512 512) scale(.86) translate(-490 -512)" fill="url(#ink)">
+    <path d="M 470 362.0 A 170 170 0 1 0 470 662.0 L 470 587.5 A 110 110 0 1 1 470 436.5 Z"/>
+    <path d="M 548 342 H 760 V 400 H 608 V 483 H 738 V 541 H 608 V 624 H 760 V 682 H 548 Z"/>
+  </g>
+</svg>
