@@ -25,7 +25,7 @@ function open(){close();var body;
  sheet.innerHTML='<div class="a2-card" role="dialog" aria-modal="true" aria-label="Add to Home Screen"><button class="a2-x" aria-label="Close">\u2715</button><img class="a2-icon" src="'+ICON+'" alt="">'+body+'<button class="a2-ok">Got it</button></div>'+(ios&&!inApp?'<div class="a2-arrow" aria-hidden="true">\u2B07</div>':'');
  sheet.addEventListener('click',function(e){if(e.target===sheet||e.target.closest('.a2-x,.a2-ok'))close()});
  document.body.appendChild(sheet);document.addEventListener('keydown',esc,true);sheet.querySelector('.a2-x').focus()}
-var ICON='/app/icons/ce2-icon-180.png';
+var ICON='/app/icons/ce3-icon-180.png';
 function tap(){if(deferred){var d=deferred;deferred=null;d.prompt();(d.userChoice||Promise.resolve({})).then(function(c){if(c.outcome==='accepted')ls(KEY,'installed')});return}open()}
 function mount(el,opt){opt=opt||{};if(!el||standalone()||ls(KEY))return null;
  var w=document.createElement('span');w.className='a2-pill-wrap';
