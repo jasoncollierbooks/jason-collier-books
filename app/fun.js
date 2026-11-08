@@ -14,7 +14,7 @@ document.addEventListener('click',function(e){if(e.target.closest('button,a,.pos
 document.querySelectorAll('.tabs button').forEach(function(b){b.addEventListener('click',function(){buzz(6)})});
 // ---------- boot: TV switch-on ----------
 if(!sessionStorage.getItem('ce-booted')&&!RM){sessionStorage.setItem('ce-booted','1');var sp=document.getElementById('splash');if(sp)sp.remove();
- var bt=el('<div id="boot"><canvas></canvas><div class="b-line"></div><div class="b-id"><img src="icons/ce2-icon-512.png" alt=""><b>COLLIER</b><span>ENTERTAINMENT</span><em>Tap to tune in</em></div></div>');document.body.appendChild(bt);
+ var bt=el('<div id="boot"><canvas></canvas><div class="b-line"></div><div class="b-id"><img src="icons/ce3-icon-512.png" alt=""><b>COLLIER</b><span>ENTERTAINMENT</span><em>Tap to tune in</em></div></div>');document.body.appendChild(bt);
  var cv=bt.querySelector('canvas'),cx=cv.getContext('2d');cv.width=120;cv.height=220;var run=true;(function n(){if(!run)return;var im=cx.createImageData(120,220);for(var i=0;i<im.data.length;i+=4){var v=Math.random()*255;im.data[i]=im.data[i+1]=im.data[i+2]=v;im.data[i+3]=255}cx.putImageData(im,0,0);requestAnimationFrame(n)})();
  setTimeout(function(){bt.classList.add('on')},150);setTimeout(function(){bt.classList.add('id');run=false},1300);
  var end=function(){bt.classList.add('out');setTimeout(function(){bt.remove()},500)};
