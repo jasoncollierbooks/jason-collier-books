@@ -1,0 +1,152 @@
+/* Collier Entertainment visual refresh (2026-11).
+   Modern dark editorial layer loaded LAST on public pages.
+   Scoped to body.broadcast (home) and body.broadcast-lite (inner pages).
+   Does not restyle game, player, studio, coloring or lab internals. */
+:root{
+  --r-bg:#070b16; --r-bg2:#0b1222; --r-panel:#0f172b; --r-panel2:#131d35;
+  --r-ink:#eef2fb; --r-muted:#a9b4cc; --r-line:rgba(148,170,220,.16); --r-line2:rgba(148,170,220,.28);
+  --r-cyan:#5ad8f0; --r-violet:#9b8cff; --r-glow:rgba(90,216,240,.18);
+  --r-sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --r-display:"Space Grotesk","Inter",system-ui,sans-serif;
+  --r-radius:14px;
+}
+:is(body.broadcast,body.broadcast-lite){
+  --ink:var(--r-ink); --muted:var(--r-muted); --line:var(--r-line2); --brass:var(--r-cyan);
+  --fire:var(--r-cyan); --fire2:var(--r-violet); --screen:var(--r-bg); --paper:var(--r-panel2); --paper-ink:var(--r-ink);
+  --ui:var(--r-sans); --display:var(--r-display); --serif:var(--r-sans);
+  background:var(--r-bg) !important;
+  background-image:radial-gradient(1200px 600px at 85% -10%,rgba(155,140,255,.14),transparent 60%),radial-gradient(900px 500px at 0% 0%,rgba(90,216,240,.10),transparent 55%),linear-gradient(180deg,var(--r-bg2),var(--r-bg) 40%) !important;
+  background-attachment:fixed !important;
+  color:var(--r-ink); font-family:var(--r-sans); font-weight:400; line-height:1.6;
+}
+:is(body.broadcast,body.broadcast-lite) ::selection{background:rgba(90,216,240,.35);color:#fff}
+:is(body.broadcast,body.broadcast-lite) :focus-visible{outline:2px solid var(--r-cyan);outline-offset:3px}
+
+/* Remove vintage overlays: grain, vignette, scanlines, wood cabinet */
+:is(body.broadcast,body.broadcast-lite) :is(.grain,.vignette,.parlor,.antenna,.plaque,.tube,.scan,.flicker,.sheen,.lamp,.knob-deco,.speaker,.graybar,.testcard .pattern,.standby-script,.marquee,.end-rule){display:none !important}
+body.broadcast-lite::after{display:none !important}
+/* Seasonal trim kept subtle: hide the larger decorations */
+:is(body.broadcast,body.broadcast-lite) :is(.season-ledge,.season-edge,.season-foot,.season-fog,.season-spider,.season-web,.season-corners,.season-corner,.season-drift,.season-nav-trim,.season-cutout,.season-ribbon){display:none !important}
+
+/* Full-color artwork everywhere */
+:is(body.broadcast,body.broadcast-lite) img{filter:none !important}
+
+/* Home shell: flatten the TV cabinet into a clean page */
+body.broadcast .set-wrap{padding:0}
+body.broadcast :is(.cabinet,.bezel,.glass){max-width:none;margin:0;padding:0;border-radius:0;background:transparent !important;box-shadow:none !important;border:0}
+body.broadcast :is(.cabinet,.cabinet-main)::before,body.broadcast :is(.cabinet,.cabinet-main)::after{display:none !important}
+body.broadcast .cabinet-main{display:block}
+body.broadcast main{max-width:1240px;margin:0 auto;padding:0 clamp(1rem,3vw,2rem)}
+/* Sound / static toggles become a small floating control */
+body.broadcast .side{position:fixed;right:1rem;bottom:1rem;z-index:50;display:flex;flex-direction:row;gap:.4rem;padding:.35rem;border-radius:999px;background:rgba(15,23,43,.85);border:1px solid var(--r-line2);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+body.broadcast .side :is(.static-btn,.sound-btn){min-height:0 !important;width:auto !important;display:inline-flex;align-items:center;gap:.35rem;padding:.4rem .7rem;border-radius:999px;background:transparent;border:0;color:var(--r-muted);font:500 .75rem var(--r-sans);letter-spacing:.04em;text-transform:none;box-shadow:none}
+body.broadcast .side .knob{display:none}
+body.broadcast .side .sound-icon{width:1rem;height:1rem}
+body.broadcast .side [aria-pressed="true"]{color:var(--r-cyan)}
+body.broadcast .side .static-label{font:inherit;color:inherit;text-transform:none;letter-spacing:inherit}
+
+/* Header / nav (shared) */
+:is(body.broadcast,body.broadcast-lite) .nav{position:sticky;top:0;z-index:40;background:rgba(7,11,22,.78) !important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--r-line) !important;box-shadow:none !important}
+body.broadcast .nav{margin:0 calc(-1 * clamp(1rem,3vw,2rem))}
+:is(body.broadcast,body.broadcast-lite) .brand{font-family:var(--r-display) !important;font-weight:700 !important;letter-spacing:.08em !important;color:var(--r-ink) !important;text-shadow:none !important}
+:is(body.broadcast,body.broadcast-lite) .brand span{font-family:var(--r-sans) !important;font-weight:500 !important;letter-spacing:.28em !important;color:var(--r-cyan) !important}
+:is(body.broadcast,body.broadcast-lite) :is(.nav-link,.nav-label){font-family:var(--r-sans) !important;font-weight:500 !important;letter-spacing:.02em !important;text-transform:none !important;color:var(--r-muted) !important;border-radius:8px}
+:is(body.broadcast,body.broadcast-lite) :is(.nav-link,.nav-label):hover,:is(body.broadcast,body.broadcast-lite) .nav-link.on{color:var(--r-ink) !important;background:rgba(148,170,220,.08)}
+:is(body.broadcast,body.broadcast-lite) .nav-link.on{box-shadow:inset 0 -2px 0 var(--r-cyan)}
+:is(body.broadcast,body.broadcast-lite) .nav-menu{background:var(--r-panel) !important;border:1px solid var(--r-line2) !important;border-radius:12px !important;box-shadow:0 20px 40px rgba(0,0,0,.45) !important}
+:is(body.broadcast,body.broadcast-lite) .nav-menu a{font-family:var(--r-sans) !important;text-transform:none !important;letter-spacing:0 !important;color:var(--r-ink) !important;border-radius:8px}
+:is(body.broadcast,body.broadcast-lite) .nav-menu a:hover{background:rgba(90,216,240,.1) !important;color:#fff !important}
+:is(body.broadcast,body.broadcast-lite) .nav-toggle{border:1px solid var(--r-line2) !important;border-radius:10px !important;background:transparent !important}
+:is(body.broadcast,body.broadcast-lite) .nav-toggle span{background:var(--r-ink) !important}
+@media (max-width:860px){:is(body.broadcast,body.broadcast-lite) .nav.open nav{background:var(--r-bg) !important}}
+
+/* Type */
+:is(body.broadcast,body.broadcast-lite) :is(h1,h2,h3,.hero-name,.home-h,.end-name,.choice-title,.page-head h1,.catalog-card h2,.book .title,.ab-h,.lab-title,.play-feature-title){font-family:var(--r-display) !important;font-style:normal !important;color:var(--r-ink);text-shadow:none !important;letter-spacing:-.01em}
+:is(body.broadcast,body.broadcast-lite) :is(.page-head h1,.about h2,.contact h2,.own-head h2,.ispy-h1,.lab-title,.rusty-text h2)::after{background:linear-gradient(90deg,var(--r-cyan),var(--r-violet)) !important;height:2px !important;border:0 !important}
+:is(body.broadcast,body.broadcast-lite) :is(p,li,.lede,.review,.hero-line){font-family:var(--r-sans);font-style:normal}
+:is(body.broadcast,body.broadcast-lite) :is(.kicker,.genre,.badge,.spec,.bcard-genre){font-family:var(--r-sans) !important;font-weight:600 !important;letter-spacing:.16em !important;text-transform:uppercase;color:var(--r-cyan) !important;background:none !important}
+:is(body.broadcast,body.broadcast-lite) .script{font-family:var(--r-sans) !important;font-style:normal !important;font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:.78rem !important;color:var(--r-violet) !important}
+:is(body.broadcast,body.broadcast-lite) a:not(.btn):not(.nav-link):not(.brand){color:inherit}
+
+/* Buttons */
+:is(body.broadcast,body.broadcast-lite) :is(a,button,span).btn.btn:not(.milestone *){font-family:var(--r-sans) !important;font-weight:600 !important;letter-spacing:.02em !important;text-transform:none !important;border-radius:10px !important;min-height:44px;padding:.7rem 1.2rem;transition:transform .15s ease,box-shadow .2s ease,background .2s ease;background-image:none !important}
+:is(body.broadcast,body.broadcast-lite) :is(a,button,span).btn-fire.btn-fire:not(.milestone *),:is(body.broadcast,body.broadcast-lite) :is(a,button).btn-brass.btn-brass{background:linear-gradient(135deg,var(--r-cyan),#7aa8ff) !important;color:#06101f !important;border:0 !important;box-shadow:0 8px 24px rgba(90,216,240,.22) !important}
+:is(body.broadcast,body.broadcast-lite) :is(a,button,span).btn-fire.btn-fire:not(.milestone *):hover{transform:translateY(-1px);box-shadow:0 10px 30px rgba(90,216,240,.32) !important}
+:is(body.broadcast,body.broadcast-lite) :is(a,button,span).btn-line.btn-line:not(.milestone *){background:rgba(148,170,220,.06) !important;color:var(--r-ink) !important;border:1px solid var(--r-line2) !important;box-shadow:none !important}
+:is(body.broadcast,body.broadcast-lite) :is(a,button,span).btn-line.btn-line:not(.milestone *):hover{border-color:var(--r-cyan) !important;background:rgba(90,216,240,.08) !important}
+
+/* Home hero */
+body.broadcast .hero{display:grid;gap:1.25rem;padding:clamp(1.5rem,4vw,3rem) 0 1rem}
+body.broadcast .testcard{background:none !important;border:0 !important;box-shadow:none !important;padding:0;min-height:0;text-align:left}
+body.broadcast .testcard-copy{position:static;padding:0;text-align:left}
+body.broadcast .hero-name{font-size:clamp(2.4rem,7vw,5rem) !important;line-height:1 !important;font-weight:700 !important;text-transform:none !important;letter-spacing:-.03em !important;display:flex;flex-wrap:wrap;gap:0 .3em;justify-content:flex-start}
+body.broadcast .hero-name span:last-child{background:linear-gradient(90deg,var(--r-cyan),var(--r-violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+body.broadcast .testcard .kicker{margin:0 0 .8rem}
+body.broadcast .testcard .kicker i{color:var(--r-line2);font-style:normal}
+body.broadcast .scene{border-radius:var(--r-radius);overflow:hidden;border:1px solid var(--r-line);min-height:clamp(320px,48vw,520px);box-shadow:0 30px 60px rgba(0,0,0,.4)}
+body.broadcast .hero-scrim{background:linear-gradient(90deg,rgba(7,11,22,.92) 0%,rgba(7,11,22,.55) 50%,rgba(7,11,22,.15) 100%) !important}
+body.broadcast .hero-line{font-size:clamp(1.15rem,2.2vw,1.6rem) !important;font-weight:500;line-height:1.4;color:var(--r-ink);max-width:28ch}
+body.broadcast .stack{border-radius:8px;box-shadow:0 20px 40px rgba(0,0,0,.55) !important;border:0 !important}
+body.broadcast .titlecard{background:var(--r-panel) !important;border:1px solid var(--r-line) !important;border-radius:var(--r-radius) !important;box-shadow:none !important;color:var(--r-ink);padding:1.25rem 1.4rem;text-align:left}
+body.broadcast .titlecard::before,body.broadcast .titlecard::after{display:none !important}
+body.broadcast .interrupt{font-family:var(--r-sans) !important;font-style:normal !important;color:var(--r-muted) !important;font-size:1rem !important}
+body.broadcast .hero-feature{background:none !important;border:0 !important;padding:0;gap:1rem}
+body.broadcast .badge{border:1px solid rgba(90,216,240,.4) !important;border-radius:999px;padding:.25rem .7rem;font-size:.7rem !important}
+body.broadcast .hero-feature strong{font-family:var(--r-display);font-size:1.4rem;color:var(--r-ink)}
+body.broadcast .hero-feature em{font-style:normal;color:var(--r-muted)}
+body.broadcast .hero-feature .cta-row a{color:var(--r-cyan) !important;border-color:rgba(90,216,240,.4) !important;background:transparent !important;font-family:var(--r-sans) !important;text-transform:none !important;letter-spacing:0 !important;border-radius:999px}
+body.broadcast .hero-actions{padding:0 !important}
+body.broadcast .hero-preview{background:var(--r-panel) !important;border:1px solid var(--r-line) !important;border-radius:var(--r-radius) !important;overflow:hidden;box-shadow:none !important}
+body.broadcast .hero-preview img{border-radius:0}
+body.broadcast .hero-preview strong{font-family:var(--r-display);color:var(--r-ink)}
+body.broadcast .hero-preview em{font-style:normal;color:var(--r-muted)}
+
+/* Home choice cards */
+body.broadcast .home-choices{padding:2rem 0}
+body.broadcast .choice-grid{gap:clamp(.9rem,2vw,1.4rem)}
+body.broadcast .choice{background:var(--r-panel) !important;border:1px solid var(--r-line) !important;border-radius:var(--r-radius) !important;overflow:hidden;box-shadow:none !important;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;color:var(--r-ink)}
+body.broadcast .choice:hover,body.broadcast .choice:focus-visible{transform:translateY(-3px);border-color:rgba(90,216,240,.45) !important;box-shadow:0 18px 40px rgba(0,0,0,.4),0 0 0 1px rgba(90,216,240,.15) !important}
+body.broadcast .choice-media{border:0 !important}
+body.broadcast .choice-covers{background:linear-gradient(160deg,#101a33,#0a0f1e) !important}
+body.broadcast .choice-covers>img{border-radius:4px;object-position:center}
+body.broadcast .choice-title{font-size:1.35rem !important;text-transform:none !important;letter-spacing:-.01em !important}
+body.broadcast .choice-line{font-family:var(--r-sans);font-style:normal !important;color:var(--r-muted) !important}
+body.broadcast .choice-soon{background:var(--r-violet) !important;color:#0a0f1e !important;font-family:var(--r-sans) !important}
+
+/* Home endcard */
+body.broadcast .endcard{background:var(--r-panel) !important;border:1px solid var(--r-line) !important;border-radius:var(--r-radius) !important;box-shadow:none !important;padding:2rem 1.25rem;margin:1rem 0 2rem}
+body.broadcast .endcard::before,body.broadcast .endcard::after{display:none !important}
+body.broadcast .end-covers{grid-template-columns:repeat(6,1fr) !important;max-width:40rem}
+@media (max-width:560px){body.broadcast .end-covers{grid-template-columns:repeat(3,1fr) !important}}
+body.broadcast .end-covers img{border-radius:6px}
+body.broadcast .end-nav a{font-family:var(--r-sans) !important;text-transform:none !important;letter-spacing:0 !important;color:var(--r-muted) !important;border-color:var(--r-line2) !important;border-radius:999px;background:transparent !important}
+body.broadcast .end-nav a:hover,body.broadcast .end-nav a[aria-current="page"]{color:var(--r-ink) !important;border-color:var(--r-cyan) !important}
+body.broadcast .end-name{text-transform:none !important;letter-spacing:-.01em !important;font-weight:700}
+body.broadcast .end-url{color:var(--r-cyan) !important;font-family:var(--r-sans) !important}
+
+/* Footer (shared) */
+:is(body.broadcast,body.broadcast-lite) footer{background:transparent !important;border-top:1px solid var(--r-line) !important;color:var(--r-muted) !important;font-family:var(--r-sans) !important;font-size:.88rem;box-shadow:none !important}
+:is(body.broadcast,body.broadcast-lite) footer a{color:var(--r-muted) !important;text-transform:none !important;letter-spacing:0 !important}
+:is(body.broadcast,body.broadcast-lite) footer a:hover{color:var(--r-cyan) !important}
+
+/* Inner pages: panels and cards */
+body.broadcast-lite :is(.about,.contact,.ab-page,.own,.rusty,.book,.western,.scifi,.woods){background:transparent !important;border-color:var(--r-line) !important;box-shadow:none !important}
+body.broadcast-lite :is(.book-body,.excerpt,.review,.signal,.bw-card,.play-feature,.own-head,.catalog-card){background:var(--r-panel) !important;border:1px solid var(--r-line) !important;border-radius:var(--r-radius) !important;box-shadow:none !important;color:var(--r-ink)}
+body.broadcast-lite :is(.book-body,.own-head,.bw-card)::before,body.broadcast-lite :is(.own-head,.woods)::after{display:none !important}
+body.broadcast-lite :is(.lede,.review,.own-sub,.brass-intro,.page-head>p,.catalog-card p,.book .lede){color:var(--r-muted) !important;font-style:normal !important}
+body.broadcast-lite .bw-script{font-family:var(--r-sans) !important;font-style:normal !important;color:var(--r-violet) !important}
+body.broadcast-lite .play-feature:hover{border-color:rgba(90,216,240,.45) !important}
+body.broadcast-lite .ab-jump a{border-radius:999px !important;border-color:var(--r-line2) !important;color:var(--r-ink) !important;background:transparent !important;font-family:var(--r-sans) !important;text-transform:none !important}
+body.broadcast-lite .ab-jump a:hover{border-color:var(--r-cyan) !important}
+
+/* Books catalog */
+body.broadcast-lite .catalog{max-width:1240px;margin:0 auto}
+body.broadcast-lite .catalog-grid{gap:clamp(1rem,2.5vw,1.75rem) !important}
+body.broadcast-lite .catalog-card{padding:1.1rem 1.1rem 1.3rem !important;transition:border-color .2s ease,transform .2s ease}
+body.broadcast-lite .catalog-card:hover{border-color:rgba(90,216,240,.4) !important}
+body.broadcast-lite .catalog-cover{background:none !important;border:0 !important;padding:0 !important;box-shadow:none !important}
+body.broadcast-lite .catalog-cover img{border-radius:8px;box-shadow:0 18px 36px rgba(0,0,0,.45) !important}
+body.broadcast-lite .catalog-card h2{text-transform:none !important;letter-spacing:-.01em !important;font-weight:700}
+body.broadcast-lite .catalog-more a{color:var(--r-cyan) !important}
+
+@media (prefers-reduced-motion:reduce){:is(body.broadcast,body.broadcast-lite) *{transition:none !important}}
