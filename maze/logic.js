@@ -79,6 +79,12 @@ function note(state, text) {
   state.msg = text;
 }
 
+export function cueLine(state, text) {
+  if (!text) return;
+  if (!state.cue) state.cue = [];
+  state.cue.push(text);
+}
+
 function enterCell(world, state, x, z) {
   const k = x + "," + z;
   if (state.stood === k) return;
@@ -86,8 +92,14 @@ function enterCell(world, state, x, z) {
   const dest = portalDest(world, state, x, z);
   if (!dest) return;
   if (dest.set) state.flags[dest.set] = true;
-  if (dest.decoy) note(state, dest.decoy);
-  if (dest.note) note(state, dest.note);
+  if (dest.decoy) {
+    note(state, dest.decoy);
+    cueLine(state, dest.decoy);
+  }
+  if (dest.note) {
+    note(state, dest.note);
+    cueLine(state, dest.note);
+  }
   if (!dest.pass) {
     if (!state.folded) state.folded = {};
     state.folded[x + "," + z] = 1;
@@ -118,6 +130,8 @@ export function createState(world) {
     folded: {},
     stirred: {},
     talk: {},
+    heard: {},
+    cue: [],
     hintTier: 0,
     goalId: "",
     cleared: false,
@@ -195,10 +209,18 @@ function syncGoal(world, state) {
   state.goalId = id;
 }
 
+export function letterProgress(world, state) {
+  const letters = (world.tokens || []).filter((t) => t.letter);
+  const have = letters.filter((t) => state.found[t.id]).length;
+  return { have, need: letters.length };
+}
+
 export function objective(world, state) {
   if (state.cleared) return world.goals.done;
   const g = nextGoal(world, state);
   if (!g) return world.goals.cipher;
+  const prog = letterProgress(world, state);
+  if (prog.have === 0 && world.goals.start) return world.goals.start;
   return g.goal || world.goals.start;
 }
 
@@ -261,7 +283,7 @@ export function interact(world, state) {
     return { msg: token.smear || "The cuts are a smear from this angle." };
   }
   if (token.letter && state.found[token.id]) {
-    return { msg: "You already hold " + token.letter + "." };
+    return { msg: "You already hold that letter." };
   }
   const res = token.letter ? takeLetter(state, token) : { msg: token.text };
   if (!token.letter && token.flag) state.flags[token.flag] = true;
@@ -303,12 +325,11 @@ export function hintFor(world, state) {
   return { tier, text };
 }
 
-export function walkTo(world, state, tx, tz) {
-  const start = cellOf(state.px, state.pz);
+export function routeCells(world, state, sx, sz, tx, tz) {
   const key = (x, z) => x + "," + z;
-  const q = [[start.x, start.z]];
+  const q = [[sx, sz]];
   const prev = new Map();
-  prev.set(key(start.x, start.z), null);
+  prev.set(key(sx, sz), null);
   while (q.length) {
     const [x, z] = q.shift();
     if (x === tx && z === tz) break;
@@ -324,7 +345,7 @@ export function walkTo(world, state, tx, tz) {
       q.push([nx, nz]);
     }
   }
-  if (!prev.has(key(tx, tz))) return false;
+  if (!prev.has(key(tx, tz))) return null;
   const path = [];
   let cur = [tx, tz];
   while (cur) {
@@ -332,6 +353,41 @@ export function walkTo(world, state, tx, tz) {
     cur = prev.get(key(cur[0], cur[1]));
   }
   path.reverse();
+  return path;
+}
+
+/* +x is east, +z is south. North is the facing at yaw 0. */
+export function cardinal(dx, dz) {
+  if (!dx && !dz) return "";
+  if (Math.abs(dx) > Math.abs(dz)) return dx > 0 ? "east" : "west";
+  return dz > 0 ? "south" : "north";
+}
+
+export function guideTarget(world, state) {
+  if (!world || !state || state.cleared) return null;
+  const g = nextGoal(world, state);
+  if (g) return { x: g.x, z: g.z, id: g.id, kind: g.letter ? "letter" : "mark", label: g.tag || "the next mark" };
+  const gate = findChar(world, "G")[0];
+  if (!gate) return null;
+  return { x: gate.x, z: gate.z, id: "gate", kind: "gate", label: "the gate" };
+}
+
+export function wayFrom(world, state, x, z) {
+  const target = guideTarget(world, state);
+  if (!target) return null;
+  const path = routeCells(world, state, x, z, target.x, target.z);
+  if (!path || path.length < 2) return { target, dir: "", path: path || [] };
+  return {
+    target,
+    dir: cardinal(path[1][0] - path[0][0], path[1][1] - path[0][1]),
+    path,
+  };
+}
+
+export function walkTo(world, state, tx, tz) {
+  const start = cellOf(state.px, state.pz);
+  const path = routeCells(world, state, start.x, start.z, tx, tz);
+  if (!path) return false;
   for (const [x, z] of path) {
     const step = 0.18;
     const goal = center(x, z);

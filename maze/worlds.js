@@ -1,6 +1,7 @@
 /* One maze for each world already on collierentertainment.com.
    Copy stays inside what those pages actually say. */
 import { shiftLetter } from "./logic.js";
+import { applyScript } from "./script.js";
 
 function grid(w, h, rects, marks) {
   const g = Array.from({ length: h }, () => Array(w).fill("#"));
@@ -515,7 +516,7 @@ const pulse = {
       ],
     },
     {
-      id: "pocket", x: 8, z: 6, letter: "C", tag: "Pocket", kind: "lantern",
+      id: "pocket", x: 8, z: 6, letter: "O", tag: "Pocket", kind: "lantern",
       dark: "The pocket is only static until the lantern fills it.",
       goal: "A dark pocket keeps a letter for the lantern.",
       text: "In the lantern the static settles on O. You take O.",
@@ -536,7 +537,7 @@ const pulse = {
       ],
     },
     {
-      id: "ring", x: 8, z: 9, letter: "O", tag: "Ring", kind: "pitch",
+      id: "ring", x: 8, z: 9, letter: "E", tag: "Ring", kind: "pitch",
       smear: "The ring is on the ceiling. Look up.",
       goal: "A ring overhead reads only when you look up.",
       text: "Looking up, the ring is E. You take E.",
@@ -630,7 +631,7 @@ const thorne = {
       ],
     },
     {
-      id: "chamber", x: 8, z: 8, letter: "O", tag: "Chamber", kind: "lantern",
+      id: "chamber", x: 8, z: 8, letter: "N", tag: "Chamber", kind: "lantern",
       dark: "The chamber wall is blank without the argon beam.",
       goal: "Cross the basement with the beam on. A chamber past it hides a letter in that light.",
       text: "In the beam, the chamber reads N. You take N.",
@@ -652,7 +653,7 @@ const thorne = {
       ],
     },
     {
-      id: "shell", x: 5, z: 9, letter: "N", tag: "Shell", kind: "read",
+      id: "shell", x: 5, z: 9, letter: "R", tag: "Shell", kind: "read",
       goal: "The photon shell keeps the last letter of the second birth.",
       text: "The shell was born twice. The last letter on the glass is R. You take R.",
       hints: [
@@ -1029,6 +1030,7 @@ function growLabyrinth(world) {
   world.oldSpawn = { x: sx, z: sz };
 }
 
+for (const w of WORLDS.concat([META])) applyScript(w);
 for (const w of WORLDS) growLabyrinth(w);
 
 /* Keep the shown brand one step ahead of the true letter, trail-style. */

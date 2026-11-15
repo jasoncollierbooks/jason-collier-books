@@ -146,7 +146,20 @@ def spec(speaker):
                 ("sarah-b", (("af_sarah", 0.7), ("af_bella", 0.3)), 0.92, 0, 0),
             ],
         )
-    # narrator, seed, ninth
+    # The storyteller. Piper's Alan was flatter (pitch std about 14 Hz against
+    # Fable's 29 Hz on the same paragraph), so the narrator stays on Kokoro
+    # and leaves the announcer presence-boost behind.
+    if speaker == "narrator":
+        return dict(
+            label="bm_fable",
+            lang="en-gb",
+            eq="highpass=f=65,equalizer=f=200:t=q:w=0.9:g=2.6,equalizer=f=3200:t=q:w=1.2:g=-1.6",
+            sentence=0.36, clause=0.16,
+            takes=[
+                ("fable", (("bm_fable", 0.78), ("bm_george", 0.22)), 0.9, 0, 0),
+                ("fable-plain", (("bm_fable", 1.0),), 0.88, 0, 0),
+            ],
+        )
     speed = 0.9 if speaker == "ninth" else 0.96
     return dict(
         label="am_michael",
@@ -297,7 +310,7 @@ def synthesize(kokoro, sp, text):
     for name, pairs, speed, pitch, rise in sp["takes"]:
         voice = blend(kokoro, pairs)
         audio, sr = kokoro.create(
-            spoken, voice=voice, speed=speed, lang="en-us", trim=True,
+            spoken, voice=voice, speed=speed, lang=sp.get("lang", "en-us"), trim=True,
             sentence_pause=sp["sentence"], clause_pause=sp["clause"],
         )
         audio = np.asarray(audio, dtype=np.float32)
@@ -325,15 +338,48 @@ def synthesize(kokoro, sp, text):
     return best[0], best[1], best_name
 
 
+def old_index():
+    path = OUT / "index.js"
+    if not path.exists():
+        return {}
+    raw = path.read_text()
+    raw = raw.split("=", 1)[1].strip()
+    if raw.endswith(";"):
+        raw = raw[:-1]
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError:
+        return {}
+
+
 def main():
     lines = json.loads(CATALOG.read_text())
-    kokoro = Kokoro(MODEL, VOICES)
+    previous = old_index()
+    kokoro = None
     index = {}
+    seen = set()
     for i, row in enumerate(lines, 1):
         text = row["text"]
         speaker = row["speaker"]
+        if text in seen:
+            continue
+        seen.add(text)
+        prior = previous.get(text)
+        if (
+            prior
+            and prior.get("speaker") == speaker
+            and speaker != "narrator"
+            and (ROOT / prior["src"].lstrip("./")).exists()
+        ):
+            index[text] = prior
+            print(f"{i}/{len(lines)} keep {speaker}", flush=True)
+            continue
+        if kokoro is None and text not in KEEP_SRC:
+            kokoro = Kokoro(MODEL, VOICES)
         sp = spec(speaker)
-        digest = hashlib.sha1(text.encode()).hexdigest()[:10]
+        if speaker != "narrator" and len(text.split()) <= 12 and len(sp["takes"]) > 1:
+            sp = dict(sp, takes=sp["takes"][:1])
+        digest = hashlib.sha1((speaker + "|" + sp["label"] + "|" + text).encode()).hexdigest()[:10]
         folder = OUT / row["world"]
         folder.mkdir(parents=True, exist_ok=True)
         mp3 = folder / f"{speaker}-{digest}.mp3"
@@ -345,6 +391,17 @@ def main():
                 check=True,
             )
             voice = "recorded"
+        elif mp3.exists() and mp3.stat().st_size > 400:
+            voice = sp["label"]
+            print(f"{i}/{len(lines)} cached {speaker}", flush=True)
+            index[text] = {
+                "src": "./" + mp3.relative_to(ROOT).as_posix(),
+                "speaker": speaker,
+                "world": row["world"],
+                "voice": voice,
+                "kind": row["kind"],
+            }
+            continue
         else:
             audio, sr, voice = synthesize(kokoro, sp, text)
             sf.write(wav, audio, sr)
@@ -358,11 +415,14 @@ def main():
             "voice": voice,
             "kind": row["kind"],
         }
-        if i % 15 == 0:
-            print(f"{i}/{len(lines)}", flush=True)
+        print(f"{i}/{len(lines)} {speaker}", flush=True)
     (OUT / "index.js").write_text(
         "export const LINES = " + json.dumps(index, ensure_ascii=False, indent=2) + ";\n"
     )
+    keep = { (ROOT / rec["src"].lstrip("./")).resolve() for rec in index.values() }
+    for mp3 in OUT.rglob("*.mp3"):
+        if mp3.resolve() not in keep:
+            mp3.unlink()
     print("indexed", len(index))
 
 

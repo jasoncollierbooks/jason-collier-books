@@ -22,13 +22,13 @@ export const CAST = {
     { id: "jang", name: "Jang", sprite: SPRITE + "jang.webp", aspect: 0.275,
       lines: [
         "You walked in during a true story. We can pencil you in. I am Jang.",
+        "Four letters, then the gate. The rope is the one that opens a wall.",
         "The key is not the punchline. The rope is.",
-        "The picture that promises California in the first breath is the false door.",
       ] },
     { id: "tom", name: "Tom", sprite: SPRITE + "tom.webp", aspect: 0.443,
       lines: [
         "Tom. My neck itched, then you arrived. That was the audition.",
-        "Four wheels, a canvas top, and only one axle looks ready to snap. I counted.",
+        "One axle is ready to snap. That count is for the carving, not the four wheels.",
         "Neck's itching. That usually means the map was a suggestion.",
       ] },
   ],
@@ -36,22 +36,22 @@ export const CAST = {
     { id: "jang", name: "Jang", sprite: SPRITE + "jang.webp", aspect: 0.275,
       lines: [
         "Younger, and still Jang. The napkin is not a map to gold.",
-        "Two boys had the napkin. The X was ketchup.",
+        "Four letters, then the gate. The X on that napkin was ketchup.",
         "Jenkins has been walking since breakfast. The napkin is what stops him.",
       ] },
     { id: "tom", name: "Tom", sprite: SPRITE + "tom.webp", aspect: 0.443,
       lines: [
         "Tom, before the trail got longer. The groundhog has the dirt piled in the square.",
         "The hole is the door. I did not dig it. I respect the professional.",
-        "The checkerboard only reads if you look along the squares.",
+        "The checkerboard only reads if you look west along the squares.",
       ] },
   ],
   mountain: [
     { id: "wade", name: "H. Wade", sprite: SPRITE + "wade.webp", aspect: 0.387,
       lines: [
         "H. Wade kept this fire. Feed it. The pass below camp stays shut until you do.",
-        "The lit cabin is not the way down.",
-        "The camera counted the nights. The gate rolls back by that count, not by anything else in camp.",
+        "Four letters, then the gate. The lit cabin is not the way down.",
+        "The camera counted seven nights. The gate rolls back by that count.",
       ] },
     { id: "mountain", name: "The mountain", sprite: SPRITE + "mountain.webp", aspect: 0.403, scale: 1.08,
       lines: [
@@ -64,13 +64,13 @@ export const CAST = {
     { id: "spacey", name: "Captain Spacey", sprite: SPRITE + "spacey.webp", aspect: 0.422,
       lines: [
         "You walked in during a true story. I'm Spacey. She flies. Eventually.",
-        "Goats with balloons. They follow a lamp. Pass them with it out.",
+        "Four letters, then the gate. The goats follow a lamp. Pass them with it out.",
         "A crate. If it hums, we charge extra.",
       ] },
     { id: "mira", name: "Mira", sprite: SPRITE + "mira.webp", aspect: 0.351, scale: 0.73,
       lines: [
         "Mira. If it ticks, I already know. Don't touch the lever marked don't.",
-        "The goats lose you when the lamp is out. Then the lamp goes back on.",
+        "The goats lose you when the lamp is out. Then the lamp goes back on for the grate.",
         "Seven feet. One monocle. The feet are not the count this ship wants.",
       ] },
   ],
@@ -78,15 +78,15 @@ export const CAST = {
     { id: "hum", name: "The hum", art: PULSE, crop: [0.12, 0.12, 0.76, 0.7],
       lines: [
         "Before light, before matter, before the void, there was only the hum.",
-        "The bright door is an invitation. Invitations are not exits.",
+        "Four letters, then the gate. The bright door is an invitation. Invitations are not exits.",
         "Answer the pedestal. Leave a mark before you trust an arch.",
       ] },
   ],
   thorne: [
     { id: "journal", name: "Thorne's journal", art: LAB, crop: [0.0, 0.0, 1, 1],
       lines: [
-        "Personal Laboratory, Princeton, New Jersey, 1982. The shell must be born twice.",
-        "The sine is the honest trace. Square and noise lie.",
+        "Personal Laboratory, Princeton, New Jersey, 1982. The shell was born twice.",
+        "Four letters, then the gate. The sine is the honest trace. Square and noise lie.",
         "The year on the clipboard is the wrong count. Roll the carving back by the births.",
       ] },
   ],
@@ -94,7 +94,7 @@ export const CAST = {
     { id: "seed", name: "The seed", art: SEED, crop: [0.18, 0.05, 0.64, 0.9],
       lines: [
         "Long before anyone was here to remember, something planted a seed.",
-        "Turn at the seed. The far arch keeps folding until you do.",
+        "Four tagged letters, then the gate. Turn at the seed. The far arch keeps folding until you do.",
         "Four points of view. Twelve endings. The counts are not the gate.",
       ] },
   ],
@@ -102,7 +102,7 @@ export const CAST = {
     { id: "ninth", name: "The Ninth", art: ENVOY, crop: [0.05, 0.12, 0.7, 0.62],
       lines: [
         "You are the hive. One mind, spread through living black glass.",
-        "The jet carries anyone who shines. Cross it dark.",
+        "Four letters, then the gate. The jet carries anyone who shines. Cross it dark.",
         "You are the Ninth. The other counts on the wall are bait.",
       ] },
   ],
@@ -110,7 +110,7 @@ export const CAST = {
     { id: "jang", name: "Jang", sprite: SPRITE + "jang-meta.webp", aspect: 0.336,
       lines: [
         "The cabinet is between stations. Eight brands are in the page.",
-        "Read them in the plaque's order. Then treat them the way the trail treated a carving.",
+        "Read them in the plaque's order. Then roll them back the way the trail rolled a carving.",
         "The sheet under the lantern has the count, and the blank.",
       ] },
   ],
@@ -167,6 +167,34 @@ function neighbors(world, x, z) {
   return n;
 }
 
+const DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+
+const TAIL = {
+  jang: ["Leave the loud promises.", "Bring every letter you find."],
+  tom: ["Go slow. I counted.", "The gate can wait until the letters are in your hands."],
+  wade: ["Feed the fire before you trust a lit cabin.", "The camera already wrote the count."],
+  mountain: ["The mountain is not empty.", "The wind still cuts. The gate is a fire you already fed."],
+  spacey: ["She flies. Eventually.", "Not through a wall. Through the gate, once you have the letters."],
+  mira: ["If it ticks, I already know.", "Leave the lever marked don't alone."],
+  hum: ["Invitations are not exits.", "Answer what is listening, then the gate."],
+  journal: ["The sine is the honest trace.", "The year on the clipboard is the wrong count."],
+  seed: ["Turn at the seed.", "Four and twelve are not the word."],
+  ninth: ["Cross anything that shines with the lamp out.", "You are the Ninth. The other counts are bait."],
+  narrator: ["Follow the gold stones.", "The carving by the gate is the last thing."],
+};
+
+export function pointLine(id, dir, gate) {
+  const pair = TAIL[id] || TAIL.narrator;
+  const lead = gate ? "The gate is " + dir + " of here." : "The next mark is " + dir + " of here.";
+  return lead + " " + (gate ? pair[1] : pair[0]);
+}
+
+export function idleLine(dir, gate) {
+  if (!dir) return "You've been still a while. Follow the gold stones on the ground.";
+  const where = gate ? "The gate" : "The next mark";
+  return "You've been still a while. " + where + " is " + dir + " of here.";
+}
+
 export function peopleFor(world) {
   const cast = CAST[world.id] || [];
   if (!cast.length) return [];
@@ -181,40 +209,73 @@ export function peopleFor(world) {
       if (world.grid[z][x] === "S") { sx = x; sz = z; }
     }
   }
-  const placed = [];
-  const used = new Set();
+  const dist = new Map();
+  const q = [[sx, sz]];
+  dist.set(sx + "," + sz, 0);
+  while (q.length) {
+    const [x, z] = q.shift();
+    const d = dist.get(x + "," + z);
+    for (const [dx, dz] of DIRS) {
+      const nx = x + dx;
+      const nz = z + dz;
+      const k = nx + "," + nz;
+      if (dist.has(k) || !openCell(world, nx, nz)) continue;
+      dist.set(k, d + 1);
+      q.push([nx, nz]);
+    }
+  }
   function free(x, z) {
     if (!openCell(world, x, z)) return false;
-    if (taken.has(x + "," + z) || used.has(x + "," + z)) return false;
+    if (taken.has(x + "," + z)) return false;
     const ch = world.grid[z][x];
     return ch !== "S" && ch !== "G" && ch !== "F";
   }
-  function walkIn(steps) {
-    let x = sx;
-    let z = sz;
-    const seen = new Set([x + "," + z]);
-    let got = 0;
-    let spot = null;
-    for (let n = 0; n < steps + 30 && got < steps; n++) {
-      const choices = [[-1, 0], [0, 1], [0, -1], [1, 0]]
-        .map(([dx, dz]) => ({ x: x + dx, z: z + dz }))
-        .filter((c) => openCell(world, c.x, c.z) && !seen.has(c.x + "," + c.z));
-      const prefer = choices.find((c) => c.x < x) || choices[0];
-      if (!prefer) break;
-      seen.add(prefer.x + "," + prefer.z);
-      x = prefer.x;
-      z = prefer.z;
-      if (free(x, z)) {
-        got++;
-        spot = { x, z };
-      }
-    }
-    return spot;
+  function kindOf(x, z) {
+    const n = neighbors(world, x, z);
+    if (n >= 3) return "branch";
+    if (n !== 2) return "";
+    const open = DIRS.filter(([dx, dz]) => openCell(world, x + dx, z + dz));
+    if (open.length !== 2) return "";
+    const straight = open[0][0] + open[1][0] === 0 && open[0][1] + open[1][1] === 0;
+    return straight ? "" : "corner";
   }
+  const pool = [];
+  for (const [k, d] of dist) {
+    const [x, z] = k.split(",").map(Number);
+    if (d < 4 || !free(x, z)) continue;
+    const kind = kindOf(x, z);
+    if (!kind) continue;
+    pool.push({ x, z, d, kind });
+  }
+  pool.sort((a, b) => a.d - b.d || (a.kind === "branch" ? -1 : 1));
+  const picks = [];
+  const want = cast.length;
+  const far = pool.length ? pool[pool.length - 1].d : 1;
+  for (let i = 0; i < want; i++) {
+    const target = Math.round(((i + 1) / (want + 1)) * far);
+    let best = null;
+    let bestScore = 1e9;
+    for (const spot of pool) {
+      if (picks.some((p) => Math.hypot(p.x - spot.x, p.z - spot.z) < 3)) continue;
+      const branchBias = spot.kind === "branch" ? 0 : 4;
+      const score = Math.abs(spot.d - target) + branchBias;
+      if (score < bestScore) { best = spot; bestScore = score; }
+    }
+    if (best) picks.push(best);
+  }
+  if (picks.length < want) {
+    for (const [k, d] of dist) {
+      if (picks.length >= want) break;
+      const [x, z] = k.split(",").map(Number);
+      if (d < 3 || !free(x, z)) continue;
+      if (picks.some((p) => p.x === x && p.z === z)) continue;
+      picks.push({ x, z, d, kind: "floor" });
+    }
+  }
+  const placed = [];
   cast.forEach((person, i) => {
-    const spot = walkIn(i === 0 ? 2 : 6);
+    const spot = picks[i];
     if (!spot) return;
-    used.add(spot.x + "," + spot.z);
     placed.push(Object.assign({ x: spot.x, z: spot.z, greet: i === 0 }, person));
   });
   return placed.map((p) => {

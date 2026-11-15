@@ -1,1997 +1,2914 @@
 export const LINES = {
-  "Jang folds his arms. You walked in during a true story. The handbills promise California. The ford forgot how a crossing works.": {
-    "src": "./voices/trail/narrator-fb2d2f5067.mp3?v=2",
+  "Find four letters, then the gate at the end of the trail. The handbills lie. The rope does not.": {
+    "src": "./voices/trail/narrator-2756020c87.mp3",
     "speaker": "narrator",
     "world": "trail",
-    "voice": "am_michael",
+    "voice": "bm_fable",
     "kind": "intro"
   },
+  "The narrows open. Jang will not be putting that on a handbill.": {
+    "src": "./voices/trail/narrator-fea0ba28a8.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "win"
+  },
+  "The carving is not the word. Roll it back by the axle that is ready to snap.": {
+    "src": "./voices/trail/narrator-f2b0a94495.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "wrong"
+  },
+  "You're close. Use what is in front of you.": {
+    "src": "./voices/trail/narrator-df7939bd23.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "near"
+  },
+  "All four letters are in your hands. The carving by the gate tells you the order.": {
+    "src": "./voices/trail/narrator-b46d6b0058.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "closing"
+  },
+  "The carving by the gate is not the word. The wagon tells you how far to roll it.": {
+    "src": "./voices/trail/narrator-086da5fbaf.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Tom counted one axle ready to snap. Roll every letter of SPQF back by that one.": {
+    "src": "./voices/trail/narrator-0c4a50fe52.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "One axle. SPQF rolled back by one is ROPE.": {
+    "src": "./voices/trail/narrator-fcc646e85e.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The rope takes the letter R, and the canyon wall shifts. Three letters left, then the gate.": {
+    "src": "./voices/trail/narrator-6920add0ab.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "Jang already said it. The key is not the punchline.": {
+    "src": "./voices/trail/narrator-74a77d9dee.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Use the rope in the west narrows.": {
+    "src": "./voices/trail/narrator-72576040a7.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The rope gives you R and opens the way east.": {
+    "src": "./voices/trail/narrator-4d9789877f.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Guaranteed safe passage. PASSAGE ends in E. You take E.": {
+    "src": "./voices/trail/narrator-ec80185df6.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The guides promised safe passage. The last letter is still on the boards.": {
+    "src": "./voices/trail/narrator-1435be23cd.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Read the promise in the yard.": {
+    "src": "./voices/trail/narrator-8bf16e4bd8.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "PASSAGE ends in E.": {
+    "src": "./voices/trail/narrator-67ae42ce73.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The round ox brand is O. You take O.": {
+    "src": "./voices/trail/narrator-76aff5afc6.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The ox brand is there. The dark is holding it.": {
+    "src": "./voices/trail/narrator-6a81326f52.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "dark"
+  },
+  "Something round was branded past the rope. Light it.": {
+    "src": "./voices/trail/narrator-83ca4b8508.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Lantern on, in the east stall, use the brand.": {
+    "src": "./voices/trail/narrator-9adb083335.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The ox brand gives you O.": {
+    "src": "./voices/trail/narrator-f2de36e929.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Along the grain, the boards keep a P. You take P. That is the set.": {
+    "src": "./voices/trail/narrator-9bdb7de70a.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The grain is a smear until you look west, along the boards.": {
+    "src": "./voices/trail/narrator-fffaf1c2d8.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "smear"
+  },
+  "A letter hides in the grain. Face the way the boards run.": {
+    "src": "./voices/trail/narrator-9f1f2a365a.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Stand at the west boards and face west, then use them.": {
+    "src": "./voices/trail/narrator-92958a25d4.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Face west at the boards. The letter is P.": {
+    "src": "./voices/trail/narrator-0c24db18f4.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Tom looked the wagon over. Four wheels, one axle ready to snap. Roll the gate's carving back by that one, not by the four wheels.": {
+    "src": "./voices/trail/narrator-e02dca8847.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "sign"
+  },
+  "Jang printed this. It promises California in the first breath. That door is the false one.": {
+    "src": "./voices/trail/narrator-2a09bdf347.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "sign"
+  },
+  "Carved here: SPQF. Roll every letter back by the axles ready to snap. Not by the four wheels.": {
+    "src": "./voices/trail/narrator-481e908312.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "sign"
+  },
+  "Tom scratches his neck. The California door was a suggestion. You are back where you started.": {
+    "src": "./voices/trail/narrator-de3cfb91b3.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "portal"
+  },
+  "This draw brings you back. The rope is the way that does not promise California.": {
+    "src": "./voices/trail/narrator-b6de5924ff.mp3",
+    "speaker": "narrator",
+    "world": "trail",
+    "voice": "bm_fable",
+    "kind": "portal"
+  },
+  "Find four letters in Pine Knot, then the gate. The napkin is not a map to gold.": {
+    "src": "./voices/pine/narrator-4c93bbb266.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "intro"
+  },
+  "The ridge lets you off it. Opal would have said yes either way.": {
+    "src": "./voices/pine/narrator-e19d2f962a.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "win"
+  },
+  "Read the first letter of each line by the gate, from the top. The story under them is not the word.": {
+    "src": "./voices/pine/narrator-746d2da5a9.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "wrong"
+  },
+  "You're on it. Use what is in front of you.": {
+    "src": "./voices/pine/narrator-be90c7153c.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "near"
+  },
+  "Four letters. The verse by the gate is an acrostic. Read down the first letters.": {
+    "src": "./voices/pine/narrator-3cb100ae24.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "closing"
+  },
+  "The verse by the gate is the order. Read it the way a headline is read.": {
+    "src": "./voices/pine/narrator-070ac79f78.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Take the first letter of each of the four lines, top to bottom.": {
+    "src": "./voices/pine/narrator-02acc2e898.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The lines start O, P, A, L. The word is OPAL.": {
+    "src": "./voices/pine/narrator-fb776e5ef5.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "GOLD is nailed under the leaves. The last letter is L. You take L.": {
+    "src": "./voices/pine/narrator-40ee7238a1.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The weather note on the main street is also a letter.": {
+    "src": "./voices/pine/narrator-8508e4ba17.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Read the gold-leaf sign.": {
+    "src": "./voices/pine/narrator-5b596c7864.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "GOLD ends in L.": {
+    "src": "./voices/pine/narrator-d0db2787b0.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Under the lantern the napkin starts with O. The X was ketchup. You take O.": {
+    "src": "./voices/pine/narrator-4784b1606f.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The napkin is grease and ketchup until the lantern is on it.": {
+    "src": "./voices/pine/narrator-8fe387859a.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "dark"
+  },
+  "Over Yonder's napkin is in a dark shed. It is not a treasure map.": {
+    "src": "./voices/pine/narrator-8d495a0f06.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Lantern on, in the east shed, use the napkin.": {
+    "src": "./voices/pine/narrator-97df59ee03.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The napkin gives you O, and the circles stop.": {
+    "src": "./voices/pine/narrator-b2ee1b1136.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The groundhog gives up the dirt. A wall in the west yard drops open.": {
+    "src": "./voices/pine/narrator-94be3c44bb.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "Something in the square is professional about dirt.": {
+    "src": "./voices/pine/narrator-c439effe66.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Use the groundhog hole in the square.": {
+    "src": "./voices/pine/narrator-3fc4df45ee.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The hole opens the west yard. The reward poster is in there.": {
+    "src": "./voices/pine/narrator-e8d26f9275.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Precious the possum. The poster starts with P. You take P.": {
+    "src": "./voices/pine/narrator-5c77ebe859.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The possum notice is behind the dirt the groundhog was holding.": {
+    "src": "./voices/pine/narrator-3b6bec83c0.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Open the hole, then read the poster in the west yard.": {
+    "src": "./voices/pine/narrator-e28c24bd56.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The reward poster gives you P.": {
+    "src": "./voices/pine/narrator-4d1249825c.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Along the board, a red square keeps an A. You take A. The pie can keep the checker.": {
+    "src": "./voices/pine/narrator-c0958b6ecc.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The checkerboard is a blur until you look west along the squares.": {
+    "src": "./voices/pine/narrator-3353974a52.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "smear"
+  },
+  "The board in the south alley has a letter along the squares.": {
+    "src": "./voices/pine/narrator-ef371b79da.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Stand at the checkerboard and face west, then use it.": {
+    "src": "./voices/pine/narrator-27c183bf02.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Face west at the checkerboard. The letter is A.": {
+    "src": "./voices/pine/narrator-bc432b431c.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Jenkins knelt to propose to a gal named Opal, and a groundhog popped out. Two boys had his napkin. It was directions to Over Yonder. The X was ketchup.": {
+    "src": "./voices/pine/narrator-06387c3b16.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "sign"
+  },
+  "A red checker turned up in the pecan pie. It is still a checker. It is not the gate.": {
+    "src": "./voices/pine/narrator-6feaf8b8f6.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "sign"
+  },
+  "Over Yonder, the X was only ketchup. Precious the possum left without asking. A gal on the ridge was named in the paper. Last in GOLD is the letter the leaves keep. Read the first letter of each line, from the top.": {
+    "src": "./voices/pine/narrator-612becbea9.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "sign"
+  },
+  "The arch says Miller's Ridge. It is a street that brings you back. Stop saying it.": {
+    "src": "./voices/pine/narrator-eb7c829b1c.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "portal"
+  },
+  "You have walked in a circle. Jenkins did the same until somebody had the napkin.": {
+    "src": "./voices/pine/narrator-3b6c397fc2.mp3",
+    "speaker": "narrator",
+    "world": "pine",
+    "voice": "bm_fable",
+    "kind": "portal"
+  },
+  "Find four letters on the ridge, then the gate below camp. Feed the fire. The mountain is not empty.": {
+    "src": "./voices/mountain/narrator-9f9b437dd8.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "intro"
+  },
+  "The ridge lets the fire be a fire again. You can leave the camp standing.": {
+    "src": "./voices/mountain/narrator-11fa3e3902.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "win"
+  },
+  "The carving is the nights on the camera away from the word. Seven, not anything else in camp.": {
+    "src": "./voices/mountain/narrator-ff13cad231.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "wrong"
+  },
+  "You're close. Use what the ridge put in front of you.": {
+    "src": "./voices/mountain/narrator-6c51e7c054.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "near"
+  },
+  "Four letters. The carving rolls back by the nights scratched on the camera.": {
+    "src": "./voices/mountain/narrator-385466d29f.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "closing"
+  },
+  "The carving by the gate has been shifted. The camera says by how many nights.": {
+    "src": "./voices/mountain/narrator-f3182a0f8c.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Seven nights. Roll MPYL back by seven. The alphabet wraps.": {
+    "src": "./voices/mountain/narrator-63ba92d8c9.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "MPYL rolled back seven is FIRE.": {
+    "src": "./voices/mountain/narrator-5ce576a2a6.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "You feed the fire. It gives you F, and the snow wall below camp drops.": {
+    "src": "./voices/mountain/narrator-f1f07915b0.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The thing on this ridge that answers is the thing you feed.": {
+    "src": "./voices/mountain/narrator-f9c0b4f4c7.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Use the campfire.": {
+    "src": "./voices/mountain/narrator-b45b5cedab.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The fire gives you F and opens the way down.": {
+    "src": "./voices/mountain/narrator-f30cab2fe2.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "On the canvas, in the lantern, the letter is I. You take I.": {
+    "src": "./voices/mountain/narrator-9a749a5040.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The tent canvas is just canvas until the lantern crosses it.": {
+    "src": "./voices/mountain/narrator-8b2006629d.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "dark"
+  },
+  "The draw turns you if you walk it dark. The tent past it wants the light.": {
+    "src": "./voices/mountain/narrator-d636ca7ffd.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Cross the draw with the lantern on, then use the tent.": {
+    "src": "./voices/mountain/narrator-96b9ad78d7.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Lantern on at the tent. The letter is I.": {
+    "src": "./voices/mountain/narrator-ec5be32777.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Along the bark the cuts make an R. You take R.": {
+    "src": "./voices/mountain/narrator-5bb742eea5.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The bark reads only if you look west, along the trunk.": {
+    "src": "./voices/mountain/narrator-9f0abf63eb.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "smear"
+  },
+  "Past the draw, the west spruce is carved. Face along it.": {
+    "src": "./voices/mountain/narrator-2ee3c64d30.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Stand at the spruce and face west, then use the bark.": {
+    "src": "./voices/mountain/narrator-3c451fc10d.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Face west at the spruce. The letter is R.": {
+    "src": "./voices/mountain/narrator-435e52795b.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Under the lens, the plate is stamped E. You take E. That is the set.": {
+    "src": "./voices/mountain/narrator-7f7236a456.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The trail camera in the lower camp is a letter, not only a number.": {
+    "src": "./voices/mountain/narrator-f830f3e022.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Read the camera after the draw.": {
+    "src": "./voices/mountain/narrator-de0c4e8cd3.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The camera plate gives you E.": {
+    "src": "./voices/mountain/narrator-c5efdd6240.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Scratched on the housing: seven nights. Keep the fire going. The gate rolls back by those nights, not by anything else in camp.": {
+    "src": "./voices/mountain/narrator-e0408c6121.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "sign"
+  },
+  "H. Wade kept this fire. The lit cabin north of camp is not the way down.": {
+    "src": "./voices/mountain/narrator-569e98eda5.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "sign"
+  },
+  "Carved in the cold: MPYL. Roll every letter back by the nights on the camera. If a letter walks off A, it comes back on from Z.": {
+    "src": "./voices/mountain/narrator-bb114c7992.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "sign"
+  },
+  "The cabin light is warm and wrong. The mountain sent you back to the fire.": {
+    "src": "./voices/mountain/narrator-e2a369827b.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "portal"
+  },
+  "The switchback folds. You are at the fire again.": {
+    "src": "./voices/mountain/narrator-9d95847edb.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "portal"
+  },
+  "The lantern is on. The draw is true. Keep walking.": {
+    "src": "./voices/mountain/narrator-3ef5b85fd5.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "portal"
+  },
+  "In the dark the mountain turns you around. Light the draw before you trust it.": {
+    "src": "./voices/mountain/narrator-b93e009ae2.mp3",
+    "speaker": "narrator",
+    "world": "mountain",
+    "voice": "bm_fable",
+    "kind": "portal"
+  },
+  "Find four letters in the ship, then the gate. Leave the lever marked don't alone. The goats follow a lamp.": {
+    "src": "./voices/rusty/narrator-64508fa468.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "intro"
+  },
+  "The hangar can have its storm back. Mira keeps the color in the gauges.": {
+    "src": "./voices/rusty/narrator-3e04779a0e.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "win"
+  },
+  "The carving stutters. Keep the first, third, fifth, and seventh letters. Let the rest rust.": {
+    "src": "./voices/rusty/narrator-b6fdb51407.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "wrong"
+  },
+  "You're close. Use it, unless it is the lever marked don't.": {
+    "src": "./voices/rusty/narrator-9adf291d33.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "near"
+  },
+  "Four letters. The carving by the gate keeps more than it wants. Take every other one.": {
+    "src": "./voices/rusty/narrator-221360966a.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "closing"
+  },
+  "The long carving by the gate is stuttering. Not every letter in it belongs.": {
+    "src": "./voices/rusty/narrator-2fe755f9bf.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Keep the 1st, 3rd, 5th, and 7th letters of DXOXNXT.": {
+    "src": "./voices/rusty/narrator-fc18da2443.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "DXOXNXT, taking every other letter from the start, is DONT.": {
+    "src": "./voices/rusty/narrator-24f8a9dcfe.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The plate starts with D. You take D. The lever marked don't is still a bad idea.": {
+    "src": "./voices/rusty/narrator-7350fb8298.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The hold has a plate and a lever. Only the plate is worth using.": {
+    "src": "./voices/rusty/narrator-e17a2c8732.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Read the brass plate. Leave the don't-lever alone.": {
+    "src": "./voices/rusty/narrator-8f3adc91a9.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The plate gives you D.": {
+    "src": "./voices/rusty/narrator-1b27d54f54.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Mira told you. The lever marked don't dumps you back in the hold.": {
+    "src": "./voices/rusty/narrator-750c3d4d88.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "Leave it.": {
+    "src": "./voices/rusty/narrator-67521f4635.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Leave the lever marked don't alone.": {
+    "src": "./voices/rusty/narrator-d1e6f2186e.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Under the grate, in the light, the letter is T. You take T.": {
+    "src": "./voices/rusty/narrator-2ea391d04e.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "Under the grate is rust and nothing, until the lantern is back on.": {
+    "src": "./voices/rusty/narrator-6a1f242ad6.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "dark"
+  },
+  "The goats follow a lamp. The grate after them wants the lamp back on.": {
+    "src": "./voices/rusty/narrator-28f37ddbb6.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Walk the goat cell dark, then lantern on at the east grate.": {
+    "src": "./voices/rusty/narrator-b8625ac257.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Lamp out past the goats, lamp on at the grate. The letter is T.": {
+    "src": "./voices/rusty/narrator-6a675df9d5.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Down the pipe, the stamp is N. You take N.": {
+    "src": "./voices/rusty/narrator-70a32b281e.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The stamp shows only if you look west, down the pipe.": {
+    "src": "./voices/rusty/narrator-a2d61f000f.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "smear"
+  },
+  "The west pipe is stamped. Look along it.": {
+    "src": "./voices/rusty/narrator-d425954121.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Stand at the west pipe and face west, then use it.": {
+    "src": "./voices/rusty/narrator-26e9395873.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Face west at the pipe. The letter is N.": {
+    "src": "./voices/rusty/narrator-f0edc34e8b.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The crate hums. Stenciled on it: O. You take O. Mira would charge extra.": {
+    "src": "./voices/rusty/narrator-6f10d12704.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "Once the goats have lost you, a crate is waiting.": {
+    "src": "./voices/rusty/narrator-946c89b4e9.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Pass the goats in the dark, then read the crate.": {
+    "src": "./voices/rusty/narrator-a896ea8bfc.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The crate gives you O.": {
+    "src": "./voices/rusty/narrator-ece5f939a9.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Seven feet. One monocle. The feet are not the count this ship wants. The goats are down the hall. They follow a lamp. Pass them with it out.": {
+    "src": "./voices/rusty/narrator-2912b94b76.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "sign"
+  },
+  "The stack stutters: DXOXNXT. Keep the 1st, 3rd, 5th, and 7th letters. Let the rest rust.": {
+    "src": "./voices/rusty/narrator-4e64da3467.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "sign"
+  },
+  "That door was the storm. You are in the hold again. The gate is the other way.": {
+    "src": "./voices/rusty/narrator-e4827fc842.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "portal"
+  },
+  "The goats follow the lamp. You are back at the start of their hall.": {
+    "src": "./voices/rusty/narrator-5f4dd1d229.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "portal"
+  },
+  "Lamp out. The goats lose you. A bulkhead ahead unlocks.": {
+    "src": "./voices/rusty/narrator-fa593744d6.mp3",
+    "speaker": "narrator",
+    "world": "rusty",
+    "voice": "bm_fable",
+    "kind": "portal"
+  },
+  "Find four letters in the hum, then the gate. The bright door is an invitation. Invitations are not exits.": {
+    "src": "./voices/pulse/narrator-77de87c920.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "intro"
+  },
+  "The hum answers, once. The signal keeps its color.": {
+    "src": "./voices/pulse/narrator-b30dee760b.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "win"
+  },
+  "The carving is a mirror. A speaks as Z, B as Y. It is not a shift, and the invitation's letter does not belong.": {
+    "src": "./voices/pulse/narrator-3198cc3a33.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "wrong"
+  },
+  "You're close. Use what is holding still.": {
+    "src": "./voices/pulse/narrator-16de68862d.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "near"
+  },
+  "Four letters. Mirror the carving. A is Z, and the rest of the alphabet folds the same way.": {
+    "src": "./voices/pulse/narrator-ec2ecbb1d2.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "closing"
+  },
+  "The carving is not shifted. The plaque says A speaks as Z.": {
+    "src": "./voices/pulse/narrator-f3e73e05bc.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Mirror the alphabet. A is Z, B is Y, and so on. Do that to every letter of VXSL.": {
+    "src": "./voices/pulse/narrator-163519f31e.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "VXSL mirrored is ECHO.": {
+    "src": "./voices/pulse/narrator-5573643e45.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "You answer the hum. The wall ahead unseats itself.": {
+    "src": "./voices/pulse/narrator-0c8b9f6f5f.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The room is listening for an answer, not a brighter door.": {
+    "src": "./voices/pulse/narrator-1041e03d93.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Use the pedestal in the first chamber.": {
+    "src": "./voices/pulse/narrator-3a62a8656d.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The pedestal opens the way deeper. The bright door is a lie.": {
+    "src": "./voices/pulse/narrator-7691c3d5c9.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "You leave a chalk mark. It will not follow you through a lying arch.": {
+    "src": "./voices/pulse/narrator-8ee35a6499.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "One arch past the hum repeats the room.": {
+    "src": "./voices/pulse/narrator-234a3ccb46.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Use the chalk, then try an arch. If you return without the mark, that arch lied.": {
+    "src": "./voices/pulse/narrator-ef59b79bfc.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The west arch repeats. The letter is on the arch that does not.": {
+    "src": "./voices/pulse/narrator-4daf68c4de.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "This arch did not repeat. Cut into it: C. You take C.": {
+    "src": "./voices/pulse/narrator-6e2452cbf3.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "One arch is a room. The other gives you back.": {
+    "src": "./voices/pulse/narrator-a059342365.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Read the arch just east of the chalk, not the west one.": {
+    "src": "./voices/pulse/narrator-e1b6a8f8f8.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The true arch gives you C.": {
+    "src": "./voices/pulse/narrator-9a677d6db5.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "In the lantern the static settles on O. You take O.": {
+    "src": "./voices/pulse/narrator-6da4ee78ef.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The pocket is only static until the lantern fills it.": {
+    "src": "./voices/pulse/narrator-c90c808106.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "dark"
+  },
+  "East of the arches, a pocket stays dark on purpose.": {
+    "src": "./voices/pulse/narrator-30ede1d075.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Lantern on in the east pocket, then use the wall.": {
+    "src": "./voices/pulse/narrator-3bac470932.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Lantern on in the pocket. The letter is O.": {
+    "src": "./voices/pulse/narrator-81733d6846.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Only the hum. The word begins with H. You take H.": {
+    "src": "./voices/pulse/narrator-112e52df4a.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The line about the beginning is in the lower gallery.": {
+    "src": "./voices/pulse/narrator-40517fec2f.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Read the carved line in the lower west.": {
+    "src": "./voices/pulse/narrator-224eaff5ae.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The line gives you H.": {
+    "src": "./voices/pulse/narrator-59b8ac0a1b.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Looking up, the ring is E. You take E. That is the set.": {
+    "src": "./voices/pulse/narrator-73cd2f6048.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The ring is on the ceiling. Look up.": {
+    "src": "./voices/pulse/narrator-eb11e3c6e2.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "smear"
+  },
+  "Not every letter is on a wall.": {
+    "src": "./voices/pulse/narrator-325adf54e1.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Stand in the lower east and look up, then use what you see.": {
+    "src": "./voices/pulse/narrator-c938234ccd.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Look up at the ring. The letter is E.": {
+    "src": "./voices/pulse/narrator-635bf1b564.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Before light, before matter, before the void, only the hum. The bright door is an invitation, not the way on. Answer the pedestal. Leave a chalk mark before you trust an arch.": {
+    "src": "./voices/pulse/narrator-643f415f9d.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "sign"
+  },
+  "A speaks as Z. B speaks as Y. Fold the rest of the alphabet the same way, and read VXSL through that fold. The letter the invitation offered does not belong.": {
+    "src": "./voices/pulse/narrator-346fd8f883.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "sign"
+  },
+  "The bright door was the invitation. It brought you back.": {
+    "src": "./voices/pulse/narrator-e322a72c9c.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "portal"
+  },
+  "The invitation offered the letter I. The hum crossed it out.": {
+    "src": "./voices/pulse/narrator-50587a50fc.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "portal"
+  },
+  "The room repeats. The true arch is the one that lets the chalk mark stay.": {
+    "src": "./voices/pulse/narrator-4f6a467f6b.mp3",
+    "speaker": "narrator",
+    "world": "pulse",
+    "voice": "bm_fable",
+    "kind": "portal"
+  },
+  "Find four letters in the lab, then the gate. The shell was born twice. The year on the clipboard is the wrong count.": {
+    "src": "./voices/thorne/narrator-0d1a01e889.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "intro"
+  },
+  "The membrane takes the second birth. The log can stay open.": {
+    "src": "./voices/thorne/narrator-b89aae7718.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "win"
+  },
+  "Roll the carving back by the births. Twice. Not by 1982.": {
+    "src": "./voices/thorne/narrator-4c81b393c2.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "wrong"
+  },
+  "You're close. Use what the bench is showing you.": {
+    "src": "./voices/thorne/narrator-a3b7c78ba7.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "near"
+  },
+  "Four letters. The carving rolls back by the two births, not by the year.": {
+    "src": "./voices/thorne/narrator-a01f574fb9.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "closing"
+  },
+  "The carving has been shifted. The year 1982 is the wrong count.": {
+    "src": "./voices/thorne/narrator-fec652e46f.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Born twice. Roll DQTP back by two.": {
+    "src": "./voices/thorne/narrator-0b2bb19e9c.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "DQTP rolled back by two is BORN.": {
+    "src": "./voices/thorne/narrator-cdad6d8a53.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Biology is the second birth. You take B. The year on the page is not the count.": {
+    "src": "./voices/thorne/narrator-e5656b0e14.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The clipboard by the door still has the inventory.": {
+    "src": "./voices/thorne/narrator-7071af1dae.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Read the clipboard at the front of the lab.": {
+    "src": "./voices/thorne/narrator-35dafd023e.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The clipboard gives you B.": {
+    "src": "./voices/thorne/narrator-130f82cb78.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "A sine. The honest trace. The membrane ahead unlocks.": {
+    "src": "./voices/thorne/narrator-e521fc4270.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The scope cycles. Square and noise are the wrong traces.": {
+    "src": "./voices/thorne/narrator-06e96292ab.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Use the scope until it reads sine.": {
+    "src": "./voices/thorne/narrator-7e705d2bd8.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Set the scope to sine. The door opens.": {
+    "src": "./voices/thorne/narrator-fa572038f9.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Noise. The membrane does not care for noise.": {
+    "src": "./voices/thorne/narrator-d946227b2d.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "scope"
+  },
+  "A square trace. Too neat to be the honest one.": {
+    "src": "./voices/thorne/narrator-712a1b1224.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "scope"
+  },
+  "A sine. The honest trace. The membrane ahead answers.": {
+    "src": "./voices/thorne/narrator-c97cc6a830.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "scope"
+  },
+  "In the beam, the chamber reads N. You take N.": {
+    "src": "./voices/thorne/narrator-fe0244f9a1.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The chamber wall is blank without the beam.": {
+    "src": "./voices/thorne/narrator-e411b47e80.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "dark"
+  },
+  "The basement repeats if the beam is off. Past it, a letter needs the same light.": {
+    "src": "./voices/thorne/narrator-bcd42d9f05.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Lantern on, cross the hall, then use the east chamber.": {
+    "src": "./voices/thorne/narrator-d56cd68650.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Lantern on at the chamber. The letter is N.": {
+    "src": "./voices/thorne/narrator-10d8b7418e.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Along the trefoil, the paint hides O. You take O.": {
+    "src": "./voices/thorne/narrator-08d2de63bd.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The warning mark reads only if you look west along the paint.": {
+    "src": "./voices/thorne/narrator-65f368033e.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "smear"
+  },
+  "The west wall of the lower lab is a warning mark. Look along the paint.": {
+    "src": "./voices/thorne/narrator-5770ea3655.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Stand at the trefoil and face west, then use it.": {
+    "src": "./voices/thorne/narrator-cebcf496a5.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Face west at the trefoil. The letter is O.": {
+    "src": "./voices/thorne/narrator-d75eb98f63.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The shell was born twice. The last letter on the glass is R. You take R.": {
+    "src": "./voices/thorne/narrator-baa5cfa380.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "Past the beam, the shell itself is labeled.": {
+    "src": "./voices/thorne/narrator-a7aac4bceb.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Read the photon shell in the lower lab.": {
+    "src": "./voices/thorne/narrator-08d519c0e8.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The shell gives you R.": {
+    "src": "./voices/thorne/narrator-b0ebf44d18.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "January 15, 1982. The argon laser arrived damaged. The sine is the honest trace. Square and noise lie. The vacuum door is only the first birth.": {
+    "src": "./voices/thorne/narrator-b635c7e3a9.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "sign"
+  },
+  "Carved on the bench: DQTP. The shell was born twice. Roll every letter back by the births. Not by the year 1982.": {
+    "src": "./voices/thorne/narrator-476450ef1c.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "sign"
+  },
+  "The vacuum door is the first birth. It returns you. The second birth is not this door.": {
+    "src": "./voices/thorne/narrator-ae540d1ae5.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "portal"
+  },
+  "The beam is on. The hall is true.": {
+    "src": "./voices/thorne/narrator-471e51acdd.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "portal"
+  },
+  "In the dark the basement repeats. The beam has to be on.": {
+    "src": "./voices/thorne/narrator-38d5d13bd4.mp3",
+    "speaker": "narrator",
+    "world": "thorne",
+    "voice": "bm_fable",
+    "kind": "portal"
+  },
+  "Find four tagged letters, then the gate. Turn at the seed. The garden door is what grew, not the way out.": {
+    "src": "./voices/seeders/narrator-db55703e8d.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "intro"
+  },
+  "The seed is still a seed. What grew can wait in the garden.": {
+    "src": "./voices/seeders/narrator-1b79b96818.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "win"
+  },
+  "Four and twelve are counts, not the word. The clock names the order: hull, circuit, vein, edge.": {
+    "src": "./voices/seeders/narrator-b68d10457f.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "wrong"
+  },
+  "You're close. Use what is planted here.": {
+    "src": "./voices/seeders/narrator-6a6a6f0df7.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "near"
+  },
+  "Four tagged letters. The clock by the gate, from the top going clockwise, is the order.": {
+    "src": "./voices/seeders/narrator-ed8ab969ba.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "closing"
+  },
+  "The gate is a clock. Your letters are already tagged with where you found them.": {
+    "src": "./voices/seeders/narrator-b2bf411886.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "From the top, clockwise: hull, circuit, vein, edge.": {
+    "src": "./voices/seeders/narrator-8e3aaa16a9.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Hull S, circuit E, vein E, edge D. The word is SEED.": {
+    "src": "./voices/seeders/narrator-edd93029bd.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The hull stamp is S. You take S, tagged Hull.": {
+    "src": "./voices/seeders/narrator-18529ae52a.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The ship you arrived in still has a letter on the hull.": {
+    "src": "./voices/seeders/narrator-19ebee4758.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Read the hull plate in the landing bay.": {
+    "src": "./voices/seeders/narrator-7ed5909aab.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The hull plate gives you S, tagged Hull.": {
+    "src": "./voices/seeders/narrator-2e312793b8.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "You turn at the seed. The vein in it is E, tagged Vein. The far arch stops folding.": {
+    "src": "./voices/seeders/narrator-29d78b9f35.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The corridor folds if you walk the arch before the seed.": {
+    "src": "./voices/seeders/narrator-74e7a5ab34.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Use the crystal in the long corridor.": {
+    "src": "./voices/seeders/narrator-df3ef51aed.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The seed gives you E, tagged Vein, and the arch lets you through.": {
+    "src": "./voices/seeders/narrator-f735662221.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The lit circuit is E. You take E, tagged Circuit.": {
+    "src": "./voices/seeders/narrator-1f45bd54bb.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The circuitry is dark glass until the lantern is on it.": {
+    "src": "./voices/seeders/narrator-12999c92dd.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "dark"
+  },
+  "After the seed lets you through, a letter is still dark.": {
+    "src": "./voices/seeders/narrator-93fd844e56.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "In the room past the arch, lantern on, use the circuit.": {
+    "src": "./voices/seeders/narrator-0e94bad964.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The circuit gives you E, tagged Circuit.": {
+    "src": "./voices/seeders/narrator-346a540709.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Along the facet, the cut is D. You take D, tagged Edge.": {
+    "src": "./voices/seeders/narrator-bc8c03cadc.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The edge-cut shows only if you look west, along the facet.": {
+    "src": "./voices/seeders/narrator-fa26718d4c.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "smear"
+  },
+  "The west facet of the bay is cut. Look along it.": {
+    "src": "./voices/seeders/narrator-ead35979d8.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Stand at the west facet and face west, then use it.": {
+    "src": "./voices/seeders/narrator-8406d7d068.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Face west at the facet. The letter is D, tagged Edge.": {
+    "src": "./voices/seeders/narrator-be688bd719.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Four points of view. Twelve endings. One crystal seed. The counts are not the gate. The garden door is the wrong way out.": {
+    "src": "./voices/seeders/narrator-996cce4ef1.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "sign"
+  },
+  "A clock with no numbers. From the top, going clockwise: Hull, Circuit, Vein, Edge. Your letters are already tagged. Four and twelve are not hands on this clock.": {
+    "src": "./voices/seeders/narrator-cf18fb16bc.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "sign"
+  },
+  "The garden is what grew. It is not the way out. You are at the hull again.": {
+    "src": "./voices/seeders/narrator-a0e5148ad1.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "portal"
+  },
+  "The arch folds you back. Turn at the seed before you take it.": {
+    "src": "./voices/seeders/narrator-aeefe531b8.mp3",
+    "speaker": "narrator",
+    "world": "seeders",
+    "voice": "bm_fable",
+    "kind": "portal"
+  },
+  "Find four letters in the hive, then the gate. You are the Ninth. The other counts on the wall are bait.": {
+    "src": "./voices/envoy/narrator-fcde3cc625.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "intro"
+  },
+  "The envoy keeps its number. The hive has the word it already was.": {
+    "src": "./voices/envoy/narrator-d30b22d1b1.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "win"
+  },
+  "Fourteen, one, and ten billion are bait. Roll the carving back by nine.": {
+    "src": "./voices/envoy/narrator-1ce0743985.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "wrong"
+  },
+  "You're close. Use what the glass is willing to show.": {
+    "src": "./voices/envoy/narrator-0254ee730c.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "near"
+  },
+  "Four letters. Step the carving back by the envoy's own number. Nine.": {
+    "src": "./voices/envoy/narrator-766c45b9b2.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "closing"
+  },
+  "The carving has been shifted by the envoy's number. The other counts are bait.": {
+    "src": "./voices/envoy/narrator-3818b24d31.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "You are the Ninth. Roll QREN back by nine. Letters that pass A come back from Z.": {
+    "src": "./voices/envoy/narrator-595884d204.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "QREN rolled back by nine is HIVE.": {
+    "src": "./voices/envoy/narrator-68fb02c38c.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Stripped, claimed, or left alone. You are the hive. You take H.": {
+    "src": "./voices/envoy/narrator-10c6f6f913.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The bay wall lists fates for worlds. You are not one of those three.": {
+    "src": "./voices/envoy/narrator-ba420c68f0.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Read the fate wall in the bay.": {
+    "src": "./voices/envoy/narrator-c0fba5ee36.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The fate wall gives you H.": {
+    "src": "./voices/envoy/narrator-68aa93d880.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "In the lantern, a shard reads E. You take E.": {
+    "src": "./voices/envoy/narrator-2be339e4dd.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The black glass stays a mirror until the lantern is on it.": {
+    "src": "./voices/envoy/narrator-2a7340c3fa.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "dark"
+  },
+  "The jet carries light. Past it, the glass still wants a lamp.": {
+    "src": "./voices/envoy/narrator-3990eb46c7.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Cross the jet dark, then lantern on at the east glass.": {
+    "src": "./voices/envoy/narrator-f1486e5ee4.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Lamp out across the jet, lamp on at the glass. The letter is E.": {
+    "src": "./voices/envoy/narrator-9d0a900652.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Along the edge, the shard says I. You take I.": {
+    "src": "./voices/envoy/narrator-63063fe764.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "The shard reads only if you look west along the edge.": {
+    "src": "./voices/envoy/narrator-8c2c45db63.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "smear"
+  },
+  "The west shard is edged with a letter. Look along it.": {
+    "src": "./voices/envoy/narrator-a6e5610c40.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Stand at the west shard and face west, then use it.": {
+    "src": "./voices/envoy/narrator-c79624001f.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Face west at the shard. The letter is I.": {
+    "src": "./voices/envoy/narrator-39e0b600f2.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The lens bends. The door to the last room opens.": {
+    "src": "./voices/envoy/narrator-b99dd2b433.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "There is a lens in the gallery. It bends the hall.": {
+    "src": "./voices/envoy/narrator-accd9f07a2.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Use the lens in the west of the gallery.": {
+    "src": "./voices/envoy/narrator-eee6c144b9.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The lens opens the last room. The letter is past it.": {
+    "src": "./voices/envoy/narrator-1668af6e07.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The mandate is cut with a V. You take V. That is the set.": {
+    "src": "./voices/envoy/narrator-9e229bd838.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "pickup"
+  },
+  "Past the lens, the envoy's orders are carved.": {
+    "src": "./voices/envoy/narrator-7f6600af2f.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Open the lens, then read the mandate.": {
+    "src": "./voices/envoy/narrator-974bf7438d.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The mandate gives you V.": {
+    "src": "./voices/envoy/narrator-4f1c5004b4.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "One mind. Ten billion shards. Fourteen endings. You are the Ninth. The jet carries anyone who shines. Cross it dark. The conquest door is an ending, not a way through.": {
+    "src": "./voices/envoy/narrator-958ce9a73e.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "sign"
+  },
+  "Carved in the glass: QREN. Step every letter back by the envoy's own number. Not by fourteen. Not by one. Not by ten billion.": {
+    "src": "./voices/envoy/narrator-bea02d331c.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "sign"
+  },
+  "Total conquest is an ending. That door brought you back.": {
+    "src": "./voices/envoy/narrator-b3712f1f9c.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "portal"
+  },
+  "The jet carries anyone who shines. Cross it dark.": {
+    "src": "./voices/envoy/narrator-957bfe4376.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "portal"
+  },
+  "You cross the jet dark. It does not take you.": {
+    "src": "./voices/envoy/narrator-b9d5a07f14.mp3",
+    "speaker": "narrator",
+    "world": "envoy",
+    "voice": "bm_fable",
+    "kind": "portal"
+  },
+  "Eight brands are already in the page. Read them in the plaque's order, roll them back the way the trail did, and say that word at the gate.": {
+    "src": "./voices/meta/narrator-f15f4e2fb3.mp3",
+    "speaker": "narrator",
+    "world": "meta",
+    "voice": "bm_fable",
+    "kind": "intro"
+  },
+  "The pages are back in the book. Color returns to the signal. We return you now to your regular program.": {
+    "src": "./voices/meta/narrator-84c6e422cf.mp3",
+    "speaker": "narrator",
+    "world": "meta",
+    "voice": "bm_fable",
+    "kind": "win"
+  },
+  "Not that word. Plaque order, then roll each brand back by the one axle Tom counted.": {
+    "src": "./voices/meta/narrator-ee67450a1c.mp3",
+    "speaker": "narrator",
+    "world": "meta",
+    "voice": "bm_fable",
+    "kind": "wrong"
+  },
+  "The sheet is here. Light it before you read.": {
+    "src": "./voices/meta/narrator-d184bb57d5.mp3",
+    "speaker": "narrator",
+    "world": "meta",
+    "voice": "bm_fable",
+    "kind": "near"
+  },
+  "The sheet has the count and the blank. The plaque has the order.": {
+    "src": "./voices/meta/narrator-9eeaf081d1.mp3",
+    "speaker": "narrator",
+    "world": "meta",
+    "voice": "bm_fable",
+    "kind": "closing"
+  },
+  "The brands are a word you have already seen printed, once you undo a shift.": {
+    "src": "./voices/meta/narrator-393d6fac50.mp3",
+    "speaker": "narrator",
+    "world": "meta",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "Plaque order, top to bottom. Roll each brand back by the one axle Tom counted. The sheet says the count.": {
+    "src": "./voices/meta/narrator-9689f3f67b.mp3",
+    "speaker": "narrator",
+    "world": "meta",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "The brands rolled back in plaque order spell HANDBILL.": {
+    "src": "./voices/meta/narrator-ac1b7cea57.mp3",
+    "speaker": "narrator",
+    "world": "meta",
+    "voice": "bm_fable",
+    "kind": "hint"
+  },
+  "1. The California Trail 2. Pine Knot 3. Old Man on the Mountain 4. The Rusty Stack 5. The First Pulse 6. Thorne's Lab 7. The Seeders 8. The Ninth Envoy Read the brands in this order. Then roll them back the way the trail rolled a carving.": {
+    "src": "./voices/meta/narrator-0326d9b1e7.mp3",
+    "speaker": "narrator",
+    "world": "meta",
+    "voice": "bm_fable",
+    "kind": "sign"
+  },
+  "Only one axle looks ready to snap. Roll every brand back by that count. Tom, later: Well, we did put out the ________. Eight letters. Two of them are the same. The blank is the word Jang kept nailing up.": {
+    "src": "./voices/meta/narrator-1586dcea99.mp3",
+    "speaker": "narrator",
+    "world": "meta",
+    "voice": "bm_fable",
+    "kind": "sign"
+  },
   "You walked in during a true story. We can pencil you in. I am Jang.": {
-    "src": "./voices/trail/jang-e25af49eef.mp3?v=2",
+    "src": "./voices/trail/jang-6223222d6f.mp3",
     "speaker": "jang",
     "world": "trail",
     "voice": "recorded",
     "kind": "cast"
   },
-  "The key is not the punchline. The rope is.": {
-    "src": "./voices/trail/jang-c416cb5b32.mp3?v=2",
-    "speaker": "jang",
-    "world": "trail",
-    "voice": "recorded",
-    "kind": "cast"
-  },
-  "The picture that promises California in the first breath is the false door.": {
-    "src": "./voices/trail/jang-899734ba1a.mp3?v=2",
+  "Four letters, then the gate. The rope is the one that opens a wall.": {
+    "src": "./voices/trail/jang-ae97128549.mp3",
     "speaker": "jang",
     "world": "trail",
     "voice": "am_puck+am_adam",
     "kind": "cast"
   },
+  "The key is not the punchline. The rope is.": {
+    "src": "./voices/trail/jang-5c5a534bef.mp3",
+    "speaker": "jang",
+    "world": "trail",
+    "voice": "recorded",
+    "kind": "cast"
+  },
+  "The next mark is north of here. Leave the loud promises.": {
+    "src": "./voices/any/jang-2f4e6c24bf.mp3",
+    "speaker": "jang",
+    "world": "any",
+    "voice": "am_puck+am_adam",
+    "kind": "point"
+  },
+  "The gate is north of here. Bring every letter you find.": {
+    "src": "./voices/any/jang-2d142c196c.mp3",
+    "speaker": "jang",
+    "world": "any",
+    "voice": "am_puck+am_adam",
+    "kind": "point"
+  },
+  "The next mark is south of here. Leave the loud promises.": {
+    "src": "./voices/any/jang-cbe93f694f.mp3",
+    "speaker": "jang",
+    "world": "any",
+    "voice": "am_puck+am_adam",
+    "kind": "point"
+  },
+  "The gate is south of here. Bring every letter you find.": {
+    "src": "./voices/any/jang-e9432a7d35.mp3",
+    "speaker": "jang",
+    "world": "any",
+    "voice": "am_puck+am_adam",
+    "kind": "point"
+  },
+  "The next mark is east of here. Leave the loud promises.": {
+    "src": "./voices/any/jang-de5cd94c4d.mp3",
+    "speaker": "jang",
+    "world": "any",
+    "voice": "am_puck+am_adam",
+    "kind": "point"
+  },
+  "The gate is east of here. Bring every letter you find.": {
+    "src": "./voices/any/jang-7425a985d6.mp3",
+    "speaker": "jang",
+    "world": "any",
+    "voice": "am_puck+am_adam",
+    "kind": "point"
+  },
+  "The next mark is west of here. Leave the loud promises.": {
+    "src": "./voices/any/jang-0acc8a1f45.mp3",
+    "speaker": "jang",
+    "world": "any",
+    "voice": "am_puck+am_adam",
+    "kind": "point"
+  },
+  "The gate is west of here. Bring every letter you find.": {
+    "src": "./voices/any/jang-38f2d5b1de.mp3",
+    "speaker": "jang",
+    "world": "any",
+    "voice": "am_puck+am_adam",
+    "kind": "point"
+  },
   "Tom. My neck itched, then you arrived. That was the audition.": {
-    "src": "./voices/trail/tom-bd49e8200f.mp3?v=2",
+    "src": "./voices/trail/tom-543762d9c9.mp3",
     "speaker": "tom",
     "world": "trail",
     "voice": "recorded",
     "kind": "cast"
   },
-  "Four wheels, a canvas top, and only one axle looks ready to snap. I counted.": {
-    "src": "./voices/trail/tom-95f6075232.mp3?v=2",
+  "One axle is ready to snap. That count is for the carving, not the four wheels.": {
+    "src": "./voices/trail/tom-d485778745.mp3",
     "speaker": "tom",
     "world": "trail",
     "voice": "am_liam+am_michael",
     "kind": "cast"
   },
   "Neck's itching. That usually means the map was a suggestion.": {
-    "src": "./voices/trail/tom-68d672db40.mp3?v=2",
+    "src": "./voices/trail/tom-21a90a165d.mp3",
     "speaker": "tom",
     "world": "trail",
     "voice": "recorded",
     "kind": "cast"
   },
-  "Tom looked it over. Four wheels, a canvas top, and only one axle looks ready to snap. That count is not a decoration. The gate's carving rolls back by it.": {
-    "src": "./voices/trail/narrator-8e56987a27.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "sign"
+  "The next mark is north of here. Go slow. I counted.": {
+    "src": "./voices/any/tom-ffd9209fe1.mp3",
+    "speaker": "tom",
+    "world": "any",
+    "voice": "am_liam+am_michael",
+    "kind": "point"
   },
-  "Experienced navigators. Reasonable rates. Guaranteed safe passage to California or your money back. Jang printed these. The picture that promises California in the first breath is the false door.": {
-    "src": "./voices/trail/narrator-9faa97f8c6.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "sign"
+  "The gate is north of here. The gate can wait until the letters are in your hands.": {
+    "src": "./voices/any/tom-27c6d41a72.mp3",
+    "speaker": "tom",
+    "world": "any",
+    "voice": "am_liam+am_michael",
+    "kind": "point"
   },
-  "Carved by the gate: SPQF. Roll every letter back by the axles Tom said were ready to snap. Not by the four wheels.": {
-    "src": "./voices/trail/narrator-0aba5436a6.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "sign"
+  "The next mark is south of here. Go slow. I counted.": {
+    "src": "./voices/any/tom-cceea363ad.mp3",
+    "speaker": "tom",
+    "world": "any",
+    "voice": "am_liam+am_michael",
+    "kind": "point"
   },
-  "The rope takes the letter R, and the canyon wall shifts.": {
-    "src": "./voices/trail/narrator-84fbd04ebd.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "clue"
+  "The gate is south of here. The gate can wait until the letters are in your hands.": {
+    "src": "./voices/any/tom-1b6318eb86.mp3",
+    "speaker": "tom",
+    "world": "any",
+    "voice": "am_liam+am_michael",
+    "kind": "point"
   },
-  "Jang already said it. The key is not the punchline.": {
-    "src": "./voices/trail/narrator-53f4a74572.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "hint"
+  "The next mark is east of here. Go slow. I counted.": {
+    "src": "./voices/any/tom-67fbec40de.mp3",
+    "speaker": "tom",
+    "world": "any",
+    "voice": "am_liam+am_michael",
+    "kind": "point"
   },
-  "Use the rope in the west narrows. A wall is waiting to move.": {
-    "src": "./voices/trail/narrator-44ca2ded14.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "hint"
+  "The gate is east of here. The gate can wait until the letters are in your hands.": {
+    "src": "./voices/any/tom-e329b9bbd5.mp3",
+    "speaker": "tom",
+    "world": "any",
+    "voice": "am_liam+am_michael",
+    "kind": "point"
   },
-  "Use the rope. It gives you R and opens the way east.": {
-    "src": "./voices/trail/narrator-4ed52f0908.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "hint"
+  "The next mark is west of here. Go slow. I counted.": {
+    "src": "./voices/any/tom-92cc85da1d.mp3",
+    "speaker": "tom",
+    "world": "any",
+    "voice": "am_liam+am_michael",
+    "kind": "point"
   },
-  "You already hold R.": {
-    "src": "./voices/trail/narrator-3274498372.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "Guaranteed safe passage. The last letter of PASSAGE is E. You take E.": {
-    "src": "./voices/trail/narrator-71b54fa346.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The guides promised something. The last letter of that promise is still on the boards.": {
-    "src": "./voices/trail/narrator-547d4b57c4.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "In the yard, read the promise of safe passage. Take its last letter.": {
-    "src": "./voices/trail/narrator-a9fb36d167.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "PASSAGE ends in E. The plaque in the yard gives you E.": {
-    "src": "./voices/trail/narrator-d621731d76.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "You already hold E.": {
-    "src": "./voices/trail/narrator-6a78d076a7.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The round ox brand is O. You take O.": {
-    "src": "./voices/trail/narrator-1f17ee93c8.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The ox brand is there, and the dark keeps it.": {
-    "src": "./voices/trail/narrator-c54c9e0540.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "Something round was branded past the rope. The dark is holding it.": {
-    "src": "./voices/trail/narrator-c94e1ad541.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Light the lantern in the east stall and use the brand.": {
-    "src": "./voices/trail/narrator-c616e8855f.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Lantern on, use the ox brand. The letter is O.": {
-    "src": "./voices/trail/narrator-6ee1b81ab2.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "You already hold O.": {
-    "src": "./voices/trail/narrator-04edf6f9aa.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "Along the grain, the pendulum left a P. You take P.": {
-    "src": "./voices/trail/narrator-10dcf5e606.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The grain is a smear until you look west, along the boards.": {
-    "src": "./voices/trail/narrator-18ce5d2887.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "A letter hides in the grain. Face the way the boards run.": {
-    "src": "./voices/trail/narrator-21d53cf066.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Stand in the west stall and face west, then use the boards.": {
-    "src": "./voices/trail/narrator-50a2ee1872.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Face west at the boards. The letter is P.": {
-    "src": "./voices/trail/narrator-7e01a951cb.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "You already hold P.": {
-    "src": "./voices/trail/narrator-a19d29f238.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The carving by the gate is not the word. Something in the yard tells you how far to roll it.": {
-    "src": "./voices/trail/narrator-5dc3a5e1a5.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Tom counted the axles ready to snap. Roll every letter of SPQF back by that count.": {
-    "src": "./voices/trail/narrator-dbba052f2a.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "One axle. SPQF rolled back by one is ROPE.": {
-    "src": "./voices/trail/narrator-d57bb268cd.mp3?v=2",
-    "speaker": "narrator",
-    "world": "trail",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "The Pine Knot Gazette is nailed to a post. Jenkins has been walking since breakfast. The napkin is not a map to gold.": {
-    "src": "./voices/pine/narrator-7e25793a11.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "intro"
+  "The gate is west of here. The gate can wait until the letters are in your hands.": {
+    "src": "./voices/any/tom-24227cfcba.mp3",
+    "speaker": "tom",
+    "world": "any",
+    "voice": "am_liam+am_michael",
+    "kind": "point"
   },
   "Younger, and still Jang. The napkin is not a map to gold.": {
-    "src": "./voices/pine/jang-2a5a64a8cb.mp3?v=2",
+    "src": "./voices/pine/jang-b222e124aa.mp3",
     "speaker": "jang",
     "world": "pine",
     "voice": "am_puck+am_adam",
     "kind": "cast"
   },
-  "Two boys had the napkin. The X was ketchup.": {
-    "src": "./voices/pine/jang-b026b401db.mp3?v=2",
+  "Four letters, then the gate. The X on that napkin was ketchup.": {
+    "src": "./voices/pine/jang-4de4cb9d0b.mp3",
     "speaker": "jang",
     "world": "pine",
     "voice": "am_puck+am_adam",
     "kind": "cast"
   },
   "Jenkins has been walking since breakfast. The napkin is what stops him.": {
-    "src": "./voices/pine/jang-4e250f5a73.mp3?v=2",
+    "src": "./voices/pine/jang-e3fcbcb142.mp3",
     "speaker": "jang",
     "world": "pine",
     "voice": "am_puck+am_adam",
     "kind": "cast"
   },
   "Tom, before the trail got longer. The groundhog has the dirt piled in the square.": {
-    "src": "./voices/pine/tom-290a9eac24.mp3?v=2",
+    "src": "./voices/pine/tom-70d9aa8b26.mp3",
     "speaker": "tom",
     "world": "pine",
     "voice": "am_liam+am_michael",
     "kind": "cast"
   },
   "The hole is the door. I did not dig it. I respect the professional.": {
-    "src": "./voices/pine/tom-54157e92b8.mp3?v=2",
+    "src": "./voices/pine/tom-2fce2447a4.mp3",
     "speaker": "tom",
     "world": "pine",
     "voice": "am_liam+am_michael",
     "kind": "cast"
   },
-  "The checkerboard only reads if you look along the squares.": {
-    "src": "./voices/pine/tom-f8e2b1b4b6.mp3?v=2",
+  "The checkerboard only reads if you look west along the squares.": {
+    "src": "./voices/pine/tom-28028ae9b0.mp3",
     "speaker": "tom",
     "world": "pine",
     "voice": "am_liam+am_michael",
     "kind": "cast"
-  },
-  "Jenkins knelt on Miller's Ridge to propose to a gal named Opal, when a groundhog popped out. Opal said yes, eventually. Two boys had his napkin. It was directions to Over Yonder barbecue. The X was ketchup. Nobody cooks the ribs. Hugh will walk you out if you ask who Nobody is.": {
-    "src": "./voices/pine/narrator-051078a312.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "sign"
-  },
-  "A red checker turned up in the pecan pie. It is still a checker. It is not the gate.": {
-    "src": "./voices/pine/narrator-55e384bd1a.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "sign"
-  },
-  "Over Yonder, the X was only ketchup. Precious the possum left without asking. A gal on the ridge was named in the paper. Last in GOLD is the letter the leaves keep. Read the first letter of each line, from the top.": {
-    "src": "./voices/pine/narrator-d531492c9b.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "sign"
-  },
-  "GOLD is nailed under the leaves. The last letter is L. You take L.": {
-    "src": "./voices/pine/narrator-2cc9118071.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The weather note is also a letter. Look on the main street.": {
-    "src": "./voices/pine/narrator-06b03dc105.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Read the gold-leaf sign on the street. Take the last letter of GOLD.": {
-    "src": "./voices/pine/narrator-d79f9c01b7.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "The street sign gives you L.": {
-    "src": "./voices/pine/narrator-5173a97d41.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "You already hold L.": {
-    "src": "./voices/pine/narrator-54f08066dd.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "Under the lantern the napkin starts with O. The X was ketchup. You take O. Circles are done with you.": {
-    "src": "./voices/pine/narrator-bad03c6403.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The napkin is grease and ketchup until the lantern is on it.": {
-    "src": "./voices/pine/narrator-ca8d9e9d79.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "Over Yonder's napkin is in a dark shed. It is not a treasure map.": {
-    "src": "./voices/pine/narrator-b35f3d8b91.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Light the lantern in the east shed and use the napkin.": {
-    "src": "./voices/pine/narrator-0d36b77015.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Lantern on in the shed. The letter is O, and the walking-in-circles stops.": {
-    "src": "./voices/pine/narrator-d07b29cb09.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "The groundhog gives up the dirt. A wall in the west yard drops open.": {
-    "src": "./voices/pine/narrator-8d5df91e8a.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "Something in the square is professional about dirt.": {
-    "src": "./voices/pine/narrator-2d8943eca2.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Use the groundhog hole in the square. It shifts a wall.": {
-    "src": "./voices/pine/narrator-b74a8d4a01.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Use the hole at the south edge of the square. The west yard opens.": {
-    "src": "./voices/pine/narrator-1a1a87f843.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Precious the possum. Twenty dollars. The poster starts with P. You take P.": {
-    "src": "./voices/pine/narrator-46942bbcee.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "Mrs. Whittaker's notice is behind the dirt the groundhog was holding.": {
-    "src": "./voices/pine/narrator-09e62af506.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Open the hole, then read the poster in the west yard.": {
-    "src": "./voices/pine/narrator-fbd1da61d7.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "The reward poster gives you P.": {
-    "src": "./voices/pine/narrator-21e1539f60.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Along the board, a red square keeps an A. You take A. The pie can keep the checker.": {
-    "src": "./voices/pine/narrator-6089345365.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The checkerboard is a blur until you look west along the squares.": {
-    "src": "./voices/pine/narrator-5e728a33ab.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The board in the south alley has a letter in the grain of the squares.": {
-    "src": "./voices/pine/narrator-1463d53187.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Stand at the checkerboard and face west, then use it.": {
-    "src": "./voices/pine/narrator-8be072b81a.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Face west at the checkerboard. The letter is A.": {
-    "src": "./voices/pine/narrator-34156e5734.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "You already hold A.": {
-    "src": "./voices/pine/narrator-c1bb0e55cc.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The verse by the gate is the order. Read it the way a headline is read.": {
-    "src": "./voices/pine/narrator-b54d7707cc.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Take the first letter of each of the four lines, top to bottom.": {
-    "src": "./voices/pine/narrator-a4e636d4ec.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "The lines start O, P, A, L. The word is OPAL.": {
-    "src": "./voices/pine/narrator-f978f91f71.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pine",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "The wind cuts across the high ridge. A hunter kept this fire. The mountain is not empty.": {
-    "src": "./voices/mountain/narrator-cefa920e5c.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "intro"
   },
   "H. Wade kept this fire. Feed it. The pass below camp stays shut until you do.": {
-    "src": "./voices/mountain/wade-8fc36758f8.mp3?v=2",
+    "src": "./voices/mountain/wade-c69ee42c97.mp3",
     "speaker": "wade",
     "world": "mountain",
     "voice": "am_echo",
     "kind": "cast"
   },
-  "The lit cabin is not the way down.": {
-    "src": "./voices/mountain/wade-3962aed6b0.mp3?v=2",
+  "Four letters, then the gate. The lit cabin is not the way down.": {
+    "src": "./voices/mountain/wade-be926d79c6.mp3",
     "speaker": "wade",
     "world": "mountain",
     "voice": "am_echo",
     "kind": "cast"
   },
-  "The camera counted the nights. The gate rolls back by that count, not by anything else in camp.": {
-    "src": "./voices/mountain/wade-7b40e571d9.mp3?v=2",
+  "The camera counted seven nights. The gate rolls back by that count.": {
+    "src": "./voices/mountain/wade-0bbb3913da.mp3",
     "speaker": "wade",
     "world": "mountain",
     "voice": "am_echo",
     "kind": "cast"
+  },
+  "The next mark is north of here. Feed the fire before you trust a lit cabin.": {
+    "src": "./voices/any/wade-aec74c1c00.mp3",
+    "speaker": "wade",
+    "world": "any",
+    "voice": "am_echo",
+    "kind": "point"
+  },
+  "The gate is north of here. The camera already wrote the count.": {
+    "src": "./voices/any/wade-3bb89a0b54.mp3",
+    "speaker": "wade",
+    "world": "any",
+    "voice": "am_echo",
+    "kind": "point"
+  },
+  "The next mark is south of here. Feed the fire before you trust a lit cabin.": {
+    "src": "./voices/any/wade-117c6a4562.mp3",
+    "speaker": "wade",
+    "world": "any",
+    "voice": "am_echo",
+    "kind": "point"
+  },
+  "The gate is south of here. The camera already wrote the count.": {
+    "src": "./voices/any/wade-ed8c35146c.mp3",
+    "speaker": "wade",
+    "world": "any",
+    "voice": "am_echo",
+    "kind": "point"
+  },
+  "The next mark is east of here. Feed the fire before you trust a lit cabin.": {
+    "src": "./voices/any/wade-677b616945.mp3",
+    "speaker": "wade",
+    "world": "any",
+    "voice": "am_echo",
+    "kind": "point"
+  },
+  "The gate is east of here. The camera already wrote the count.": {
+    "src": "./voices/any/wade-9f3091b5b6.mp3",
+    "speaker": "wade",
+    "world": "any",
+    "voice": "am_echo",
+    "kind": "point"
+  },
+  "The next mark is west of here. Feed the fire before you trust a lit cabin.": {
+    "src": "./voices/any/wade-38e9495918.mp3",
+    "speaker": "wade",
+    "world": "any",
+    "voice": "am_echo",
+    "kind": "point"
+  },
+  "The gate is west of here. The camera already wrote the count.": {
+    "src": "./voices/any/wade-3d4733926b.mp3",
+    "speaker": "wade",
+    "world": "any",
+    "voice": "am_echo",
+    "kind": "point"
   },
   "The mountain is not empty.": {
-    "src": "./voices/mountain/mountain-f2f8604a28.mp3?v=2",
+    "src": "./voices/mountain/mountain-dea45e2bb8.mp3",
     "speaker": "mountain",
     "world": "mountain",
     "voice": "am_fenrir",
     "kind": "cast"
   },
   "In the dark the draw turns you around. Light it before you trust it.": {
-    "src": "./voices/mountain/mountain-4a7cf29395.mp3?v=2",
+    "src": "./voices/mountain/mountain-21e0c3af95.mp3",
     "speaker": "mountain",
     "world": "mountain",
     "voice": "am_fenrir",
     "kind": "cast"
   },
   "The wind still cuts. The fire is the thing that answers.": {
-    "src": "./voices/mountain/mountain-e5524a3a9e.mp3?v=2",
+    "src": "./voices/mountain/mountain-badc96befc.mp3",
     "speaker": "mountain",
     "world": "mountain",
     "voice": "am_fenrir",
     "kind": "cast"
   },
-  "Scratched on the housing: Seven nights. Keep the fire going. The gate rolls back by the nights, not by anything else written in camp.": {
-    "src": "./voices/mountain/narrator-5444cae438.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "sign"
+  "The next mark is north of here. The mountain is not empty.": {
+    "src": "./voices/any/mountain-0ec6afc92d.mp3",
+    "speaker": "mountain",
+    "world": "any",
+    "voice": "am_fenrir",
+    "kind": "point"
   },
-  "H. Wade kept this fire. The wind still cuts. The lit cabin north of camp is not the way down.": {
-    "src": "./voices/mountain/narrator-ec961e7dbe.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "sign"
+  "The gate is north of here. The wind still cuts. The gate is a fire you already fed.": {
+    "src": "./voices/any/mountain-603867b386.mp3",
+    "speaker": "mountain",
+    "world": "any",
+    "voice": "am_fenrir",
+    "kind": "point"
   },
-  "Carved in the cold: MPYL. Roll every letter back by the nights on the camera. If a letter walks off the front of the alphabet, it comes back on from Z.": {
-    "src": "./voices/mountain/narrator-a3859a3b7c.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "sign"
+  "The next mark is south of here. The mountain is not empty.": {
+    "src": "./voices/any/mountain-26dc44769c.mp3",
+    "speaker": "mountain",
+    "world": "any",
+    "voice": "am_fenrir",
+    "kind": "point"
   },
-  "You feed the fire. It gives you F, and the snow wall below camp drops.": {
-    "src": "./voices/mountain/narrator-142052a92b.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "clue"
+  "The gate is south of here. The wind still cuts. The gate is a fire you already fed.": {
+    "src": "./voices/any/mountain-983f1225f6.mp3",
+    "speaker": "mountain",
+    "world": "any",
+    "voice": "am_fenrir",
+    "kind": "point"
   },
-  "The only thing on this ridge that answers is the thing you feed.": {
-    "src": "./voices/mountain/narrator-bcaa1557e4.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "hint"
+  "The next mark is east of here. The mountain is not empty.": {
+    "src": "./voices/any/mountain-185b0b0abc.mp3",
+    "speaker": "mountain",
+    "world": "any",
+    "voice": "am_fenrir",
+    "kind": "point"
   },
-  "Use the campfire. A wall of snow shifts, and a letter stays in the coals.": {
-    "src": "./voices/mountain/narrator-55bd5519bf.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "hint"
+  "The gate is east of here. The wind still cuts. The gate is a fire you already fed.": {
+    "src": "./voices/any/mountain-ab410cf00b.mp3",
+    "speaker": "mountain",
+    "world": "any",
+    "voice": "am_fenrir",
+    "kind": "point"
   },
-  "Use the fire. The letter is F, and the way down opens.": {
-    "src": "./voices/mountain/narrator-777d25b967.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "hint"
+  "The next mark is west of here. The mountain is not empty.": {
+    "src": "./voices/any/mountain-e759bfb040.mp3",
+    "speaker": "mountain",
+    "world": "any",
+    "voice": "am_fenrir",
+    "kind": "point"
   },
-  "You already hold F.": {
-    "src": "./voices/mountain/narrator-a55d7e1064.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "On the canvas, in the lantern, the letter is I. You take I.": {
-    "src": "./voices/mountain/narrator-c52b9bd580.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The tent canvas is just canvas until the lantern crosses it.": {
-    "src": "./voices/mountain/narrator-11ff47701b.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The draw below the fire turns you if you walk it dark. Something past it wants the light.": {
-    "src": "./voices/mountain/narrator-b358dfd252.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Cross the narrow draw with the lantern on. Then use the tent.": {
-    "src": "./voices/mountain/narrator-7ff41efc92.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Lantern on, through the draw, use the tent. The letter is I.": {
-    "src": "./voices/mountain/narrator-a2980e89b9.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "You already hold I.": {
-    "src": "./voices/mountain/narrator-884aa9dfa7.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "Along the bark the cuts make an R. You take R.": {
-    "src": "./voices/mountain/narrator-5611e71364.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The bark reads only if you look west, along the trunk.": {
-    "src": "./voices/mountain/narrator-d74e469029.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "Past the draw, the west spruce is carved. Face along it.": {
-    "src": "./voices/mountain/narrator-e6c295b3c3.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Stand at the west spruce and face west, then use the bark.": {
-    "src": "./voices/mountain/narrator-ead005ac62.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Face west at the spruce. The letter is R.": {
-    "src": "./voices/mountain/narrator-5b13324aa1.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Scratched under the lens: keep it going. The plate is stamped E. You take E.": {
-    "src": "./voices/mountain/narrator-b13b09085a.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "A trail camera sits in the lower camp. It is not only a number.": {
-    "src": "./voices/mountain/narrator-5abc2ac47e.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Read the camera in the lower camp after the draw.": {
-    "src": "./voices/mountain/narrator-d09f56e540.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "The camera plate gives you E.": {
-    "src": "./voices/mountain/narrator-d7a8024298.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "The carving by the gate has been shifted. A note in camp says by how many nights.": {
-    "src": "./voices/mountain/narrator-e13d263a46.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "The camera note says seven nights. Roll MPYL back by seven. The alphabet wraps.": {
-    "src": "./voices/mountain/narrator-5ca0b85ea4.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "MPYL rolled back seven is FIRE.": {
-    "src": "./voices/mountain/narrator-17a5f91cc7.mp3?v=2",
-    "speaker": "narrator",
-    "world": "mountain",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Mira taps a pipe. Don't touch the lever marked don't. If the crate hums, they charge extra. The goats have balloons.": {
-    "src": "./voices/rusty/narrator-70a41cd354.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "intro"
+  "The gate is west of here. The wind still cuts. The gate is a fire you already fed.": {
+    "src": "./voices/any/mountain-0b206023bf.mp3",
+    "speaker": "mountain",
+    "world": "any",
+    "voice": "am_fenrir",
+    "kind": "point"
   },
   "You walked in during a true story. I'm Spacey. She flies. Eventually.": {
-    "src": "./voices/rusty/spacey-9bc06dd2b7.mp3?v=2",
+    "src": "./voices/rusty/spacey-9f1ccc98e9.mp3",
     "speaker": "spacey",
     "world": "rusty",
     "voice": "recorded",
     "kind": "cast"
   },
-  "Goats with balloons. They follow a lamp. Pass them with it out.": {
-    "src": "./voices/rusty/spacey-16a5f574d4.mp3?v=2",
+  "Four letters, then the gate. The goats follow a lamp. Pass them with it out.": {
+    "src": "./voices/rusty/spacey-94d397f6cc.mp3",
     "speaker": "spacey",
     "world": "rusty",
     "voice": "am_onyx",
     "kind": "cast"
   },
   "A crate. If it hums, we charge extra.": {
-    "src": "./voices/rusty/spacey-55e93c848c.mp3?v=2",
+    "src": "./voices/rusty/spacey-fd1f96bcdd.mp3",
     "speaker": "spacey",
     "world": "rusty",
     "voice": "recorded",
     "kind": "cast"
   },
+  "The next mark is north of here. She flies. Eventually.": {
+    "src": "./voices/any/spacey-8137d754fd.mp3",
+    "speaker": "spacey",
+    "world": "any",
+    "voice": "am_onyx",
+    "kind": "point"
+  },
+  "The gate is north of here. Not through a wall. Through the gate, once you have the letters.": {
+    "src": "./voices/any/spacey-8f0f2d6464.mp3",
+    "speaker": "spacey",
+    "world": "any",
+    "voice": "am_onyx",
+    "kind": "point"
+  },
+  "The next mark is south of here. She flies. Eventually.": {
+    "src": "./voices/any/spacey-b43e9b39eb.mp3",
+    "speaker": "spacey",
+    "world": "any",
+    "voice": "am_onyx",
+    "kind": "point"
+  },
+  "The gate is south of here. Not through a wall. Through the gate, once you have the letters.": {
+    "src": "./voices/any/spacey-a10f047eba.mp3",
+    "speaker": "spacey",
+    "world": "any",
+    "voice": "am_onyx",
+    "kind": "point"
+  },
+  "The next mark is east of here. She flies. Eventually.": {
+    "src": "./voices/any/spacey-bbbf34bcca.mp3",
+    "speaker": "spacey",
+    "world": "any",
+    "voice": "am_onyx",
+    "kind": "point"
+  },
+  "The gate is east of here. Not through a wall. Through the gate, once you have the letters.": {
+    "src": "./voices/any/spacey-c119e9f2a7.mp3",
+    "speaker": "spacey",
+    "world": "any",
+    "voice": "am_onyx",
+    "kind": "point"
+  },
+  "The next mark is west of here. She flies. Eventually.": {
+    "src": "./voices/any/spacey-7a3082f37a.mp3",
+    "speaker": "spacey",
+    "world": "any",
+    "voice": "am_onyx",
+    "kind": "point"
+  },
+  "The gate is west of here. Not through a wall. Through the gate, once you have the letters.": {
+    "src": "./voices/any/spacey-152d1e7faa.mp3",
+    "speaker": "spacey",
+    "world": "any",
+    "voice": "am_onyx",
+    "kind": "point"
+  },
   "Mira. If it ticks, I already know. Don't touch the lever marked don't.": {
-    "src": "./voices/rusty/mira-0301acfd8a.mp3?v=2",
+    "src": "./voices/rusty/mira-17ddb3ee90.mp3",
     "speaker": "mira",
     "world": "rusty",
     "voice": "recorded",
     "kind": "cast"
   },
-  "The goats lose you when the lamp is out. Then the lamp goes back on.": {
-    "src": "./voices/rusty/mira-560c1bb2b4.mp3?v=2",
+  "The goats lose you when the lamp is out. Then the lamp goes back on for the grate.": {
+    "src": "./voices/rusty/mira-9aeab2c9d9.mp3",
     "speaker": "mira",
     "world": "rusty",
     "voice": "af_bella+af_heart",
     "kind": "cast"
   },
   "Seven feet. One monocle. The feet are not the count this ship wants.": {
-    "src": "./voices/rusty/mira-a75accc5f5.mp3?v=2",
+    "src": "./voices/rusty/mira-0752dc9e02.mp3",
     "speaker": "mira",
     "world": "rusty",
     "voice": "af_bella+af_heart",
     "kind": "cast"
   },
-  "Seven feet. One monocle. No face. The feet are not the count this ship wants. The goats are down the hall: they follow a lamp. Pass them with it out.": {
-    "src": "./voices/rusty/narrator-80d9a16583.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "sign"
+  "The next mark is north of here. If it ticks, I already know.": {
+    "src": "./voices/any/mira-670e48184b.mp3",
+    "speaker": "mira",
+    "world": "any",
+    "voice": "af_bella+af_heart",
+    "kind": "point"
   },
-  "The stack stutters. Keep the 1st, 3rd, 5th, and 7th letters. Let the rest rust.": {
-    "src": "./voices/rusty/narrator-739994f941.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "sign"
+  "The gate is north of here. Leave the lever marked don't alone.": {
+    "src": "./voices/any/mira-b2e0f962e6.mp3",
+    "speaker": "mira",
+    "world": "any",
+    "voice": "af_bella+af_heart",
+    "kind": "point"
   },
-  "The plate is the first letter of her warning. You take D. The lever marked don't is still a bad idea.": {
-    "src": "./voices/rusty/narrator-4c58c9488b.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "clue"
+  "The next mark is south of here. If it ticks, I already know.": {
+    "src": "./voices/any/mira-d68a4b2205.mp3",
+    "speaker": "mira",
+    "world": "any",
+    "voice": "af_bella+af_heart",
+    "kind": "point"
   },
-  "The hold has a plate and a lever. Only one of them is worth using.": {
-    "src": "./voices/rusty/narrator-751fb87f92.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "hint"
+  "The gate is south of here. Leave the lever marked don't alone.": {
+    "src": "./voices/any/mira-1184255237.mp3",
+    "speaker": "mira",
+    "world": "any",
+    "voice": "af_bella+af_heart",
+    "kind": "point"
   },
-  "Read the brass plate in the hold. Leave the lever marked don't alone.": {
-    "src": "./voices/rusty/narrator-3d78305fc1.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "hint"
+  "The next mark is east of here. If it ticks, I already know.": {
+    "src": "./voices/any/mira-6c4e35ccc0.mp3",
+    "speaker": "mira",
+    "world": "any",
+    "voice": "af_bella+af_heart",
+    "kind": "point"
   },
-  "The plate gives you D. Using the don't-lever throws you back.": {
-    "src": "./voices/rusty/narrator-7b9fb9a6bc.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "hint"
+  "The gate is east of here. Leave the lever marked don't alone.": {
+    "src": "./voices/any/mira-ff5014ce36.mp3",
+    "speaker": "mira",
+    "world": "any",
+    "voice": "af_bella+af_heart",
+    "kind": "point"
   },
-  "You already hold D.": {
-    "src": "./voices/rusty/narrator-f1002af62f.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "clue"
+  "The next mark is west of here. If it ticks, I already know.": {
+    "src": "./voices/any/mira-380c4a1f3e.mp3",
+    "speaker": "mira",
+    "world": "any",
+    "voice": "af_bella+af_heart",
+    "kind": "point"
   },
-  "Mira told you. The lever marked don't dumps you back in the hold.": {
-    "src": "./voices/rusty/narrator-cdf6162efb.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "Leave it.": {
-    "src": "./voices/rusty/narrator-7db9671e2e.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Leave the lever marked don't alone.": {
-    "src": "./voices/rusty/narrator-e2943a832c.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Under the grate, in the light, the letter is T. You take T.": {
-    "src": "./voices/rusty/narrator-6cb85e31d7.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "Under the grate is rust and nothing, until the lantern is back on.": {
-    "src": "./voices/rusty/narrator-662e2d9591.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The goat hall is a test of the lamp. The letter after it is a test of the lamp the other way.": {
-    "src": "./voices/rusty/narrator-52a93c0847.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Walk the goat cell dark, then turn the lantern on and use the grate to the east.": {
-    "src": "./voices/rusty/narrator-fa0ab05581.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Lamp out past the goats, lamp on at the grate. The letter is T.": {
-    "src": "./voices/rusty/narrator-a91f7fa9ba.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "You already hold T.": {
-    "src": "./voices/rusty/narrator-d8e22825f8.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "Down the pipe, the stamp is N. You take N.": {
-    "src": "./voices/rusty/narrator-168bdf0411.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The pipe's stamp shows only if you look west, down its length.": {
-    "src": "./voices/rusty/narrator-a4c26394e2.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The west pipe is stamped. Look along it, not at the end.": {
-    "src": "./voices/rusty/narrator-088bc5e9ad.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "After the goats, stand at the west pipe and face west.": {
-    "src": "./voices/rusty/narrator-88513e61f1.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Face west at the pipe. The letter is N.": {
-    "src": "./voices/rusty/narrator-b73735b6dc.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "You already hold N.": {
-    "src": "./voices/rusty/narrator-d66a9054d9.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The crate hums. Stenciled on it: O. You take O. Mira would charge extra.": {
-    "src": "./voices/rusty/narrator-48564b3ce8.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "Once the goats have lost you, a bulkhead opens onto a crate.": {
-    "src": "./voices/rusty/narrator-b1c115e1ea.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Pass the goats in the dark, then read the crate.": {
-    "src": "./voices/rusty/narrator-2755845ad2.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "The crate gives you O.": {
-    "src": "./voices/rusty/narrator-fb8048caed.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "The long carving by the gate is stuttering. Not every letter in it belongs.": {
-    "src": "./voices/rusty/narrator-4fd126de0d.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Keep the 1st, 3rd, 5th, and 7th letters of DXOXNXT. Let the rest rust.": {
-    "src": "./voices/rusty/narrator-ae2d5b492d.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "DXOXNXT, taking every other letter from the start, is DONT.": {
-    "src": "./voices/rusty/narrator-0ba462ec1c.mp3?v=2",
-    "speaker": "narrator",
-    "world": "rusty",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Before light, before matter, before the void, there was only the hum. You are leftover light. The bright door is an invitation. Invitations are not exits.": {
-    "src": "./voices/pulse/narrator-4cee85a72a.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "intro"
+  "The gate is west of here. Leave the lever marked don't alone.": {
+    "src": "./voices/any/mira-38c686827c.mp3",
+    "speaker": "mira",
+    "world": "any",
+    "voice": "af_bella+af_heart",
+    "kind": "point"
   },
   "Before light, before matter, before the void, there was only the hum.": {
-    "src": "./voices/pulse/hum-3297d0cb24.mp3?v=2",
+    "src": "./voices/pulse/hum-7a92cb30c7.mp3",
     "speaker": "hum",
     "world": "pulse",
     "voice": "am_fenrir",
     "kind": "cast"
   },
-  "The bright door is an invitation. Invitations are not exits.": {
-    "src": "./voices/pulse/hum-a9d938c351.mp3?v=2",
+  "Four letters, then the gate. The bright door is an invitation. Invitations are not exits.": {
+    "src": "./voices/pulse/hum-054cac9191.mp3",
     "speaker": "hum",
     "world": "pulse",
     "voice": "am_fenrir",
     "kind": "cast"
   },
   "Answer the pedestal. Leave a mark before you trust an arch.": {
-    "src": "./voices/pulse/hum-63cff8ec05.mp3?v=2",
+    "src": "./voices/pulse/hum-fbc4573b42.mp3",
     "speaker": "hum",
     "world": "pulse",
     "voice": "am_fenrir",
     "kind": "cast"
   },
-  "In the beginning there was no light, no matter, no void. Only the hum. The bright door north of here is an invitation. It is not the way on. Answer the pedestal. Leave a chalk mark before you trust an arch.": {
-    "src": "./voices/pulse/narrator-737000363b.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "sign"
+  "The next mark is north of here. Invitations are not exits.": {
+    "src": "./voices/any/hum-370ae5acd8.mp3",
+    "speaker": "hum",
+    "world": "any",
+    "voice": "am_fenrir",
+    "kind": "point"
   },
-  "A speaks as Z. B speaks as Y. Fold the rest of the alphabet the same way, and read the carving through that fold. The letter the invitation offered does not belong.": {
-    "src": "./voices/pulse/narrator-a025c20c9d.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "sign"
+  "The gate is north of here. Answer what is listening, then the gate.": {
+    "src": "./voices/any/hum-a93257f8a0.mp3",
+    "speaker": "hum",
+    "world": "any",
+    "voice": "am_fenrir",
+    "kind": "point"
   },
-  "You answer the hum. The wall ahead unseats itself.": {
-    "src": "./voices/pulse/narrator-4f73390a2f.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "clue"
+  "The next mark is south of here. Invitations are not exits.": {
+    "src": "./voices/any/hum-37a7bb95bc.mp3",
+    "speaker": "hum",
+    "world": "any",
+    "voice": "am_fenrir",
+    "kind": "point"
   },
-  "The room is listening for an answer, not a brighter door.": {
-    "src": "./voices/pulse/narrator-8d4513d2a3.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "hint"
+  "The gate is south of here. Answer what is listening, then the gate.": {
+    "src": "./voices/any/hum-cf1f3c5266.mp3",
+    "speaker": "hum",
+    "world": "any",
+    "voice": "am_fenrir",
+    "kind": "point"
   },
-  "Use the pedestal in the first chamber.": {
-    "src": "./voices/pulse/narrator-fbd798a1b4.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "hint"
+  "The next mark is east of here. Invitations are not exits.": {
+    "src": "./voices/any/hum-d700656bd2.mp3",
+    "speaker": "hum",
+    "world": "any",
+    "voice": "am_fenrir",
+    "kind": "point"
   },
-  "Use the pedestal. The way deeper opens. The bright door is a lie.": {
-    "src": "./voices/pulse/narrator-f229a7bd6e.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "hint"
+  "The gate is east of here. Answer what is listening, then the gate.": {
+    "src": "./voices/any/hum-28c2843908.mp3",
+    "speaker": "hum",
+    "world": "any",
+    "voice": "am_fenrir",
+    "kind": "point"
   },
-  "You leave a chalk mark. It will not follow you through a lying arch.": {
-    "src": "./voices/pulse/narrator-0ee6bc8220.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "clue"
+  "The next mark is west of here. Invitations are not exits.": {
+    "src": "./voices/any/hum-7095578b0f.mp3",
+    "speaker": "hum",
+    "world": "any",
+    "voice": "am_fenrir",
+    "kind": "point"
   },
-  "The arches past the hum are not all rooms.": {
-    "src": "./voices/pulse/narrator-c6702b6116.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "hint"
+  "The gate is west of here. Answer what is listening, then the gate.": {
+    "src": "./voices/any/hum-793e5d2f61.mp3",
+    "speaker": "hum",
+    "world": "any",
+    "voice": "am_fenrir",
+    "kind": "point"
   },
-  "Use the chalk at the junction, then try the side arch. If you return without the mark, that arch lied.": {
-    "src": "./voices/pulse/narrator-923c49cf3b.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "The west arch repeats the room. The letter is on the arch that does not.": {
-    "src": "./voices/pulse/narrator-bb7938a0fc.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "This arch did not repeat. Cut into it: C. You take C.": {
-    "src": "./voices/pulse/narrator-f3588c6086.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "One arch past the junction is a room. The other gives you back.": {
-    "src": "./voices/pulse/narrator-f19eb019c5.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Ignore the west arch. Read the arch just east of the junction.": {
-    "src": "./voices/pulse/narrator-27ce0a3f23.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "The true arch gives you C.": {
-    "src": "./voices/pulse/narrator-d879dc008d.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "You already hold C.": {
-    "src": "./voices/pulse/narrator-07a11d5bdf.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "In the lantern the static settles on O. You take O.": {
-    "src": "./voices/pulse/narrator-5990d754ff.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The pocket is only static until the lantern fills it.": {
-    "src": "./voices/pulse/narrator-9216989df0.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "East of the arches, a pocket stays dark on purpose.": {
-    "src": "./voices/pulse/narrator-b08f6a39d8.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Turn the lantern on in the east pocket and use the wall.": {
-    "src": "./voices/pulse/narrator-1f72904ce1.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Lantern on in the pocket. The letter is O.": {
-    "src": "./voices/pulse/narrator-e3df687abc.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Only the hum. The word begins with H. You take H.": {
-    "src": "./voices/pulse/narrator-39c0fba311.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The line about the beginning is written in the lower gallery.": {
-    "src": "./voices/pulse/narrator-ed9fbc7c49.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Read the carved line in the lower west gallery.": {
-    "src": "./voices/pulse/narrator-c086755143.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "The line gives you H.": {
-    "src": "./voices/pulse/narrator-301bd97fb1.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "You already hold H.": {
-    "src": "./voices/pulse/narrator-e8ac72299d.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "Looking up, the ring is E. You take E.": {
-    "src": "./voices/pulse/narrator-9d0b3b4f4a.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The ring is on the ceiling. Look up.": {
-    "src": "./voices/pulse/narrator-4215cfd8c6.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "Not every letter is on a wall.": {
-    "src": "./voices/pulse/narrator-0aaaf1fd56.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Stand in the lower east and look up, then use what you see.": {
-    "src": "./voices/pulse/narrator-88051cf644.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Look up at the ring. The letter is E.": {
-    "src": "./voices/pulse/narrator-571d5d6698.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "The carving is not shifted. The plaque says A speaks as Z.": {
-    "src": "./voices/pulse/narrator-a5736bec5a.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Mirror the alphabet. A is Z, B is Y, C is X, and so on. Do that to every letter of VXSL.": {
-    "src": "./voices/pulse/narrator-3e760d4ee0.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "VXSL mirrored is ECHO.": {
-    "src": "./voices/pulse/narrator-6859f124b2.mp3?v=2",
-    "speaker": "narrator",
-    "world": "pulse",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Personal Laboratory, Princeton, New Jersey, 1982. The shell must be born twice. Once in vacuum, once in biology. The argon laser arrived damaged.": {
-    "src": "./voices/thorne/narrator-fcd681e9a7.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "intro"
-  },
-  "Personal Laboratory, Princeton, New Jersey, 1982. The shell must be born twice.": {
-    "src": "./voices/thorne/journal-65ea37cf08.mp3?v=2",
+  "Personal Laboratory, Princeton, New Jersey, 1982. The shell was born twice.": {
+    "src": "./voices/thorne/journal-f2906adc50.mp3",
     "speaker": "journal",
     "world": "thorne",
     "voice": "af_sarah",
     "kind": "cast"
   },
-  "The sine is the honest trace. Square and noise lie.": {
-    "src": "./voices/thorne/journal-65494b49d3.mp3?v=2",
+  "Four letters, then the gate. The sine is the honest trace. Square and noise lie.": {
+    "src": "./voices/thorne/journal-3b5541e768.mp3",
     "speaker": "journal",
     "world": "thorne",
     "voice": "af_sarah",
     "kind": "cast"
   },
   "The year on the clipboard is the wrong count. Roll the carving back by the births.": {
-    "src": "./voices/thorne/journal-ff293b01cb.mp3?v=2",
+    "src": "./voices/thorne/journal-14ba8a0bc4.mp3",
     "speaker": "journal",
     "world": "thorne",
     "voice": "af_sarah",
     "kind": "cast"
   },
-  "January 15, 1982. Equipment: an aging oscilloscope, a vacuum chamber, a Geiger counter scavenged from the nuclear physics department, and a borrowed argon laser. The laser arrived damaged. The sine is the honest trace. Square and noise lie. The vacuum door is only the first birth.": {
-    "src": "./voices/thorne/narrator-883e80a4b5.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "sign"
+  "The next mark is north of here. The sine is the honest trace.": {
+    "src": "./voices/any/journal-4ce5c7405a.mp3",
+    "speaker": "journal",
+    "world": "any",
+    "voice": "af_sarah",
+    "kind": "point"
   },
-  "Carved on the bench: DQTP. The shell must be born twice. Roll every letter back by the births. Not by the year 1982. Not by the hours Thorne slept.": {
-    "src": "./voices/thorne/narrator-ec5c578f2d.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "sign"
+  "The gate is north of here. The year on the clipboard is the wrong count.": {
+    "src": "./voices/any/journal-2d0e380794.mp3",
+    "speaker": "journal",
+    "world": "any",
+    "voice": "af_sarah",
+    "kind": "point"
   },
-  "Biology is the second birth. You take B. The argon laser is listed once. It arrived damaged.": {
-    "src": "./voices/thorne/narrator-318abcdab2.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "clue"
+  "The next mark is south of here. The sine is the honest trace.": {
+    "src": "./voices/any/journal-74c9785746.mp3",
+    "speaker": "journal",
+    "world": "any",
+    "voice": "af_sarah",
+    "kind": "point"
   },
-  "Entry 001 is still on the clipboard, near where you came in.": {
-    "src": "./voices/thorne/narrator-715b864ce4.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "hint"
+  "The gate is south of here. The year on the clipboard is the wrong count.": {
+    "src": "./voices/any/journal-5eec040feb.mp3",
+    "speaker": "journal",
+    "world": "any",
+    "voice": "af_sarah",
+    "kind": "point"
   },
-  "Read the clipboard in the front of the lab.": {
-    "src": "./voices/thorne/narrator-171e4c0113.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "hint"
+  "The next mark is east of here. The sine is the honest trace.": {
+    "src": "./voices/any/journal-6fd44d720c.mp3",
+    "speaker": "journal",
+    "world": "any",
+    "voice": "af_sarah",
+    "kind": "point"
   },
-  "The clipboard gives you B.": {
-    "src": "./voices/thorne/narrator-923e8d9d48.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "hint"
+  "The gate is east of here. The year on the clipboard is the wrong count.": {
+    "src": "./voices/any/journal-444c758a07.mp3",
+    "speaker": "journal",
+    "world": "any",
+    "voice": "af_sarah",
+    "kind": "point"
   },
-  "You already hold B.": {
-    "src": "./voices/thorne/narrator-de153f363e.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "clue"
+  "The next mark is west of here. The sine is the honest trace.": {
+    "src": "./voices/any/journal-055842375b.mp3",
+    "speaker": "journal",
+    "world": "any",
+    "voice": "af_sarah",
+    "kind": "point"
   },
-  "A sine. The membrane unlocks.": {
-    "src": "./voices/thorne/narrator-4640419a5e.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "Noise. The membrane does not care for noise.": {
-    "src": "./voices/thorne/narrator-4d3c82d158.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "A square trace. Too neat to be the honest one.": {
-    "src": "./voices/thorne/narrator-6abe36b4c5.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "A sine. The honest trace. The membrane ahead answers.": {
-    "src": "./voices/thorne/narrator-d0e68a6382.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The scope on the bench cycles. Square and noise are the wrong traces.": {
-    "src": "./voices/thorne/narrator-dda2225712.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Use the scope until it reads sine. That opens the membrane.": {
-    "src": "./voices/thorne/narrator-1c5a89a602.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Set the scope to sine. The door opens. Noise and square do not.": {
-    "src": "./voices/thorne/narrator-61eda38dc8.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "In the beam, the chamber reads N. You take N.": {
-    "src": "./voices/thorne/narrator-b1ae88b8c8.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The chamber wall is blank without the argon beam.": {
-    "src": "./voices/thorne/narrator-da3d946442.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The basement hall repeats if the beam is off. Past it, a letter needs the same beam.": {
-    "src": "./voices/thorne/narrator-938ffb11d0.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Turn the lantern on, cross the repeating hall, then use the east chamber.": {
-    "src": "./voices/thorne/narrator-02655d2dbd.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Lantern on through the hall and on the chamber. The letter is N.": {
-    "src": "./voices/thorne/narrator-ca17f0522e.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Along the trefoil, the paint hides O. You take O.": {
-    "src": "./voices/thorne/narrator-4a4f8f5476.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The warning mark reads only if you look west along the paint.": {
-    "src": "./voices/thorne/narrator-8d4cade2f3.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The west wall of the lower lab is a warning mark. Look along the paint.": {
-    "src": "./voices/thorne/narrator-d3935d1318.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Stand at the trefoil and face west, then use it.": {
-    "src": "./voices/thorne/narrator-079d453310.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Face west at the trefoil. The letter is O.": {
-    "src": "./voices/thorne/narrator-e4b89b6d48.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "The shell was born twice. The last letter on the glass is R. You take R.": {
-    "src": "./voices/thorne/narrator-bf033d6019.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "Past the beam and the membrane, the shell itself is labeled.": {
-    "src": "./voices/thorne/narrator-1288e3e689.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Read the photon shell in the lower lab.": {
-    "src": "./voices/thorne/narrator-38000370b5.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "The shell gives you R.": {
-    "src": "./voices/thorne/narrator-19a373877c.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "The carving by the gate has been shifted. The year 1982 is the wrong count.": {
-    "src": "./voices/thorne/narrator-cba0f57345.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Born twice. Roll DQTP back by two.": {
-    "src": "./voices/thorne/narrator-950c10a9ca.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "DQTP rolled back by two is BORN.": {
-    "src": "./voices/thorne/narrator-b947b012ab.mp3?v=2",
-    "speaker": "narrator",
-    "world": "thorne",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Long before anyone was here to remember, something planted a seed. The visitors came back to see what grew. There is a maze in the back.": {
-    "src": "./voices/seeders/narrator-d21dac9ecd.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
-    "voice": "am_michael",
-    "kind": "intro"
+  "The gate is west of here. The year on the clipboard is the wrong count.": {
+    "src": "./voices/any/journal-34174c2056.mp3",
+    "speaker": "journal",
+    "world": "any",
+    "voice": "af_sarah",
+    "kind": "point"
   },
   "Long before anyone was here to remember, something planted a seed.": {
-    "src": "./voices/seeders/seed-0adf7b1f88.mp3?v=2",
+    "src": "./voices/seeders/seed-a5822664b5.mp3",
     "speaker": "seed",
     "world": "seeders",
     "voice": "am_michael",
     "kind": "cast"
   },
-  "Turn at the seed. The far arch keeps folding until you do.": {
-    "src": "./voices/seeders/seed-8898be8d84.mp3?v=2",
+  "Four tagged letters, then the gate. Turn at the seed. The far arch keeps folding until you do.": {
+    "src": "./voices/seeders/seed-9d2704e5a8.mp3",
     "speaker": "seed",
     "world": "seeders",
     "voice": "am_michael",
     "kind": "cast"
   },
   "Four points of view. Twelve endings. The counts are not the gate.": {
-    "src": "./voices/seeders/seed-969ab88af9.mp3?v=2",
+    "src": "./voices/seeders/seed-cd84871981.mp3",
     "speaker": "seed",
     "world": "seeders",
     "voice": "am_michael",
     "kind": "cast"
   },
-  "Four points of view. Twelve endings. Alien ships, worlds, and species. One crystal seed. The counts are not the gate. The garden door is what grew, and it is the wrong way out.": {
-    "src": "./voices/seeders/narrator-f460548ae9.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
+  "The next mark is north of here. Turn at the seed.": {
+    "src": "./voices/any/seed-699209e6dc.mp3",
+    "speaker": "seed",
+    "world": "any",
     "voice": "am_michael",
-    "kind": "sign"
+    "kind": "point"
   },
-  "A clock with no numbers. From the top, going clockwise: Hull, Circuit, Vein, Edge. Your letters are already tagged. Four and twelve are not hands on this clock.": {
-    "src": "./voices/seeders/narrator-e086938eae.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
+  "The gate is north of here. Four and twelve are not the word.": {
+    "src": "./voices/any/seed-ba206cde2c.mp3",
+    "speaker": "seed",
+    "world": "any",
     "voice": "am_michael",
-    "kind": "sign"
+    "kind": "point"
   },
-  "The hull stamp is S. You take S, tagged Hull.": {
-    "src": "./voices/seeders/narrator-7177358204.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
+  "The next mark is south of here. Turn at the seed.": {
+    "src": "./voices/any/seed-fbc685fd4b.mp3",
+    "speaker": "seed",
+    "world": "any",
     "voice": "am_michael",
-    "kind": "clue"
+    "kind": "point"
   },
-  "The ship you arrived in still has a letter on the hull.": {
-    "src": "./voices/seeders/narrator-73f8624d72.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
+  "The gate is south of here. Four and twelve are not the word.": {
+    "src": "./voices/any/seed-514478016c.mp3",
+    "speaker": "seed",
+    "world": "any",
     "voice": "am_michael",
-    "kind": "hint"
+    "kind": "point"
   },
-  "Read the hull plate in the landing bay.": {
-    "src": "./voices/seeders/narrator-1b5f34b164.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
+  "The next mark is east of here. Turn at the seed.": {
+    "src": "./voices/any/seed-103df6f2d7.mp3",
+    "speaker": "seed",
+    "world": "any",
     "voice": "am_michael",
-    "kind": "hint"
+    "kind": "point"
   },
-  "The hull plate gives you S.": {
-    "src": "./voices/seeders/narrator-daf8f150ac.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
+  "The gate is east of here. Four and twelve are not the word.": {
+    "src": "./voices/any/seed-3b17421a43.mp3",
+    "speaker": "seed",
+    "world": "any",
     "voice": "am_michael",
-    "kind": "hint"
+    "kind": "point"
   },
-  "You already hold S.": {
-    "src": "./voices/seeders/narrator-e8ee04efe7.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
+  "The next mark is west of here. Turn at the seed.": {
+    "src": "./voices/any/seed-cd7deda9cd.mp3",
+    "speaker": "seed",
+    "world": "any",
     "voice": "am_michael",
-    "kind": "clue"
+    "kind": "point"
   },
-  "You turn at the seed. The vein in it is E, tagged Vein. The far arch stops folding.": {
-    "src": "./voices/seeders/narrator-fe7e3e85aa.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
+  "The gate is west of here. Four and twelve are not the word.": {
+    "src": "./voices/any/seed-88f06fd134.mp3",
+    "speaker": "seed",
+    "world": "any",
     "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The corridor folds because you walked through the arch instead of turning at the seed.": {
-    "src": "./voices/seeders/narrator-f974729435.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Use the crystal in the long corridor before you take the far arch.": {
-    "src": "./voices/seeders/narrator-7678196eb0.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Use the seed. It gives you E, tagged Vein, and the arch lets you through.": {
-    "src": "./voices/seeders/narrator-912401023d.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "The lit circuit is E. You take E, tagged Circuit.": {
-    "src": "./voices/seeders/narrator-ff37d29c9c.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The circuitry is dark glass until the lantern is on it.": {
-    "src": "./voices/seeders/narrator-51df827cd3.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "After the seed lets you through, a letter is still dark.": {
-    "src": "./voices/seeders/narrator-17d402c088.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "In the room past the arch, lantern on, use the circuit.": {
-    "src": "./voices/seeders/narrator-29908f36a6.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Lantern on the circuit. The letter is E, tagged Circuit.": {
-    "src": "./voices/seeders/narrator-5f6703202c.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Along the facet, the cut is D. You take D, tagged Edge.": {
-    "src": "./voices/seeders/narrator-820ca621c9.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The edge-cut shows only if you look west, along the facet.": {
-    "src": "./voices/seeders/narrator-f020043059.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The west facet of the bay is cut. Look along it.": {
-    "src": "./voices/seeders/narrator-591075c5ee.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Stand at the west facet and face west, then use it.": {
-    "src": "./voices/seeders/narrator-06f2862b6a.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Face west at the bay facet. The letter is D, tagged Edge.": {
-    "src": "./voices/seeders/narrator-6b6f8dfda0.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "The gate is a clock. Your letters are already tagged with where you found them.": {
-    "src": "./voices/seeders/narrator-2ba2dbaec0.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "From the top, clockwise: hull, circuit, vein, edge.": {
-    "src": "./voices/seeders/narrator-83afb7f55a.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Hull S, circuit E, vein E, edge D. The word is SEED.": {
-    "src": "./voices/seeders/narrator-aa933cfb7c.mp3?v=2",
-    "speaker": "narrator",
-    "world": "seeders",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "You are the hive. One mind, spread through living black glass. The Ninth Envoy was sent to bind stars. A world is stripped, claimed, or left alone.": {
-    "src": "./voices/envoy/narrator-62a62408d3.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
-    "voice": "am_michael",
-    "kind": "intro"
+    "kind": "point"
   },
   "You are the hive. One mind, spread through living black glass.": {
-    "src": "./voices/envoy/ninth-d20ba27296.mp3?v=2",
+    "src": "./voices/envoy/ninth-e516edae15.mp3",
     "speaker": "ninth",
     "world": "envoy",
     "voice": "am_michael",
     "kind": "cast"
   },
-  "The jet carries anyone who shines. Cross it dark.": {
-    "src": "./voices/envoy/ninth-92a72decfc.mp3?v=2",
+  "Four letters, then the gate. The jet carries anyone who shines. Cross it dark.": {
+    "src": "./voices/envoy/ninth-ec93016c1f.mp3",
     "speaker": "ninth",
     "world": "envoy",
     "voice": "am_michael",
     "kind": "cast"
   },
   "You are the Ninth. The other counts on the wall are bait.": {
-    "src": "./voices/envoy/ninth-b5200fc994.mp3?v=2",
+    "src": "./voices/envoy/ninth-fe7f9c3385.mp3",
     "speaker": "ninth",
     "world": "envoy",
     "voice": "am_michael",
     "kind": "cast"
   },
-  "One mind. Ten billion shards of living black glass. Fourteen endings, from total conquest to the end of your kind. You are the Ninth. The jet north of the gallery carries anyone who shines. The conquest door is an ending, not a way through.": {
-    "src": "./voices/envoy/narrator-080022a22b.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
+  "The next mark is north of here. Cross anything that shines with the lamp out.": {
+    "src": "./voices/any/ninth-02ef55d17e.mp3",
+    "speaker": "ninth",
+    "world": "any",
     "voice": "am_michael",
-    "kind": "sign"
+    "kind": "point"
   },
-  "Carved in the glass: QREN. Step every letter back by the envoy's own number. Not by fourteen. Not by one. Not by ten billion. If a letter steps off the front of the alphabet, it returns from Z.": {
-    "src": "./voices/envoy/narrator-930527241a.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
+  "The gate is north of here. You are the Ninth. The other counts are bait.": {
+    "src": "./voices/any/ninth-04fdbedd8a.mp3",
+    "speaker": "ninth",
+    "world": "any",
     "voice": "am_michael",
-    "kind": "sign"
+    "kind": "point"
   },
-  "Stripped, claimed, or left alone. You are the hive. You take H.": {
-    "src": "./voices/envoy/narrator-bd923b5f13.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
+  "The next mark is south of here. Cross anything that shines with the lamp out.": {
+    "src": "./voices/any/ninth-9aaa4dc05c.mp3",
+    "speaker": "ninth",
+    "world": "any",
     "voice": "am_michael",
-    "kind": "clue"
+    "kind": "point"
   },
-  "The bay wall lists fates for worlds. You are not one of those fates.": {
-    "src": "./voices/envoy/narrator-f51079c4ae.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
+  "The gate is south of here. You are the Ninth. The other counts are bait.": {
+    "src": "./voices/any/ninth-5bd65eedba.mp3",
+    "speaker": "ninth",
+    "world": "any",
     "voice": "am_michael",
-    "kind": "hint"
+    "kind": "point"
   },
-  "Read the fate wall in the bay.": {
-    "src": "./voices/envoy/narrator-7d3be05693.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
+  "The next mark is east of here. Cross anything that shines with the lamp out.": {
+    "src": "./voices/any/ninth-b37a79429b.mp3",
+    "speaker": "ninth",
+    "world": "any",
     "voice": "am_michael",
-    "kind": "hint"
+    "kind": "point"
   },
-  "The fate wall gives you H.": {
-    "src": "./voices/envoy/narrator-d63f2de181.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
+  "The gate is east of here. You are the Ninth. The other counts are bait.": {
+    "src": "./voices/any/ninth-62c7d4745a.mp3",
+    "speaker": "ninth",
+    "world": "any",
     "voice": "am_michael",
-    "kind": "hint"
+    "kind": "point"
   },
-  "In the lantern, a shard reads E. You take E.": {
-    "src": "./voices/envoy/narrator-ed1838bb10.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
+  "The next mark is west of here. Cross anything that shines with the lamp out.": {
+    "src": "./voices/any/ninth-8c236c5b5e.mp3",
+    "speaker": "ninth",
+    "world": "any",
     "voice": "am_michael",
-    "kind": "clue"
+    "kind": "point"
   },
-  "The black glass stays a mirror until the lantern is on it.": {
-    "src": "./voices/envoy/narrator-b7ef1fdaaa.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
+  "The gate is west of here. You are the Ninth. The other counts are bait.": {
+    "src": "./voices/any/ninth-ed46459eba.mp3",
+    "speaker": "ninth",
+    "world": "any",
     "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The jet ahead carries light. Past it, the glass still wants a lamp.": {
-    "src": "./voices/envoy/narrator-129ecb1e36.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Cross the jet dark, then turn the lantern on and use the east glass.": {
-    "src": "./voices/envoy/narrator-8f84946735.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Lamp out across the jet, lamp on at the glass. The letter is E.": {
-    "src": "./voices/envoy/narrator-e66cb91150.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Along the edge, the shard says I. You take I.": {
-    "src": "./voices/envoy/narrator-78ee53921c.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The shard reads only if you look west along the edge.": {
-    "src": "./voices/envoy/narrator-6b01a0ef4c.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The west shard is edged with a letter. Look along it.": {
-    "src": "./voices/envoy/narrator-ae3bfd759d.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Stand at the west shard and face west, then use it.": {
-    "src": "./voices/envoy/narrator-9e5c57454b.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Face west at the shard. The letter is I.": {
-    "src": "./voices/envoy/narrator-741b8ff63d.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "The lens bends. A door beyond the gallery opens.": {
-    "src": "./voices/envoy/narrator-852ef23295.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "Black holes are how this place bends a hall. There is a lens in the gallery.": {
-    "src": "./voices/envoy/narrator-459d04edbc.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Use the lens in the west of the gallery after the jet.": {
-    "src": "./voices/envoy/narrator-77e4a7451d.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Use the lens. It opens the last room. It is not a letter by itself.": {
-    "src": "./voices/envoy/narrator-f78406c1bb.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Bind every star. The mandate is cut with a V. You take V.": {
-    "src": "./voices/envoy/narrator-1a10e83b3d.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "Past the lens, the envoy's orders are carved.": {
-    "src": "./voices/envoy/narrator-bb60e74e5b.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "Open the lens, then read the mandate.": {
-    "src": "./voices/envoy/narrator-b72e01e6ef.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "The mandate gives you V.": {
-    "src": "./voices/envoy/narrator-9e05dcd829.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "You already hold V.": {
-    "src": "./voices/envoy/narrator-59339a2fa7.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The carving has been shifted by the envoy's number. The other counts on the wall are bait.": {
-    "src": "./voices/envoy/narrator-7e2c10562d.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "You are the Ninth. Roll QREN back by nine. Letters that pass A come back from Z.": {
-    "src": "./voices/envoy/narrator-e090f40d93.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "QREN rolled back by nine is HIVE.": {
-    "src": "./voices/envoy/narrator-d2a92b01f0.mp3?v=2",
-    "speaker": "narrator",
-    "world": "envoy",
-    "voice": "am_michael",
-    "kind": "hint"
-  },
-  "The cabinet is between stations. Eight brands are in the page. Dead air is what is left when a story is eaten, and it is waiting for one word.": {
-    "src": "./voices/meta/narrator-cf4cd9abe4.mp3?v=2",
-    "speaker": "narrator",
-    "world": "meta",
-    "voice": "am_michael",
-    "kind": "intro"
+    "kind": "point"
   },
   "The cabinet is between stations. Eight brands are in the page.": {
-    "src": "./voices/meta/jang-f161e8a496.mp3?v=2",
+    "src": "./voices/meta/jang-7e9b46dda1.mp3",
     "speaker": "jang",
     "world": "meta",
     "voice": "am_puck+am_adam",
     "kind": "cast"
   },
-  "Read them in the plaque's order. Then treat them the way the trail treated a carving.": {
-    "src": "./voices/meta/jang-95b68e0051.mp3?v=2",
+  "Read them in the plaque's order. Then roll them back the way the trail rolled a carving.": {
+    "src": "./voices/meta/jang-5d07962772.mp3",
     "speaker": "jang",
     "world": "meta",
     "voice": "am_puck+am_adam",
     "kind": "cast"
   },
   "The sheet under the lantern has the count, and the blank.": {
-    "src": "./voices/meta/jang-5189ed5506.mp3?v=2",
+    "src": "./voices/meta/jang-6ab47066a6.mp3",
     "speaker": "jang",
     "world": "meta",
     "voice": "am_puck+am_adam",
     "kind": "cast"
   },
-  "1. The California Trail 2. Pine Knot 3. Old Man on the Mountain 4. The Rusty Stack 5. The First Pulse 6. Thorne's Lab 7. The Seeders 8. The Ninth Envoy Read the brands in this order. Then treat them the way the trail treated a carving.": {
-    "src": "./voices/meta/narrator-51d5971409.mp3?v=2",
+  "You've been still a while. The next mark is north of here.": {
+    "src": "./voices/any/narrator-70bbad5828.mp3",
     "speaker": "narrator",
-    "world": "meta",
-    "voice": "am_michael",
-    "kind": "sign"
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "idle"
   },
-  "Only one axle looks ready to snap. Roll every brand back by that count. Tom, later: Well, we did put out the ________. Eight letters. Two of them are the same. The blank is the word Jang kept nailing up. You have already walked through a maze papered with them.": {
-    "src": "./voices/meta/narrator-2396541011.mp3?v=2",
+  "You've been still a while. The gate is north of here.": {
+    "src": "./voices/any/narrator-a54d9ac580.mp3",
     "speaker": "narrator",
-    "world": "meta",
-    "voice": "am_michael",
-    "kind": "sign"
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "idle"
   },
-  "The brands are a word you have already seen printed, once you undo a shift.": {
-    "src": "./voices/meta/narrator-96a9cb1bbc.mp3?v=2",
+  "You've been still a while. The next mark is south of here.": {
+    "src": "./voices/any/narrator-e6b36efea6.mp3",
     "speaker": "narrator",
-    "world": "meta",
-    "voice": "am_michael",
-    "kind": "hint"
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "idle"
   },
-  "Plaque order, top to bottom. Then roll each brand back by the axles Tom counted. The sheet under the lantern says the count, and the blank.": {
-    "src": "./voices/meta/narrator-cdf1924487.mp3?v=2",
+  "You've been still a while. The gate is south of here.": {
+    "src": "./voices/any/narrator-68b8acf3ee.mp3",
     "speaker": "narrator",
-    "world": "meta",
-    "voice": "am_michael",
-    "kind": "hint"
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "idle"
   },
-  "The brands rolled back in plaque order spell HANDBILL.": {
-    "src": "./voices/meta/narrator-13c93a94c5.mp3?v=2",
+  "You've been still a while. The next mark is east of here.": {
+    "src": "./voices/any/narrator-b1d9ac9dc4.mp3",
     "speaker": "narrator",
-    "world": "meta",
-    "voice": "am_michael",
-    "kind": "hint"
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "idle"
+  },
+  "You've been still a while. The gate is east of here.": {
+    "src": "./voices/any/narrator-471ffc50f2.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "idle"
+  },
+  "You've been still a while. The next mark is west of here.": {
+    "src": "./voices/any/narrator-7da568dbca.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "idle"
+  },
+  "You've been still a while. The gate is west of here.": {
+    "src": "./voices/any/narrator-6dea8ca62f.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "idle"
+  },
+  "You've been still a while. Follow the gold stones on the ground.": {
+    "src": "./voices/any/narrator-abc199f831.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "idle"
+  },
+  "Hold to walk, slide to steer.": {
+    "src": "./voices/any/narrator-eb941e2b49.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "You already hold that letter.": {
+    "src": "./voices/any/narrator-f3e2602996.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "system"
   },
   "The sheet is blank until the lantern is on it.": {
-    "src": "./voices/any/narrator-4f383987c4.mp3?v=2",
+    "src": "./voices/any/narrator-c14ae266eb.mp3",
     "speaker": "narrator",
     "world": "any",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The carving stays dark.": {
-    "src": "./voices/any/narrator-dd1cf93a21.mp3?v=2",
-    "speaker": "narrator",
-    "world": "any",
-    "voice": "am_michael",
-    "kind": "clue"
-  },
-  "The cuts are a smear from this angle.": {
-    "src": "./voices/any/narrator-a34094890a.mp3?v=2",
-    "speaker": "narrator",
-    "world": "any",
-    "voice": "am_michael",
-    "kind": "clue"
+    "voice": "bm_fable",
+    "kind": "system"
   }
 };

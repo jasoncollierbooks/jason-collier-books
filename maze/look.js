@@ -1117,6 +1117,7 @@ function addCast(scene, world) {
     root.userData.nameLabel = person.name;
     root.userData.bob = i;
     root.userData.home = { x: person.wx, z: person.wz };
+    root.userData.cell = { x: person.x, z: person.z };
     root.userData.axis = person.axis || "x";
     root.userData.span = person.span || 0.3;
     root.userData.sprite = !!person.sprite;

@@ -1,6 +1,7 @@
 /* Walk every maze with only the moves a clued player can make. */
 import { WORLDS, META, worldById, brandsSpell, brandsShown } from "./worlds.js";
-import { createState, walkTo, interact, submitCode, hintFor, lettersHeld, cellOf, FACE, findChar, blocked } from "./logic.js";
+import { createState, walkTo, interact, submitCode, hintFor, lettersHeld, cellOf, FACE, findChar, blocked, wayFrom } from "./logic.js";
+import { peopleFor } from "./cast.js";
 
 const SOLVE = {
   trail: [
@@ -163,6 +164,19 @@ if (brandsSpell() !== "HANDBILL") fail("brands spell " + brandsSpell());
 if (brandsShown() !== "IBOECJMM") fail("shown brands " + brandsShown());
 
 for (const world of WORLDS.concat([META])) {
+  const letters = (world.tokens || []).filter((t) => t.letter).map((t) => t.letter).sort().join("");
+  if (world.code && letters && letters !== world.code.split("").sort().join("")) {
+    fail(world.id + " letters " + letters + " are not " + world.code);
+  }
+  const state = createState(world);
+  const way = wayFrom(world, state, findChar(world, "S")[0].x, findChar(world, "S")[0].z);
+  if (!way || !way.dir) fail(world.id + " has no way from the entrance");
+  const folks = peopleFor(world);
+  if (!folks.length) fail(world.id + " has nobody standing in it");
+  for (const p of folks) {
+    const ch = world.grid[p.z][p.x];
+    if (ch === "#" || ch === "+" || ch === "=") fail(world.id + " put " + p.id + " on " + ch);
+  }
   const w = world.grid[0].length;
   if (world.grid.some((row) => row.length !== w)) fail(world.id + " ragged grid");
   for (const t of (world.tokens || []).concat(world.signs || [])) {

@@ -3,11 +3,12 @@ import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass } from "three/a
 import { WORLDS, ORDER, worldById } from "./worlds.js";
 import { GAME_TITLE } from "./title.js";
 import { dressScene } from "./look.js";
-import { preloadWorld, speak, stopSpeak, unlockSpeech } from "./speech.js?v=2";
+import { preloadWorld, speak, speakChain, stopSpeak, unlockSpeech, busy } from "./speech.js?v=3";
 import {
   CELL, SPEED, FACE, createState, movePlayer, interact, nearest, objective,
-  lettersHeld, submitCode, hintFor, cellOf, angDiff,
+  lettersHeld, letterProgress, submitCode, hintFor, cellOf, center, wayFrom, angDiff,
 } from "./logic.js";
+import { pointLine, idleLine } from "./cast.js";
 import { createAudio } from "./audio.js";
 
 const SAVE_KEY = "ce-cryptic-mazes-v1";
@@ -39,7 +40,11 @@ let doors = [];
 let plaques = [];
 let particles = null;
 let people = [];
+let crumbs = null;
 let mapOn = true;
+let mapBig = false;
+const idle = { x: 0, z: 0, t: 0 };
+let voicedAt = 0;
 let sprintUntil = 0;
 let lastTap = 0;
 let nearClue = false;
@@ -50,7 +55,11 @@ let clock = 0;
 let last = 0;
 let saveAt = 0;
 let stepLeft = 0;
+const hold = { on: false, hurry: false, gas: 0, wantSteer: 0, steer: 0, pitch: 0, timer: 0, lastUp: 0, lastWasTap: false };
 const keys = {};
+const phoneLayout = matchMedia("(pointer: coarse), (max-width: 900px)");
+function directWalk() { return phoneLayout.matches && !save.stick; }
+function applyStick() { document.body.classList.toggle("stick", !!save.stick); }
 const joy = { x: 0, y: 0, id: null };
 let sens = save.sens || 1;
 
@@ -75,6 +84,7 @@ function snapshot() {
     flags: state.flags, found: state.found, cycle: state.cycle,
     notes: state.notes, read: state.read, hintTier: state.hintTier, goalId: state.goalId,
     seen: state.seen, knownWall: state.knownWall, folded: state.folded, stirred: state.stirred, talk: state.talk,
+    heard: state.heard,
   };
 }
 
@@ -96,6 +106,8 @@ function restore(run) {
   state.folded = run.folded || {};
   state.stirred = run.stirred || {};
   state.talk = run.talk || {};
+  state.heard = run.heard || {};
+  state.cue = [];
   const c = cellOf(state.px, state.pz);
   state.stood = c.x + "," + c.z;
   state.msg = state.notes[state.notes.length - 1] || world.intro;
@@ -146,6 +158,10 @@ function drawHub() {
 }
 
 function openPanel(html, lock) {
+  if (typeof showBig === "function") showBig(false);
+  hold.on = false;
+  hold.hurry = false;
+  hold.wantSteer = 0;
   panel.hidden = false;
   panel.innerHTML = `<div class="scrim"${lock ? "" : " data-close"}></div><div class="sheet" role="dialog">${html}</div>`;
   look.style.pointerEvents = "none";
@@ -156,6 +172,11 @@ function closePanel() {
   panel.hidden = true;
   panel.innerHTML = "";
   if (world) look.style.pointerEvents = "auto";
+  if (state) {
+    idle.x = state.px;
+    idle.z = state.pz;
+    idle.t = clock;
+  }
 }
 
 function helpHtml() {
@@ -163,9 +184,10 @@ function helpHtml() {
     <p>Walk the maze. Read what is carved. Some letters show only under the lantern, some only when you look along a wall or up at the ceiling.</p>
     <p>A bright door is often a lie. A room that brings you back is telling you the truth about itself. Walls move when you do the thing the room asked for.</p>
     <p>The gate wants the letters you found, in the order a carving explains. Hints start vague. The third one is plain.</p>
-    <p><strong>Phone.</strong> The stick walks forward and back, and leans to turn. The arrows beside it turn while you hold them. Drag the view to look. A short tap steps forward. Light, Use, Hint, Notes.</p>
+    <p><strong>Phone.</strong> Hold a finger on the view to walk. Slide it sideways to steer. Let go to stop. A quick tap steps forward. Hold twice to hurry. Light, Use, Hint, and Map stay where they are. The stick can be turned back on in settings.</p>
     <p><strong>Keyboard.</strong> W and S walk. A and D, or the arrow keys, turn. Z and C sidestep. Hold Shift, or tap W twice, to hurry. Click the view to capture the mouse, and press Esc to let it go. Dragging still looks if the mouse is free. F lantern. E or Space uses what is in front of you, or talks to someone standing there. H hint. M shows the map. B toggles the head bob.</p>
-    <p>The map only inks corridors you have seen. A gold mark means a wall gave way. A curl means a room folded.</p>
+    <p>The map only inks corridors you have seen. Your arrow shows which way you face. N is north. Gold is the next mark, once you have seen it, and the arch is the gate. Tap the map to make it large. A gold mark means a wall gave way. A curl means a room folded.</p>
+    <p>Gold stones on the floor, and the needle beside the letter count, point to the next mark. Someone at a junction will point out loud. Stand still and the storyteller will too. Trail markers can be turned off in settings.</p>
     <p>People in the maze speak. Captions are off until you turn them on.</p>
     <div class="row"><button type="button" data-close>Step in</button></div>`;
 }
@@ -175,6 +197,8 @@ function settingsHtml() {
     <p><label><input type="checkbox" id="sound" ${save.sound ? "checked" : ""}> Sound</label></p>
     <p><label><input type="checkbox" id="bob" ${save.bob !== false ? "checked" : ""}> Head bob</label></p>
     <p><label><input type="checkbox" id="captions" ${save.captions ? "checked" : ""}> Captions</label></p>
+    <p><label><input type="checkbox" id="stick" ${save.stick ? "checked" : ""}> On-screen stick</label></p>
+    <p><label><input type="checkbox" id="guide" ${save.guide !== false ? "checked" : ""}> Trail markers</label></p>
     <p>Look speed</p>
     <div class="row">
       <button type="button" data-sens="0.7">Slow</button>
@@ -257,8 +281,21 @@ function buildScene() {
       mesh: obj,
       wx: obj.userData.home.x,
       wz: obj.userData.home.z,
+      x: obj.userData.cell ? obj.userData.cell.x : cellOf(obj.userData.home.x, obj.userData.home.z).x,
+      z: obj.userData.cell ? obj.userData.cell.z : cellOf(obj.userData.home.x, obj.userData.home.z).z,
     });
   });
+  crumbs = new THREE.Group();
+  crumbs.name = "crumbs";
+  for (let i = 0; i < 7; i++) {
+    const stone = new THREE.Mesh(
+      new THREE.SphereGeometry(0.065, 8, 6),
+      new THREE.MeshBasicMaterial({ color: 0xffd56a })
+    );
+    stone.visible = false;
+    crumbs.add(stone);
+  }
+  scene.add(crumbs);
   doors = built.doors;
   plaques = built.plaques;
   particles = built.particles;
@@ -294,6 +331,7 @@ function disposeScene() {
   doors = [];
   plaques = [];
   particles = null;
+  crumbs = null;
 }
 
 
@@ -356,6 +394,10 @@ function enter(id, resume) {
   hud.hidden = false;
   seedMap();
   showMap(mapOn);
+  idle.x = state.px;
+  idle.z = state.pz;
+  idle.t = clock;
+  voicedAt = clock;
   touch.hidden = false;
   look.hidden = false;
   cross.hidden = coarse;
@@ -364,13 +406,34 @@ function enter(id, resume) {
   refreshHud();
   unlockSpeech();
   preloadWorld(world.id);
-  speak(world.intro, { id: "narrator", name: world.title });
-  markSpeaking("narrator", world.intro);
+  applyStick();
+  showWalkTip(() => {
+    speak(world.intro, { id: "narrator", name: world.title });
+    markSpeaking("narrator", world.intro);
+  });
   if (!save.help) {
     save.help = true;
     persist();
     openPanel(helpHtml(), false);
   }
+}
+
+function showWalkTip(then) {
+  const tip = document.getElementById("walk-tip");
+  if (!directWalk() || save.walkTip) {
+    if (tip) tip.hidden = true;
+    then();
+    return;
+  }
+  save.walkTip = true;
+  persist();
+  if (tip) tip.hidden = false;
+  speak("Hold to walk, slide to steer.", { id: "narrator", name: "Tip" });
+  markSpeaking("narrator", "Hold to walk, slide to steer.");
+  setTimeout(() => {
+    if (tip) tip.hidden = true;
+    if (world) then();
+  }, 2300);
 }
 
 function showMap(on) {
@@ -410,16 +473,21 @@ function markSpeaking(id, line) {
   if (view) view.dataset.speaking = id + ": " + line;
 }
 
-function talk(person) {
+function talk(person, auto) {
   const i = state.talk[person.id] || 0;
   const line = person.lines[Math.min(i, person.lines.length - 1)];
-  state.talk[person.id] = Math.min(person.lines.length - 1, i + 1);
+  if (auto) state.talk[person.id] = Math.max(i, 1);
+  else state.talk[person.id] = Math.min(person.lines.length - 1, i + 1);
+  state.heard[person.id] = 1;
+  const way = wayFrom(world, state, person.x, person.z);
+  const tail = way && way.dir ? pointLine(person.id, way.dir, way.target.kind === "gate") : "";
   state.msg = save.captions ? person.name + ". " + line : "";
-  state.notes.push(person.name + ". " + line);
+  state.notes.push(person.name + ". " + [line, tail].filter(Boolean).join(" "));
   if (state.notes.length > 48) state.notes.splice(0, state.notes.length - 48);
   unlockSpeech();
-  speak(line, person);
+  speakChain([line, tail], person);
   markSpeaking(person.id, line);
+  voicedAt = clock;
   refreshHud();
 }
 
@@ -459,9 +527,96 @@ function revealMap() {
   }
 }
 
-function drawMap() {
-  const canvas = document.getElementById("minimap");
-  if (!canvas || canvas.hidden || !world || !state) return;
+function updateGuide() {
+  const on = save.guide !== false && !state.cleared;
+  const here = cellOf(state.px, state.pz);
+  const way = on ? wayFrom(world, state, here.x, here.z) : null;
+  const bearing = document.getElementById("bearing");
+  const name = document.getElementById("bearing-name");
+  const needle = document.getElementById("needle");
+  if (bearing) bearing.hidden = !way || !way.dir;
+  if (way && way.dir && name) {
+    const word = way.dir.charAt(0).toUpperCase() + way.dir.slice(1);
+    name.textContent = (way.target.kind === "gate" ? "Gate" : "Next") + " · " + word;
+  }
+  if (needle && way && way.dir) {
+    const ang = way.dir === "east" ? Math.PI / 2 : way.dir === "west" ? -Math.PI / 2 : way.dir === "south" ? Math.PI : 0;
+    needle.style.transform = "rotate(" + (ang - state.yaw) + "rad)";
+  }
+  if (crumbs) {
+    const path = way && way.path ? way.path : [];
+    crumbs.children.forEach((stone, i) => {
+      const step = path[i + 1];
+      if (!on || !step) { stone.visible = false; return; }
+      const spot = center(step[0], step[1]);
+      stone.visible = true;
+      stone.position.set(spot.x, 0.14 + Math.sin(clock * 3 + i) * 0.02, spot.z);
+      stone.scale.setScalar(1);
+    });
+  }
+  if (view) view.dataset.bearing = way && way.dir ? way.dir : "";
+  if (view) view.dataset.guide = on ? "1" : "0";
+}
+
+function guideSpeech() {
+  if (!state.heard) state.heard = {};
+  if (state.cue && state.cue.length && !busy() && clock - voicedAt > 0.4) {
+    const lines = state.cue.splice(0, state.cue.length);
+    speakChain(lines, { id: "narrator", name: world.title });
+    markSpeaking("narrator", lines[0]);
+    voicedAt = clock;
+    return;
+  }
+  if (mapBig || busy() || clock < 8) return;
+  const moved = Math.hypot(state.px - idle.x, state.pz - idle.z);
+  if (moved > 1.3) {
+    idle.x = state.px;
+    idle.z = state.pz;
+    idle.t = clock;
+  }
+  const person = personNear();
+  if (person && !state.heard[person.id] && clock - voicedAt > 1.2) {
+    state.heard[person.id] = 1;
+    talk(person, true);
+    return;
+  }
+  const here = cellOf(state.px, state.pz);
+  const way = wayFrom(world, state, here.x, here.z);
+  if (way && way.target) {
+    const d = Math.hypot(state.px - (way.target.x + 0.5) * CELL, state.pz - (way.target.z + 0.5) * CELL);
+    const key = "near:" + way.target.id;
+    if (d < 3.1 && !state.heard[key] && clock - voicedAt > 1.2) {
+      state.heard[key] = 1;
+      const line = way.target.kind === "gate" ? world.closing : world.near;
+      if (line) {
+        speak(line, { id: "narrator", name: world.title });
+        markSpeaking("narrator", line);
+        if (save.captions) state.msg = line;
+        voicedAt = clock;
+        return;
+      }
+    }
+  }
+  if (save.guide === false || state.cleared) return;
+  if (clock - idle.t > 45 && clock - voicedAt > 12) {
+    const line = idleLine(way && way.dir, way && way.target && way.target.kind === "gate");
+    speak(line, { id: "narrator", name: "Hint" });
+    markSpeaking("narrator", line);
+    if (save.captions) state.msg = line;
+    voicedAt = clock;
+    idle.t = clock;
+  }
+}
+
+function showBig(on) {
+  mapBig = !!on && !!world;
+  const overlay = document.getElementById("map-overlay");
+  if (overlay) overlay.hidden = !mapBig;
+  if (mapBig) paintMap(document.getElementById("map-big"), true);
+}
+
+function paintMap(canvas, big) {
+  if (!canvas || !world || !state) return;
   const g = canvas.getContext("2d");
   const cols = world.grid[0].length;
   const rows = world.grid.length;
@@ -478,57 +633,147 @@ function drawMap() {
   if (minX > maxX) { minX = 0; maxX = 1; minZ = 0; maxZ = 1; }
   const spanX = maxX - minX + 1;
   const spanZ = maxZ - minZ + 1;
-  const pad = 14;
+  const pad = big ? 36 : 22;
   const cell = Math.min((canvas.width - pad * 2) / spanX, (canvas.height - pad * 2) / spanZ);
   const ox = (canvas.width - cell * spanX) / 2 - minX * cell;
   const oy = (canvas.height - cell * spanZ) / 2 - minZ * cell;
-  g.fillStyle = "#e6d2a6";
+  g.clearRect(0, 0, canvas.width, canvas.height);
+  g.fillStyle = "#c9b48a";
   g.fillRect(0, 0, canvas.width, canvas.height);
-  g.fillStyle = "rgba(120,70,30,0.08)";
-  g.beginPath();
-  g.arc(canvas.width * 0.3, canvas.height * 0.4, 40, 0, 7);
-  g.fill();
+  g.fillStyle = "rgba(90,58,28,0.18)";
+  g.fillRect(0, 0, canvas.width, canvas.height);
   for (let z = 0; z < rows; z++) {
     for (let x = 0; x < cols; x++) {
       const key = x + "," + z;
       if (!state.seen[key] && !state.knownWall[key]) continue;
       const ch = world.grid[z][x];
       const shut = ch === "#" || (ch === "+" && !state.flags[world.door]) || (ch === "=" && !state.flags[world.door2]);
-      g.fillStyle = shut ? "#6b4a2c" : "#f4e6c4";
-      g.fillRect(ox + x * cell, oy + z * cell, cell - 0.5, cell - 0.5);
+      g.fillStyle = shut ? "#5c3a22" : (state.seen[key] ? "#f4e6c4" : "#b89a6a");
+      g.fillRect(ox + x * cell, oy + z * cell, Math.max(1, cell - 0.6), Math.max(1, cell - 0.6));
       if (state.stirred[key]) {
         g.strokeStyle = "#c47a18";
+        g.lineWidth = Math.max(1, cell * 0.08);
         g.strokeRect(ox + x * cell + 1, oy + z * cell + 1, cell - 2, cell - 2);
       }
       if (state.folded && state.folded[key]) {
         g.strokeStyle = "#5a3a78";
+        g.lineWidth = Math.max(1, cell * 0.08);
         g.beginPath();
-        g.arc(ox + (x + 0.5) * cell, oy + (z + 0.5) * cell, cell * 0.28, 0, 5);
+        g.arc(ox + (x + 0.5) * cell, oy + (z + 0.5) * cell, cell * 0.28, 0, Math.PI * 2);
         g.stroke();
       }
     }
   }
+  const hereCell = cellOf(state.px, state.pz);
+  const target = wayFrom(world, state, hereCell.x, hereCell.z);
+  const gateCell = findGate();
+  if (gateCell && state.seen[gateCell.x + "," + gateCell.z]) {
+    drawArch(g, ox + (gateCell.x + 0.5) * cell, oy + (gateCell.z + 0.5) * cell, cell);
+  }
+  for (const t of world.tokens || []) {
+    if (!t.letter && !t.blocks) continue;
+    if (!state.seen[t.x + "," + t.z]) continue;
+    const cx = ox + (t.x + 0.5) * cell;
+    const cy = oy + (t.z + 0.5) * cell;
+    const found = !!(t.letter && state.found[t.id]) || !!(t.blocks && state.flags[t.flag]);
+    const hot = target && target.target.id === t.id;
+    drawDiamond(g, cx, cy, cell * (hot ? 0.34 : 0.26), found ? "#8a7048" : "#c47a18");
+    if (t.letter && cell > 11) {
+      g.fillStyle = found ? "#3a2a18" : "#1a120c";
+      g.font = "600 " + Math.max(8, cell * 0.42) + "px Georgia, serif";
+      g.textAlign = "center";
+      g.textBaseline = "middle";
+      g.fillText(t.letter, cx, cy + 0.5);
+    }
+  }
   people.forEach((p) => {
     if (!state.seen[p.x + "," + p.z]) return;
+    const cx = ox + (p.x + 0.5) * cell;
+    const cy = oy + (p.z + 0.5) * cell;
     g.fillStyle = "#8a3a22";
     g.beginPath();
-    g.arc(ox + (p.x + 0.5) * cell, oy + (p.z + 0.5) * cell, Math.max(1.5, cell * 0.22), 0, 7);
+    g.arc(cx, cy, Math.max(2.2, cell * 0.2), 0, Math.PI * 2);
     g.fill();
+    if (big && cell > 14) {
+      g.fillStyle = "#1a120c";
+      g.font = "600 " + Math.max(9, cell * 0.28) + "px Georgia, serif";
+      g.textAlign = "center";
+      g.textBaseline = "bottom";
+      g.fillText(p.name, cx, cy - cell * 0.28);
+    }
   });
   const here = cellOf(state.px, state.pz);
   const px = ox + (state.px / CELL) * cell;
   const py = oy + (state.pz / CELL) * cell;
+  if (save.guide !== false && target && target.dir) {
+    const ang = target.dir === "east" ? 0 : target.dir === "south" ? Math.PI / 2 : target.dir === "west" ? Math.PI : -Math.PI / 2;
+    g.strokeStyle = "#c47a18";
+    g.lineWidth = Math.max(2, cell * 0.09);
+    g.beginPath();
+    g.moveTo(px, py);
+    g.lineTo(px + Math.cos(ang) * cell * 1.7, py + Math.sin(ang) * cell * 1.7);
+    g.stroke();
+  }
   g.save();
   g.translate(px, py);
   g.rotate(state.yaw);
   g.fillStyle = "#1a120c";
+  g.strokeStyle = "#f4e6c4";
+  g.lineWidth = Math.max(1, cell * 0.06);
   g.beginPath();
-  g.moveTo(0, -cell * 0.38);
-  g.lineTo(cell * 0.22, cell * 0.28);
-  g.lineTo(-cell * 0.22, cell * 0.28);
+  g.moveTo(0, -cell * 0.46);
+  g.lineTo(cell * 0.26, cell * 0.32);
+  g.lineTo(-cell * 0.26, cell * 0.32);
+  g.closePath();
   g.fill();
+  g.stroke();
   g.restore();
+  g.fillStyle = "#3a2416";
+  g.font = "700 " + (big ? 28 : 18) + "px Georgia, serif";
+  g.textAlign = "center";
+  g.textBaseline = "top";
+  g.fillText("N", canvas.width / 2, 6);
   if (!state.seen[here.x + "," + here.z]) revealMap();
+}
+
+function findGate() {
+  for (let z = 0; z < world.grid.length; z++) {
+    for (let x = 0; x < world.grid[z].length; x++) {
+      if (world.grid[z][x] === "G") return { x, z };
+    }
+  }
+  return null;
+}
+
+function drawDiamond(g, x, y, r, color) {
+  g.fillStyle = color;
+  g.beginPath();
+  g.moveTo(x, y - r);
+  g.lineTo(x + r, y);
+  g.lineTo(x, y + r);
+  g.lineTo(x - r, y);
+  g.closePath();
+  g.fill();
+}
+
+function drawArch(g, x, y, cell) {
+  const w = cell * 0.34;
+  const h = cell * 0.42;
+  g.strokeStyle = "#1a120c";
+  g.lineWidth = Math.max(1.5, cell * 0.08);
+  g.beginPath();
+  g.moveTo(x - w, y + h * 0.45);
+  g.lineTo(x - w, y - h * 0.15);
+  g.quadraticCurveTo(x, y - h, x + w, y - h * 0.15);
+  g.lineTo(x + w, y + h * 0.45);
+  g.stroke();
+}
+
+function drawMap() {
+  const canvas = document.getElementById("minimap");
+  if (!canvas || canvas.hidden || !world || !state) return;
+  paintMap(canvas, false);
+  if (mapBig) paintMap(document.getElementById("map-big"), true);
 }
 
 function leave() {
@@ -536,6 +781,7 @@ function leave() {
   const btn = document.getElementById("btn-map");
   if (canvas) canvas.hidden = true;
   if (btn) btn.hidden = true;
+  showBig(false);
   const cc = document.getElementById("btn-captions");
   if (cc) cc.hidden = true;
   if (state && !state.cleared) snapshot();
@@ -552,9 +798,10 @@ function leave() {
 function refreshHud() {
   if (!world) return;
   document.getElementById("objective").textContent = objective(world, state);
-  const held = lettersHeld(world, state).slice().sort((a, b) => a.letter.localeCompare(b.letter) || a.tag.localeCompare(b.tag));
-  const need = (world.tokens || []).filter((t) => t.letter).length;
-  document.getElementById("held").textContent = need ? "Letters " + held.length + "/" + need + (held.length ? " · " + held.map((h) => h.letter).join(" ") : "") : "";
+  const prog = letterProgress(world, state);
+  const heldEl = document.getElementById("held");
+  heldEl.textContent = prog.need ? "Letters " + prog.have + "/" + prog.need : (world.id === "meta" ? "Eight brands, then the gate" : "");
+  if (view) view.dataset.progress = prog.need ? prog.have + "/" + prog.need : "meta";
   toast.hidden = !save.captions || !state.msg;
   toast.textContent = state.msg || "";
   const person = personNear();
@@ -595,6 +842,7 @@ function useNow() {
     unlockSpeech();
     speak(said, { id: "narrator", name: res.title || "Clue" });
     markSpeaking("narrator", said);
+    voicedAt = clock;
     if (!save.captions) state.msg = "";
   }
   refreshHud();
@@ -635,6 +883,9 @@ function tryCode(raw) {
   const res = submitCode(world, state, raw);
   if (!res.ok) {
     state.msg = res.msg;
+    unlockSpeech();
+    speak(res.msg, { id: "narrator", name: "Gate" });
+    markSpeaking("narrator", res.msg);
     refreshHud();
     const field = document.getElementById("code");
     if (field) {
@@ -653,6 +904,9 @@ function tryCode(raw) {
   else save.cleared[world.id] = world.shown;
   save.run = null;
   persist();
+  unlockSpeech();
+  speak(world.win, { id: "narrator", name: world.title });
+  markSpeaking("narrator", world.win);
   openPanel(winHtml(res.shown), true);
 }
 
@@ -679,27 +933,41 @@ function frame(now) {
     if (keys.z) ix -= 1;
     if (keys.c) ix += 1;
     if (stepLeft > 0) { iz += 1; stepLeft -= dt; }
+    const gasGoal = hold.on ? 1 : 0;
+    hold.gas += (gasGoal - hold.gas) * (1 - Math.exp(-(hold.on ? 5.2 : 7.5) * dt));
+    if (hold.gas > 0.02) iz += hold.gas;
+    hold.wantSteer *= Math.exp(-7 * dt);
+    hold.steer += (hold.wantSteer - hold.steer) * (1 - Math.exp(-14 * dt));
     const len = Math.hypot(ix, iz);
     if (len > 1) { ix /= len; iz /= len; }
     if (keys.a || keys.arrowleft || turnHeld < 0) state.yaw -= TURN * dt * sens;
     if (keys.d || keys.arrowright || turnHeld > 0) state.yaw += TURN * dt * sens;
     if (stickX) state.yaw += stickX * TURN * dt * sens;
+    if (Math.abs(hold.steer) > 0.02) state.yaw += hold.steer * dt * sens;
+    if (hold.pitch) {
+      state.pitch = Math.max(-1.15, Math.min(1.05, state.pitch + hold.pitch));
+      hold.pitch = 0;
+    }
     const fx = Math.sin(state.yaw);
     const fz = -Math.cos(state.yaw);
     const rx = Math.cos(state.yaw);
     const rz = Math.sin(state.yaw);
     const moving = len > 0.05;
-    const sprint = keys.shift || clock < sprintUntil;
+    const sprint = keys.shift || clock < sprintUntil || hold.hurry;
     const pace = SPEED * (sprint ? 1.7 : 1);
     movePlayer(world, state, (fx * iz + rx * ix) * pace * dt, (fz * iz + rz * ix) * pace * dt);
     const bob = moving && save.bob !== false && !reduce ? Math.sin(clock * 9) * 0.05 : 0;
     revealMap();
+    updateGuide();
+    guideSpeech();
     const clue = (world.tokens || []).some((t) => t.letter && !state.found[t.id] && Math.hypot(state.px - (t.x + 0.5) * CELL, state.pz - (t.z + 0.5) * CELL) < 2.3);
     if (clue && !nearClue) audio.blip();
     nearClue = clue;
     camera.position.set(state.px, EYE + bob, state.pz);
     camera.rotation.y = -state.yaw;
     view.dataset.yaw = String(state.yaw);
+    view.dataset.holding = hold.on ? "1" : "0";
+    view.dataset.gas = hold.gas.toFixed(2);
     camera.rotation.x = state.pitch;
     if (now - saveAt > 2000) { saveAt = now; snapshot(); persist(); }
   }
@@ -848,6 +1116,11 @@ function bind() {
   document.getElementById("btn-hint").addEventListener("click", () => { audio.resume(); doHint(); });
   document.getElementById("btn-book").addEventListener("click", () => openPanel(notesHtml(), false));
   document.getElementById("btn-map").addEventListener("click", () => { if (world) showMap(!mapOn); });
+  document.getElementById("minimap").addEventListener("click", () => { if (world) showBig(!mapBig); });
+  document.getElementById("map-close").addEventListener("click", () => showBig(false));
+  document.getElementById("map-overlay").addEventListener("click", (e) => {
+    if (e.target.id === "map-overlay") showBig(false);
+  });
   document.getElementById("btn-captions").addEventListener("click", () => {
     save.captions = !save.captions;
     persist();
@@ -914,6 +1187,16 @@ function bind() {
       persist();
       if (world) refreshHud();
     }
+    if (e.target.id === "stick") {
+      save.stick = e.target.checked;
+      persist();
+      applyStick();
+    }
+    if (e.target.id === "guide") {
+      save.guide = e.target.checked;
+      persist();
+      if (world) updateGuide();
+    }
   });
   window.addEventListener("keydown", (e) => {
     if (e.target && e.target.matches && e.target.matches("input, textarea")) {
@@ -926,6 +1209,7 @@ function bind() {
     keys[k] = true;
     if (["arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(k)) e.preventDefault();
     if (k === "escape") {
+      if (mapBig) { showBig(false); return; }
       if (document.pointerLockElement) document.exitPointerLock();
       closePanel();
     }
@@ -933,7 +1217,10 @@ function bind() {
     if (k === "f") toggleLight();
     if (k === "e" || k === " ") useNow();
     if (k === "h") doHint();
-    if (k === "m") showMap(!mapOn);
+    if (k === "m") {
+      if (mapBig) showBig(false);
+      else showMap(!mapOn);
+    }
     if (k === "b") { save.bob = save.bob === false; persist(); }
     if (k === "j") openPanel(notesHtml(), false);
   });
@@ -996,8 +1283,22 @@ function bind() {
     if (e.cancelable) e.preventDefault();
     if (!panel.hidden || !e.changedTouches.length) return;
     audio.resume();
+    unlockSpeech();
     const t = e.changedTouches[0];
-    drag = { id: "touch", x: t.clientX, y: t.clientY, moved: false, type: "touch" };
+    const nowMs = performance.now();
+    const again = nowMs - hold.lastUp < 340 && hold.lastWasTap;
+    drag = { id: "touch", x: t.clientX, y: t.clientY, moved: false, type: "touch", walking: false, hurry: again, t: nowMs };
+    clearTimeout(hold.timer);
+    if (directWalk()) {
+      hold.timer = setTimeout(() => {
+        if (!drag || drag.id !== "touch" || drag.moved) return;
+        drag.walking = true;
+        hold.on = true;
+        hold.hurry = !!drag.hurry;
+        const tip = document.getElementById("walk-tip");
+        if (tip) tip.hidden = true;
+      }, 170);
+    }
   }, { passive: false });
   look.addEventListener("touchmove", (e) => {
     if (e.cancelable) e.preventDefault();
@@ -1007,16 +1308,36 @@ function bind() {
     const dy = t.clientY - drag.y;
     drag.x = t.clientX;
     drag.y = t.clientY;
+    if (drag.walking) {
+      const span = Math.max(0.016, Math.min(0.05, (performance.now() - (drag.moveT || drag.t)) / 1000));
+      drag.moveT = performance.now();
+      hold.wantSteer = Math.max(-2.6, Math.min(2.6, dx / span * 0.0044));
+      hold.pitch += -dy * 0.0032 * sens;
+      return;
+    }
     nudgeLook(dx, dy, drag);
+    if (drag.moved) clearTimeout(hold.timer);
   }, { passive: false });
   look.addEventListener("touchend", (e) => {
     if (e.cancelable) e.preventDefault();
     if (!drag || drag.id !== "touch") return;
-    const tap = !drag.moved;
+    clearTimeout(hold.timer);
+    const tap = !drag.moved && !drag.walking;
+    hold.on = false;
+    hold.hurry = false;
+    hold.wantSteer = 0;
     drag = null;
+    hold.lastUp = performance.now();
+    hold.lastWasTap = tap;
     if (tap) tapLook();
   }, { passive: false });
-  look.addEventListener("touchcancel", () => { if (!lookFromPointer) drag = null; });
+  look.addEventListener("touchcancel", () => {
+    clearTimeout(hold.timer);
+    hold.on = false;
+    hold.hurry = false;
+    hold.wantSteer = 0;
+    if (!lookFromPointer) drag = null;
+  });
 
   function joyPos(e) {
     const r = stick.getBoundingClientRect();
@@ -1083,6 +1404,7 @@ function bind() {
   window.addEventListener("pagehide", () => { snapshot(); persist(); });
 }
 
+applyStick();
 drawHub();
 audio.setMuted(!save.sound);
 document.title = GAME_TITLE + " | Collier Entertainment";

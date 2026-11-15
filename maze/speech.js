@@ -1,7 +1,7 @@
 /* Spoken lines. Every line has a recording. A book-worlds clip is used when
    it already says the same sentence. The rest were made with Kokoro.
    The browser voice is only a fallback if a file will not play. */
-import { LINES } from "./voices/index.js?v=2";
+import { LINES } from "./voices/index.js?v=3";
 
 const TONE = {
   jang: { pitch: 1.42, rate: 1.14, high: true },
@@ -90,18 +90,42 @@ function synthesize(line, who) {
   return true;
 }
 
+export function busy() {
+  return !!(clip && !clip.paused && !clip.ended);
+}
+
+function playOne(line, who, then) {
+  const rec = LINES[line];
+  if (rec) {
+    clip = new Audio(blobs.get(rec.src) || rec.src);
+    clip.onended = () => { if (then) then(); };
+    const played = clip.play();
+    if (played && played.catch) played.catch(() => { synthesize(line, who); });
+    return { spoken: true, kind: rec.voice === "recorded" ? "clip" : "voice" };
+  }
+  const ok = synthesize(line, who);
+  if (then) setTimeout(then, Math.min(9000, 900 + line.length * 45));
+  return { spoken: ok, kind: "synth" };
+}
+
 export function speak(text, who) {
   const line = norm(text);
   if (!line) return { spoken: false, kind: "" };
   stopSpeak();
-  const rec = LINES[line];
-  if (rec) {
-    clip = new Audio(blobs.get(rec.src) || rec.src);
-    const played = clip.play();
-    if (played && played.catch) played.catch(() => synthesize(line, who));
-    return { spoken: true, kind: rec.voice === "recorded" ? "clip" : "voice" };
-  }
-  return { spoken: synthesize(line, who), kind: "synth" };
+  return playOne(line, who);
+}
+
+export function speakChain(parts, who) {
+  const lines = (parts || []).map(norm).filter(Boolean);
+  if (!lines.length) return { spoken: false, kind: "" };
+  stopSpeak();
+  let i = 0;
+  const next = () => {
+    if (i >= lines.length) return;
+    playOne(lines[i++], who, next);
+  };
+  next();
+  return { spoken: true, kind: "chain" };
 }
 
 export function toneFor(id) {
