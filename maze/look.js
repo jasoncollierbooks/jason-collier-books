@@ -730,6 +730,7 @@ export function dressScene(scene, world, coarse) {
     emissive: new THREE.Color(style.emissive || 0x000000),
     emissiveIntensity: style.ei || 0,
     vertexColors: true,
+    side: THREE.DoubleSide,
   });
   const shell = new THREE.Mesh(shellOf(world, style), mat);
   shell.castShadow = true;
