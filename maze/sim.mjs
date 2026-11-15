@@ -1,91 +1,17 @@
 /* Walk every maze with only the moves a clued player can make. */
 import { WORLDS, META, worldById, brandsSpell, brandsShown } from "./worlds.js";
-import { createState, walkTo, interact, submitCode, hintFor, lettersHeld, cellOf, FACE, findChar, blocked, wayFrom } from "./logic.js";
+import { createState, walkTo, interact, submitCode, hintFor, lettersHeld, cellOf, FACE, findChar, blocked, wayFrom, routeCells } from "./logic.js";
 import { peopleFor } from "./cast.js";
 
-const SOLVE = {
-  trail: [
-    ["at", 1, 4],
-    ["at", 2, 3],
-    ["light", true],
-    ["at", 8, 6],
-    ["face", "west"],
-    ["at", 1, 8],
-    ["code", "ROPE"],
-  ],
-  pine: [
-    ["at", 5, 2],
-    ["light", true],
-    ["at", 9, 3],
-    ["at", 5, 6],
-    ["at", 1, 5],
-    ["face", "west"],
-    ["at", 1, 8],
-    ["code", "OPAL"],
-  ],
-  mountain: [
-    ["at", 2, 3],
-    ["light", true],
-    ["at", 7, 8],
-    ["face", "west"],
-    ["at", 1, 8],
-    ["at", 6, 9],
-    ["code", "FIRE"],
-  ],
-  rusty: [
-    ["at", 4, 2],
-    ["light", false],
-    ["to", 8, 6],
-    ["light", true],
-    ["use"],
-    ["face", "west"],
-    ["at", 1, 6],
-    ["at", 4, 9],
-    ["code", "DONT"],
-  ],
-  pulse: [
-    ["at", 2, 4],
-    ["at", 4, 7],
-    ["light", true],
-    ["at", 8, 6],
-    ["at", 1, 8],
-    ["pitch"],
-    ["at", 8, 9],
-    ["code", "ECHO"],
-  ],
-  thorne: [
-    ["at", 4, 2],
-    ["at", 2, 4],
-    ["at", 2, 4],
-    ["at", 2, 4],
-    ["light", true],
-    ["at", 8, 8],
-    ["face", "west"],
-    ["at", 1, 8],
-    ["at", 5, 9],
-    ["code", "BORN"],
-  ],
-  seeders: [
-    ["at", 4, 2],
-    ["face", "west"],
-    ["at", 1, 2],
-    ["at", 4, 4],
-    ["light", true],
-    ["at", 7, 6],
-    ["code", "SEED"],
-  ],
-  envoy: [
-    ["at", 4, 2],
-    ["light", false],
-    ["to", 8, 5],
-    ["light", true],
-    ["use"],
-    ["face", "west"],
-    ["at", 1, 5],
-    ["at", 2, 6],
-    ["at", 4, 9],
-    ["code", "HIVE"],
-  ],
+const PLAN = {
+  trail: [["use", "rope"], ["use", "passage"], ["light", true], ["use", "ox"], ["face", "west"], ["use", "boards"], ["code", "ROPE"]],
+  pine: [["use", "gold"], ["light", true], ["use", "napkin"], ["use", "hole"], ["use", "reward"], ["face", "west"], ["use", "board"], ["code", "OPAL"]],
+  mountain: [["use", "campfire"], ["light", true], ["use", "tent"], ["face", "west"], ["use", "spruce"], ["use", "camera"], ["code", "FIRE"]],
+  rusty: [["use", "plate"], ["face", "west"], ["use", "pipe"], ["light", false], ["goto", "grate"], ["light", true], ["use", "grate"], ["use", "crate"], ["code", "DONT"]],
+  pulse: [["use", "pedestal"], ["use", "arch"], ["light", true], ["use", "pocket"], ["use", "quote"], ["pitch"], ["use", "ring"], ["code", "ECHO"]],
+  thorne: [["use", "clip"], ["use", "scope", 3], ["light", true], ["use", "chamber"], ["face", "west"], ["use", "trefoil"], ["use", "shell"], ["code", "BORN"]],
+  seeders: [["use", "hull"], ["face", "west"], ["use", "edge"], ["use", "vein"], ["light", true], ["use", "circuit"], ["code", "SEED"]],
+  envoy: [["use", "fates"], ["face", "west"], ["use", "shard"], ["light", false], ["goto", "glass"], ["light", true], ["use", "glass"], ["use", "lens"], ["use", "bind"], ["code", "HIVE"]],
 };
 
 function fail(msg) {
@@ -93,36 +19,36 @@ function fail(msg) {
   process.exitCode = 1;
 }
 
+function entity(world, id) {
+  return (world.tokens || []).concat(world.signs || []).find((t) => t.id === id) || null;
+}
+
 function play(world, steps) {
   const state = createState(world);
   const early = submitCode(world, state, world.code);
-  if (early.ok) fail(world.id + " accepted the code with no letters");
+  if (early.ok && !world.freeCode) fail(world.id + " accepted the code with no letters");
   for (const step of steps) {
     const [op, a, b] = step;
     if (op === "light") state.light = a;
     else if (op === "face") state.yaw = FACE[a];
     else if (op === "pitch") state.pitch = -0.9;
-    else if (op === "use") {
-      const res = interact(world, state);
-      if (res.msg && /smear|dark|blank|Nothing/i.test(res.msg) && !res.found && !res.ui) {
-        fail(world.id + " use failed: " + res.msg);
-      }
-    } else if (op === "to") {
-      if (!walkTo(world, state, a, b)) {
+    else if (op === "goto" || op === "use") {
+      const spot = entity(world, a);
+      if (!spot) { fail(world.id + " missing " + a); return null; }
+      if (!walkTo(world, state, spot.x, spot.z)) {
         const at = cellOf(state.px, state.pz);
-        fail(world.id + " cannot walk to " + a + "," + b + " (stuck " + at.x + "," + at.z + ")");
+        fail(world.id + " cannot reach " + a + " at " + spot.x + "," + spot.z + " (stuck " + at.x + "," + at.z + " light=" + state.light + " flags=" + JSON.stringify(state.flags) + ")");
         return null;
       }
-    } else if (op === "at") {
-      state.pitch = step.pitch != null ? state.pitch : state.pitch;
-      if (!walkTo(world, state, a, b)) {
-        const at = cellOf(state.px, state.pz);
-        fail(world.id + " cannot reach " + a + "," + b + " (stuck " + at.x + "," + at.z + " light=" + state.light + " flags=" + JSON.stringify(state.flags) + ")");
-        return null;
-      }
-      const res = interact(world, state);
-      if (!res.found && !res.ui && res.msg && /smear|dark|blank|Nothing here/i.test(res.msg)) {
-        fail(world.id + " at " + a + "," + b + " did not work: " + res.msg);
+      if (op === "use") {
+        const times = b || 1;
+        for (let n = 0; n < times; n++) {
+          const res = interact(world, state);
+          if (res.msg && /smear|dark|blank|Nothing/i.test(res.msg) && !res.found && !res.ui) {
+            fail(world.id + " use " + a + " failed: " + res.msg);
+            return null;
+          }
+        }
       }
     } else if (op === "code") {
       const res = submitCode(world, state, a);
@@ -189,7 +115,30 @@ for (const world of WORLDS.concat([META])) {
 }
 
 for (const world of WORLDS) {
-  play(world, SOLVE[world.id]);
+  if (world.grid.length < 21) fail(world.id + " grid is only " + world.grid.length);
+  const openFlags = {};
+  if (world.door) openFlags[world.door] = true;
+  if (world.door2) openFlags[world.door2] = true;
+  for (const portal of world.portals || []) if (portal.unlessFlag) openFlags[portal.unlessFlag] = true;
+  const probe = createState(world);
+  Object.assign(probe.flags, openFlags);
+  probe.light = true;
+  const start = findChar(world, "S")[0];
+  const goal = findChar(world, "G")[0];
+  const viaLight = routeCells(world, probe, start.x, start.z, goal.x, goal.z);
+  probe.light = false;
+  const viaDark = routeCells(world, probe, start.x, start.z, goal.x, goal.z);
+  const solution = viaLight || viaDark;
+  if (!solution) fail(world.id + " has no solved path to the gate");
+  else console.log("  path " + world.id + " " + solution.length + " cells  grid " + world.grid.length + "x" + world.grid[0].length + " oneways " + (world.oneway || []).length);
+  for (const token of world.tokens || []) {
+    probe.light = true;
+    const lit = routeCells(world, probe, start.x, start.z, token.x, token.z);
+    probe.light = false;
+    const dark = routeCells(world, probe, start.x, start.z, token.x, token.z);
+    if (!lit && !dark) fail(world.id + " token " + token.id + " is unreachable even with the tricks done");
+  }
+  play(world, PLAN[world.id]);
   if (world.door || world.door2) {
     const open = reachable(world, {}, true);
     const hidden = (world.tokens || []).filter((t) => t.letter && !open.has(t.x + "," + t.z));
@@ -197,8 +146,10 @@ for (const world of WORLDS) {
   }
 }
 
-const seed = createState(worldById("seeders"));
-if (walkTo(worldById("seeders"), seed, 7, 6)) fail("seeders back room opens before the seed is used");
+const seeders = worldById("seeders");
+const circuit = seeders.tokens.find((t) => t.id === "circuit");
+const seed = createState(seeders);
+if (walkTo(seeders, seed, circuit.x, circuit.z)) fail("seeders back room opens before the seed is used");
 
 const meta = createState(META);
 const metaBad = submitCode(META, meta, "STATIONS");
@@ -215,4 +166,4 @@ if (!process.exitCode) {
   for (const w of WORLDS) console.log("  " + w.id + " " + w.code + " brand " + w.shown);
 }
 }
-export { SOLVE };
+export { PLAN };

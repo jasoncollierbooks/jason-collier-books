@@ -140,8 +140,17 @@ export function createState(world) {
   };
 }
 
+function oneWayBlocks(world, x, z, nx, nz) {
+  return (world.oneway || []).some((a) => a.x === nx && a.z === nz && a.x + a.dx === x && a.z + a.dz === z);
+}
+
 function slide(world, state, mx, mz) {
   if (!mx && !mz) return;
+  const nextX = state.px + mx;
+  const nextZ = state.pz + mz;
+  const from = cellOf(state.px, state.pz);
+  const to = cellOf(nextX, nextZ);
+  if ((from.x !== to.x || from.z !== to.z) && oneWayBlocks(world, from.x, from.z, to.x, to.z)) return;
   if (!circleHits(world, state.flags, state.px + mx, state.pz + mz)) {
     if (mx) state.px += mx;
     if (mz) state.pz += mz;
@@ -339,6 +348,7 @@ export function routeCells(world, state, sx, sz, tx, tz) {
       const k = key(nx, nz);
       if (prev.has(k)) continue;
       if (blocked(world, nx, nz, state.flags)) continue;
+      if (oneWayBlocks(world, x, z, nx, nz)) continue;
       const dest = portalDest(world, state, nx, nz);
       if (dest && !dest.pass) continue;
       prev.set(k, [x, z]);

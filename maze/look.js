@@ -1215,6 +1215,25 @@ function addIvy(scene, world, coarse) {
   }
 }
 
+function addOneWays(scene, world) {
+  const arrows = world.oneway || [];
+  if (!arrows.length) return;
+  const shape = new THREE.Shape();
+  shape.moveTo(0.22, 0);
+  shape.lineTo(-0.16, 0.12);
+  shape.lineTo(-0.16, -0.12);
+  const geo = new THREE.ShapeGeometry(shape);
+  const mat = new THREE.MeshBasicMaterial({ color: 0x3a78b0, side: THREE.DoubleSide });
+  for (const arrow of arrows) {
+    const mesh = new THREE.Mesh(geo, mat);
+    const yaw = arrow.dx === 1 ? 0 : arrow.dx === -1 ? Math.PI : arrow.dz === 1 ? Math.PI / 2 : -Math.PI / 2;
+    mesh.rotation.x = -Math.PI / 2;
+    mesh.rotation.z = -yaw;
+    mesh.position.set((arrow.x + 0.5) * CELL, 0.045, (arrow.z + 0.5) * CELL);
+    scene.add(mesh);
+  }
+}
+
 function addKnockers(scene, doors) {
   const mat = new THREE.MeshStandardMaterial({ color: 0xc4a15a, roughness: 0.35, metalness: 0.6 });
   doors.forEach((d) => {
@@ -1355,6 +1374,7 @@ export function dressScene(scene, world, coarse, renderer) {
   addCast(scene, world);
   addIvy(scene, world, coarse);
   addKnockers(scene, doors);
+  addOneWays(scene, world);
   if (world.id === "pulse" || world.id === "envoy") addEscher(scene, world);
 
   const count = coarse ? 40 : 80;

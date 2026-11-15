@@ -63,12 +63,30 @@ function applyStick() { document.body.classList.toggle("stick", !!save.stick); }
 const joy = { x: 0, y: 0, id: null };
 let sens = save.sens || 1;
 
+function freshSave(extra) {
+  return Object.assign({ v: 2, cleared: {}, meta: false, sound: true, sens: 1, help: false, run: null }, extra || {});
+}
+
 function load() {
   try {
     const raw = JSON.parse(localStorage.getItem(SAVE_KEY) || "null");
-    if (raw && raw.v === 1) return raw;
+    if (raw && raw.v === 2) return raw;
+    if (raw && raw.v === 1) {
+      return freshSave({
+        cleared: raw.cleared || {},
+        meta: !!raw.meta,
+        sound: raw.sound !== false,
+        sens: raw.sens || 1,
+        help: !!raw.help,
+        stick: raw.stick,
+        captions: raw.captions,
+        bob: raw.bob,
+        walkTip: raw.walkTip,
+        run: null,
+      });
+    }
   } catch (e) { /* empty save */ }
-  return { v: 1, cleared: {}, meta: false, sound: true, sens: 1, help: false, run: null };
+  return freshSave();
 }
 
 function persist() {
@@ -185,8 +203,8 @@ function helpHtml() {
     <p>A bright door is often a lie. A room that brings you back is telling you the truth about itself. Walls move when you do the thing the room asked for.</p>
     <p>The gate wants the letters you found, in the order a carving explains. Hints start vague. The third one is plain.</p>
     <p><strong>Phone.</strong> Hold a finger on the view to walk. Slide it sideways to steer. Let go to stop. A quick tap steps forward. Hold twice to hurry. Light, Use, Hint, and Map stay where they are. The stick can be turned back on in settings.</p>
-    <p><strong>Keyboard.</strong> W and S walk. A and D, or the arrow keys, turn. Z and C sidestep. Hold Shift, or tap W twice, to hurry. Click the view to capture the mouse, and press Esc to let it go. Dragging still looks if the mouse is free. F lantern. E or Space uses what is in front of you, or talks to someone standing there. H hint. M shows the map. B toggles the head bob.</p>
-    <p>The map only inks corridors you have seen. Your arrow shows which way you face. N is north. Gold is the next mark, once you have seen it, and the arch is the gate. Tap the map to make it large. A gold mark means a wall gave way. A curl means a room folded.</p>
+    <p><strong>Keyboard.</strong> W and S walk. A and D, or the arrow keys, turn. Z and C sidestep. Hold Shift, or tap W twice, to hurry. Click the view to capture the mouse, and press Esc to let it go. Dragging still looks if the mouse is free. F lantern. E or Space uses what is in front of you, or talks to someone standing there. H hint. M opens the big map. B toggles the head bob.</p>
+    <p>Map opens a see-through chart over the maze. You can keep walking under it. M, or Map, hides it again. The small map stays in the corner. N is north. Your arrow is you. Gold is the next mark, once you have seen it. Blue marks a one-way. A gold outline means a wall gave way.</p>
     <p>Gold stones on the floor, and the needle beside the letter count, point to the next mark. Someone at a junction will point out loud. Stand still and the storyteller will too. Trail markers can be turned off in settings.</p>
     <p>People in the maze speak. Captions are off until you turn them on.</p>
     <div class="row"><button type="button" data-close>Step in</button></div>`;
@@ -287,7 +305,7 @@ function buildScene() {
   });
   crumbs = new THREE.Group();
   crumbs.name = "crumbs";
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < 3; i++) {
     const stone = new THREE.Mesh(
       new THREE.SphereGeometry(0.065, 8, 6),
       new THREE.MeshBasicMaterial({ color: 0xffd56a })
@@ -441,10 +459,7 @@ function showMap(on) {
   const canvas = document.getElementById("minimap");
   const btn = document.getElementById("btn-map");
   if (canvas) canvas.hidden = !on || !world;
-  if (btn) {
-    btn.hidden = !world;
-    btn.textContent = on ? "Hide map" : "Map";
-  }
+  if (btn) btn.hidden = !world;
   const cc = document.getElementById("btn-captions");
   if (cc) {
     cc.hidden = !world;
@@ -612,6 +627,8 @@ function showBig(on) {
   mapBig = !!on && !!world;
   const overlay = document.getElementById("map-overlay");
   if (overlay) overlay.hidden = !mapBig;
+  const btn = document.getElementById("btn-map");
+  if (btn && world) btn.textContent = mapBig ? "Hide map" : "Map";
   if (mapBig) paintMap(document.getElementById("map-big"), true);
 }
 
@@ -705,6 +722,23 @@ function paintMap(canvas, big) {
   const here = cellOf(state.px, state.pz);
   const px = ox + (state.px / CELL) * cell;
   const py = oy + (state.pz / CELL) * cell;
+  for (const arrow of world.oneway || []) {
+    if (!state.seen[arrow.x + "," + arrow.z]) continue;
+    const ax = ox + (arrow.x + 0.5) * cell;
+    const ay = oy + (arrow.z + 0.5) * cell;
+    const ang = arrow.dx === 1 ? 0 : arrow.dx === -1 ? Math.PI : arrow.dz === 1 ? Math.PI / 2 : -Math.PI / 2;
+    g.save();
+    g.translate(ax, ay);
+    g.rotate(ang);
+    g.fillStyle = "#2a5f8a";
+    g.beginPath();
+    g.moveTo(cell * 0.28, 0);
+    g.lineTo(-cell * 0.16, cell * 0.16);
+    g.lineTo(-cell * 0.16, -cell * 0.16);
+    g.closePath();
+    g.fill();
+    g.restore();
+  }
   if (save.guide !== false && target && target.dir) {
     const ang = target.dir === "east" ? 0 : target.dir === "south" ? Math.PI / 2 : target.dir === "west" ? Math.PI : -Math.PI / 2;
     g.strokeStyle = "#c47a18";
@@ -1115,7 +1149,7 @@ function bind() {
   document.getElementById("btn-use").addEventListener("click", () => { audio.resume(); useNow(); });
   document.getElementById("btn-hint").addEventListener("click", () => { audio.resume(); doHint(); });
   document.getElementById("btn-book").addEventListener("click", () => openPanel(notesHtml(), false));
-  document.getElementById("btn-map").addEventListener("click", () => { if (world) showMap(!mapOn); });
+  document.getElementById("btn-map").addEventListener("click", () => { if (world) showBig(!mapBig); });
   document.getElementById("minimap").addEventListener("click", () => { if (world) showBig(!mapBig); });
   document.getElementById("map-close").addEventListener("click", () => showBig(false));
   document.getElementById("map-overlay").addEventListener("click", (e) => {
@@ -1165,7 +1199,7 @@ function bind() {
       const sound = save.sound;
       world = null;
       state = null;
-      save = { v: 1, cleared: {}, meta: false, sound, sens, help: true, run: null };
+      save = freshSave({ sound, sens, help: true });
       persist();
       closePanel();
       audio.play("parlor");
@@ -1217,10 +1251,7 @@ function bind() {
     if (k === "f") toggleLight();
     if (k === "e" || k === " ") useNow();
     if (k === "h") doHint();
-    if (k === "m") {
-      if (mapBig) showBig(false);
-      else showMap(!mapOn);
-    }
+    if (k === "m") showBig(!mapBig);
     if (k === "b") { save.bob = save.bob === false; persist(); }
     if (k === "j") openPanel(notesHtml(), false);
   });
@@ -1413,7 +1444,7 @@ requestAnimationFrame(frame);
 
 const params = new URLSearchParams(location.search);
 if (params.get("reset") === "1") {
-  save = { v: 1, cleared: {}, meta: false, sound: true, sens: 1, help: true, run: null };
+  save = freshSave({ help: true });
   persist();
   drawHub();
 }
