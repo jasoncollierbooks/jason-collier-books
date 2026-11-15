@@ -95,6 +95,10 @@ export function createAudio() {
       if (master) master.gain.value = v ? 0 : 0.42;
     },
     stop,
+    blip() {
+      if (!context() || muted) return;
+      burst(640, 0.09, 0.045);
+    },
     play(kind) {
       if (!context()) return;
       stop();

@@ -929,6 +929,108 @@ export function brandsShown() {
   return ORDER.map((id) => worldById(id).shown).join("");
 }
 
+/* A winding stone approach, grafted onto the east side of each maze.
+   Puzzle cells, doors, and portals stay where they are. The new spawn
+   is the far end of the added corridors, and the tunnel only cuts rock. */
+function growLabyrinth(world) {
+  const src = world.grid.map((row) => row.split(""));
+  const h = src.length;
+  const w = src[0].length;
+  const portals = new Set((world.portals || []).map((p) => p.x + "," + p.z));
+  const blocked = (x, z) => {
+    if (z < 0 || x < 0 || z >= src.length || x >= src[0].length) return true;
+    const c = src[z][x];
+    return c === "#" || c === "+" || c === "=" || portals.has(x + "," + z);
+  };
+  let sx = 1;
+  let sz = 1;
+  for (let z = 0; z < h; z++) {
+    for (let x = 0; x < w; x++) if (src[z][x] === "S") { sx = x; sz = z; }
+  }
+  const safe = new Set([sx + "," + sz]);
+  const q = [[sx, sz]];
+  while (q.length) {
+    const [x, z] = q.shift();
+    for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const nx = x + dx;
+      const nz = z + dz;
+      const k = nx + "," + nz;
+      if (safe.has(k) || blocked(nx, nz)) continue;
+      safe.add(k);
+      q.push([nx, nz]);
+    }
+  }
+  const extraW = 11;
+  const extraH = 8;
+  const W = w + extraW;
+  const H = h + extraH;
+  const g = Array.from({ length: H }, (_, z) => {
+    const row = Array(W).fill("#");
+    if (z < h) for (let x = 0; x < w; x++) row[x] = src[z][x];
+    return row;
+  });
+  const candidates = [...safe].map((k) => k.split(",").map(Number)).sort((a, b) => b[0] - a[0] || a[1] - b[1]);
+  let landZ = null;
+  for (const [cx, cz] of candidates) {
+    let z = cz;
+    const carved = [];
+    let ok = true;
+    for (let x = cx + 1; x < w; x++) {
+      if (g[z][x] === "#") {
+        carved.push([x, z]);
+        continue;
+      }
+      let moved = false;
+      for (const dz of [1, -1, 2, -2]) {
+        const nz = z + dz;
+        if (nz < 1 || nz >= h - 1) continue;
+        if (g[nz][x] === "#" && (x === cx + 1 || g[nz][x - 1] === "#" || g[nz][x - 1] === ".")) {
+          if (g[nz][x - 1] === "#") carved.push([x - 1, nz]);
+          carved.push([x, nz]);
+          z = nz;
+          moved = true;
+          break;
+        }
+      }
+      if (!moved) { ok = false; break; }
+    }
+    if (!ok) continue;
+    carved.forEach(([x, zed]) => { g[zed][x] = "."; });
+    landZ = z;
+    break;
+  }
+  if (landZ == null) return;
+  const x0 = w;
+  const x1 = W - 2;
+  const bands = [];
+  for (let z = 1; z < H - 2; z += 2) bands.push(z);
+  bands.forEach((z, i) => {
+    for (let x = x0; x <= x1; x++) g[z][x] = ".";
+    const join = i % 2 === 0 ? x1 : x0;
+    if (bands[i + 1] != null) {
+      for (let y = z; y <= bands[i + 1]; y++) g[y][join] = ".";
+    }
+    if (i % 2 === 1) {
+      const spur = x0 + 3;
+      g[z][spur] = ".";
+      if (z + 1 < H - 1) g[z + 1][spur] = ".";
+      if (z + 2 < H - 1) g[z + 2][spur] = ".";
+    }
+  });
+  let band = bands[0];
+  bands.forEach((z) => { if (Math.abs(z - landZ) < Math.abs(band - landZ)) band = z; });
+  for (let z = Math.min(landZ, band); z <= Math.max(landZ, band); z++) g[z][x0] = ".";
+  g[sz][sx] = ".";
+  const nsx = x1;
+  const nsz = bands[bands.length - 1];
+  g[nsz][nsx] = "S";
+  world.grid = g.map((row) => row.join(""));
+  world.spawnYaw = -Math.PI / 2;
+  world.oldSpawn = { x: sx, z: sz };
+}
+
+for (const w of WORLDS) growLabyrinth(w);
+
 /* Keep the shown brand one step ahead of the true letter, trail-style. */
 for (const w of WORLDS) {
   if (shiftLetter(w.brand, 1) !== w.shown) {

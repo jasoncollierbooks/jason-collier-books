@@ -1,7 +1,9 @@
 import * as THREE from "three";
+import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass } from "three/addons";
 import { WORLDS, ORDER, worldById } from "./worlds.js";
 import { GAME_TITLE } from "./title.js";
 import { dressScene } from "./look.js";
+import { peopleFor } from "./cast.js";
 import {
   CELL, SPEED, FACE, createState, movePlayer, interact, nearest, objective,
   lettersHeld, submitCode, hintFor, cellOf, angDiff,
@@ -36,6 +38,11 @@ let spot = null;
 let doors = [];
 let plaques = [];
 let particles = null;
+let people = [];
+let mapOn = true;
+let sprintUntil = 0;
+let lastTap = 0;
+let nearClue = false;
 let clock = 0;
 let last = 0;
 let saveAt = 0;
@@ -64,6 +71,7 @@ function snapshot() {
     px: state.px, pz: state.pz, yaw: state.yaw, pitch: state.pitch, light: state.light,
     flags: state.flags, found: state.found, cycle: state.cycle,
     notes: state.notes, read: state.read, hintTier: state.hintTier, goalId: state.goalId,
+    seen: state.seen, knownWall: state.knownWall, folded: state.folded, stirred: state.stirred, talk: state.talk,
   };
 }
 
@@ -80,6 +88,11 @@ function restore(run) {
   state.read = run.read || {};
   state.hintTier = run.hintTier || 0;
   state.goalId = run.goalId || "";
+  state.seen = run.seen || {};
+  state.knownWall = run.knownWall || {};
+  state.folded = run.folded || {};
+  state.stirred = run.stirred || {};
+  state.talk = run.talk || {};
   const c = cellOf(state.px, state.pz);
   state.stood = c.x + "," + c.z;
   state.msg = state.notes[state.notes.length - 1] || world.intro;
@@ -147,13 +160,15 @@ function helpHtml() {
     <p>A bright door is often a lie. A room that brings you back is telling you the truth about itself. Walls move when you do the thing the room asked for.</p>
     <p>The gate wants the letters you found, in the order a carving explains. Hints start vague. The third one is plain.</p>
     <p><strong>Phone.</strong> The left stick moves. Drag the view to look. A short tap steps forward. Light, Use, Hint, Notes.</p>
-    <p><strong>Keyboard.</strong> WASD or arrows move and turn. Drag the mouse to look. F lantern. E or Space uses what is in front of you. H hint.</p>
+    <p><strong>Keyboard.</strong> WASD or arrows move and turn. Hold Shift, or tap W twice, to hurry. Drag the mouse to look. F lantern. E or Space uses what is in front of you, or talks to someone standing there. H hint. M shows the map. B toggles the head bob.</p>
+    <p>The map only inks corridors you have seen. A gold mark means a wall gave way. A curl means a room folded.</p>
     <div class="row"><button type="button" data-close>Step in</button></div>`;
 }
 
 function settingsHtml() {
   return `<h2>On this device</h2>
     <p><label><input type="checkbox" id="sound" ${save.sound ? "checked" : ""}> Sound</label></p>
+    <p><label><input type="checkbox" id="bob" ${save.bob !== false ? "checked" : ""}> Head bob</label></p>
     <p>Look speed</p>
     <div class="row">
       <button type="button" data-sens="0.7">Slow</button>
@@ -215,35 +230,37 @@ function buildScene() {
   camera = new THREE.PerspectiveCamera(coarse ? 78 : 72, 1, 0.08, 80);
   camera.rotation.order = "YXZ";
   scene.add(camera);
-  const skyLight = new THREE.Color(world.theme.sky).lerp(new THREE.Color(0xfff6e8), 0.55);
-  scene.add(new THREE.HemisphereLight(skyLight, 0x8a7560, 0.95));
-  const sun = new THREE.DirectionalLight(0xfff1d2, 0.62);
-  sun.position.set(-10, 18, 6);
-  scene.add(sun);
   const lampColor = world.theme.lamp;
-  spot = new THREE.SpotLight(lampColor, 0, 18, 0.72, 0.45, 1.2);
-  spot.castShadow = true;
-  spot.shadow.mapSize.set(coarse ? 256 : 512, coarse ? 256 : 512);
-  spot.shadow.bias = -0.0008;
-  spot.shadow.normalBias = 0.045;
-  spot.shadow.camera.near = 0.4;
-  spot.shadow.camera.far = 22;
+  spot = new THREE.SpotLight(lampColor, 0, 16, 0.8, 0.5, 1.1);
+  spot.castShadow = false;
   const target = new THREE.Object3D();
-  target.position.set(0, 0, -1);
-  fillLamp = new THREE.PointLight(lampColor, 0, 7.5, 2);
+  target.position.set(0, -0.15, -1);
+  fillLamp = new THREE.PointLight(lampColor, 0, 9, 2);
   camera.add(spot);
   camera.add(target);
   camera.add(fillLamp);
   spot.target = target;
-  const built = dressScene(scene, world, coarse);
+  const built = dressScene(scene, world, coarse, renderer);
+  people = peopleFor(world);
   doors = built.doors;
   plaques = built.plaques;
   particles = built.particles;
+  try {
+    if (!coarse) {
+      composer = new EffectComposer(renderer);
+      composer.addPass(new RenderPass(scene, camera));
+      composer.addPass(new UnrealBloomPass(new THREE.Vector2(512, 512), 0.14, 0.25, 0.9));
+      composer.addPass(new OutputPass());
+    } else composer = null;
+  } catch (e) {
+    composer = null;
+  }
   applyLight();
   resize();
 }
 
 let fillLamp = null;
+let composer = null;
 
 function disposeScene() {
   if (!scene) return;
@@ -287,16 +304,18 @@ function resize() {
   camera.aspect = w / Math.max(1, h);
   camera.updateProjectionMatrix();
   renderer.setSize(w, h, false);
+  if (composer) composer.setSize(w, h);
 }
 
 function ensureRenderer() {
   if (renderer) return true;
   try {
     renderer = new THREE.WebGLRenderer({ canvas: view, antialias: !coarse, powerPreference: "high-performance", alpha: false });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, coarse ? 1.15 : 1.5));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, coarse ? 1.1 : 1.5));
     renderer.setSize(window.innerWidth, window.innerHeight, false);
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = coarse ? THREE.BasicShadowMap : THREE.PCFSoftShadowMap;
+    renderer.shadowMap.enabled = false;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
     return true;
   } catch (e) {
     hub.innerHTML = "<div class='hub-inner'><h1>" + GAME_TITLE + "</h1><p>This browser could not start the 3D view.</p></div>";
@@ -318,6 +337,8 @@ function enter(id, resume) {
   audio.setMuted(!save.sound);
   hub.hidden = true;
   hud.hidden = false;
+  seedMap();
+  showMap(mapOn);
   touch.hidden = false;
   look.hidden = false;
   cross.hidden = coarse;
@@ -331,7 +352,154 @@ function enter(id, resume) {
   }
 }
 
+function showMap(on) {
+  mapOn = on;
+  const canvas = document.getElementById("minimap");
+  const btn = document.getElementById("btn-map");
+  if (canvas) canvas.hidden = !on || !world;
+  if (btn) {
+    btn.hidden = !world;
+    btn.textContent = on ? "Hide map" : "Map";
+  }
+}
+
+function personNear() {
+  let best = null;
+  let bestD = 2.5;
+  for (const p of people) {
+    const d = Math.hypot(state.px - p.wx, state.pz - p.wz);
+    if (d < bestD) { best = p; bestD = d; }
+  }
+  return best;
+}
+
+function talk(person) {
+  const i = state.talk[person.id] || 0;
+  const line = person.lines[Math.min(i, person.lines.length - 1)];
+  state.talk[person.id] = Math.min(person.lines.length - 1, i + 1);
+  state.msg = person.name + ". " + line;
+  state.notes.push(state.msg);
+  if (state.notes.length > 48) state.notes.splice(0, state.notes.length - 48);
+  const pos = person.crop ? (person.crop[0] * 100) + "% center" : "center";
+  openPanel(`<img class="portrait" alt="" src="${person.art}" style="object-position:${pos}">
+    <h2>${escapeHtml(person.name)}</h2><p>${escapeHtml(line)}</p>
+    <div class="row"><button type="button" data-close>Close</button></div>`, false);
+  refreshHud();
+}
+
+function seedMap() {
+  const here = cellOf(state.px, state.pz);
+  const cols = world.grid[0].length;
+  const rows = world.grid.length;
+  for (let z = here.z - 7; z <= here.z + 2; z++) {
+    for (let x = here.x - 8; x <= here.x + 1; x++) {
+      if (x < 0 || z < 0 || x >= cols || z >= rows) continue;
+      if (Math.abs(x - here.x) + Math.abs(z - here.z) > 7) continue;
+      const ch = world.grid[z][x];
+      const shut = ch === "#" || ch === "+" || ch === "=";
+      if (shut) state.knownWall[x + "," + z] = 1;
+      else state.seen[x + "," + z] = 1;
+    }
+  }
+}
+
+function revealMap() {
+  if (!state.seen) state.seen = {};
+  if (!state.knownWall) state.knownWall = {};
+  if (!state.stirred) state.stirred = {};
+  const c = cellOf(state.px, state.pz);
+  const cols = world.grid[0].length;
+  const rows = world.grid.length;
+  for (const [x, z] of [[c.x, c.z], [c.x + 1, c.z], [c.x - 1, c.z], [c.x, c.z + 1], [c.x, c.z - 1]]) {
+    if (x < 0 || z < 0 || x >= cols || z >= rows) continue;
+    const ch = world.grid[z][x];
+    const shut = (ch === "+" && !state.flags[world.door]) || (ch === "=" && !state.flags[world.door2]) || ch === "#";
+    const key = x + "," + z;
+    if (shut) state.knownWall[key] = 1;
+    else {
+      if (state.knownWall[key] && (ch === "+" || ch === "=")) state.stirred[key] = 1;
+      state.seen[key] = 1;
+    }
+  }
+}
+
+function drawMap() {
+  const canvas = document.getElementById("minimap");
+  if (!canvas || canvas.hidden || !world || !state) return;
+  const g = canvas.getContext("2d");
+  const cols = world.grid[0].length;
+  const rows = world.grid.length;
+  let minX = cols, maxX = 0, minZ = rows, maxZ = 0;
+  for (let z = 0; z < rows; z++) {
+    for (let x = 0; x < cols; x++) {
+      if (!state.seen[x + "," + z] && !state.knownWall[x + "," + z]) continue;
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+      if (z < minZ) minZ = z;
+      if (z > maxZ) maxZ = z;
+    }
+  }
+  if (minX > maxX) { minX = 0; maxX = 1; minZ = 0; maxZ = 1; }
+  const spanX = maxX - minX + 1;
+  const spanZ = maxZ - minZ + 1;
+  const pad = 14;
+  const cell = Math.min((canvas.width - pad * 2) / spanX, (canvas.height - pad * 2) / spanZ);
+  const ox = (canvas.width - cell * spanX) / 2 - minX * cell;
+  const oy = (canvas.height - cell * spanZ) / 2 - minZ * cell;
+  g.fillStyle = "#e6d2a6";
+  g.fillRect(0, 0, canvas.width, canvas.height);
+  g.fillStyle = "rgba(120,70,30,0.08)";
+  g.beginPath();
+  g.arc(canvas.width * 0.3, canvas.height * 0.4, 40, 0, 7);
+  g.fill();
+  for (let z = 0; z < rows; z++) {
+    for (let x = 0; x < cols; x++) {
+      const key = x + "," + z;
+      if (!state.seen[key] && !state.knownWall[key]) continue;
+      const ch = world.grid[z][x];
+      const shut = ch === "#" || (ch === "+" && !state.flags[world.door]) || (ch === "=" && !state.flags[world.door2]);
+      g.fillStyle = shut ? "#6b4a2c" : "#f4e6c4";
+      g.fillRect(ox + x * cell, oy + z * cell, cell - 0.5, cell - 0.5);
+      if (state.stirred[key]) {
+        g.strokeStyle = "#c47a18";
+        g.strokeRect(ox + x * cell + 1, oy + z * cell + 1, cell - 2, cell - 2);
+      }
+      if (state.folded && state.folded[key]) {
+        g.strokeStyle = "#5a3a78";
+        g.beginPath();
+        g.arc(ox + (x + 0.5) * cell, oy + (z + 0.5) * cell, cell * 0.28, 0, 5);
+        g.stroke();
+      }
+    }
+  }
+  people.forEach((p) => {
+    if (!state.seen[p.x + "," + p.z]) return;
+    g.fillStyle = "#8a3a22";
+    g.beginPath();
+    g.arc(ox + (p.x + 0.5) * cell, oy + (p.z + 0.5) * cell, Math.max(1.5, cell * 0.22), 0, 7);
+    g.fill();
+  });
+  const here = cellOf(state.px, state.pz);
+  const px = ox + (state.px / CELL) * cell;
+  const py = oy + (state.pz / CELL) * cell;
+  g.save();
+  g.translate(px, py);
+  g.rotate(state.yaw);
+  g.fillStyle = "#1a120c";
+  g.beginPath();
+  g.moveTo(0, -cell * 0.38);
+  g.lineTo(cell * 0.22, cell * 0.28);
+  g.lineTo(-cell * 0.22, cell * 0.28);
+  g.fill();
+  g.restore();
+  if (!state.seen[here.x + "," + here.z]) revealMap();
+}
+
 function leave() {
+  const canvas = document.getElementById("minimap");
+  const btn = document.getElementById("btn-map");
+  if (canvas) canvas.hidden = true;
+  if (btn) btn.hidden = true;
   if (state && !state.cleared) snapshot();
   persist();
   closePanel();
@@ -349,8 +517,14 @@ function refreshHud() {
   document.getElementById("held").textContent = need ? "Letters " + held.length + "/" + need + (held.length ? " · " + held.map((h) => h.letter).join(" ") : "") : "";
   toast.hidden = !state.msg;
   toast.textContent = state.msg || "";
+  const person = personNear();
   const near = nearest(world, state);
-  if (!near || !panel.hidden) {
+  const pd = person ? Math.hypot(state.px - person.wx, state.pz - person.wz) : 99;
+  const zd = near ? Math.hypot(state.px - (near.x + 0.5) * CELL, state.pz - (near.z + 0.5) * CELL) : 99;
+  if (panel.hidden && person && pd + 0.2 < zd) {
+    promptEl.hidden = false;
+    promptEl.textContent = "Use · " + person.name;
+  } else if (!near || !panel.hidden) {
     promptEl.hidden = true;
   } else {
     promptEl.hidden = false;
@@ -360,6 +534,18 @@ function refreshHud() {
 
 function useNow() {
   if (!world || !panel.hidden) return;
+  const puzzle = nearest(world, state);
+  const person = personNear();
+  if (person) {
+    const pd = Math.hypot(state.px - person.wx, state.pz - person.wz);
+    const zd = puzzle ? Math.hypot(state.px - (puzzle.x + 0.5) * CELL, state.pz - (puzzle.z + 0.5) * CELL) : 99;
+    if (pd + 0.2 < zd) {
+      talk(person);
+      snapshot();
+      persist();
+      return;
+    }
+  }
   const res = interact(world, state);
   applyLight();
   refreshHud();
@@ -439,15 +625,58 @@ function frame(now) {
     const rx = Math.cos(state.yaw);
     const rz = Math.sin(state.yaw);
     const moving = len > 0.05;
-    movePlayer(world, state, (fx * iz + rx * ix) * SPEED * dt, (fz * iz + rz * ix) * SPEED * dt);
-    const bob = moving && !reduce ? Math.sin(clock * 8) * 0.035 : 0;
+    const sprint = keys.shift || clock < sprintUntil;
+    const pace = SPEED * (sprint ? 1.7 : 1);
+    movePlayer(world, state, (fx * iz + rx * ix) * pace * dt, (fz * iz + rz * ix) * pace * dt);
+    const bob = moving && save.bob !== false && !reduce ? Math.sin(clock * 9) * 0.05 : 0;
+    revealMap();
+    const clue = (world.tokens || []).some((t) => t.letter && !state.found[t.id] && Math.hypot(state.px - (t.x + 0.5) * CELL, state.pz - (t.z + 0.5) * CELL) < 2.3);
+    if (clue && !nearClue) audio.blip();
+    nearClue = clue;
     camera.position.set(state.px, EYE + bob, state.pz);
     camera.rotation.y = -state.yaw;
     camera.rotation.x = state.pitch;
     if (now - saveAt > 2000) { saveAt = now; snapshot(); persist(); }
   }
   const fire = scene.getObjectByName("fire");
-  if (fire && !reduce) fire.scale.y = 0.85 + Math.sin(clock * 9) * 0.15;
+  if (fire && !reduce) {
+    fire.children.forEach((child, i) => {
+      if (!child.isMesh || !child.userData.base) return;
+      child.scale.y = 0.75 + Math.sin(clock * 14 + i * 1.7) * 0.3;
+    });
+    const glow = fire.getObjectByName("firelight");
+    if (glow) glow.intensity = 1.7 + Math.sin(clock * 17) * 0.7;
+  }
+  const embers = scene.getObjectByName("embers");
+  if (embers && !reduce) {
+    const arr = embers.geometry.attributes.position;
+    for (let i = 0; i < arr.count; i++) {
+      let y = arr.getY(i) + dt * 0.55;
+      if (y > 1.15 || arr.getX(i) === 0) {
+        y = 0.2;
+        arr.setX(i, (Math.random() - 0.5) * 0.35);
+        arr.setZ(i, (Math.random() - 0.5) * 0.35);
+      }
+      arr.setY(i, y);
+    }
+    arr.needsUpdate = true;
+  }
+  if (!reduce && scene.getObjectsByProperty) {
+    scene.getObjectsByProperty("name", "glowbit").forEach((bit, i) => {
+      const s = 1 + Math.sin(clock * 2.4 + i) * 0.07;
+      bit.scale.setScalar(s);
+    });
+  }
+  if (scene.getObjectsByProperty) {
+    scene.getObjectsByProperty("name", "cast").forEach((board) => {
+      const dx = camera.position.x - board.position.x;
+      const dz = camera.position.z - board.position.z;
+      board.rotation.y = Math.atan2(dx, dz);
+      const base = 0.95;
+      board.position.y = base + Math.sin(clock * 1.5 + (board.userData.bob || 0)) * 0.025;
+    });
+  }
+  drawMap();
   if (particles && !reduce) {
     const arr = particles.geometry.attributes.position;
     const kind = world.theme.particles;
@@ -479,7 +708,8 @@ function frame(now) {
     }
   });
   if (panel.hidden) refreshHud();
-  renderer.render(scene, camera);
+  if (composer) composer.render();
+  else renderer.render(scene, camera);
 }
 
 function bind() {
@@ -495,6 +725,7 @@ function bind() {
   document.getElementById("btn-use").addEventListener("click", () => { audio.resume(); useNow(); });
   document.getElementById("btn-hint").addEventListener("click", () => { audio.resume(); doHint(); });
   document.getElementById("btn-book").addEventListener("click", () => openPanel(notesHtml(), false));
+  document.getElementById("btn-map").addEventListener("click", () => { if (world) showMap(!mapOn); });
   panel.addEventListener("click", (e) => {
     if (e.target.dataset.close != null || e.target.closest("[data-close]")) {
       if (!e.target.closest(".sheet") || e.target.dataset.close != null) closePanel();
@@ -524,13 +755,19 @@ function bind() {
       audio.setMuted(!save.sound);
       persist();
     }
+    if (e.target.id === "bob") {
+      save.bob = e.target.checked;
+      persist();
+    }
   });
   window.addEventListener("keydown", (e) => {
-    if (e.target.matches("input, textarea")) {
+    if (e.target && e.target.matches && e.target.matches("input, textarea")) {
       if (e.key === "Enter" && e.target.id === "code") tryCode(e.target.value);
       return;
     }
     const k = e.key.toLowerCase();
+    if ((k === "w" || k === "arrowup") && !keys[k] && clock - lastTap < 0.32) sprintUntil = clock + 1.5;
+    if (k === "w" || k === "arrowup") lastTap = clock;
     keys[k] = true;
     if (["arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(k)) e.preventDefault();
     if (k === "escape") closePanel();
@@ -538,6 +775,8 @@ function bind() {
     if (k === "f") toggleLight();
     if (k === "e" || k === " ") useNow();
     if (k === "h") doHint();
+    if (k === "m") showMap(!mapOn);
+    if (k === "b") { save.bob = save.bob === false; persist(); }
     if (k === "j") openPanel(notesHtml(), false);
   });
   window.addEventListener("keyup", (e) => { keys[e.key.toLowerCase()] = false; });
@@ -588,6 +827,8 @@ function bind() {
   }
   stick.addEventListener("pointerdown", (e) => {
     audio.resume();
+    if (clock - lastTap < 0.32) sprintUntil = clock + 1.5;
+    lastTap = clock;
     joy.id = e.pointerId;
     stick.setPointerCapture(e.pointerId);
     joyPos(e);

@@ -18,13 +18,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Josefin+Sans:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./maze.css?v=2">
-<script type="importmap">{ "imports": { "three": "../old-man-game/vendor/three.min.js" } }</script>
+<link rel="stylesheet" href="./maze.css?v=4">
+<script type="importmap">{ "imports": { "three": "../old-man-game/vendor/three.min.js", "three/addons": "../old-man-game/vendor/three-addons.min.js" } }</script>
 </head>
 <body>
 <canvas id="view" aria-label="Maze view"></canvas>
 <div id="look" hidden></div>
 <div id="grain" aria-hidden="true"></div>
+<div id="vignette" aria-hidden="true"></div>
 <div id="cross" hidden aria-hidden="true"></div>
 <header id="top">
   <a class="wordmark" href="../play.html">COLLIER<span>ENTERTAINMENT</span></a>
@@ -39,7 +40,9 @@
 </div>
 <p id="toast" hidden aria-live="polite"></p>
 <p id="prompt" hidden></p>
-<p id="keys">WASD move · arrows turn · drag to look · F lantern · E use · H hint</p>
+<p id="keys">WASD move · Shift hurry · M map · E talk or use · H hint · B bob</p>
+<button type="button" id="btn-map" hidden>Map</button>
+<canvas id="minimap" width="220" height="220" hidden aria-label="Overhead map"></canvas>
 <div id="touch" hidden>
   <div id="stick" aria-hidden="true"><div id="knob"></div></div>
   <div id="pads">
@@ -50,7 +53,7 @@
   </div>
 </div>
 <div id="panel" hidden></div>
-<script type="module" src="./main.js?v=2"></script>
+<script type="module" src="./main.js?v=5"></script>
 <noscript><p style="padding:24px">Collier Adventure Mazes needs JavaScript.</p></noscript>
 </body>
 </html>

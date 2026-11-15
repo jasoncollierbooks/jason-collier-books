@@ -89,6 +89,8 @@ function enterCell(world, state, x, z) {
   if (dest.decoy) note(state, dest.decoy);
   if (dest.note) note(state, dest.note);
   if (!dest.pass) {
+    if (!state.folded) state.folded = {};
+    state.folded[x + "," + z] = 1;
     const c = center(dest.toX, dest.toZ);
     state.px = c.x;
     state.pz = c.z;
@@ -111,6 +113,11 @@ export function createState(world) {
     cycle: {},
     notes: [],
     read: {},
+    seen: {},
+    knownWall: {},
+    folded: {},
+    stirred: {},
+    talk: {},
     hintTier: 0,
     goalId: "",
     cleared: false,
@@ -119,11 +126,27 @@ export function createState(world) {
   };
 }
 
-export function movePlayer(world, state, mx, mz) {
-  if (mx || mz) {
-    if (!circleHits(world, state.flags, state.px + mx, state.pz)) state.px += mx;
-    if (!circleHits(world, state.flags, state.px, state.pz + mz)) state.pz += mz;
+function slide(world, state, mx, mz) {
+  if (!mx && !mz) return;
+  if (!circleHits(world, state.flags, state.px + mx, state.pz + mz)) {
+    if (mx) state.px += mx;
+    if (mz) state.pz += mz;
+    return;
   }
+  let lo = 0;
+  let hi = 1;
+  for (let i = 0; i < 5; i++) {
+    const mid = (lo + hi) / 2;
+    if (!circleHits(world, state.flags, state.px + mx * mid, state.pz + mz * mid)) lo = mid;
+    else hi = mid;
+  }
+  if (mx) state.px += mx * lo;
+  if (mz) state.pz += mz * lo;
+}
+
+export function movePlayer(world, state, mx, mz) {
+  slide(world, state, mx, 0);
+  slide(world, state, 0, mz);
   const c = cellOf(state.px, state.pz);
   enterCell(world, state, c.x, c.z);
 }
