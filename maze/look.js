@@ -1064,6 +1064,35 @@ function figureMaterial(url, crop) {
   return mat;
 }
 
+function spriteMaterial(url) {
+  const mat = new THREE.MeshStandardMaterial({
+    color: 0xffffff, roughness: 0.84, metalness: 0.02,
+    emissive: 0xffffff, emissiveIntensity: 0.38,
+    alphaTest: 0.42, depthWrite: true, side: THREE.FrontSide,
+  });
+  new THREE.TextureLoader().load(url, (tex) => {
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 4;
+    tex.generateMipmaps = true;
+    mat.map = tex;
+    mat.emissiveMap = tex;
+    mat.needsUpdate = true;
+  });
+  return mat;
+}
+
+function contactShadow() {
+  const mesh = new THREE.Mesh(
+    new THREE.CircleGeometry(0.5, 24),
+    new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.32, depthWrite: false })
+  );
+  mesh.rotation.x = -Math.PI / 2;
+  mesh.position.y = 0.02;
+  mesh.name = "shade";
+  mesh.renderOrder = 2;
+  return mesh;
+}
+
 function speechMark() {
   const canvas = document.createElement("canvas");
   canvas.width = 160;
@@ -1093,19 +1122,43 @@ function speechMark() {
 function addCast(scene, world) {
   const group = new THREE.Group();
   peopleFor(world).forEach((person, i) => {
-    const board = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 1.52), figureMaterial(person.art, person.crop));
-    board.position.set(person.wx, 0.82, person.wz);
-    board.name = "cast";
-    board.userData.person = person.id;
-    board.userData.lines = person.lines;
-    board.userData.nameLabel = person.name;
-    board.userData.bob = i;
-    board.userData.home = { x: person.wx, z: person.wz };
-    board.userData.axis = person.axis || "x";
-    board.userData.span = person.span || 0.4;
-    board.add(speechMark());
-    person.mesh = board;
-    group.add(board);
+    const root = new THREE.Group();
+    root.position.set(person.wx, 0, person.wz);
+    root.name = "cast";
+    root.userData.person = person.id;
+    root.userData.lines = person.lines;
+    root.userData.nameLabel = person.name;
+    root.userData.bob = i;
+    root.userData.home = { x: person.wx, z: person.wz };
+    root.userData.axis = person.axis || "x";
+    root.userData.span = person.span || 0.3;
+    root.userData.sprite = !!person.sprite;
+    if (person.sprite) {
+      const h = 1.74 * (person.scale || 1);
+      const w = h * (person.aspect || 0.4);
+      const body = new THREE.Mesh(new THREE.PlaneGeometry(w, h), spriteMaterial(person.sprite));
+      body.position.y = h / 2;
+      body.name = "body";
+      const mark = speechMark();
+      mark.position.set(0, h / 2 + 0.14, 0.02);
+      body.add(mark);
+      root.add(body);
+      root.userData.height = h;
+      const shade = contactShadow();
+      shade.scale.set(Math.max(0.34, w * 0.72), Math.max(0.16, w * 0.32), 1);
+      shade.position.set(person.wx, 0.02, person.wz);
+      root.userData.shade = shade;
+      group.add(shade);
+    } else {
+      const board = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 1.52), figureMaterial(person.art, person.crop));
+      board.position.y = 0.82;
+      board.name = "body";
+      board.add(speechMark());
+      root.add(board);
+      root.userData.height = 1.52;
+    }
+    person.mesh = root;
+    group.add(root);
   });
   posterSpots(world).forEach((spot) => {
     const plane = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.95), cutoutMaterial(spot.art));

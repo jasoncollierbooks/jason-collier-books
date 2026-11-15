@@ -733,37 +733,62 @@ function frame(now) {
   }
   if (scene.getObjectsByProperty) {
     const ease = (cur, goal, rate) => cur + (goal - cur) * (1 - Math.exp(-rate * dt));
-    scene.getObjectsByProperty("name", "cast").forEach((board) => {
-      const ud = board.userData;
-      const home = ud.home || { x: board.position.x, z: board.position.z };
+    scene.getObjectsByProperty("name", "cast").forEach((root) => {
+      const ud = root.userData;
+      const home = ud.home || { x: root.position.x, z: root.position.z };
       const bob = ud.bob || 0;
       const dist = Math.hypot(camera.position.x - home.x, camera.position.z - home.z);
       ud.near = ease(ud.near || 0, dist < 3.1 ? 1 : 0, 3.2);
       ud.talk = ease(ud.talk || 0, speaking && speaking.id === ud.person && clock < speaking.until ? 1 : 0, 5);
-      const along = Math.sin(clock * 0.42 + bob) * (ud.span || 0.4) * (1 - ud.near * 0.85);
+      if (ud.near > 0.7 && !ud.greeted) { ud.hopT = clock; ud.greeted = true; }
+      if (ud.near < 0.25) ud.greeted = false;
+      const along = Math.sin(clock * 0.4 + bob) * (ud.span || 0.3) * (1 - ud.near * 0.9);
       const tx = home.x + (ud.axis === "z" ? 0 : along);
       const tz = home.z + (ud.axis === "z" ? along : 0);
-      const step = Math.abs(Math.cos(clock * 0.42 + bob)) * (ud.span || 0.4) * 0.03 * (1 - ud.near);
-      const ty = 0.82 + Math.sin(clock * 1.7 + bob) * 0.012 + step + ud.talk * Math.sin(clock * 5.2) * 0.018;
-      if (ud.px == null) { ud.px = tx; ud.pz = tz; ud.py = ty; }
-      ud.px = ease(ud.px, tx, 3.4);
-      ud.pz = ease(ud.pz, tz, 3.4);
-      ud.py = ease(ud.py, ty, 6);
-      board.position.set(ud.px, ud.py, ud.pz);
-      const face = Math.atan2(camera.position.x - board.position.x, camera.position.z - board.position.z);
+      const walking = (1 - ud.near) * Math.min(1, (ud.span || 0.3) / 0.3);
+      const step = Math.abs(Math.sin(clock * 5.4 + bob)) * 0.04 * walking;
+      let hop = 0;
+      let wave = 0;
+      if (ud.hopT != null) {
+        const k = (clock - ud.hopT) / 0.62;
+        if (k >= 0 && k < 1) {
+          hop = Math.sin(k * Math.PI) * 0.1;
+          wave = Math.sin(k * Math.PI * 2) * 0.06;
+        }
+      }
+      if (ud.px == null) { ud.px = tx; ud.pz = tz; }
+      ud.px = ease(ud.px, tx, 3.2);
+      ud.pz = ease(ud.pz, tz, 3.2);
+      const face = Math.atan2(camera.position.x - ud.px, camera.position.z - ud.pz);
       if (ud.yaw == null) ud.yaw = face;
       let turn = face - ud.yaw;
       while (turn > Math.PI) turn -= Math.PI * 2;
       while (turn < -Math.PI) turn += Math.PI * 2;
-      ud.yaw += turn * (1 - Math.exp(-6 * dt));
-      board.rotation.set(0, ud.yaw, 0);
-      const pulse = 1 + ud.talk * (0.012 + Math.sin(clock * 5.5) * 0.012);
-      board.scale.set(pulse, pulse, 1);
-      const mark = board.getObjectByName("speech");
-      if (mark) {
-        mark.material.opacity = ud.talk;
-        mark.position.y = 0.9 + ud.talk * 0.04;
+      ud.yaw += turn * (1 - Math.exp(-5.5 * dt));
+      const breathe = 1 + Math.sin(clock * 1.65 + bob) * 0.014;
+      const talkPulse = 1 + ud.talk * (0.018 + Math.sin(clock * 5.2) * 0.016);
+      const sy = breathe * talkPulse;
+      const body = root.getObjectByName("body");
+      if (ud.sprite) {
+        root.position.set(ud.px, hop + step, ud.pz);
+        root.rotation.set(0, ud.yaw, 0);
+        if (body) {
+          body.scale.set(1, sy, 1);
+          body.position.y = (ud.height || 1.74) * sy / 2;
+          body.rotation.z = Math.sin(clock * 1.05 + bob) * 0.016 + wave;
+        }
+        if (ud.shade) ud.shade.position.set(ud.px, 0.02, ud.pz);
+      } else {
+        root.position.set(ud.px, 0, ud.pz);
+        root.rotation.set(0, ud.yaw, 0);
+        if (body) {
+          body.scale.set(1, sy, 1);
+          body.position.y = 0.06 + ((ud.height || 1.52) * sy) / 2 + hop * 0.35 + step * 0.25;
+          body.rotation.z = Math.sin(clock * 1.05 + bob) * 0.01;
+        }
       }
+      const mark = root.getObjectByName("speech");
+      if (mark) mark.material.opacity = ud.talk;
     });
   }
   drawMap();
