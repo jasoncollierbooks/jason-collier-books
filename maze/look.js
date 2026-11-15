@@ -695,28 +695,6 @@ function tent() {
   return g;
 }
 
-function balloon() {
-  const c = document.createElement("canvas");
-  c.width = 256;
-  c.height = 128;
-  const g = c.getContext("2d");
-  g.fillStyle = "#c4a882";
-  g.fillRect(0, 0, 256, 128);
-  const patches = ["#8a3030", "#2a4068", "#3a6840", "#c4a060", "#6a6a6a"];
-  for (let i = 0; i < 8; i++) {
-    g.fillStyle = patches[i % patches.length];
-    g.fillRect(8 + (i % 4) * 62, 10 + Math.floor(i / 4) * 54, 52, 44);
-    g.strokeStyle = "#2a2018";
-    g.strokeRect(8 + (i % 4) * 62, 10 + Math.floor(i / 4) * 54, 52, 44);
-  }
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  const mesh = new THREE.Mesh(new THREE.SphereGeometry(0.85, 16, 12), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.65, metalness: 0.1 }));
-  mesh.scale.set(1.35, 0.82, 0.72);
-  mesh.position.y = 2.55;
-  return mesh;
-}
-
 function pipeRun() {
   const g = new THREE.Group();
   const mat = metalMat(0xb08a62);
@@ -894,9 +872,15 @@ function addProps(scene, world) {
     dial.position.y = 1.35;
     const r = ahead(world, 1.3, -0.85);
     drop(group, dial, r.x, r.z);
-    const bag = balloon();
-    const s = ahead(world, 3.3, 0.15);
-    drop(group, bag, s.x, s.z);
+    const ribMat = metalMat(0x3a2a22);
+    [2.4, 6.2, 10].forEach((dist) => {
+      const rib = new THREE.Mesh(new THREE.BoxGeometry(1.55, 0.07, 0.12), ribMat);
+      rib.name = "hull-rib";
+      rib.position.y = CEIL - 0.1;
+      rib.rotation.y = world.spawnYaw || 0;
+      const spot = ahead(world, dist, 0);
+      drop(group, rib, spot.x, spot.z);
+    });
     const crateMesh = crate();
     const t = ahead(world, 2.8, 1.1);
     drop(group, crateMesh, t.x, t.z);
@@ -1006,21 +990,163 @@ function cutoutMaterial(url, crop) {
   return new THREE.MeshStandardMaterial({ map: tex, roughness: 0.72, side: THREE.DoubleSide });
 }
 
+function roundPath(g, x, y, w, h, r) {
+  const radius = Math.min(r, w / 2, h / 2);
+  g.beginPath();
+  g.moveTo(x + radius, y);
+  g.arcTo(x + w, y, x + w, y + h, radius);
+  g.arcTo(x + w, y + h, x, y + h, radius);
+  g.arcTo(x, y + h, x, y, radius);
+  g.arcTo(x, y, x + w, y, radius);
+  g.closePath();
+}
+
+function figureMaterial(url, crop) {
+  const mat = new THREE.MeshStandardMaterial({
+    color: 0xffffff, roughness: 0.8, metalness: 0.02,
+    alphaTest: 0.45, depthWrite: true, side: THREE.FrontSide,
+  });
+  new THREE.TextureLoader().load(url, (tex) => {
+    const img = tex.image;
+    if (!img || !img.width) return;
+    const sw = 480;
+    const sh = 720;
+    const canvas = document.createElement("canvas");
+    canvas.width = sw;
+    canvas.height = sh;
+    const g = canvas.getContext("2d");
+    const pad = 22;
+    const radius = 28;
+    const u = crop ? crop[0] : 0;
+    const v = crop ? crop[1] : 0;
+    const uw = crop ? crop[2] : 1;
+    const uh = crop ? crop[3] : 1;
+    roundPath(g, pad, pad, sw - pad * 2, sh - pad * 2, radius);
+    g.save();
+    g.clip();
+    g.drawImage(img, u * img.width, (1 - v - uh) * img.height, uw * img.width, uh * img.height, pad, pad, sw - pad * 2, sh - pad * 2);
+    const shade = g.createRadialGradient(sw * 0.5, sh * 0.42, sw * 0.12, sw * 0.5, sh * 0.48, sh * 0.62);
+    shade.addColorStop(0, "rgba(0,0,0,0)");
+    shade.addColorStop(0.72, "rgba(0,0,0,0)");
+    shade.addColorStop(1, "rgba(24,14,8,0.38)");
+    g.fillStyle = shade;
+    g.fillRect(pad, pad, sw - pad * 2, sh - pad * 2);
+    g.restore();
+    roundPath(g, pad, pad, sw - pad * 2, sh - pad * 2, radius);
+    g.lineWidth = 18;
+    g.strokeStyle = "#3d2816";
+    g.stroke();
+    g.lineWidth = 4;
+    g.strokeStyle = "#d4af37";
+    g.stroke();
+    const cut = new THREE.CanvasTexture(canvas);
+    cut.colorSpace = THREE.SRGBColorSpace;
+    cut.anisotropy = 4;
+    mat.map = cut;
+    mat.needsUpdate = true;
+  });
+  return mat;
+}
+
+function spriteMaterial(url) {
+  const mat = new THREE.MeshStandardMaterial({
+    color: 0xffffff, roughness: 0.84, metalness: 0.02,
+    emissive: 0xffffff, emissiveIntensity: 0.38,
+    alphaTest: 0.42, depthWrite: true, side: THREE.FrontSide,
+  });
+  new THREE.TextureLoader().load(url, (tex) => {
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 4;
+    tex.generateMipmaps = true;
+    mat.map = tex;
+    mat.emissiveMap = tex;
+    mat.needsUpdate = true;
+  });
+  return mat;
+}
+
+function contactShadow() {
+  const mesh = new THREE.Mesh(
+    new THREE.CircleGeometry(0.5, 28),
+    new THREE.MeshBasicMaterial({
+      color: 0x000000, transparent: true, opacity: 0.38, depthWrite: false,
+      polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2,
+    })
+  );
+  mesh.rotation.x = -Math.PI / 2;
+  mesh.position.y = 0.012;
+  mesh.name = "shade";
+  mesh.renderOrder = 2;
+  return mesh;
+}
+
+function speechMark() {
+  const canvas = document.createElement("canvas");
+  canvas.width = 160;
+  canvas.height = 64;
+  const g = canvas.getContext("2d");
+  roundPath(g, 4, 8, 152, 48, 24);
+  g.fillStyle = "rgba(16,14,12,0.92)";
+  g.fill();
+  g.lineWidth = 3;
+  g.strokeStyle = "#d4af37";
+  g.stroke();
+  g.fillStyle = "#fbf6ee";
+  for (let i = 0; i < 3; i++) {
+    g.beginPath();
+    g.arc(46 + i * 34, 32, 7, 0, Math.PI * 2);
+    g.fill();
+  }
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, opacity: 0 });
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 0.17), mat);
+  mesh.name = "speech";
+  mesh.position.set(0, 0.9, 0.03);
+  return mesh;
+}
+
 function addCast(scene, world) {
   const group = new THREE.Group();
   peopleFor(world).forEach((person, i) => {
-    const board = new THREE.Mesh(new THREE.PlaneGeometry(0.86, 1.7), cutoutMaterial(person.art, person.crop));
-    board.position.set(person.wx, 0.95, person.wz);
-    board.name = "cast";
-    board.userData.person = person.id;
-    board.userData.bob = i;
-    const frame = new THREE.Mesh(
-      new THREE.PlaneGeometry(0.96, 1.8),
-      new THREE.MeshStandardMaterial({ color: 0x3a2414, roughness: 0.8, side: THREE.DoubleSide })
-    );
-    frame.position.z = -0.03;
-    board.add(frame);
-    group.add(board);
+    const root = new THREE.Group();
+    root.position.set(person.wx, 0, person.wz);
+    root.name = "cast";
+    root.userData.person = person.id;
+    root.userData.lines = person.lines;
+    root.userData.nameLabel = person.name;
+    root.userData.bob = i;
+    root.userData.home = { x: person.wx, z: person.wz };
+    root.userData.axis = person.axis || "x";
+    root.userData.span = person.span || 0.3;
+    root.userData.sprite = !!person.sprite;
+    if (person.sprite) {
+      const h = 1.74 * (person.scale || 1);
+      const w = h * (person.aspect || 0.4);
+      const body = new THREE.Mesh(new THREE.PlaneGeometry(w, h), spriteMaterial(person.sprite));
+      body.position.y = h / 2;
+      body.name = "body";
+      const mark = speechMark();
+      mark.position.set(0, h / 2 + 0.14, 0.02);
+      body.add(mark);
+      root.add(body);
+      root.userData.height = h;
+      const shade = contactShadow();
+      const foot = Math.max(0.2, Math.min(0.3, w * 0.34));
+      shade.scale.set(foot, foot, 1);
+      shade.position.set(person.wx, 0.012, person.wz);
+      root.userData.shade = shade;
+      group.add(shade);
+    } else {
+      const board = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 1.52), figureMaterial(person.art, person.crop));
+      board.position.y = 0.82;
+      board.name = "body";
+      board.add(speechMark());
+      root.add(board);
+      root.userData.height = 1.52;
+    }
+    person.mesh = root;
+    group.add(root);
   });
   posterSpots(world).forEach((spot) => {
     const plane = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.95), cutoutMaterial(spot.art));

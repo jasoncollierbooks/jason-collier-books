@@ -3,7 +3,7 @@ import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass } from "three/a
 import { WORLDS, ORDER, worldById } from "./worlds.js";
 import { GAME_TITLE } from "./title.js";
 import { dressScene } from "./look.js";
-import { peopleFor } from "./cast.js";
+import { speak, stopSpeak, unlockSpeech } from "./speech.js";
 import {
   CELL, SPEED, FACE, createState, movePlayer, interact, nearest, objective,
   lettersHeld, submitCode, hintFor, cellOf, angDiff,
@@ -44,6 +44,7 @@ let sprintUntil = 0;
 let lastTap = 0;
 let nearClue = false;
 let turnHeld = 0;
+let speaking = null;
 const TURN = 2.2;
 let clock = 0;
 let last = 0;
@@ -165,6 +166,7 @@ function helpHtml() {
     <p><strong>Phone.</strong> The stick walks forward and back, and leans to turn. The arrows beside it turn while you hold them. Drag the view to look. A short tap steps forward. Light, Use, Hint, Notes.</p>
     <p><strong>Keyboard.</strong> W and S walk. A and D, or the arrow keys, turn. Z and C sidestep. Hold Shift, or tap W twice, to hurry. Click the view to capture the mouse, and press Esc to let it go. Dragging still looks if the mouse is free. F lantern. E or Space uses what is in front of you, or talks to someone standing there. H hint. M shows the map. B toggles the head bob.</p>
     <p>The map only inks corridors you have seen. A gold mark means a wall gave way. A curl means a room folded.</p>
+    <p>People in the maze speak. Captions are off until you turn them on.</p>
     <div class="row"><button type="button" data-close>Step in</button></div>`;
 }
 
@@ -172,6 +174,7 @@ function settingsHtml() {
   return `<h2>On this device</h2>
     <p><label><input type="checkbox" id="sound" ${save.sound ? "checked" : ""}> Sound</label></p>
     <p><label><input type="checkbox" id="bob" ${save.bob !== false ? "checked" : ""}> Head bob</label></p>
+    <p><label><input type="checkbox" id="captions" ${save.captions ? "checked" : ""}> Captions</label></p>
     <p>Look speed</p>
     <div class="row">
       <button type="button" data-sens="0.7">Slow</button>
@@ -244,7 +247,18 @@ function buildScene() {
   camera.add(fillLamp);
   spot.target = target;
   const built = dressScene(scene, world, coarse, renderer);
-  people = peopleFor(world);
+  people = [];
+  scene.traverse((obj) => {
+    if (obj.name !== "cast" || !obj.userData.lines) return;
+    people.push({
+      id: obj.userData.person,
+      name: obj.userData.nameLabel,
+      lines: obj.userData.lines,
+      mesh: obj,
+      wx: obj.userData.home.x,
+      wz: obj.userData.home.z,
+    });
+  });
   doors = built.doors;
   plaques = built.plaques;
   particles = built.particles;
@@ -348,6 +362,9 @@ function enter(id, resume) {
   document.getElementById("kicker").textContent = world.kicker;
   document.getElementById("title").textContent = world.title;
   refreshHud();
+  unlockSpeech();
+  speak(world.intro, { id: "narrator", name: world.title });
+  markSpeaking("narrator", world.intro);
   if (!save.help) {
     save.help = true;
     persist();
@@ -364,29 +381,44 @@ function showMap(on) {
     btn.hidden = !world;
     btn.textContent = on ? "Hide map" : "Map";
   }
+  const cc = document.getElementById("btn-captions");
+  if (cc) {
+    cc.hidden = !world;
+    cc.classList.toggle("on", !!save.captions);
+  }
+}
+
+function personSpot(person) {
+  if (person.mesh) return { x: person.mesh.position.x, z: person.mesh.position.z };
+  return { x: person.wx, z: person.wz };
 }
 
 function personNear() {
   let best = null;
   let bestD = 2.5;
   for (const p of people) {
-    const d = Math.hypot(state.px - p.wx, state.pz - p.wz);
+    const spot = personSpot(p);
+    const d = Math.hypot(state.px - spot.x, state.pz - spot.z);
     if (d < bestD) { best = p; bestD = d; }
   }
   return best;
+}
+
+function markSpeaking(id, line) {
+  speaking = { id, until: clock + Math.min(9, 1.1 + String(line || "").length * 0.045) };
+  if (view) view.dataset.speaking = id + ": " + line;
 }
 
 function talk(person) {
   const i = state.talk[person.id] || 0;
   const line = person.lines[Math.min(i, person.lines.length - 1)];
   state.talk[person.id] = Math.min(person.lines.length - 1, i + 1);
-  state.msg = person.name + ". " + line;
-  state.notes.push(state.msg);
+  state.msg = save.captions ? person.name + ". " + line : "";
+  state.notes.push(person.name + ". " + line);
   if (state.notes.length > 48) state.notes.splice(0, state.notes.length - 48);
-  const pos = person.crop ? (person.crop[0] * 100) + "% center" : "center";
-  openPanel(`<img class="portrait" alt="" src="${person.art}" style="object-position:${pos}">
-    <h2>${escapeHtml(person.name)}</h2><p>${escapeHtml(line)}</p>
-    <div class="row"><button type="button" data-close>Close</button></div>`, false);
+  unlockSpeech();
+  speak(line, person);
+  markSpeaking(person.id, line);
   refreshHud();
 }
 
@@ -503,8 +535,12 @@ function leave() {
   const btn = document.getElementById("btn-map");
   if (canvas) canvas.hidden = true;
   if (btn) btn.hidden = true;
+  const cc = document.getElementById("btn-captions");
+  if (cc) cc.hidden = true;
   if (state && !state.cleared) snapshot();
   persist();
+  stopSpeak();
+  speaking = null;
   closePanel();
   world = null;
   state = null;
@@ -518,11 +554,12 @@ function refreshHud() {
   const held = lettersHeld(world, state).slice().sort((a, b) => a.letter.localeCompare(b.letter) || a.tag.localeCompare(b.tag));
   const need = (world.tokens || []).filter((t) => t.letter).length;
   document.getElementById("held").textContent = need ? "Letters " + held.length + "/" + need + (held.length ? " · " + held.map((h) => h.letter).join(" ") : "") : "";
-  toast.hidden = !state.msg;
+  toast.hidden = !save.captions || !state.msg;
   toast.textContent = state.msg || "";
   const person = personNear();
   const near = nearest(world, state);
-  const pd = person ? Math.hypot(state.px - person.wx, state.pz - person.wz) : 99;
+  const spot = person ? personSpot(person) : null;
+  const pd = spot ? Math.hypot(state.px - spot.x, state.pz - spot.z) : 99;
   const zd = near ? Math.hypot(state.px - (near.x + 0.5) * CELL, state.pz - (near.z + 0.5) * CELL) : 99;
   if (panel.hidden && person && pd + 0.2 < zd) {
     promptEl.hidden = false;
@@ -540,7 +577,8 @@ function useNow() {
   const puzzle = nearest(world, state);
   const person = personNear();
   if (person) {
-    const pd = Math.hypot(state.px - person.wx, state.pz - person.wz);
+    const spot = personSpot(person);
+    const pd = Math.hypot(state.px - spot.x, state.pz - spot.z);
     const zd = puzzle ? Math.hypot(state.px - (puzzle.x + 0.5) * CELL, state.pz - (puzzle.z + 0.5) * CELL) : 99;
     if (pd + 0.2 < zd) {
       talk(person);
@@ -551,13 +589,20 @@ function useNow() {
   }
   const res = interact(world, state);
   applyLight();
+  if (res && (res.ui === "read" || (res.msg && !/Nothing here/i.test(res.msg)))) {
+    const said = res.ui === "read" ? res.body : res.msg;
+    unlockSpeech();
+    speak(said, { id: "narrator", name: res.title || "Clue" });
+    markSpeaking("narrator", said);
+    if (!save.captions) state.msg = "";
+  }
   refreshHud();
   if (res.ui === "code") {
       openPanel(codeHtml(), false);
       const field = document.getElementById("code");
       if (field) field.focus();
     }
-  else if (res.ui === "read") {
+  else if (res.ui === "read" && save.captions) {
     openPanel(`<h2>${escapeHtml(res.title)}</h2><p>${escapeHtml(res.body)}</p><div class="row"><button type="button" data-close>Close</button></div>`, false);
   }
   snapshot();
@@ -574,8 +619,13 @@ function toggleLight() {
 function doHint() {
   if (!world) return;
   const h = hintFor(world, state);
+  unlockSpeech();
+  speak(h.text, { id: "narrator", name: "Hint" });
+  markSpeaking("narrator", h.text);
   refreshHud();
-  openPanel(`<h2>Hint ${h.tier + 1} of 3</h2><p>${escapeHtml(h.text)}</p><div class="row"><button type="button" data-close>Close</button></div>`, false);
+  if (save.captions) {
+    openPanel(`<h2>Hint ${h.tier + 1} of 3</h2><p>${escapeHtml(h.text)}</p><div class="row"><button type="button" data-close>Close</button></div>`, false);
+  }
   snapshot();
   persist();
 }
@@ -682,12 +732,69 @@ function frame(now) {
     });
   }
   if (scene.getObjectsByProperty) {
-    scene.getObjectsByProperty("name", "cast").forEach((board) => {
-      const dx = camera.position.x - board.position.x;
-      const dz = camera.position.z - board.position.z;
-      board.rotation.y = Math.atan2(dx, dz);
-      const base = 0.95;
-      board.position.y = base + Math.sin(clock * 1.5 + (board.userData.bob || 0)) * 0.025;
+    const ease = (cur, goal, rate) => cur + (goal - cur) * (1 - Math.exp(-rate * dt));
+    scene.getObjectsByProperty("name", "cast").forEach((root) => {
+      const ud = root.userData;
+      const home = ud.home || { x: root.position.x, z: root.position.z };
+      const bob = ud.bob || 0;
+      const dist = Math.hypot(camera.position.x - home.x, camera.position.z - home.z);
+      ud.near = ease(ud.near || 0, dist < 3.1 ? 1 : 0, 3.2);
+      ud.talk = ease(ud.talk || 0, speaking && speaking.id === ud.person && clock < speaking.until ? 1 : 0, 5);
+      if (ud.near > 0.7 && !ud.greeted) { ud.hopT = clock; ud.greeted = true; }
+      if (ud.near < 0.25) ud.greeted = false;
+      const along = Math.sin(clock * 0.4 + bob) * (ud.span || 0.3) * (1 - ud.near * 0.9);
+      const tx = home.x + (ud.axis === "z" ? 0 : along);
+      const tz = home.z + (ud.axis === "z" ? along : 0);
+      const walking = (1 - ud.near) * Math.min(1, (ud.span || 0.3) / 0.3);
+      const step = Math.abs(Math.sin(clock * 5.4 + bob)) * 0.04 * walking;
+      let hop = 0;
+      let wave = 0;
+      if (ud.hopT != null) {
+        const k = (clock - ud.hopT) / 0.62;
+        if (k >= 0 && k < 1) {
+          hop = Math.sin(k * Math.PI) * 0.1;
+          wave = Math.sin(k * Math.PI * 2) * 0.06;
+        }
+      }
+      if (ud.px == null) { ud.px = tx; ud.pz = tz; }
+      ud.px = ease(ud.px, tx, 3.2);
+      ud.pz = ease(ud.pz, tz, 3.2);
+      const face = Math.atan2(camera.position.x - ud.px, camera.position.z - ud.pz);
+      if (ud.yaw == null) ud.yaw = face;
+      let turn = face - ud.yaw;
+      while (turn > Math.PI) turn -= Math.PI * 2;
+      while (turn < -Math.PI) turn += Math.PI * 2;
+      ud.yaw += turn * (1 - Math.exp(-5.5 * dt));
+      const breathe = 1 + Math.sin(clock * 1.65 + bob) * 0.014;
+      const talkPulse = 1 + ud.talk * (0.018 + Math.sin(clock * 5.2) * 0.016);
+      const sy = breathe * talkPulse;
+      const body = root.getObjectByName("body");
+      if (ud.sprite) {
+        root.position.set(ud.px, hop + step, ud.pz);
+        root.rotation.set(0, ud.yaw, 0);
+        if (body) {
+          body.scale.set(1, sy, 1);
+          body.position.y = (ud.height || 1.74) * sy / 2;
+          body.rotation.z = Math.sin(clock * 1.05 + bob) * 0.016 + wave;
+        }
+        if (ud.shade) {
+          const sway = body ? body.rotation.z : 0;
+          const shift = Math.sin(sway) * (ud.height || 1.74) * 0.5 * (body ? body.scale.y : 1);
+          const yaw = ud.yaw || 0;
+          ud.shade.position.set(ud.px + Math.cos(yaw) * shift, 0.012, ud.pz - Math.sin(yaw) * shift);
+          ud.shade.rotation.set(-Math.PI / 2, 0, 0);
+        }
+      } else {
+        root.position.set(ud.px, 0, ud.pz);
+        root.rotation.set(0, ud.yaw, 0);
+        if (body) {
+          body.scale.set(1, sy, 1);
+          body.position.y = 0.06 + ((ud.height || 1.52) * sy) / 2 + hop * 0.35 + step * 0.25;
+          body.rotation.z = Math.sin(clock * 1.05 + bob) * 0.01;
+        }
+      }
+      const mark = root.getObjectByName("speech");
+      if (mark) mark.material.opacity = ud.talk;
     });
   }
   drawMap();
@@ -740,6 +847,12 @@ function bind() {
   document.getElementById("btn-hint").addEventListener("click", () => { audio.resume(); doHint(); });
   document.getElementById("btn-book").addEventListener("click", () => openPanel(notesHtml(), false));
   document.getElementById("btn-map").addEventListener("click", () => { if (world) showMap(!mapOn); });
+  document.getElementById("btn-captions").addEventListener("click", () => {
+    save.captions = !save.captions;
+    persist();
+    document.getElementById("btn-captions").classList.toggle("on", !!save.captions);
+    if (world) refreshHud();
+  });
   function holdTurn(dir) {
     return (e) => {
       if (e.cancelable) e.preventDefault();
@@ -795,6 +908,11 @@ function bind() {
       save.bob = e.target.checked;
       persist();
     }
+    if (e.target.id === "captions") {
+      save.captions = e.target.checked;
+      persist();
+      if (world) refreshHud();
+    }
   });
   window.addEventListener("keydown", (e) => {
     if (e.target && e.target.matches && e.target.matches("input, textarea")) {
@@ -836,6 +954,7 @@ function bind() {
   }
   look.addEventListener("pointerdown", (e) => {
     audio.resume();
+    unlockSpeech();
     if (!panel.hidden) return;
     if (e.pointerType === "touch") return;
     if (e.pointerType === "mouse" && e.button !== 0) return;

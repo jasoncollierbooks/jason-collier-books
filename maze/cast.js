@@ -1,8 +1,8 @@
-/* Painted cutouts from art already on the site. Lines stay inside the
+/* People stand in as full-body paintings where we have them. The other
+   worlds keep a framed picture from the book. Lines stay inside the
    existing clues. They never name a gate word. */
 import { CELL, center } from "./logic.js";
 
-const TV = "../app/media/jang-tom-tv.jpg";
 const PINE = "../images/pine-knot.jpg";
 const RIDGE = "../images/jang-tom-millers-ridge.jpg";
 const WAGON = "../images/jang-and-tom-wagon-masters.jpg";
@@ -14,17 +14,18 @@ const PULSE = "../images/the-first-pulse.jpg";
 const LAB = "../images/lab/born-twice-banner.jpg";
 const SEED = "../images/the-seeders-cover.jpg";
 const ENVOY = "../images/the-ninth-envoy.jpg";
-const JANG = "../images/author-as-jang.jpg";
+
+const SPRITE = "./cast/";
 
 export const CAST = {
   trail: [
-    { id: "jang", name: "Jang", art: TV, crop: [0.0, 0.02, 0.30, 0.96],
+    { id: "jang", name: "Jang", sprite: SPRITE + "jang.webp", aspect: 0.275,
       lines: [
         "You walked in during a true story. We can pencil you in. I am Jang.",
         "The key is not the punchline. The rope is.",
         "The picture that promises California in the first breath is the false door.",
       ] },
-    { id: "tom", name: "Tom", art: TV, crop: [0.40, 0.02, 0.48, 0.96],
+    { id: "tom", name: "Tom", sprite: SPRITE + "tom.webp", aspect: 0.443,
       lines: [
         "Tom. My neck itched, then you arrived. That was the audition.",
         "Four wheels, a canvas top, and only one axle looks ready to snap. I counted.",
@@ -32,13 +33,13 @@ export const CAST = {
       ] },
   ],
   pine: [
-    { id: "jang", name: "Jang", art: PINE, crop: [0.0, 0.0, 0.4, 1],
+    { id: "jang", name: "Jang", sprite: SPRITE + "jang.webp", aspect: 0.275,
       lines: [
         "Younger, and still Jang. The napkin is not a map to gold.",
         "Two boys had the napkin. The X was ketchup.",
         "Jenkins has been walking since breakfast. The napkin is what stops him.",
       ] },
-    { id: "tom", name: "Tom", art: RIDGE, crop: [0.32, 0.05, 0.4, 0.9],
+    { id: "tom", name: "Tom", sprite: SPRITE + "tom.webp", aspect: 0.443,
       lines: [
         "Tom, before the trail got longer. The groundhog has the dirt piled in the square.",
         "The hole is the door. I did not dig it. I respect the professional.",
@@ -46,13 +47,13 @@ export const CAST = {
       ] },
   ],
   mountain: [
-    { id: "wade", name: "H. Wade", art: OLD, crop: [0.48, 0.0, 0.5, 0.62],
+    { id: "wade", name: "H. Wade", sprite: SPRITE + "wade.webp", aspect: 0.387,
       lines: [
         "H. Wade kept this fire. Feed it. The pass below camp stays shut until you do.",
         "The lit cabin is not the way down.",
         "The camera counted the nights. The gate rolls back by that count, not by anything else in camp.",
       ] },
-    { id: "mountain", name: "The mountain", art: OLD, crop: [0.02, 0.42, 0.46, 0.5],
+    { id: "mountain", name: "The mountain", sprite: SPRITE + "mountain.webp", aspect: 0.403, scale: 1.08,
       lines: [
         "The mountain is not empty.",
         "In the dark the draw turns you around. Light it before you trust it.",
@@ -60,13 +61,13 @@ export const CAST = {
       ] },
   ],
   rusty: [
-    { id: "spacey", name: "Captain Spacey", art: CREW, crop: [0.0, 0.0, 0.4, 1],
+    { id: "spacey", name: "Captain Spacey", sprite: SPRITE + "spacey.webp", aspect: 0.422,
       lines: [
         "You walked in during a true story. I'm Spacey. She flies. Eventually.",
         "Goats with balloons. They follow a lamp. Pass them with it out.",
         "A crate. If it hums, we charge extra.",
       ] },
-    { id: "mira", name: "Mira", art: CREW, crop: [0.34, 0.08, 0.28, 0.84],
+    { id: "mira", name: "Mira", sprite: SPRITE + "mira.webp", aspect: 0.351, scale: 0.73,
       lines: [
         "Mira. If it ticks, I already know. Don't touch the lever marked don't.",
         "The goats lose you when the lamp is out. Then the lamp goes back on.",
@@ -106,7 +107,7 @@ export const CAST = {
       ] },
   ],
   meta: [
-    { id: "jang", name: "Jang", art: JANG, crop: [0.08, 0.02, 0.84, 0.96],
+    { id: "jang", name: "Jang", sprite: SPRITE + "jang-meta.webp", aspect: 0.336,
       lines: [
         "The cabinet is between stations. Eight brands are in the page.",
         "Read them in the plaque's order. Then treat them the way the trail treated a carving.",
@@ -175,37 +176,54 @@ export function peopleFor(world) {
   (world.portals || []).forEach((t) => taken.add(t.x + "," + t.z));
   let sx = 1;
   let sz = 1;
-  const dead = [];
-  const floors = [];
   for (let z = 0; z < world.grid.length; z++) {
     for (let x = 0; x < world.grid[z].length; x++) {
       if (world.grid[z][x] === "S") { sx = x; sz = z; }
-      if (!openCell(world, x, z)) continue;
-      if (world.grid[z][x] === "S" || world.grid[z][x] === "G" || world.grid[z][x] === "F") continue;
-      if (taken.has(x + "," + z)) continue;
-      const far = !(world.tokens || []).some((t) => Math.abs(t.x - x) + Math.abs(t.z - z) < 4);
-      if (!far) continue;
-      floors.push({ x, z });
-      if (neighbors(world, x, z) === 1) dead.push({ x, z });
     }
   }
   const placed = [];
-  const greeter = cast[0];
-  const gx = openCell(world, sx - 2, sz) ? sx - 2 : sx - 1;
-  const gz = sz;
-  placed.push(Object.assign({ x: gx, z: gz, greet: true, side: 0.42 }, greeter));
-  const used = new Set(placed.map((p) => p.x + "," + p.z));
-  const pool = dead.concat(floors).filter((c) => !used.has(c.x + "," + c.z));
-  pool.sort((a, b) => (b.x - a.x) || (a.z - b.z));
-  cast.slice(1).forEach((person, i) => {
-    const spot = pool[i * 3] || pool[i] || pool[0];
+  const used = new Set();
+  function free(x, z) {
+    if (!openCell(world, x, z)) return false;
+    if (taken.has(x + "," + z) || used.has(x + "," + z)) return false;
+    const ch = world.grid[z][x];
+    return ch !== "S" && ch !== "G" && ch !== "F";
+  }
+  function walkIn(steps) {
+    let x = sx;
+    let z = sz;
+    const seen = new Set([x + "," + z]);
+    let got = 0;
+    let spot = null;
+    for (let n = 0; n < steps + 30 && got < steps; n++) {
+      const choices = [[-1, 0], [0, 1], [0, -1], [1, 0]]
+        .map(([dx, dz]) => ({ x: x + dx, z: z + dz }))
+        .filter((c) => openCell(world, c.x, c.z) && !seen.has(c.x + "," + c.z));
+      const prefer = choices.find((c) => c.x < x) || choices[0];
+      if (!prefer) break;
+      seen.add(prefer.x + "," + prefer.z);
+      x = prefer.x;
+      z = prefer.z;
+      if (free(x, z)) {
+        got++;
+        spot = { x, z };
+      }
+    }
+    return spot;
+  }
+  cast.forEach((person, i) => {
+    const spot = walkIn(i === 0 ? 2 : 6);
     if (!spot) return;
     used.add(spot.x + "," + spot.z);
-    placed.push(Object.assign({ x: spot.x, z: spot.z }, person));
+    placed.push(Object.assign({ x: spot.x, z: spot.z, greet: i === 0 }, person));
   });
   return placed.map((p) => {
     const c = center(p.x, p.z);
-    return Object.assign({}, p, { wx: c.x, wz: c.z + (p.side || 0) });
+    const east = openCell(world, p.x + 1, p.z) || openCell(world, p.x - 1, p.z);
+    const north = openCell(world, p.x, p.z + 1) || openCell(world, p.x, p.z - 1);
+    const axis = north && !east ? "z" : "x";
+    const span = east && north ? 0.22 : 0.36;
+    return Object.assign({}, p, { wx: c.x, wz: c.z, axis, span });
   });
 }
 
