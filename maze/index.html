@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#100e0c">
+<title>Cryptic Mazes | Collier Entertainment</title>
+<meta name="description" content="A first-person maze for every world on Collier Entertainment. The California Trail, Pine Knot, the mountain, the Rusty Stack, the First Pulse, Thorne’s Lab, the Seeders, and the Ninth Envoy. The last gate needs all of them.">
+<link rel="canonical" href="https://collierentertainment.com/maze/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Collier Entertainment">
+<meta property="og:title" content="Cryptic Mazes | Collier Entertainment">
+<meta property="og:description" content="Eight book-world mazes, one hidden word. Bring a lantern.">
+<meta property="og:url" content="https://collierentertainment.com/maze/">
+<meta property="og:image" content="https://collierentertainment.com/images/games/cryptic-mazes.jpg">
+<link rel="icon" href="../icons/brand/ce3-icon-32.png?v=ce3" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../icons/brand/ce3-icon-180.png?v=ce3" sizes="180x180">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Josefin+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./maze.css?v=1">
+<script type="importmap">{ "imports": { "three": "../old-man-game/vendor/three.min.js" } }</script>
+</head>
+<body>
+<canvas id="view" aria-label="Maze view"></canvas>
+<div id="look" hidden></div>
+<div id="grain" aria-hidden="true"></div>
+<div id="cross" hidden aria-hidden="true"></div>
+<header id="top">
+  <a class="wordmark" href="../play.html">COLLIER<span>ENTERTAINMENT</span></a>
+  <button type="button" class="text-btn" id="btn-help">How to play</button>
+</header>
+<main id="hub"></main>
+<div id="hud" hidden>
+  <p id="kicker"></p>
+  <h1 id="title"></h1>
+  <p id="objective"></p>
+  <p id="held"></p>
+</div>
+<p id="toast" hidden aria-live="polite"></p>
+<p id="prompt" hidden></p>
+<p id="keys">WASD move · arrows turn · drag to look · F lantern · E use · H hint</p>
+<div id="touch" hidden>
+  <div id="stick" aria-hidden="true"><div id="knob"></div></div>
+  <div id="pads">
+    <button type="button" id="btn-light">Light</button>
+    <button type="button" id="btn-use">Use</button>
+    <button type="button" id="btn-hint">Hint</button>
+    <button type="button" id="btn-book">Notes</button>
+  </div>
+</div>
+<div id="panel" hidden></div>
+<script type="module" src="./main.js?v=1"></script>
+<noscript><p style="padding:24px">Cryptic Mazes needs JavaScript.</p></noscript>
+</body>
+</html>
