@@ -742,25 +742,26 @@ function bind() {
   document.getElementById("btn-map").addEventListener("click", () => { if (world) showMap(!mapOn); });
   function holdTurn(dir) {
     return (e) => {
-      e.preventDefault();
+      if (e.cancelable) e.preventDefault();
       audio.resume();
       turnHeld = dir;
-      e.currentTarget.setPointerCapture(e.pointerId);
+      if (e.pointerId != null) {
+        try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) { /* touchend still releases */ }
+      }
     };
   }
   function releaseTurn(dir) {
-    return (e) => {
-      if (turnHeld === dir) turnHeld = 0;
-    };
+    return () => { if (turnHeld === dir) turnHeld = 0; };
   }
-  const left = document.getElementById("btn-left");
-  const right = document.getElementById("btn-right");
-  left.addEventListener("pointerdown", holdTurn(-1));
-  right.addEventListener("pointerdown", holdTurn(1));
-  left.addEventListener("pointerup", releaseTurn(-1));
-  right.addEventListener("pointerup", releaseTurn(1));
-  left.addEventListener("pointercancel", releaseTurn(-1));
-  right.addEventListener("pointercancel", releaseTurn(1));
+  [["btn-left", -1], ["btn-right", 1]].forEach(([id, dir]) => {
+    const el = document.getElementById(id);
+    el.addEventListener("pointerdown", holdTurn(dir));
+    el.addEventListener("pointerup", releaseTurn(dir));
+    el.addEventListener("pointercancel", releaseTurn(dir));
+    el.addEventListener("touchstart", holdTurn(dir), { passive: false });
+    el.addEventListener("touchend", releaseTurn(dir), { passive: false });
+    el.addEventListener("touchcancel", releaseTurn(dir), { passive: false });
+  });
   panel.addEventListener("click", (e) => {
     if (e.target.dataset.close != null || e.target.closest("[data-close]")) {
       if (!e.target.closest(".sheet") || e.target.dataset.close != null) closePanel();
@@ -821,11 +822,26 @@ function bind() {
   window.addEventListener("blur", () => Object.keys(keys).forEach((k) => { keys[k] = false; }));
 
   let drag = null;
+  let lookFromPointer = false;
+  function nudgeLook(dx, dy, rec) {
+    if (!state || !panel.hidden) return;
+    if (rec && dx * dx + dy * dy > 16) rec.moved = true;
+    state.yaw += dx * 0.0042 * sens;
+    state.pitch = Math.max(-1.15, Math.min(1.05, state.pitch - dy * 0.0036 * sens));
+  }
+  function tapLook() {
+    if (!state || !panel.hidden) return;
+    if (nearest(world, state)) useNow();
+    else stepLeft = 0.34;
+  }
   look.addEventListener("pointerdown", (e) => {
     audio.resume();
     if (!panel.hidden) return;
-    drag = { id: e.pointerId, x: e.clientX, y: e.clientY, moved: false };
-    look.setPointerCapture(e.pointerId);
+    if (e.pointerType === "touch") return;
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    lookFromPointer = true;
+    drag = { id: e.pointerId, x: e.clientX, y: e.clientY, moved: false, type: e.pointerType || "" };
+    try { look.setPointerCapture(e.pointerId); } catch (err) { /* iOS may refuse capture */ }
   });
   document.addEventListener("mousemove", (e) => {
     if (document.pointerLockElement !== look || !state || !panel.hidden) return;
@@ -833,30 +849,54 @@ function bind() {
     state.pitch = Math.max(-1.15, Math.min(1.05, state.pitch - e.movementY * 0.0018 * sens));
   });
   look.addEventListener("pointermove", (e) => {
-    if (document.pointerLockElement === look) return;
+    if (e.pointerType === "touch" || document.pointerLockElement === look) return;
     if (!drag || e.pointerId !== drag.id || !state) return;
     const dx = e.clientX - drag.x;
     const dy = e.clientY - drag.y;
-    if (dx * dx + dy * dy > 16) drag.moved = true;
-    state.yaw += dx * 0.0042 * sens;
-    state.pitch = Math.max(-1.15, Math.min(1.05, state.pitch - dy * 0.0036 * sens));
     drag.x = e.clientX;
     drag.y = e.clientY;
+    nudgeLook(dx, dy, drag);
   });
   function endLook(e) {
-    if (!drag || e.pointerId !== drag.id) return;
+    if (!drag || (e.pointerId != null && e.pointerId !== drag.id)) return;
     const tap = !drag.moved;
+    const kind = drag.type;
     drag = null;
+    lookFromPointer = false;
     if (!tap || !state || !panel.hidden) return;
-    if (!coarse && document.pointerLockElement !== look) {
+    if (!coarse && kind !== "touch" && document.pointerLockElement !== look) {
       look.requestPointerLock();
       return;
     }
-    if (nearest(world, state)) useNow();
-    else stepLeft = 0.34;
+    tapLook();
   }
   look.addEventListener("pointerup", endLook);
   look.addEventListener("pointercancel", endLook);
+  look.addEventListener("touchstart", (e) => {
+    if (e.cancelable) e.preventDefault();
+    if (!panel.hidden || !e.changedTouches.length) return;
+    audio.resume();
+    const t = e.changedTouches[0];
+    drag = { id: "touch", x: t.clientX, y: t.clientY, moved: false, type: "touch" };
+  }, { passive: false });
+  look.addEventListener("touchmove", (e) => {
+    if (e.cancelable) e.preventDefault();
+    if (!drag || drag.id !== "touch" || !e.touches.length) return;
+    const t = e.touches[0];
+    const dx = t.clientX - drag.x;
+    const dy = t.clientY - drag.y;
+    drag.x = t.clientX;
+    drag.y = t.clientY;
+    nudgeLook(dx, dy, drag);
+  }, { passive: false });
+  look.addEventListener("touchend", (e) => {
+    if (e.cancelable) e.preventDefault();
+    if (!drag || drag.id !== "touch") return;
+    const tap = !drag.moved;
+    drag = null;
+    if (tap) tapLook();
+  }, { passive: false });
+  look.addEventListener("touchcancel", () => { if (!lookFromPointer) drag = null; });
 
   function joyPos(e) {
     const r = stick.getBoundingClientRect();
@@ -873,17 +913,25 @@ function bind() {
     joy.x = dx / max;
     joy.y = dy / max;
   }
+  let joyFromPointer = false;
   stick.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "touch") return;
     audio.resume();
+    if (e.cancelable) e.preventDefault();
     if (clock - lastTap < 0.32) sprintUntil = clock + 1.5;
     lastTap = clock;
+    joyFromPointer = true;
     joy.id = e.pointerId;
-    stick.setPointerCapture(e.pointerId);
+    try { stick.setPointerCapture(e.pointerId); } catch (err) { /* touch fallback still tracks the finger */ }
     joyPos(e);
   });
-  stick.addEventListener("pointermove", (e) => { if (e.pointerId === joy.id) joyPos(e); });
+  stick.addEventListener("pointermove", (e) => {
+    if (e.pointerType === "touch" || e.pointerId !== joy.id) return;
+    joyPos(e);
+  });
   function endJoy(e) {
-    if (e.pointerId !== joy.id) return;
+    if (e && e.pointerId != null && e.pointerId !== joy.id) return;
+    joyFromPointer = false;
     joy.id = null;
     joy.x = 0;
     joy.y = 0;
@@ -891,6 +939,25 @@ function bind() {
   }
   stick.addEventListener("pointerup", endJoy);
   stick.addEventListener("pointercancel", endJoy);
+  stick.addEventListener("touchstart", (e) => {
+    if (e.cancelable) e.preventDefault();
+    audio.resume();
+    if (!e.changedTouches.length) return;
+    if (clock - lastTap < 0.32) sprintUntil = clock + 1.5;
+    lastTap = clock;
+    joy.id = "touch";
+    joyPos(e.changedTouches[0]);
+  }, { passive: false });
+  stick.addEventListener("touchmove", (e) => {
+    if (e.cancelable) e.preventDefault();
+    if (joy.id !== "touch" || !e.touches.length) return;
+    joyPos(e.touches[0]);
+  }, { passive: false });
+  stick.addEventListener("touchend", (e) => {
+    if (e.cancelable) e.preventDefault();
+    if (joy.id === "touch") endJoy();
+  }, { passive: false });
+  stick.addEventListener("touchcancel", () => { if (joy.id === "touch") endJoy(); });
   window.addEventListener("resize", resize);
   document.addEventListener("visibilitychange", () => { if (document.hidden) { snapshot(); persist(); } });
   window.addEventListener("pagehide", () => { snapshot(); persist(); });
