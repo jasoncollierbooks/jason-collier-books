@@ -36,7 +36,7 @@ ads:[{h:"PAINT THE RIDGE",b:"Palette-knife mountains and fan-brush trees in the 
 
 {lead:{h:"GENERAL HOSKINS' GOLD: FACT OR FEED STORE?",d:"Historians puzzled by Jang's account of 1864",b:["According to Mr. Jang, General Beauregard P. Hoskins came through these hills in 1864 with a mule cart full of gold and buried it \u201cwhere no one will ever find it.\u201d","Mr. Hoskins of the feed store says he has never heard of the general. Mr. Jang says that is exactly what a Hoskins would say."]},
 shorts:[{h:"Mule Cart Not Found",b:"Searchers found a wheelbarrow. It belonged to Mr. Tom."},{h:"Feed Store Sale",b:"Seed corn, two for one. No gold accepted."}],
-ads:[{h:"FIRST PULSE",b:"Something older than the stars. The animated audiobook and the game.",c:"Play the game",go:"firstpulse"},{h:"GAMES! GAMES! GAMES!",b:"Eight free games, all in one place.",c:"Pick a game",go:"play"}]},
+ads:[{h:"FIRST PULSE",b:"Something older than the stars. The animated audiobook and the game.",c:"Play the game",go:"firstpulse"},{h:"GAMES! GAMES! GAMES!",b:"Free games, all in one place.",c:"Pick a game",go:"play"}]},
 
 {lead:{h:"CANDY BAR MYSTERY DEEPENS",d:"Treat hidden under flour sack \u2018ain't there no more\u2019",b:["A half candy bar hidden by Mr. Tom under the flour sack in his pantry has gone missing. Mr. Jang was the only other person who knew of the hiding place.","Asked about it, Mr. Jang replied, \u201cWhat candy bar?\u201d Investigators consider this suspicious."]},
 shorts:[{h:"Sandwich Offered in Peace",b:"Mr. Tom made Mr. Jang a peanut butter and jelly sandwich anyway. Cut diagonal."},{h:"Flour Sack Cleared",b:"The flour sack has been ruled out as a suspect."}],
