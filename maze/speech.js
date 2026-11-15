@@ -1,16 +1,7 @@
-/* Spoken lines. A clip plays only when a recording in the repo says the same
-   sentence. Every other line uses the browser voice, one tone per speaker. */
-const CLIP = "../book-worlds/audio/voices/";
-
-const CLIPS = {
-  "You walked in during a true story. We can pencil you in. I am Jang.": CLIP + "jang/jang-meet.mp3",
-  "The key is not the punchline. The rope is.": CLIP + "jang/jang-rope-hint.mp3",
-  "Tom. My neck itched, then you arrived. That was the audition.": CLIP + "tom/tom-meet.mp3",
-  "Neck's itching. That usually means the map was a suggestion.": CLIP + "tom/tom-greet.mp3",
-  "You walked in during a true story. I'm Spacey. She flies. Eventually.": CLIP + "spacey/spacey-greet.mp3",
-  "A crate. If it hums, we charge extra.": CLIP + "spacey/spacey-chest.mp3",
-  "Mira. If it ticks, I already know. Don't touch the lever marked don't.": CLIP + "mira/mira-greet.mp3",
-};
+/* Spoken lines. Every line has a recording. A book-worlds clip is used when
+   it already says the same sentence. The rest were made with Kokoro.
+   The browser voice is only a fallback if a file will not play. */
+import { LINES } from "./voices/index.js";
 
 const TONE = {
   jang: { pitch: 1.42, rate: 1.14, high: true },
@@ -20,15 +11,43 @@ const TONE = {
   spacey: { pitch: 1.04, rate: 1.0, high: false },
   mira: { pitch: 1.3, rate: 1.08, high: true },
   hum: { pitch: 0.64, rate: 0.8, high: false },
-  journal: { pitch: 0.9, rate: 0.9, high: false },
-  seed: { pitch: 1.16, rate: 0.86, high: true },
-  ninth: { pitch: 0.8, rate: 0.82, high: false },
-  narrator: { pitch: 1, rate: 0.95, high: false },
+  journal: { pitch: 0.95, rate: 0.92, high: true },
+  seed: { pitch: 1, rate: 0.95, high: false },
+  ninth: { pitch: 0.95, rate: 0.9, high: false },
+  narrator: { pitch: 0.96, rate: 0.95, high: false },
 };
 
+const blobs = new Map();
 let clip = null;
 
+function norm(text) {
+  return String(text || "").replace(/\s+/g, " ").trim();
+}
+
+export function preloadWorld(id) {
+  const jobs = [];
+  for (const rec of Object.values(LINES)) {
+    if (rec.world !== id && rec.world !== "any") continue;
+    if (blobs.has(rec.src)) continue;
+    blobs.set(rec.src, rec.src);
+    jobs.push(fetch(rec.src).then((res) => {
+      if (!res.ok) throw new Error(rec.src);
+      return res.blob();
+    }).then((blob) => {
+      blobs.set(rec.src, URL.createObjectURL(blob));
+    }).catch(() => {
+      blobs.delete(rec.src);
+    }));
+  }
+  return Promise.all(jobs);
+}
+
 export function unlockSpeech() {
+  try {
+    const silent = new Audio("data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=");
+    const played = silent.play();
+    if (played && played.catch) played.catch(() => {});
+  } catch (e) { /* a locked browser will refuse this until a gesture */ }
   const synth = window.speechSynthesis;
   if (!synth) return;
   try { synth.resume(); } catch (e) { /* some browsers throw before a gesture */ }
@@ -72,15 +91,15 @@ function synthesize(line, who) {
 }
 
 export function speak(text, who) {
-  const line = String(text || "").replace(/\s+/g, " ").trim();
+  const line = norm(text);
   if (!line) return { spoken: false, kind: "" };
   stopSpeak();
-  const src = CLIPS[line];
-  if (src) {
-    clip = new Audio(src);
+  const rec = LINES[line];
+  if (rec) {
+    clip = new Audio(blobs.get(rec.src) || rec.src);
     const played = clip.play();
     if (played && played.catch) played.catch(() => synthesize(line, who));
-    return { spoken: true, kind: "clip" };
+    return { spoken: true, kind: rec.voice === "recorded" ? "clip" : "voice" };
   }
   return { spoken: synthesize(line, who), kind: "synth" };
 }

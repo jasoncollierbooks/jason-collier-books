@@ -3,7 +3,7 @@ import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass } from "three/a
 import { WORLDS, ORDER, worldById } from "./worlds.js";
 import { GAME_TITLE } from "./title.js";
 import { dressScene } from "./look.js";
-import { speak, stopSpeak, unlockSpeech } from "./speech.js";
+import { preloadWorld, speak, stopSpeak, unlockSpeech } from "./speech.js";
 import {
   CELL, SPEED, FACE, createState, movePlayer, interact, nearest, objective,
   lettersHeld, submitCode, hintFor, cellOf, angDiff,
@@ -363,6 +363,7 @@ function enter(id, resume) {
   document.getElementById("title").textContent = world.title;
   refreshHud();
   unlockSpeech();
+  preloadWorld(world.id);
   speak(world.intro, { id: "narrator", name: world.title });
   markSpeaking("narrator", world.intro);
   if (!save.help) {
