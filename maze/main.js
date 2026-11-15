@@ -43,6 +43,8 @@ let mapOn = true;
 let sprintUntil = 0;
 let lastTap = 0;
 let nearClue = false;
+let turnHeld = 0;
+const TURN = 2.2;
 let clock = 0;
 let last = 0;
 let saveAt = 0;
@@ -146,6 +148,7 @@ function openPanel(html, lock) {
   panel.hidden = false;
   panel.innerHTML = `<div class="scrim"${lock ? "" : " data-close"}></div><div class="sheet" role="dialog">${html}</div>`;
   look.style.pointerEvents = "none";
+  if (document.pointerLockElement) document.exitPointerLock();
 }
 
 function closePanel() {
@@ -159,8 +162,8 @@ function helpHtml() {
     <p>Walk the maze. Read what is carved. Some letters show only under the lantern, some only when you look along a wall or up at the ceiling.</p>
     <p>A bright door is often a lie. A room that brings you back is telling you the truth about itself. Walls move when you do the thing the room asked for.</p>
     <p>The gate wants the letters you found, in the order a carving explains. Hints start vague. The third one is plain.</p>
-    <p><strong>Phone.</strong> The left stick moves. Drag the view to look. A short tap steps forward. Light, Use, Hint, Notes.</p>
-    <p><strong>Keyboard.</strong> WASD or arrows move and turn. Hold Shift, or tap W twice, to hurry. Drag the mouse to look. F lantern. E or Space uses what is in front of you, or talks to someone standing there. H hint. M shows the map. B toggles the head bob.</p>
+    <p><strong>Phone.</strong> The stick walks forward and back, and leans to turn. The arrows beside it turn while you hold them. Drag the view to look. A short tap steps forward. Light, Use, Hint, Notes.</p>
+    <p><strong>Keyboard.</strong> W and S walk. A and D, or the arrow keys, turn. Z and C sidestep. Hold Shift, or tap W twice, to hurry. Click the view to capture the mouse, and press Esc to let it go. Dragging still looks if the mouse is free. F lantern. E or Space uses what is in front of you, or talks to someone standing there. H hint. M shows the map. B toggles the head bob.</p>
     <p>The map only inks corridors you have seen. A gold mark means a wall gave way. A curl means a room folded.</p>
     <div class="row"><button type="button" data-close>Step in</button></div>`;
 }
@@ -602,6 +605,13 @@ function tryCode(raw) {
   openPanel(winHtml(res.shown), true);
 }
 
+function stickAxis(v) {
+  const dead = 0.14;
+  if (Math.abs(v) < dead) return 0;
+  const sign = v < 0 ? -1 : 1;
+  return sign * (Math.abs(v) - dead) / (1 - dead);
+}
+
 function frame(now) {
   requestAnimationFrame(frame);
   const dt = Math.min(0.05, (now - last) / 1000 || 0);
@@ -609,17 +619,20 @@ function frame(now) {
   if (!world || !state || !scene) return;
   clock += dt;
   if (panel.hidden) {
-    let ix = joy.x;
-    let iz = -joy.y;
+    const stickX = stickAxis(joy.x);
+    const stickY = stickAxis(joy.y);
+    let ix = 0;
+    let iz = -stickY;
     if (keys.w || keys.arrowup) iz += 1;
     if (keys.s || keys.arrowdown) iz -= 1;
-    if (keys.a) ix -= 1;
-    if (keys.d) ix += 1;
+    if (keys.z) ix -= 1;
+    if (keys.c) ix += 1;
     if (stepLeft > 0) { iz += 1; stepLeft -= dt; }
     const len = Math.hypot(ix, iz);
     if (len > 1) { ix /= len; iz /= len; }
-    if (keys.arrowleft) state.yaw -= 1.7 * dt * sens;
-    if (keys.arrowright) state.yaw += 1.7 * dt * sens;
+    if (keys.a || keys.arrowleft || turnHeld < 0) state.yaw -= TURN * dt * sens;
+    if (keys.d || keys.arrowright || turnHeld > 0) state.yaw += TURN * dt * sens;
+    if (stickX) state.yaw += stickX * TURN * dt * sens;
     const fx = Math.sin(state.yaw);
     const fz = -Math.cos(state.yaw);
     const rx = Math.cos(state.yaw);
@@ -635,6 +648,7 @@ function frame(now) {
     nearClue = clue;
     camera.position.set(state.px, EYE + bob, state.pz);
     camera.rotation.y = -state.yaw;
+    view.dataset.yaw = String(state.yaw);
     camera.rotation.x = state.pitch;
     if (now - saveAt > 2000) { saveAt = now; snapshot(); persist(); }
   }
@@ -726,6 +740,27 @@ function bind() {
   document.getElementById("btn-hint").addEventListener("click", () => { audio.resume(); doHint(); });
   document.getElementById("btn-book").addEventListener("click", () => openPanel(notesHtml(), false));
   document.getElementById("btn-map").addEventListener("click", () => { if (world) showMap(!mapOn); });
+  function holdTurn(dir) {
+    return (e) => {
+      e.preventDefault();
+      audio.resume();
+      turnHeld = dir;
+      e.currentTarget.setPointerCapture(e.pointerId);
+    };
+  }
+  function releaseTurn(dir) {
+    return (e) => {
+      if (turnHeld === dir) turnHeld = 0;
+    };
+  }
+  const left = document.getElementById("btn-left");
+  const right = document.getElementById("btn-right");
+  left.addEventListener("pointerdown", holdTurn(-1));
+  right.addEventListener("pointerdown", holdTurn(1));
+  left.addEventListener("pointerup", releaseTurn(-1));
+  right.addEventListener("pointerup", releaseTurn(1));
+  left.addEventListener("pointercancel", releaseTurn(-1));
+  right.addEventListener("pointercancel", releaseTurn(1));
   panel.addEventListener("click", (e) => {
     if (e.target.dataset.close != null || e.target.closest("[data-close]")) {
       if (!e.target.closest(".sheet") || e.target.dataset.close != null) closePanel();
@@ -770,7 +805,10 @@ function bind() {
     if (k === "w" || k === "arrowup") lastTap = clock;
     keys[k] = true;
     if (["arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(k)) e.preventDefault();
-    if (k === "escape") closePanel();
+    if (k === "escape") {
+      if (document.pointerLockElement) document.exitPointerLock();
+      closePanel();
+    }
     if (!world || !panel.hidden) return;
     if (k === "f") toggleLight();
     if (k === "e" || k === " ") useNow();
@@ -789,7 +827,13 @@ function bind() {
     drag = { id: e.pointerId, x: e.clientX, y: e.clientY, moved: false };
     look.setPointerCapture(e.pointerId);
   });
+  document.addEventListener("mousemove", (e) => {
+    if (document.pointerLockElement !== look || !state || !panel.hidden) return;
+    state.yaw += e.movementX * 0.0022 * sens;
+    state.pitch = Math.max(-1.15, Math.min(1.05, state.pitch - e.movementY * 0.0018 * sens));
+  });
   look.addEventListener("pointermove", (e) => {
+    if (document.pointerLockElement === look) return;
     if (!drag || e.pointerId !== drag.id || !state) return;
     const dx = e.clientX - drag.x;
     const dy = e.clientY - drag.y;
@@ -804,6 +848,10 @@ function bind() {
     const tap = !drag.moved;
     drag = null;
     if (!tap || !state || !panel.hidden) return;
+    if (!coarse && document.pointerLockElement !== look) {
+      look.requestPointerLock();
+      return;
+    }
     if (nearest(world, state)) useNow();
     else stepLeft = 0.34;
   }
