@@ -295,11 +295,11 @@ const mountain = {
       id: "tent", x: 7, z: 8, letter: "I", tag: "Tent", kind: "lantern",
       dark: "The tent canvas is just canvas until the lantern crosses it.",
       goal: "Cross the draw with the lantern lit. The tent hides a letter.",
-      text: "On the canvas, in the lantern, the letter is E. You take E.",
+      text: "On the canvas, in the lantern, the letter is I. You take I.",
       hints: [
         "The draw below the fire turns you if you walk it dark. Something past it wants the light.",
         "Cross the narrow draw with the lantern on. Then use the tent.",
-        "Lantern on, through the draw, use the tent. The letter is E.",
+        "Lantern on, through the draw, use the tent. The letter is I.",
       ],
     },
     {
@@ -316,11 +316,11 @@ const mountain = {
     {
       id: "camera", x: 6, z: 9, letter: "E", tag: "Camera", kind: "read",
       goal: "The trail camera keeps one last letter.",
-      text: "Scratched under the lens: keep it going. The plate is stamped I. You take I.",
+      text: "Scratched under the lens: keep it going. The plate is stamped E. You take E.",
       hints: [
         "A trail camera sits in the lower camp. It is not only a number.",
         "Read the camera in the lower camp after the draw.",
-        "The camera plate gives you I.",
+        "The camera plate gives you E.",
       ],
     },
   ],

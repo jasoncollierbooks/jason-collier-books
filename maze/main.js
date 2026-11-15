@@ -1,13 +1,14 @@
 import * as THREE from "three";
 import { WORLDS, ORDER, worldById } from "./worlds.js";
+import { GAME_TITLE } from "./title.js";
+import { dressScene } from "./look.js";
 import {
   CELL, SPEED, FACE, createState, movePlayer, interact, nearest, objective,
-  lettersHeld, submitCode, hintFor, cellOf, angDiff, findChar,
+  lettersHeld, submitCode, hintFor, cellOf, angDiff,
 } from "./logic.js";
 import { createAudio } from "./audio.js";
 
 const SAVE_KEY = "ce-cryptic-mazes-v1";
-const H = 2.7;
 const EYE = 1.52;
 const coarse = matchMedia("(pointer: coarse)").matches;
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -109,7 +110,7 @@ function drawHub() {
     : `<p class="locked">Dead Air stays shut until every station has branded the page. ${n} of 8.</p>`;
   hub.innerHTML = `<div class="hub-inner">
     <p class="wordmark">COLLIER<span>ENTERTAINMENT</span></p>
-    <h1>Cryptic Mazes</h1>
+    <h1>${GAME_TITLE}</h1>
     <p class="lede">Eight worlds from the shelf, each with the exit hidden. A lantern, a wrong door, and a word you have to earn. When every page is branded, the cabinet has one more lock.</p>
     <div class="hub-row">
       ${resume ? `<button type="button" class="text-btn" id="resume">Resume ${resume.title}</button>` : ""}
@@ -208,50 +209,41 @@ function escapeHtml(s) {
   return String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
 }
 
-function labelTexture(text, fg, bg) {
-  const c = document.createElement("canvas");
-  c.width = 512;
-  c.height = 256;
-  const g = c.getContext("2d");
-  g.fillStyle = bg;
-  g.fillRect(0, 0, 512, 256);
-  g.fillStyle = fg;
-  g.textAlign = "center";
-  g.textBaseline = "middle";
-  const lines = String(text).split("\n").slice(0, 3);
-  const size = lines.some((line) => line.length > 8) ? 40 : 78;
-  g.font = "600 " + size + "px Georgia, serif";
-  lines.forEach((line, i) => g.fillText(line.slice(0, 18), 256, 128 + (i - (lines.length - 1) / 2) * 78));
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
+function buildScene() {
+  disposeScene();
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(coarse ? 78 : 72, 1, 0.08, 80);
+  camera.rotation.order = "YXZ";
+  scene.add(camera);
+  const skyLight = new THREE.Color(world.theme.sky).lerp(new THREE.Color(0xfff6e8), 0.55);
+  scene.add(new THREE.HemisphereLight(skyLight, 0x8a7560, 0.95));
+  const sun = new THREE.DirectionalLight(0xfff1d2, 0.62);
+  sun.position.set(-10, 18, 6);
+  scene.add(sun);
+  const lampColor = world.theme.lamp;
+  spot = new THREE.SpotLight(lampColor, 0, 18, 0.72, 0.45, 1.2);
+  spot.castShadow = true;
+  spot.shadow.mapSize.set(coarse ? 256 : 512, coarse ? 256 : 512);
+  spot.shadow.bias = -0.0008;
+  spot.shadow.normalBias = 0.045;
+  spot.shadow.camera.near = 0.4;
+  spot.shadow.camera.far = 22;
+  const target = new THREE.Object3D();
+  target.position.set(0, 0, -1);
+  fillLamp = new THREE.PointLight(lampColor, 0, 7.5, 2);
+  camera.add(spot);
+  camera.add(target);
+  camera.add(fillLamp);
+  spot.target = target;
+  const built = dressScene(scene, world, coarse);
+  doors = built.doors;
+  plaques = built.plaques;
+  particles = built.particles;
+  applyLight();
+  resize();
 }
 
-function readable(hex) {
-  const c = new THREE.Color(hex);
-  const hsl = { h: 0, s: 0, l: 0 };
-  c.getHSL(hsl);
-  if (hsl.l < 0.2) c.offsetHSL(0, -0.08, 0.2 - hsl.l);
-  return c;
-}
-
-function floorTexture(hex) {
-  const c = document.createElement("canvas");
-  c.width = c.height = 128;
-  const g = c.getContext("2d");
-  const css = "#" + hex.toString(16).padStart(6, "0");
-  g.fillStyle = css;
-  g.fillRect(0, 0, 128, 128);
-  for (let i = 0; i < 30; i++) {
-    g.fillStyle = `rgba(0,0,0,${0.04 + Math.random() * 0.08})`;
-    g.fillRect(0, Math.random() * 128, 128, 1 + Math.random() * 3);
-  }
-  const tex = new THREE.CanvasTexture(c);
-  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(6, 6);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
-}
+let fillLamp = null;
 
 function disposeScene() {
   if (!scene) return;
@@ -260,6 +252,7 @@ function disposeScene() {
     const mats = o.material ? [].concat(o.material) : [];
     mats.forEach((m) => {
       if (m.map) m.map.dispose();
+      if (m.normalMap) m.normalMap.dispose();
       m.dispose();
     });
   });
@@ -269,199 +262,6 @@ function disposeScene() {
   particles = null;
 }
 
-function buildScene() {
-  disposeScene();
-  const theme = world.theme;
-  scene = new THREE.Scene();
-  scene.background = new THREE.Color(theme.sky);
-  scene.fog = new THREE.Fog(theme.fog, 12, 34);
-  camera = new THREE.PerspectiveCamera(coarse ? 78 : 72, 1, 0.08, 60);
-  camera.rotation.order = "YXZ";
-  scene.add(camera);
-  const skyLight = new THREE.Color(theme.sky).lerp(new THREE.Color(0xfff6e8), 0.78);
-  const hemi = new THREE.HemisphereLight(skyLight, 0x8a7060, 1.15);
-  scene.add(hemi);
-  const sun = new THREE.DirectionalLight(0xfff3dd, 0.72);
-  sun.position.set(-8, 12, 5);
-  scene.add(sun);
-  spot = new THREE.SpotLight(theme.lamp, 0, 20, 0.58, 0.55, 1.1);
-  const target = new THREE.Object3D();
-  target.position.set(0, 0, -1);
-  camera.add(spot);
-  camera.add(target);
-  spot.target = target;
-
-  const rows = world.grid.length;
-  const cols = world.grid[0].length;
-  const wallMat = new THREE.MeshLambertMaterial({ color: readable(theme.wall) });
-  const boxes = [];
-  for (let z = 0; z < rows; z++) {
-    for (let x = 0; x < cols; x++) {
-      const ch = world.grid[z][x];
-      if (ch === "#" || ch === "+" || ch === "=") boxes.push({ x, z, ch });
-    }
-  }
-  const geo = new THREE.BoxGeometry(CELL, H, CELL);
-  const mesh = new THREE.InstancedMesh(geo, wallMat, Math.max(1, boxes.length));
-  const dummy = new THREE.Object3D();
-  boxes.forEach((b, i) => {
-    dummy.position.set((b.x + 0.5) * CELL, H / 2, (b.z + 0.5) * CELL);
-    dummy.scale.set(1, 1, 1);
-    dummy.updateMatrix();
-    mesh.setMatrixAt(i, dummy.matrix);
-    if (b.ch === "+" || b.ch === "=") doors.push({ x: b.x, z: b.z, i, open: false });
-  });
-  mesh.instanceMatrix.needsUpdate = true;
-  scene.add(mesh);
-  scene.userData.walls = mesh;
-
-  const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(cols * CELL, rows * CELL),
-    new THREE.MeshLambertMaterial({ map: floorTexture(readable(theme.ground).getHex()), color: 0xffffff })
-  );
-  floor.rotation.x = -Math.PI / 2;
-  floor.position.set(cols * CELL / 2, 0, rows * CELL / 2);
-  scene.add(floor);
-  if (theme.ceiling) {
-    const ceil = new THREE.Mesh(
-      new THREE.PlaneGeometry(cols * CELL, rows * CELL),
-      new THREE.MeshLambertMaterial({ color: 0x100e0c })
-    );
-    ceil.rotation.x = Math.PI / 2;
-    ceil.position.set(cols * CELL / 2, H, rows * CELL / 2);
-    scene.add(ceil);
-  }
-
-  const accent = new THREE.MeshLambertMaterial({ color: theme.accent, emissive: theme.accent, emissiveIntensity: 0.25 });
-  const falseMat = new THREE.MeshLambertMaterial({ color: 0xffe2b0, emissive: 0xffb35c, emissiveIntensity: 0.45 });
-  function arch(x, z, mat) {
-    const g = new THREE.Group();
-    const post = new THREE.BoxGeometry(0.18, 2.2, 0.18);
-    const lintel = new THREE.BoxGeometry(1.5, 0.16, 0.18);
-    const a = new THREE.Mesh(post, mat);
-    const b = new THREE.Mesh(post, mat);
-    const c = new THREE.Mesh(lintel, mat);
-    a.position.set(-0.82, 1.1, 0);
-    b.position.set(0.82, 1.1, 0);
-    c.position.set(0, 2.2, 0);
-    g.add(a, b, c);
-    g.position.set((x + 0.5) * CELL, 0, (z + 0.5) * CELL);
-    scene.add(g);
-  }
-  findChar(world, "G").forEach((p) => arch(p.x, p.z, accent));
-  findChar(world, "F").forEach((p) => arch(p.x, p.z, falseMat));
-
-  const spawn = findChar(world, "S")[0];
-  const artMat = new THREE.MeshBasicMaterial({ color: 0x222 });
-  const art = new THREE.Mesh(new THREE.PlaneGeometry(0.86, 1.15), artMat);
-  const px = (spawn.x + 0.5) * CELL;
-  const pz = (spawn.z + 0.5) * CELL;
-  const yaw0 = world.spawnYaw || 0;
-  const fx = Math.sin(yaw0);
-  const fz = -Math.cos(yaw0);
-  art.position.set(px - fx * 1.15, 1.4, pz - fz * 1.15);
-  art.lookAt(px - fx * 3, 1.4, pz - fz * 3);
-  scene.add(art);
-  new THREE.TextureLoader().load(theme.art, (tex) => {
-    tex.colorSpace = THREE.SRGBColorSpace;
-    artMat.map = tex;
-    artMat.color.set(0xffffff);
-    artMat.needsUpdate = true;
-  });
-
-  function plaqueFor(entry, text, secret) {
-    const shown = labelTexture(text, "#1a140d", "#f3e2b0");
-    const hidden = labelTexture("· · ·", "#2a241c", "#14110e");
-    const mat = new THREE.MeshBasicMaterial({ map: secret ? hidden : shown, color: 0xffffff, side: THREE.FrontSide });
-    const m = new THREE.Mesh(new THREE.PlaneGeometry(0.92, 0.46), mat);
-    const cx = (entry.x + 0.5) * CELL;
-    const cz = (entry.z + 0.5) * CELL;
-    m.position.set(cx, 1.45, cz - 0.42);
-    m.lookAt(cx, 1.45, cz - 2);
-    scene.add(m);
-    plaques.push({ entry, mesh: m, mat, shown, hidden, secret });
-  }
-  (world.tokens || []).forEach((t) => {
-    if (t.kind === "trap") return;
-    const secret = t.kind === "lantern" || t.kind === "angle" || t.kind === "pitch";
-    plaqueFor(t, t.letter || "Use", secret);
-  });
-  (world.signs || []).forEach((s) => plaqueFor(s, s.title, s.need === "lantern"));
-
-  dress(theme);
-  addParticles(theme);
-  applyLight();
-  resize();
-}
-
-function dress(theme) {
-  const wood = new THREE.MeshLambertMaterial({ color: 0x6b4428 });
-  const metal = new THREE.MeshLambertMaterial({ color: theme.accent, emissive: theme.accent, emissiveIntensity: 0.2 });
-  function at(x, z, mesh, dx, dy) {
-    mesh.position.set((x + 0.5) * CELL + (dx || 0.5), dy || 0, (z + 0.5) * CELL);
-    scene.add(mesh);
-  }
-  (world.tokens || []).forEach((t) => {
-    if (t.kind === "lever" || t.kind === "trap" || t.kind === "cycle") {
-      const lever = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.7, 0.12), metal);
-      at(t.x, t.z, lever, -0.45, 0.7);
-    }
-  });
-  if (world.id === "trail") {
-    const wheel = new THREE.Mesh(new THREE.TorusGeometry(0.38, 0.06, 6, 10), wood);
-    at(1, 4, wheel, 0.5, 0.45);
-    wheel.rotation.y = 0.4;
-  }
-  if (world.id === "mountain") {
-    const fire = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.7, 6), new THREE.MeshBasicMaterial({ color: 0xff6a2a }));
-    at(2, 3, fire, 0.45, 0.35);
-    fire.name = "fire";
-    const spruce = new THREE.Mesh(new THREE.ConeGeometry(0.45, 1.6, 6), new THREE.MeshLambertMaterial({ color: 0x1d3a28 }));
-    at(1, 8, spruce, 0.45, 0.8);
-  }
-  if (world.id === "rusty") {
-    const crate = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.5, 0.7), wood);
-    at(4, 9, crate, 0.4, 0.25);
-  }
-  if (world.id === "pulse" || world.id === "seeders") {
-    const crystal = new THREE.Mesh(new THREE.OctahedronGeometry(0.32), metal);
-    const t = (world.tokens || []).find((n) => n.kind === "lever" && n.letter) || findChar(world, "S")[0];
-    at(t.x, t.z, crystal, 0.45, 0.7);
-  }
-  if (world.id === "envoy") {
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.05, 6, 12), metal);
-    at(2, 6, ring, 0.4, 1.2);
-    ring.rotation.x = Math.PI / 2.5;
-  }
-  if (world.id === "thorne") {
-    const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.9, 8), metal);
-    tube.rotation.z = Math.PI / 2;
-    at(2, 4, tube, 0.4, 1.1);
-  }
-  if (world.id === "pine") {
-    const hog = new THREE.Mesh(new THREE.SphereGeometry(0.22, 8, 6), new THREE.MeshLambertMaterial({ color: 0x8a5a2b }));
-    at(5, 6, hog, 0.4, 0.22);
-  }
-}
-
-function addParticles(theme) {
-  const n = coarse ? 28 : 56;
-  const geo = new THREE.BufferGeometry();
-  const pos = new Float32Array(n * 3);
-  const cols = world.grid[0].length * CELL;
-  const rows = world.grid.length * CELL;
-  for (let i = 0; i < n; i++) {
-    pos[i * 3] = Math.random() * cols;
-    pos[i * 3 + 1] = Math.random() * 3;
-    pos[i * 3 + 2] = Math.random() * rows;
-  }
-  geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-  const color = theme.particles === "snow" ? 0xdde7ef : theme.accent;
-  particles = new THREE.Points(geo, new THREE.PointsMaterial({
-    color, size: coarse ? 0.06 : 0.045, transparent: true, opacity: 0.7, depthWrite: false,
-  }));
-  scene.add(particles);
-}
 
 function plaqueReady(entry) {
   if (!entry.secret) return true;
@@ -473,9 +273,11 @@ function plaqueReady(entry) {
 }
 
 function applyLight() {
-  if (spot) spot.intensity = state && state.light ? 7.5 : 0;
+  const on = !!(state && state.light);
+  if (spot) spot.intensity = on ? 9 : 0;
+  if (fillLamp) fillLamp.intensity = on ? 2.4 : 0;
   const btn = document.getElementById("btn-light");
-  if (btn) btn.classList.toggle("on", !!(state && state.light));
+  if (btn) btn.classList.toggle("on", on);
 }
 
 function resize() {
@@ -491,11 +293,13 @@ function ensureRenderer() {
   if (renderer) return true;
   try {
     renderer = new THREE.WebGLRenderer({ canvas: view, antialias: !coarse, powerPreference: "high-performance", alpha: false });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, coarse ? 1.25 : 1.6));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, coarse ? 1.15 : 1.5));
     renderer.setSize(window.innerWidth, window.innerHeight, false);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = coarse ? THREE.BasicShadowMap : THREE.PCFSoftShadowMap;
     return true;
   } catch (e) {
-    hub.innerHTML = "<div class='hub-inner'><h1>Cryptic Mazes</h1><p>This browser could not start the 3D view.</p></div>";
+    hub.innerHTML = "<div class='hub-inner'><h1>" + GAME_TITLE + "</h1><p>This browser could not start the 3D view.</p></div>";
     return false;
   }
 }
@@ -652,8 +456,8 @@ function frame(now) {
       if (kind === "snow") y -= dt * 0.35;
       else if (kind === "soot") y += dt * 0.2;
       else y += Math.sin(clock + i) * dt * 0.15;
-      if (y < 0.1) y = 2.8;
-      if (y > 3) y = 0.2;
+      if (y < 0.15) y = particles.userData.hi || 4;
+      if (y > (particles.userData.hi || 4)) y = 0.2;
       arr.setY(i, y);
     }
     arr.needsUpdate = true;
@@ -671,12 +475,7 @@ function frame(now) {
     const open = ch === "+" ? !!state.flags[world.door] : !!state.flags[world.door2];
     if (open !== d.open) {
       d.open = open;
-      const dummy = new THREE.Object3D();
-      dummy.position.set((d.x + 0.5) * CELL, open ? -8 : H / 2, (d.z + 0.5) * CELL);
-      dummy.updateMatrix();
-      const mesh = scene.userData.walls;
-      mesh.setMatrixAt(d.i, dummy.matrix);
-      mesh.instanceMatrix.needsUpdate = true;
+      d.mesh.position.y = open ? -24 : 0;
     }
   });
   if (panel.hidden) refreshHud();
@@ -810,6 +609,7 @@ function bind() {
 
 drawHub();
 audio.setMuted(!save.sound);
+document.title = GAME_TITLE + " | Collier Entertainment";
 bind();
 requestAnimationFrame(frame);
 
