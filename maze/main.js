@@ -3,7 +3,7 @@ import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass } from "three/a
 import { WORLDS, ORDER, worldById } from "./worlds.js";
 import { GAME_TITLE } from "./title.js";
 import { dressScene } from "./look.js";
-import { preloadWorld, speak, stopSpeak, unlockSpeech } from "./speech.js";
+import { preloadWorld, speak, stopSpeak, unlockSpeech } from "./speech.js?v=2";
 import {
   CELL, SPEED, FACE, createState, movePlayer, interact, nearest, objective,
   lettersHeld, submitCode, hintFor, cellOf, angDiff,
