@@ -49,7 +49,7 @@ export const CAST = {
   mountain: [
     { id: "wade", name: "H. Wade", sprite: SPRITE + "wade.webp", aspect: 0.387,
       lines: [
-        "H. Wade kept this fire. Feed it. The pass below camp stays shut until you do.",
+        "H. Wade kept this fire. Feed it. The pass stays shut until you do.",
         "Four letters, then the gate. The lit cabin is not the way down.",
         "The camera counted seven nights. The gate rolls back by that count.",
       ] },

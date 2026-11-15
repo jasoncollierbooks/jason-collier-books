@@ -30,7 +30,7 @@ export function applyScript(world) {
 const COPY = {
   trail: {
     intro: "Find four letters, then the gate at the end of the trail. The handbills lie. The rope does not.",
-    win: "The narrows open. Jang will not be putting that on a handbill.",
+    win: "The trail opens. Jang will not be putting that on a handbill.",
     wrong: "The carving is not the word. Roll it back by the axle that is ready to snap.",
     near: "You're close. Use what is in front of you.",
     closing: "All four letters are in your hands. The carving by the gate tells you the order.",
@@ -46,20 +46,20 @@ const COPY = {
     ],
     tokens: {
       rope: {
-        goal: "Use the rope in the west narrows. It opens a wall and gives you a letter.",
-        text: "The rope takes the letter R, and the canyon wall shifts. Three letters left, then the gate.",
+        goal: "Use the rope. It opens a wall and gives you a letter.",
+        text: "The rope takes the letter R, and a wall shifts. Three letters left, then the gate.",
         hints: [
           "Jang already said it. The key is not the punchline.",
-          "Use the rope in the west narrows.",
-          "The rope gives you R and opens the way east.",
+          "Use the rope. A wall is waiting to move.",
+          "The rope gives you R and opens the way on.",
         ],
       },
       passage: {
-        goal: "Read the promise painted in the yard. Its last letter is one of yours.",
+        goal: "Read the painted promise. Its last letter is one of yours.",
         text: "Guaranteed safe passage. PASSAGE ends in E. You take E.",
         hints: [
           "The guides promised safe passage. The last letter is still on the boards.",
-          "Read the promise in the yard.",
+          "Read the promise of safe passage.",
           "PASSAGE ends in E.",
         ],
       },
@@ -69,17 +69,17 @@ const COPY = {
         dark: "The ox brand is there. The dark is holding it.",
         hints: [
           "Something round was branded past the rope. Light it.",
-          "Lantern on, in the east stall, use the brand.",
+          "Lantern on, then use the ox brand.",
           "The ox brand gives you O.",
         ],
       },
       boards: {
-        goal: "The west boards only read when you look along them.",
+        goal: "The boards only read when you look along them. Face west.",
         text: "Along the grain, the boards keep a P. You take P. That is the set.",
         smear: "The grain is a smear until you look west, along the boards.",
         hints: [
           "A letter hides in the grain. Face the way the boards run.",
-          "Stand at the west boards and face west, then use them.",
+          "Stand at the boards and face west, then use them.",
           "Face west at the boards. The letter is P.",
         ],
       },
@@ -121,22 +121,22 @@ const COPY = {
         ],
       },
       napkin: {
-        goal: "The napkin in the east shed only reads with the lantern on.",
+        goal: "The napkin only reads with the lantern on.",
         text: "Under the lantern the napkin starts with O. The X was ketchup. You take O.",
         dark: "The napkin is grease and ketchup until the lantern is on it.",
         hints: [
-          "Over Yonder's napkin is in a dark shed. It is not a treasure map.",
-          "Lantern on, in the east shed, use the napkin.",
+          "The napkin is grease and ketchup. It is not a treasure map.",
+          "Lantern on, then use the napkin.",
           "The napkin gives you O, and the circles stop.",
         ],
       },
       hole: {
         goal: "The groundhog has the dirt piled in the square. Use the hole. It opens a wall.",
-        text: "The groundhog gives up the dirt. A wall in the west yard drops open.",
+        text: "The groundhog gives up the dirt. A wall drops open.",
         hints: [
           "Something in the square is professional about dirt.",
           "Use the groundhog hole in the square.",
-          "The hole opens the west yard. The reward poster is in there.",
+          "The hole opens a wall. The reward poster is past it.",
         ],
       },
       reward: {
@@ -144,7 +144,7 @@ const COPY = {
         text: "Precious the possum. The poster starts with P. You take P.",
         hints: [
           "The possum notice is behind the dirt the groundhog was holding.",
-          "Open the hole, then read the poster in the west yard.",
+          "Open the hole, then read the reward poster.",
           "The reward poster gives you P.",
         ],
       },
@@ -153,7 +153,7 @@ const COPY = {
         text: "Along the board, a red square keeps an A. You take A. The pie can keep the checker.",
         smear: "The checkerboard is a blur until you look west along the squares.",
         hints: [
-          "The board in the south alley has a letter along the squares.",
+          "The checkerboard has a letter along the squares.",
           "Stand at the checkerboard and face west, then use it.",
           "Face west at the checkerboard. The letter is A.",
         ],
@@ -170,7 +170,7 @@ const COPY = {
     },
   },
   mountain: {
-    intro: "Find four letters on the ridge, then the gate below camp. Feed the fire. The mountain is not empty.",
+    intro: "Find four letters on the ridge, then the gate. Feed the fire. The mountain is not empty.",
     win: "The ridge lets the fire be a fire again. You can leave the camp standing.",
     wrong: "The carving is the nights on the camera away from the word. Seven, not anything else in camp.",
     near: "You're close. Use what the ridge put in front of you.",
@@ -187,8 +187,8 @@ const COPY = {
     ],
     tokens: {
       campfire: {
-        goal: "Feed the fire. The pass below camp opens, and the coals keep a letter.",
-        text: "You feed the fire. It gives you F, and the snow wall below camp drops.",
+        goal: "Feed the fire. A pass opens, and the coals keep a letter.",
+        text: "You feed the fire. It gives you F, and a snow wall drops.",
         hints: [
           "The thing on this ridge that answers is the thing you feed.",
           "Use the campfire.",
@@ -206,11 +206,11 @@ const COPY = {
         ],
       },
       spruce: {
-        goal: "The west spruce reads only when you look along the bark.",
+        goal: "The spruce reads only when you look along the bark. Face west.",
         text: "Along the bark the cuts make an R. You take R.",
         smear: "The bark reads only if you look west, along the trunk.",
         hints: [
-          "Past the draw, the west spruce is carved. Face along it.",
+          "The spruce past the draw is carved. Face along it.",
           "Stand at the spruce and face west, then use the bark.",
           "Face west at the spruce. The letter is R.",
         ],
@@ -219,7 +219,7 @@ const COPY = {
         goal: "The trail camera keeps the last letter, and the count for the gate.",
         text: "Under the lens, the plate is stamped E. You take E. That is the set.",
         hints: [
-          "The trail camera in the lower camp is a letter, not only a number.",
+          "The trail camera is a letter, not only a number.",
           "Read the camera after the draw.",
           "The camera plate gives you E.",
         ],
@@ -227,7 +227,7 @@ const COPY = {
     },
     signs: {
       seven: { body: "Scratched on the housing: seven nights. Keep the fire going. The gate rolls back by those nights, not by anything else in camp." },
-      wade: { body: "H. Wade kept this fire. The lit cabin north of camp is not the way down." },
+      wade: { body: "H. Wade kept this fire. The lit cabin is not the way down." },
       cipher: { body: "Carved in the cold: MPYL. Roll every letter back by the nights on the camera. If a letter walks off A, it comes back on from Z." },
     },
     notes: {
@@ -254,17 +254,17 @@ const COPY = {
     ],
     tokens: {
       plate: {
-        goal: "Read Mira's plate in the hold. Leave the lever marked don't alone.",
+        goal: "Read Mira's plate. Leave the lever marked don't alone.",
         text: "The plate starts with D. You take D. The lever marked don't is still a bad idea.",
         hints: [
-          "The hold has a plate and a lever. Only the plate is worth using.",
+          "There is a plate and a lever. Only the plate is worth using.",
           "Read the brass plate. Leave the don't-lever alone.",
           "The plate gives you D.",
         ],
       },
       dont: {
         goal: "The lever marked don't is labeled that way on purpose. Leave it.",
-        text: "Mira told you. The lever marked don't dumps you back in the hold.",
+        text: "Mira told you. The lever marked don't dumps you back at the start.",
         hints: ["Leave it.", "Leave it.", "Leave the lever marked don't alone."],
       },
       grate: {
@@ -273,17 +273,17 @@ const COPY = {
         dark: "Under the grate is rust and nothing, until the lantern is back on.",
         hints: [
           "The goats follow a lamp. The grate after them wants the lamp back on.",
-          "Walk the goat cell dark, then lantern on at the east grate.",
+          "Walk past the goats in the dark, then lantern on at the grate.",
           "Lamp out past the goats, lamp on at the grate. The letter is T.",
         ],
       },
       pipe: {
-        goal: "The steam pipe reads only when you look west down its length.",
+        goal: "The steam pipe reads only when you face west and look down its length.",
         text: "Down the pipe, the stamp is N. You take N.",
         smear: "The stamp shows only if you look west, down the pipe.",
         hints: [
-          "The west pipe is stamped. Look along it.",
-          "Stand at the west pipe and face west, then use it.",
+          "The pipe is stamped. Look along it.",
+          "Stand at the pipe and face west, then use it.",
           "Face west at the pipe. The letter is N.",
         ],
       },
@@ -302,7 +302,7 @@ const COPY = {
       cipher: { body: "The stack stutters: DXOXNXT. Keep the 1st, 3rd, 5th, and 7th letters. Let the rest rust." },
     },
     notes: {
-      "8,1": { always: "That door was the storm. You are in the hold again. The gate is the other way." },
+      "8,1": { always: "That door was the storm. You are back at the start. The gate is the other way." },
       "5,5": { lit: "The goats follow the lamp. You are back at the start of their hall.", dark: "Lamp out. The goats lose you. A bulkhead ahead unlocks." },
     },
   },
@@ -328,7 +328,7 @@ const COPY = {
         text: "You answer the hum. The wall ahead unseats itself.",
         hints: [
           "The room is listening for an answer, not a brighter door.",
-          "Use the pedestal in the first chamber.",
+          "Use the pedestal.",
           "The pedestal opens the way deeper. The bright door is a lie.",
         ],
       },
@@ -338,7 +338,7 @@ const COPY = {
         hints: [
           "One arch past the hum repeats the room.",
           "Use the chalk, then try an arch. If you return without the mark, that arch lied.",
-          "The west arch repeats. The letter is on the arch that does not.",
+          "One arch repeats the room. The letter is on the arch that does not.",
         ],
       },
       arch: {
@@ -346,26 +346,26 @@ const COPY = {
         text: "This arch did not repeat. Cut into it: C. You take C.",
         hints: [
           "One arch is a room. The other gives you back.",
-          "Read the arch just east of the chalk, not the west one.",
+          "Read the arch that keeps you, not the one that sends you back.",
           "The true arch gives you C.",
         ],
       },
       pocket: {
-        goal: "The east pocket keeps a letter for the lantern.",
+        goal: "A dark pocket keeps a letter for the lantern.",
         text: "In the lantern the static settles on O. You take O.",
         dark: "The pocket is only static until the lantern fills it.",
         hints: [
-          "East of the arches, a pocket stays dark on purpose.",
-          "Lantern on in the east pocket, then use the wall.",
+          "A pocket past the arches stays dark on purpose.",
+          "Lantern on in the pocket, then use the wall.",
           "Lantern on in the pocket. The letter is O.",
         ],
       },
       quote: {
-        goal: "The old line in the lower gallery is missing a word. The wall still has its letter.",
+        goal: "The old line is missing a word. The wall still has its letter.",
         text: "Only the hum. The word begins with H. You take H.",
         hints: [
-          "The line about the beginning is in the lower gallery.",
-          "Read the carved line in the lower west.",
+          "The line about the beginning is carved on a wall.",
+          "Read the carved line about the hum.",
           "The line gives you H.",
         ],
       },
@@ -375,7 +375,7 @@ const COPY = {
         smear: "The ring is on the ceiling. Look up.",
         hints: [
           "Not every letter is on a wall.",
-          "Stand in the lower east and look up, then use what you see.",
+          "Stand under the ring and look up, then use what you see.",
           "Look up at the ring. The letter is E.",
         ],
       },
@@ -430,7 +430,7 @@ const COPY = {
         dark: "The chamber wall is blank without the beam.",
         hints: [
           "The basement repeats if the beam is off. Past it, a letter needs the same light.",
-          "Lantern on, cross the hall, then use the east chamber.",
+          "Lantern on, cross the hall, then use the chamber.",
           "Lantern on at the chamber. The letter is N.",
         ],
       },
@@ -439,7 +439,7 @@ const COPY = {
         text: "Along the trefoil, the paint hides O. You take O.",
         smear: "The warning mark reads only if you look west along the paint.",
         hints: [
-          "The west wall of the lower lab is a warning mark. Look along the paint.",
+          "A warning mark is painted on a wall. Look along the paint, facing west.",
           "Stand at the trefoil and face west, then use it.",
           "Face west at the trefoil. The letter is O.",
         ],
@@ -449,7 +449,7 @@ const COPY = {
         text: "The shell was born twice. The last letter on the glass is R. You take R.",
         hints: [
           "Past the beam, the shell itself is labeled.",
-          "Read the photon shell in the lower lab.",
+          "Read the photon shell.",
           "The shell gives you R.",
         ],
       },
@@ -485,7 +485,7 @@ const COPY = {
         text: "The hull stamp is S. You take S, tagged Hull.",
         hints: [
           "The ship you arrived in still has a letter on the hull.",
-          "Read the hull plate in the landing bay.",
+          "Read the hull plate.",
           "The hull plate gives you S, tagged Hull.",
         ],
       },
@@ -509,12 +509,12 @@ const COPY = {
         ],
       },
       edge: {
-        goal: "The west facet reads only when you look along its edge. It is tagged Edge.",
+        goal: "The facet reads only when you look along its edge. Face west. It is tagged Edge.",
         text: "Along the facet, the cut is D. You take D, tagged Edge.",
         smear: "The edge-cut shows only if you look west, along the facet.",
         hints: [
-          "The west facet of the bay is cut. Look along it.",
-          "Stand at the west facet and face west, then use it.",
+          "The facet is cut. Look along it.",
+          "Stand at the facet and face west, then use it.",
           "Face west at the facet. The letter is D, tagged Edge.",
         ],
       },
@@ -549,8 +549,8 @@ const COPY = {
         goal: "Read the fate wall. What you are is a fourth word, and it starts a letter.",
         text: "Stripped, claimed, or left alone. You are the hive. You take H.",
         hints: [
-          "The bay wall lists fates for worlds. You are not one of those three.",
-          "Read the fate wall in the bay.",
+          "The wall lists three fates for a world. You are not one of those three.",
+          "Read the fate wall.",
           "The fate wall gives you H.",
         ],
       },
@@ -560,17 +560,17 @@ const COPY = {
         dark: "The black glass stays a mirror until the lantern is on it.",
         hints: [
           "The jet carries light. Past it, the glass still wants a lamp.",
-          "Cross the jet dark, then lantern on at the east glass.",
+          "Cross the jet dark, then lantern on at the glass.",
           "Lamp out across the jet, lamp on at the glass. The letter is E.",
         ],
       },
       shard: {
-        goal: "The west shard reads only along its edge.",
+        goal: "The shard reads only along its edge. Face west.",
         text: "Along the edge, the shard says I. You take I.",
         smear: "The shard reads only if you look west along the edge.",
         hints: [
-          "The west shard is edged with a letter. Look along it.",
-          "Stand at the west shard and face west, then use it.",
+          "The shard is edged with a letter. Look along it.",
+          "Stand at the shard and face west, then use it.",
           "Face west at the shard. The letter is I.",
         ],
       },
@@ -578,8 +578,8 @@ const COPY = {
         goal: "Use the lens. The last room is on the far side of that bend.",
         text: "The lens bends. The door to the last room opens.",
         hints: [
-          "There is a lens in the gallery. It bends the hall.",
-          "Use the lens in the west of the gallery.",
+          "There is a lens. It bends the hall.",
+          "Use the lens. The last room is past that bend.",
           "The lens opens the last room. The letter is past it.",
         ],
       },

@@ -6,8 +6,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "intro"
   },
-  "The narrows open. Jang will not be putting that on a handbill.": {
-    "src": "./voices/trail/narrator-fea0ba28a8.mp3",
+  "The trail opens. Jang will not be putting that on a handbill.": {
+    "src": "./voices/trail/narrator-e0fda9b00b.mp3",
     "speaker": "narrator",
     "world": "trail",
     "voice": "bm_fable",
@@ -55,8 +55,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "The rope takes the letter R, and the canyon wall shifts. Three letters left, then the gate.": {
-    "src": "./voices/trail/narrator-6920add0ab.mp3",
+  "The rope takes the letter R, and a wall shifts. Three letters left, then the gate.": {
+    "src": "./voices/trail/narrator-51e47fbabe.mp3",
     "speaker": "narrator",
     "world": "trail",
     "voice": "bm_fable",
@@ -69,15 +69,15 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "Use the rope in the west narrows.": {
-    "src": "./voices/trail/narrator-72576040a7.mp3",
+  "Use the rope. A wall is waiting to move.": {
+    "src": "./voices/trail/narrator-929b6134c2.mp3",
     "speaker": "narrator",
     "world": "trail",
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "The rope gives you R and opens the way east.": {
-    "src": "./voices/trail/narrator-4d9789877f.mp3",
+  "The rope gives you R and opens the way on.": {
+    "src": "./voices/trail/narrator-7115182879.mp3",
     "speaker": "narrator",
     "world": "trail",
     "voice": "bm_fable",
@@ -97,8 +97,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "Read the promise in the yard.": {
-    "src": "./voices/trail/narrator-8bf16e4bd8.mp3",
+  "Read the promise of safe passage.": {
+    "src": "./voices/trail/narrator-2bde4dd1ac.mp3",
     "speaker": "narrator",
     "world": "trail",
     "voice": "bm_fable",
@@ -132,8 +132,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "Lantern on, in the east stall, use the brand.": {
-    "src": "./voices/trail/narrator-9adb083335.mp3",
+  "Lantern on, then use the ox brand.": {
+    "src": "./voices/trail/narrator-f764e86f1f.mp3",
     "speaker": "narrator",
     "world": "trail",
     "voice": "bm_fable",
@@ -167,8 +167,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "Stand at the west boards and face west, then use them.": {
-    "src": "./voices/trail/narrator-92958a25d4.mp3",
+  "Stand at the boards and face west, then use them.": {
+    "src": "./voices/trail/narrator-7f60ea6b81.mp3",
     "speaker": "narrator",
     "world": "trail",
     "voice": "bm_fable",
@@ -314,15 +314,15 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "dark"
   },
-  "Over Yonder's napkin is in a dark shed. It is not a treasure map.": {
-    "src": "./voices/pine/narrator-8d495a0f06.mp3",
+  "The napkin is grease and ketchup. It is not a treasure map.": {
+    "src": "./voices/pine/narrator-55a8baf227.mp3",
     "speaker": "narrator",
     "world": "pine",
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "Lantern on, in the east shed, use the napkin.": {
-    "src": "./voices/pine/narrator-97df59ee03.mp3",
+  "Lantern on, then use the napkin.": {
+    "src": "./voices/pine/narrator-f8acab62c6.mp3",
     "speaker": "narrator",
     "world": "pine",
     "voice": "bm_fable",
@@ -335,8 +335,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "The groundhog gives up the dirt. A wall in the west yard drops open.": {
-    "src": "./voices/pine/narrator-94be3c44bb.mp3",
+  "The groundhog gives up the dirt. A wall drops open.": {
+    "src": "./voices/pine/narrator-737f41b1d4.mp3",
     "speaker": "narrator",
     "world": "pine",
     "voice": "bm_fable",
@@ -356,8 +356,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "The hole opens the west yard. The reward poster is in there.": {
-    "src": "./voices/pine/narrator-e8d26f9275.mp3",
+  "The hole opens a wall. The reward poster is past it.": {
+    "src": "./voices/pine/narrator-d8e2c483c7.mp3",
     "speaker": "narrator",
     "world": "pine",
     "voice": "bm_fable",
@@ -377,8 +377,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "Open the hole, then read the poster in the west yard.": {
-    "src": "./voices/pine/narrator-e28c24bd56.mp3",
+  "Open the hole, then read the reward poster.": {
+    "src": "./voices/pine/narrator-5eae5c6642.mp3",
     "speaker": "narrator",
     "world": "pine",
     "voice": "bm_fable",
@@ -405,8 +405,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "smear"
   },
-  "The board in the south alley has a letter along the squares.": {
-    "src": "./voices/pine/narrator-ef371b79da.mp3",
+  "The checkerboard has a letter along the squares.": {
+    "src": "./voices/pine/narrator-8a01fd62b8.mp3",
     "speaker": "narrator",
     "world": "pine",
     "voice": "bm_fable",
@@ -461,8 +461,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "portal"
   },
-  "Find four letters on the ridge, then the gate below camp. Feed the fire. The mountain is not empty.": {
-    "src": "./voices/mountain/narrator-9f9b437dd8.mp3",
+  "Find four letters on the ridge, then the gate. Feed the fire. The mountain is not empty.": {
+    "src": "./voices/mountain/narrator-5455d2fa49.mp3",
     "speaker": "narrator",
     "world": "mountain",
     "voice": "bm_fable",
@@ -517,8 +517,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "You feed the fire. It gives you F, and the snow wall below camp drops.": {
-    "src": "./voices/mountain/narrator-f1f07915b0.mp3",
+  "You feed the fire. It gives you F, and a snow wall drops.": {
+    "src": "./voices/mountain/narrator-f682cd27a1.mp3",
     "speaker": "narrator",
     "world": "mountain",
     "voice": "bm_fable",
@@ -594,8 +594,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "smear"
   },
-  "Past the draw, the west spruce is carved. Face along it.": {
-    "src": "./voices/mountain/narrator-2ee3c64d30.mp3",
+  "The spruce past the draw is carved. Face along it.": {
+    "src": "./voices/mountain/narrator-33495352de.mp3",
     "speaker": "narrator",
     "world": "mountain",
     "voice": "bm_fable",
@@ -622,8 +622,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "pickup"
   },
-  "The trail camera in the lower camp is a letter, not only a number.": {
-    "src": "./voices/mountain/narrator-f830f3e022.mp3",
+  "The trail camera is a letter, not only a number.": {
+    "src": "./voices/mountain/narrator-f0f3d220f0.mp3",
     "speaker": "narrator",
     "world": "mountain",
     "voice": "bm_fable",
@@ -650,8 +650,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "sign"
   },
-  "H. Wade kept this fire. The lit cabin north of camp is not the way down.": {
-    "src": "./voices/mountain/narrator-569e98eda5.mp3",
+  "H. Wade kept this fire. The lit cabin is not the way down.": {
+    "src": "./voices/mountain/narrator-7f8c5a10d8.mp3",
     "speaker": "narrator",
     "world": "mountain",
     "voice": "bm_fable",
@@ -755,8 +755,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "pickup"
   },
-  "The hold has a plate and a lever. Only the plate is worth using.": {
-    "src": "./voices/rusty/narrator-e17a2c8732.mp3",
+  "There is a plate and a lever. Only the plate is worth using.": {
+    "src": "./voices/rusty/narrator-35a1ee174a.mp3",
     "speaker": "narrator",
     "world": "rusty",
     "voice": "bm_fable",
@@ -776,8 +776,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "Mira told you. The lever marked don't dumps you back in the hold.": {
-    "src": "./voices/rusty/narrator-750c3d4d88.mp3",
+  "Mira told you. The lever marked don't dumps you back at the start.": {
+    "src": "./voices/rusty/narrator-494845f3a3.mp3",
     "speaker": "narrator",
     "world": "rusty",
     "voice": "bm_fable",
@@ -818,8 +818,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "Walk the goat cell dark, then lantern on at the east grate.": {
-    "src": "./voices/rusty/narrator-b8625ac257.mp3",
+  "Walk past the goats in the dark, then lantern on at the grate.": {
+    "src": "./voices/rusty/narrator-2d9ac8afee.mp3",
     "speaker": "narrator",
     "world": "rusty",
     "voice": "bm_fable",
@@ -846,15 +846,15 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "smear"
   },
-  "The west pipe is stamped. Look along it.": {
-    "src": "./voices/rusty/narrator-d425954121.mp3",
+  "The pipe is stamped. Look along it.": {
+    "src": "./voices/rusty/narrator-8bbc1ab24a.mp3",
     "speaker": "narrator",
     "world": "rusty",
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "Stand at the west pipe and face west, then use it.": {
-    "src": "./voices/rusty/narrator-26e9395873.mp3",
+  "Stand at the pipe and face west, then use it.": {
+    "src": "./voices/rusty/narrator-e1685b8f66.mp3",
     "speaker": "narrator",
     "world": "rusty",
     "voice": "bm_fable",
@@ -909,8 +909,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "sign"
   },
-  "That door was the storm. You are in the hold again. The gate is the other way.": {
-    "src": "./voices/rusty/narrator-e4827fc842.mp3",
+  "That door was the storm. You are back at the start. The gate is the other way.": {
+    "src": "./voices/rusty/narrator-dc3c883c12.mp3",
     "speaker": "narrator",
     "world": "rusty",
     "voice": "bm_fable",
@@ -1000,8 +1000,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "Use the pedestal in the first chamber.": {
-    "src": "./voices/pulse/narrator-3a62a8656d.mp3",
+  "Use the pedestal.": {
+    "src": "./voices/pulse/narrator-2cf0b7d7f3.mp3",
     "speaker": "narrator",
     "world": "pulse",
     "voice": "bm_fable",
@@ -1035,8 +1035,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "The west arch repeats. The letter is on the arch that does not.": {
-    "src": "./voices/pulse/narrator-4daf68c4de.mp3",
+  "One arch repeats the room. The letter is on the arch that does not.": {
+    "src": "./voices/pulse/narrator-de73a6ef64.mp3",
     "speaker": "narrator",
     "world": "pulse",
     "voice": "bm_fable",
@@ -1056,8 +1056,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "Read the arch just east of the chalk, not the west one.": {
-    "src": "./voices/pulse/narrator-e1b6a8f8f8.mp3",
+  "Read the arch that keeps you, not the one that sends you back.": {
+    "src": "./voices/pulse/narrator-f2fe3c4c11.mp3",
     "speaker": "narrator",
     "world": "pulse",
     "voice": "bm_fable",
@@ -1084,15 +1084,15 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "dark"
   },
-  "East of the arches, a pocket stays dark on purpose.": {
-    "src": "./voices/pulse/narrator-30ede1d075.mp3",
+  "A pocket past the arches stays dark on purpose.": {
+    "src": "./voices/pulse/narrator-26512258a9.mp3",
     "speaker": "narrator",
     "world": "pulse",
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "Lantern on in the east pocket, then use the wall.": {
-    "src": "./voices/pulse/narrator-3bac470932.mp3",
+  "Lantern on in the pocket, then use the wall.": {
+    "src": "./voices/pulse/narrator-e16bfe8538.mp3",
     "speaker": "narrator",
     "world": "pulse",
     "voice": "bm_fable",
@@ -1112,15 +1112,15 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "pickup"
   },
-  "The line about the beginning is in the lower gallery.": {
-    "src": "./voices/pulse/narrator-40517fec2f.mp3",
+  "The line about the beginning is carved on a wall.": {
+    "src": "./voices/pulse/narrator-d4b62b2747.mp3",
     "speaker": "narrator",
     "world": "pulse",
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "Read the carved line in the lower west.": {
-    "src": "./voices/pulse/narrator-224eaff5ae.mp3",
+  "Read the carved line about the hum.": {
+    "src": "./voices/pulse/narrator-2f20c390cf.mp3",
     "speaker": "narrator",
     "world": "pulse",
     "voice": "bm_fable",
@@ -1154,8 +1154,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "Stand in the lower east and look up, then use what you see.": {
-    "src": "./voices/pulse/narrator-c938234ccd.mp3",
+  "Stand under the ring and look up, then use what you see.": {
+    "src": "./voices/pulse/narrator-c12ab3bfd3.mp3",
     "speaker": "narrator",
     "world": "pulse",
     "voice": "bm_fable",
@@ -1357,8 +1357,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "Lantern on, cross the hall, then use the east chamber.": {
-    "src": "./voices/thorne/narrator-d56cd68650.mp3",
+  "Lantern on, cross the hall, then use the chamber.": {
+    "src": "./voices/thorne/narrator-da7523ac33.mp3",
     "speaker": "narrator",
     "world": "thorne",
     "voice": "bm_fable",
@@ -1385,8 +1385,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "smear"
   },
-  "The west wall of the lower lab is a warning mark. Look along the paint.": {
-    "src": "./voices/thorne/narrator-5770ea3655.mp3",
+  "A warning mark is painted on a wall. Look along the paint, facing west.": {
+    "src": "./voices/thorne/narrator-15a5203136.mp3",
     "speaker": "narrator",
     "world": "thorne",
     "voice": "bm_fable",
@@ -1420,8 +1420,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "Read the photon shell in the lower lab.": {
-    "src": "./voices/thorne/narrator-08d519c0e8.mp3",
+  "Read the photon shell.": {
+    "src": "./voices/thorne/narrator-6595ccfc40.mp3",
     "speaker": "narrator",
     "world": "thorne",
     "voice": "bm_fable",
@@ -1539,8 +1539,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "Read the hull plate in the landing bay.": {
-    "src": "./voices/seeders/narrator-7ed5909aab.mp3",
+  "Read the hull plate.": {
+    "src": "./voices/seeders/narrator-db7443ccae.mp3",
     "speaker": "narrator",
     "world": "seeders",
     "voice": "bm_fable",
@@ -1630,15 +1630,15 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "smear"
   },
-  "The west facet of the bay is cut. Look along it.": {
-    "src": "./voices/seeders/narrator-ead35979d8.mp3",
+  "The facet is cut. Look along it.": {
+    "src": "./voices/seeders/narrator-4dfbed942b.mp3",
     "speaker": "narrator",
     "world": "seeders",
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "Stand at the west facet and face west, then use it.": {
-    "src": "./voices/seeders/narrator-8406d7d068.mp3",
+  "Stand at the facet and face west, then use it.": {
+    "src": "./voices/seeders/narrator-5dfcadca8f.mp3",
     "speaker": "narrator",
     "world": "seeders",
     "voice": "bm_fable",
@@ -1742,15 +1742,15 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "pickup"
   },
-  "The bay wall lists fates for worlds. You are not one of those three.": {
-    "src": "./voices/envoy/narrator-ba420c68f0.mp3",
+  "The wall lists three fates for a world. You are not one of those three.": {
+    "src": "./voices/envoy/narrator-e74704eb77.mp3",
     "speaker": "narrator",
     "world": "envoy",
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "Read the fate wall in the bay.": {
-    "src": "./voices/envoy/narrator-c0fba5ee36.mp3",
+  "Read the fate wall.": {
+    "src": "./voices/envoy/narrator-dd50c0d3ec.mp3",
     "speaker": "narrator",
     "world": "envoy",
     "voice": "bm_fable",
@@ -1784,8 +1784,8 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "Cross the jet dark, then lantern on at the east glass.": {
-    "src": "./voices/envoy/narrator-f1486e5ee4.mp3",
+  "Cross the jet dark, then lantern on at the glass.": {
+    "src": "./voices/envoy/narrator-ee28d1d59f.mp3",
     "speaker": "narrator",
     "world": "envoy",
     "voice": "bm_fable",
@@ -1812,15 +1812,15 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "smear"
   },
-  "The west shard is edged with a letter. Look along it.": {
-    "src": "./voices/envoy/narrator-a6e5610c40.mp3",
+  "The shard is edged with a letter. Look along it.": {
+    "src": "./voices/envoy/narrator-d03d66589c.mp3",
     "speaker": "narrator",
     "world": "envoy",
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "Stand at the west shard and face west, then use it.": {
-    "src": "./voices/envoy/narrator-c79624001f.mp3",
+  "Stand at the shard and face west, then use it.": {
+    "src": "./voices/envoy/narrator-d5319173b2.mp3",
     "speaker": "narrator",
     "world": "envoy",
     "voice": "bm_fable",
@@ -1840,15 +1840,15 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "pickup"
   },
-  "There is a lens in the gallery. It bends the hall.": {
-    "src": "./voices/envoy/narrator-accd9f07a2.mp3",
+  "There is a lens. It bends the hall.": {
+    "src": "./voices/envoy/narrator-5fe88dd851.mp3",
     "speaker": "narrator",
     "world": "envoy",
     "voice": "bm_fable",
     "kind": "hint"
   },
-  "Use the lens in the west of the gallery.": {
-    "src": "./voices/envoy/narrator-eee6c144b9.mp3",
+  "Use the lens. The last room is past that bend.": {
+    "src": "./voices/envoy/narrator-4e383588b5.mp3",
     "speaker": "narrator",
     "world": "envoy",
     "voice": "bm_fable",
@@ -2190,8 +2190,8 @@ export const LINES = {
     "voice": "am_liam+am_michael",
     "kind": "cast"
   },
-  "H. Wade kept this fire. Feed it. The pass below camp stays shut until you do.": {
-    "src": "./voices/mountain/wade-c69ee42c97.mp3",
+  "H. Wade kept this fire. Feed it. The pass stays shut until you do.": {
+    "src": "./voices/mountain/wade-18f3df5e71.mp3",
     "speaker": "wade",
     "world": "mountain",
     "voice": "am_echo",

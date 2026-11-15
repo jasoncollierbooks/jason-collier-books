@@ -51,10 +51,18 @@ button { cursor: pointer; }
   pointer-events: none;
 }
 #map-legend {
-  position: absolute; left: 0; right: 0; bottom: 18px; margin: 0;
+  position: absolute; left: 16px; right: 16px; bottom: 18px; margin: 0;
   text-align: center; pointer-events: none;
   font-family: "Josefin Sans", sans-serif; letter-spacing: 0.04em; font-size: 0.95rem;
   text-shadow: 0 1px 2px #000;
+}
+@media (pointer: coarse), (max-width: 900px) {
+  #map-legend {
+    bottom: calc(148px + var(--safe-b));
+    left: 12px;
+    right: 12px;
+    font-size: 0.82rem;
+  }
 }
 #map-close {
   position: absolute; top: calc(10px + var(--safe-t)); left: 50%;
