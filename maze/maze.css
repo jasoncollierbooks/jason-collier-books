@@ -191,15 +191,27 @@ button { cursor: pointer; }
   #cross { display: none; }
 }
 @media (max-width: 720px) {
-  #stick { width: 92px; height: 92px; left: 10px; }
-  #knob { left: 26px; top: 26px; }
-  #turns { left: 112px; bottom: calc(8px + var(--safe-b)); }
-  #turns button { width: 76px; height: 68px; font-size: 1.7rem; }
+  #stick { width: 84px; height: 84px; left: 8px; }
+  #knob { left: 24px; top: 24px; width: 36px; height: 36px; }
+  #turns { left: 100px; bottom: calc(12px + var(--safe-b)); gap: 6px; }
+  #turns button { width: 64px; height: 56px; font-size: 1.45rem; }
   #pads { right: 8px; gap: 6px; }
-  #pads button { min-width: 48px; min-height: 48px; border-radius: 12px; font-size: 0.85rem; }
+  #pads button { min-width: 52px; min-height: 48px; border-radius: 12px; font-size: 0.82rem; }
   #minimap { width: 96px; height: 96px; right: 8px; top: calc(86px + var(--safe-t)); }
   #btn-map { right: 8px; }
+  #btn-captions { right: 78px; }
   #keys { display: none; }
   #objective, #toast, #panel p { font-size: 1.05rem; }
+}
+@media (max-width: 480px) {
+  #stick { width: 72px; height: 72px; left: 8px; bottom: calc(14px + var(--safe-b)); }
+  #knob { width: 28px; height: 28px; left: 22px; top: 22px; }
+  #turns { left: 86px; bottom: calc(16px + var(--safe-b)); }
+  #turns button { width: 52px; height: 48px; font-size: 1.2rem; border-radius: 14px; }
+  #pads {
+    right: 8px; bottom: calc(14px + var(--safe-b));
+    display: grid; grid-template-columns: 60px 60px; gap: 6px; width: auto;
+  }
+  #pads button { width: 60px; min-width: 0; min-height: 48px; font-size: 0.75rem; letter-spacing: 0.02em; padding: 0; }
 }
 [hidden] { display: none !important; }

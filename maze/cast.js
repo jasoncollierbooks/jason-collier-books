@@ -18,13 +18,13 @@ const JANG = "../images/author-as-jang.jpg";
 
 export const CAST = {
   trail: [
-    { id: "jang", name: "Jang", art: TV, crop: [0.02, 0.04, 0.26, 0.92],
+    { id: "jang", name: "Jang", art: TV, crop: [0.0, 0.0, 0.36, 1],
       lines: [
         "You walked in during a true story. We can pencil you in. I am Jang.",
         "The key is not the punchline. The rope is.",
         "The picture that promises California in the first breath is the false door.",
       ] },
-    { id: "tom", name: "Tom", art: TV, crop: [0.40, 0.02, 0.48, 0.96],
+    { id: "tom", name: "Tom", art: TV, crop: [0.28, 0.0, 0.44, 1],
       lines: [
         "Tom. My neck itched, then you arrived. That was the audition.",
         "Four wheels, a canvas top, and only one axle looks ready to snap. I counted.",
@@ -32,13 +32,13 @@ export const CAST = {
       ] },
   ],
   pine: [
-    { id: "jang", name: "Jang", art: PINE, crop: [0.0, 0.0, 0.4, 1],
+    { id: "jang", name: "Jang", art: PINE, crop: [0.0, 0.0, 0.42, 1],
       lines: [
         "Younger, and still Jang. The napkin is not a map to gold.",
         "Two boys had the napkin. The X was ketchup.",
         "Jenkins has been walking since breakfast. The napkin is what stops him.",
       ] },
-    { id: "tom", name: "Tom", art: RIDGE, crop: [0.32, 0.05, 0.4, 0.9],
+    { id: "tom", name: "Tom", art: RIDGE, crop: [0.26, 0.0, 0.48, 1],
       lines: [
         "Tom, before the trail got longer. The groundhog has the dirt piled in the square.",
         "The hole is the door. I did not dig it. I respect the professional.",
@@ -46,7 +46,7 @@ export const CAST = {
       ] },
   ],
   mountain: [
-    { id: "wade", name: "H. Wade", art: OLD, crop: [0.48, 0.0, 0.5, 0.62],
+    { id: "wade", name: "H. Wade", art: OLD, crop: [0.42, 0.02, 0.52, 0.96],
       lines: [
         "H. Wade kept this fire. Feed it. The pass below camp stays shut until you do.",
         "The lit cabin is not the way down.",
@@ -60,13 +60,13 @@ export const CAST = {
       ] },
   ],
   rusty: [
-    { id: "spacey", name: "Captain Spacey", art: CREW, crop: [0.0, 0.0, 0.4, 1],
+    { id: "spacey", name: "Captain Spacey", art: CREW, crop: [0.0, 0.0, 0.38, 1],
       lines: [
         "You walked in during a true story. I'm Spacey. She flies. Eventually.",
         "Goats with balloons. They follow a lamp. Pass them with it out.",
         "A crate. If it hums, we charge extra.",
       ] },
-    { id: "mira", name: "Mira", art: CREW, crop: [0.34, 0.08, 0.28, 0.84],
+    { id: "mira", name: "Mira", art: CREW, crop: [0.30, 0.02, 0.38, 0.96],
       lines: [
         "Mira. If it ticks, I already know. Don't touch the lever marked don't.",
         "The goats lose you when the lamp is out. Then the lamp goes back on.",
@@ -193,7 +193,7 @@ export function peopleFor(world) {
   const greeter = cast[0];
   const gx = openCell(world, sx - 2, sz) ? sx - 2 : sx - 1;
   const gz = sz;
-  placed.push(Object.assign({ x: gx, z: gz, greet: true, side: 0.42 }, greeter));
+  placed.push(Object.assign({ x: gx, z: gz, greet: true }, greeter));
   const used = new Set(placed.map((p) => p.x + "," + p.z));
   const pool = dead.concat(floors).filter((c) => !used.has(c.x + "," + c.z));
   pool.sort((a, b) => (b.x - a.x) || (a.z - b.z));
@@ -205,7 +205,11 @@ export function peopleFor(world) {
   });
   return placed.map((p) => {
     const c = center(p.x, p.z);
-    return Object.assign({}, p, { wx: c.x, wz: c.z + (p.side || 0) });
+    const east = openCell(world, p.x + 1, p.z) || openCell(world, p.x - 1, p.z);
+    const north = openCell(world, p.x, p.z + 1) || openCell(world, p.x, p.z - 1);
+    const axis = north && !east ? "z" : "x";
+    const span = east && north ? 0.28 : 0.55;
+    return Object.assign({}, p, { wx: c.x, wz: c.z, axis, span });
   });
 }
 

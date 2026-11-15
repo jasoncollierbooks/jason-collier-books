@@ -732,41 +732,37 @@ function frame(now) {
     });
   }
   if (scene.getObjectsByProperty) {
+    const ease = (cur, goal, rate) => cur + (goal - cur) * (1 - Math.exp(-rate * dt));
     scene.getObjectsByProperty("name", "cast").forEach((board) => {
-      const home = board.userData.home || { x: board.position.x, z: board.position.z };
-      const bob = board.userData.bob || 0;
+      const ud = board.userData;
+      const home = ud.home || { x: board.position.x, z: board.position.z };
+      const bob = ud.bob || 0;
       const dist = Math.hypot(camera.position.x - home.x, camera.position.z - home.z);
-      const near = dist < 3.4;
-      const talking = !!(speaking && speaking.id === board.userData.person && clock < speaking.until);
-      let x = home.x;
-      let y = 0.9;
-      if (!near && !talking && board.userData.patrol) {
-        const phase = (Math.sin(clock * 0.45 + bob) + 1) / 2;
-        x = home.x + (phase - 0.5) * board.userData.patrol;
-        y += Math.abs(Math.sin(clock * 7 + bob)) * 0.055;
-      }
-      if (near && !board.userData.wasNear) board.userData.hop = clock;
-      board.userData.wasNear = near;
-      if (board.userData.hop && clock - board.userData.hop < 0.5) {
-        const k = (clock - board.userData.hop) / 0.5;
-        y += Math.sin(k * Math.PI) * 0.2;
-      }
-      board.position.x = x;
-      board.position.z = home.z;
-      board.position.y = y + Math.sin(clock * 2.1 + bob) * 0.02;
-      const dx = camera.position.x - board.position.x;
-      const dz = camera.position.z - board.position.z;
-      board.rotation.y = Math.atan2(dx, dz);
-      board.rotation.z = Math.sin(clock * 1.4 + bob) * 0.035;
-      if (near && board.userData.hop && clock - board.userData.hop < 0.5) {
-        board.rotation.z += Math.sin(((clock - board.userData.hop) / 0.5) * Math.PI * 2) * 0.14;
-      }
-      const breathe = 1 + Math.sin(clock * 2.4 + bob) * 0.018;
-      board.scale.set(1, breathe * (talking ? 1 + Math.sin(clock * 12) * 0.025 : 1), 1);
-      const mouth = board.getObjectByName("mouth");
-      if (mouth) {
-        mouth.visible = talking;
-        mouth.scale.y = talking ? 0.35 + Math.abs(Math.sin(clock * 16)) * 1.3 : 1;
+      ud.near = ease(ud.near || 0, dist < 3.1 ? 1 : 0, 3.2);
+      ud.talk = ease(ud.talk || 0, speaking && speaking.id === ud.person && clock < speaking.until ? 1 : 0, 5);
+      const along = Math.sin(clock * 0.42 + bob) * (ud.span || 0.4) * (1 - ud.near * 0.85);
+      const tx = home.x + (ud.axis === "z" ? 0 : along);
+      const tz = home.z + (ud.axis === "z" ? along : 0);
+      const step = Math.abs(Math.cos(clock * 0.42 + bob)) * (ud.span || 0.4) * 0.03 * (1 - ud.near);
+      const ty = 0.82 + Math.sin(clock * 1.7 + bob) * 0.012 + step + ud.talk * Math.sin(clock * 5.2) * 0.018;
+      if (ud.px == null) { ud.px = tx; ud.pz = tz; ud.py = ty; }
+      ud.px = ease(ud.px, tx, 3.4);
+      ud.pz = ease(ud.pz, tz, 3.4);
+      ud.py = ease(ud.py, ty, 6);
+      board.position.set(ud.px, ud.py, ud.pz);
+      const face = Math.atan2(camera.position.x - board.position.x, camera.position.z - board.position.z);
+      if (ud.yaw == null) ud.yaw = face;
+      let turn = face - ud.yaw;
+      while (turn > Math.PI) turn -= Math.PI * 2;
+      while (turn < -Math.PI) turn += Math.PI * 2;
+      ud.yaw += turn * (1 - Math.exp(-6 * dt));
+      board.rotation.set(0, ud.yaw, 0);
+      const pulse = 1 + ud.talk * (0.012 + Math.sin(clock * 5.5) * 0.012);
+      board.scale.set(pulse, pulse, 1);
+      const mark = board.getObjectByName("speech");
+      if (mark) {
+        mark.material.opacity = ud.talk;
+        mark.position.y = 0.9 + ud.talk * 0.04;
       }
     });
   }
