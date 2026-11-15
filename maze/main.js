@@ -777,7 +777,13 @@ function frame(now) {
           body.position.y = (ud.height || 1.74) * sy / 2;
           body.rotation.z = Math.sin(clock * 1.05 + bob) * 0.016 + wave;
         }
-        if (ud.shade) ud.shade.position.set(ud.px, 0.02, ud.pz);
+        if (ud.shade) {
+          const sway = body ? body.rotation.z : 0;
+          const shift = Math.sin(sway) * (ud.height || 1.74) * 0.5 * (body ? body.scale.y : 1);
+          const yaw = ud.yaw || 0;
+          ud.shade.position.set(ud.px + Math.cos(yaw) * shift, 0.012, ud.pz - Math.sin(yaw) * shift);
+          ud.shade.rotation.set(-Math.PI / 2, 0, 0);
+        }
       } else {
         root.position.set(ud.px, 0, ud.pz);
         root.rotation.set(0, ud.yaw, 0);

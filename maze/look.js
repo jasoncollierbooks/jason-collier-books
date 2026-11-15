@@ -695,28 +695,6 @@ function tent() {
   return g;
 }
 
-function balloon() {
-  const c = document.createElement("canvas");
-  c.width = 256;
-  c.height = 128;
-  const g = c.getContext("2d");
-  g.fillStyle = "#c4a882";
-  g.fillRect(0, 0, 256, 128);
-  const patches = ["#8a3030", "#2a4068", "#3a6840", "#c4a060", "#6a6a6a"];
-  for (let i = 0; i < 8; i++) {
-    g.fillStyle = patches[i % patches.length];
-    g.fillRect(8 + (i % 4) * 62, 10 + Math.floor(i / 4) * 54, 52, 44);
-    g.strokeStyle = "#2a2018";
-    g.strokeRect(8 + (i % 4) * 62, 10 + Math.floor(i / 4) * 54, 52, 44);
-  }
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  const mesh = new THREE.Mesh(new THREE.SphereGeometry(0.85, 16, 12), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.65, metalness: 0.1 }));
-  mesh.scale.set(1.35, 0.82, 0.72);
-  mesh.position.y = 2.55;
-  return mesh;
-}
-
 function pipeRun() {
   const g = new THREE.Group();
   const mat = metalMat(0xb08a62);
@@ -894,9 +872,15 @@ function addProps(scene, world) {
     dial.position.y = 1.35;
     const r = ahead(world, 1.3, -0.85);
     drop(group, dial, r.x, r.z);
-    const bag = balloon();
-    const s = ahead(world, 3.3, 0.15);
-    drop(group, bag, s.x, s.z);
+    const ribMat = metalMat(0x3a2a22);
+    [2.4, 6.2, 10].forEach((dist) => {
+      const rib = new THREE.Mesh(new THREE.BoxGeometry(1.55, 0.07, 0.12), ribMat);
+      rib.name = "hull-rib";
+      rib.position.y = CEIL - 0.1;
+      rib.rotation.y = world.spawnYaw || 0;
+      const spot = ahead(world, dist, 0);
+      drop(group, rib, spot.x, spot.z);
+    });
     const crateMesh = crate();
     const t = ahead(world, 2.8, 1.1);
     drop(group, crateMesh, t.x, t.z);
@@ -1083,11 +1067,14 @@ function spriteMaterial(url) {
 
 function contactShadow() {
   const mesh = new THREE.Mesh(
-    new THREE.CircleGeometry(0.5, 24),
-    new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.32, depthWrite: false })
+    new THREE.CircleGeometry(0.5, 28),
+    new THREE.MeshBasicMaterial({
+      color: 0x000000, transparent: true, opacity: 0.38, depthWrite: false,
+      polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2,
+    })
   );
   mesh.rotation.x = -Math.PI / 2;
-  mesh.position.y = 0.02;
+  mesh.position.y = 0.012;
   mesh.name = "shade";
   mesh.renderOrder = 2;
   return mesh;
@@ -1145,8 +1132,9 @@ function addCast(scene, world) {
       root.add(body);
       root.userData.height = h;
       const shade = contactShadow();
-      shade.scale.set(Math.max(0.34, w * 0.72), Math.max(0.16, w * 0.32), 1);
-      shade.position.set(person.wx, 0.02, person.wz);
+      const foot = Math.max(0.2, Math.min(0.3, w * 0.34));
+      shade.scale.set(foot, foot, 1);
+      shade.position.set(person.wx, 0.012, person.wz);
       root.userData.shade = shade;
       group.add(shade);
     } else {
