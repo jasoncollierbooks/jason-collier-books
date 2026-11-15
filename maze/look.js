@@ -1006,20 +1006,71 @@ function cutoutMaterial(url, crop) {
   return new THREE.MeshStandardMaterial({ map: tex, roughness: 0.72, side: THREE.DoubleSide });
 }
 
+function softFigure(data, w, h) {
+  const cx = w * 0.5;
+  const cy = h * 0.42;
+  const rx = w * 0.46;
+  const ry = h * 0.5;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const n = ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2;
+      const a = n <= 1 ? 255 : Math.max(0, Math.round(255 * (1.22 - n)));
+      const i = (y * w + x) * 4 + 3;
+      data[i] = Math.min(data[i], a);
+    }
+  }
+}
+
+function figureMaterial(url, crop) {
+  const mat = new THREE.MeshStandardMaterial({
+    color: 0xffffff, roughness: 0.7, transparent: true, alphaTest: 0.2, side: THREE.DoubleSide,
+  });
+  new THREE.TextureLoader().load(url, (tex) => {
+    const img = tex.image;
+    if (!img || !img.width) return;
+    const sw = 200;
+    const sh = 360;
+    const canvas = document.createElement("canvas");
+    canvas.width = sw;
+    canvas.height = sh;
+    const g = canvas.getContext("2d");
+    const u = crop ? crop[0] : 0;
+    const v = crop ? crop[1] : 0;
+    const uw = crop ? crop[2] : 1;
+    const uh = crop ? crop[3] : 1;
+    g.drawImage(img, u * img.width, (1 - v - uh) * img.height, uw * img.width, uh * img.height, 0, 0, sw, sh);
+    const pixels = g.getImageData(0, 0, sw, sh);
+    softFigure(pixels.data, sw, sh);
+    g.putImageData(pixels, 0, 0);
+    const cut = new THREE.CanvasTexture(canvas);
+    cut.colorSpace = THREE.SRGBColorSpace;
+    mat.map = cut;
+    mat.needsUpdate = true;
+  });
+  return mat;
+}
+
 function addCast(scene, world) {
   const group = new THREE.Group();
   peopleFor(world).forEach((person, i) => {
-    const board = new THREE.Mesh(new THREE.PlaneGeometry(0.86, 1.7), cutoutMaterial(person.art, person.crop));
-    board.position.set(person.wx, 0.95, person.wz);
+    const board = new THREE.Mesh(new THREE.PlaneGeometry(0.78, 1.72), figureMaterial(person.art, person.crop));
+    board.position.set(person.wx, 0.9, person.wz);
     board.name = "cast";
     board.userData.person = person.id;
+    board.userData.lines = person.lines;
+    board.userData.nameLabel = person.name;
     board.userData.bob = i;
-    const frame = new THREE.Mesh(
-      new THREE.PlaneGeometry(0.96, 1.8),
-      new THREE.MeshStandardMaterial({ color: 0x3a2414, roughness: 0.8, side: THREE.DoubleSide })
+    board.userData.home = { x: person.wx, z: person.wz };
+    board.userData.patrol = person.greet ? 1.35 : 0.55;
+    const mouth = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.09, 0.035),
+      new THREE.MeshBasicMaterial({ color: 0x2a140e })
     );
-    frame.position.z = -0.03;
-    board.add(frame);
+    mouth.position.set(0.02, 0.58, 0.02);
+    mouth.name = "mouth";
+    mouth.visible = false;
+    board.add(mouth);
+    person.mesh = board;
     group.add(board);
   });
   posterSpots(world).forEach((spot) => {

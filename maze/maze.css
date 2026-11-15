@@ -35,7 +35,13 @@ button { cursor: pointer; }
   background: #e6d2a6; box-shadow: 0 10px 24px rgba(0,0,0,0.35);
   pointer-events: none;
 }
-#btn-map { pointer-events: auto; }
+#btn-map, #btn-captions { pointer-events: auto; }
+#btn-captions {
+  position: fixed; z-index: 8; top: calc(54px + var(--safe-t)); right: 92px;
+  min-width: 44px; min-height: 32px; border-radius: 999px; border: 1px solid var(--line);
+  background: rgba(16, 14, 12, 0.72); color: var(--ink); font-size: 0.8rem;
+}
+#btn-captions.on { border-color: var(--gold); color: var(--gold); }
 .portrait { width: 116px; height: 146px; object-fit: cover; border-radius: 8px; display: block; margin: 0 0 8px; }
 #vignette {
   position: fixed; inset: 0; z-index: 4; pointer-events: none;

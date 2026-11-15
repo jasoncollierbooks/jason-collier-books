@@ -18,7 +18,7 @@ const JANG = "../images/author-as-jang.jpg";
 
 export const CAST = {
   trail: [
-    { id: "jang", name: "Jang", art: TV, crop: [0.0, 0.02, 0.30, 0.96],
+    { id: "jang", name: "Jang", art: TV, crop: [0.02, 0.04, 0.26, 0.92],
       lines: [
         "You walked in during a true story. We can pencil you in. I am Jang.",
         "The key is not the punchline. The rope is.",

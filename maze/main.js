@@ -3,7 +3,7 @@ import { EffectComposer, RenderPass, UnrealBloomPass, OutputPass } from "three/a
 import { WORLDS, ORDER, worldById } from "./worlds.js";
 import { GAME_TITLE } from "./title.js";
 import { dressScene } from "./look.js";
-import { peopleFor } from "./cast.js";
+import { speak, stopSpeak, unlockSpeech } from "./speech.js";
 import {
   CELL, SPEED, FACE, createState, movePlayer, interact, nearest, objective,
   lettersHeld, submitCode, hintFor, cellOf, angDiff,
@@ -44,6 +44,7 @@ let sprintUntil = 0;
 let lastTap = 0;
 let nearClue = false;
 let turnHeld = 0;
+let speaking = null;
 const TURN = 2.2;
 let clock = 0;
 let last = 0;
@@ -165,6 +166,7 @@ function helpHtml() {
     <p><strong>Phone.</strong> The stick walks forward and back, and leans to turn. The arrows beside it turn while you hold them. Drag the view to look. A short tap steps forward. Light, Use, Hint, Notes.</p>
     <p><strong>Keyboard.</strong> W and S walk. A and D, or the arrow keys, turn. Z and C sidestep. Hold Shift, or tap W twice, to hurry. Click the view to capture the mouse, and press Esc to let it go. Dragging still looks if the mouse is free. F lantern. E or Space uses what is in front of you, or talks to someone standing there. H hint. M shows the map. B toggles the head bob.</p>
     <p>The map only inks corridors you have seen. A gold mark means a wall gave way. A curl means a room folded.</p>
+    <p>People in the maze speak. Captions are off until you turn them on.</p>
     <div class="row"><button type="button" data-close>Step in</button></div>`;
 }
 
@@ -172,6 +174,7 @@ function settingsHtml() {
   return `<h2>On this device</h2>
     <p><label><input type="checkbox" id="sound" ${save.sound ? "checked" : ""}> Sound</label></p>
     <p><label><input type="checkbox" id="bob" ${save.bob !== false ? "checked" : ""}> Head bob</label></p>
+    <p><label><input type="checkbox" id="captions" ${save.captions ? "checked" : ""}> Captions</label></p>
     <p>Look speed</p>
     <div class="row">
       <button type="button" data-sens="0.7">Slow</button>
@@ -244,7 +247,18 @@ function buildScene() {
   camera.add(fillLamp);
   spot.target = target;
   const built = dressScene(scene, world, coarse, renderer);
-  people = peopleFor(world);
+  people = [];
+  scene.traverse((obj) => {
+    if (obj.name !== "cast" || !obj.userData.lines) return;
+    people.push({
+      id: obj.userData.person,
+      name: obj.userData.nameLabel,
+      lines: obj.userData.lines,
+      mesh: obj,
+      wx: obj.userData.home.x,
+      wz: obj.userData.home.z,
+    });
+  });
   doors = built.doors;
   plaques = built.plaques;
   particles = built.particles;
@@ -348,6 +362,9 @@ function enter(id, resume) {
   document.getElementById("kicker").textContent = world.kicker;
   document.getElementById("title").textContent = world.title;
   refreshHud();
+  unlockSpeech();
+  speak(world.intro, { id: "narrator", name: world.title });
+  markSpeaking("narrator", world.intro);
   if (!save.help) {
     save.help = true;
     persist();
@@ -364,29 +381,44 @@ function showMap(on) {
     btn.hidden = !world;
     btn.textContent = on ? "Hide map" : "Map";
   }
+  const cc = document.getElementById("btn-captions");
+  if (cc) {
+    cc.hidden = !world;
+    cc.classList.toggle("on", !!save.captions);
+  }
+}
+
+function personSpot(person) {
+  if (person.mesh) return { x: person.mesh.position.x, z: person.mesh.position.z };
+  return { x: person.wx, z: person.wz };
 }
 
 function personNear() {
   let best = null;
   let bestD = 2.5;
   for (const p of people) {
-    const d = Math.hypot(state.px - p.wx, state.pz - p.wz);
+    const spot = personSpot(p);
+    const d = Math.hypot(state.px - spot.x, state.pz - spot.z);
     if (d < bestD) { best = p; bestD = d; }
   }
   return best;
+}
+
+function markSpeaking(id, line) {
+  speaking = { id, until: clock + Math.min(9, 1.1 + String(line || "").length * 0.045) };
+  if (view) view.dataset.speaking = id + ": " + line;
 }
 
 function talk(person) {
   const i = state.talk[person.id] || 0;
   const line = person.lines[Math.min(i, person.lines.length - 1)];
   state.talk[person.id] = Math.min(person.lines.length - 1, i + 1);
-  state.msg = person.name + ". " + line;
-  state.notes.push(state.msg);
+  state.msg = save.captions ? person.name + ". " + line : "";
+  state.notes.push(person.name + ". " + line);
   if (state.notes.length > 48) state.notes.splice(0, state.notes.length - 48);
-  const pos = person.crop ? (person.crop[0] * 100) + "% center" : "center";
-  openPanel(`<img class="portrait" alt="" src="${person.art}" style="object-position:${pos}">
-    <h2>${escapeHtml(person.name)}</h2><p>${escapeHtml(line)}</p>
-    <div class="row"><button type="button" data-close>Close</button></div>`, false);
+  unlockSpeech();
+  speak(line, person);
+  markSpeaking(person.id, line);
   refreshHud();
 }
 
@@ -503,8 +535,12 @@ function leave() {
   const btn = document.getElementById("btn-map");
   if (canvas) canvas.hidden = true;
   if (btn) btn.hidden = true;
+  const cc = document.getElementById("btn-captions");
+  if (cc) cc.hidden = true;
   if (state && !state.cleared) snapshot();
   persist();
+  stopSpeak();
+  speaking = null;
   closePanel();
   world = null;
   state = null;
@@ -518,11 +554,12 @@ function refreshHud() {
   const held = lettersHeld(world, state).slice().sort((a, b) => a.letter.localeCompare(b.letter) || a.tag.localeCompare(b.tag));
   const need = (world.tokens || []).filter((t) => t.letter).length;
   document.getElementById("held").textContent = need ? "Letters " + held.length + "/" + need + (held.length ? " · " + held.map((h) => h.letter).join(" ") : "") : "";
-  toast.hidden = !state.msg;
+  toast.hidden = !save.captions || !state.msg;
   toast.textContent = state.msg || "";
   const person = personNear();
   const near = nearest(world, state);
-  const pd = person ? Math.hypot(state.px - person.wx, state.pz - person.wz) : 99;
+  const spot = person ? personSpot(person) : null;
+  const pd = spot ? Math.hypot(state.px - spot.x, state.pz - spot.z) : 99;
   const zd = near ? Math.hypot(state.px - (near.x + 0.5) * CELL, state.pz - (near.z + 0.5) * CELL) : 99;
   if (panel.hidden && person && pd + 0.2 < zd) {
     promptEl.hidden = false;
@@ -540,7 +577,8 @@ function useNow() {
   const puzzle = nearest(world, state);
   const person = personNear();
   if (person) {
-    const pd = Math.hypot(state.px - person.wx, state.pz - person.wz);
+    const spot = personSpot(person);
+    const pd = Math.hypot(state.px - spot.x, state.pz - spot.z);
     const zd = puzzle ? Math.hypot(state.px - (puzzle.x + 0.5) * CELL, state.pz - (puzzle.z + 0.5) * CELL) : 99;
     if (pd + 0.2 < zd) {
       talk(person);
@@ -551,13 +589,20 @@ function useNow() {
   }
   const res = interact(world, state);
   applyLight();
+  if (res && (res.ui === "read" || (res.msg && !/Nothing here/i.test(res.msg)))) {
+    const said = res.ui === "read" ? res.body : res.msg;
+    unlockSpeech();
+    speak(said, { id: "narrator", name: res.title || "Clue" });
+    markSpeaking("narrator", said);
+    if (!save.captions) state.msg = "";
+  }
   refreshHud();
   if (res.ui === "code") {
       openPanel(codeHtml(), false);
       const field = document.getElementById("code");
       if (field) field.focus();
     }
-  else if (res.ui === "read") {
+  else if (res.ui === "read" && save.captions) {
     openPanel(`<h2>${escapeHtml(res.title)}</h2><p>${escapeHtml(res.body)}</p><div class="row"><button type="button" data-close>Close</button></div>`, false);
   }
   snapshot();
@@ -574,8 +619,13 @@ function toggleLight() {
 function doHint() {
   if (!world) return;
   const h = hintFor(world, state);
+  unlockSpeech();
+  speak(h.text, { id: "narrator", name: "Hint" });
+  markSpeaking("narrator", h.text);
   refreshHud();
-  openPanel(`<h2>Hint ${h.tier + 1} of 3</h2><p>${escapeHtml(h.text)}</p><div class="row"><button type="button" data-close>Close</button></div>`, false);
+  if (save.captions) {
+    openPanel(`<h2>Hint ${h.tier + 1} of 3</h2><p>${escapeHtml(h.text)}</p><div class="row"><button type="button" data-close>Close</button></div>`, false);
+  }
   snapshot();
   persist();
 }
@@ -683,11 +733,41 @@ function frame(now) {
   }
   if (scene.getObjectsByProperty) {
     scene.getObjectsByProperty("name", "cast").forEach((board) => {
+      const home = board.userData.home || { x: board.position.x, z: board.position.z };
+      const bob = board.userData.bob || 0;
+      const dist = Math.hypot(camera.position.x - home.x, camera.position.z - home.z);
+      const near = dist < 3.4;
+      const talking = !!(speaking && speaking.id === board.userData.person && clock < speaking.until);
+      let x = home.x;
+      let y = 0.9;
+      if (!near && !talking && board.userData.patrol) {
+        const phase = (Math.sin(clock * 0.45 + bob) + 1) / 2;
+        x = home.x + (phase - 0.5) * board.userData.patrol;
+        y += Math.abs(Math.sin(clock * 7 + bob)) * 0.055;
+      }
+      if (near && !board.userData.wasNear) board.userData.hop = clock;
+      board.userData.wasNear = near;
+      if (board.userData.hop && clock - board.userData.hop < 0.5) {
+        const k = (clock - board.userData.hop) / 0.5;
+        y += Math.sin(k * Math.PI) * 0.2;
+      }
+      board.position.x = x;
+      board.position.z = home.z;
+      board.position.y = y + Math.sin(clock * 2.1 + bob) * 0.02;
       const dx = camera.position.x - board.position.x;
       const dz = camera.position.z - board.position.z;
       board.rotation.y = Math.atan2(dx, dz);
-      const base = 0.95;
-      board.position.y = base + Math.sin(clock * 1.5 + (board.userData.bob || 0)) * 0.025;
+      board.rotation.z = Math.sin(clock * 1.4 + bob) * 0.035;
+      if (near && board.userData.hop && clock - board.userData.hop < 0.5) {
+        board.rotation.z += Math.sin(((clock - board.userData.hop) / 0.5) * Math.PI * 2) * 0.14;
+      }
+      const breathe = 1 + Math.sin(clock * 2.4 + bob) * 0.018;
+      board.scale.set(1, breathe * (talking ? 1 + Math.sin(clock * 12) * 0.025 : 1), 1);
+      const mouth = board.getObjectByName("mouth");
+      if (mouth) {
+        mouth.visible = talking;
+        mouth.scale.y = talking ? 0.35 + Math.abs(Math.sin(clock * 16)) * 1.3 : 1;
+      }
     });
   }
   drawMap();
@@ -740,6 +820,12 @@ function bind() {
   document.getElementById("btn-hint").addEventListener("click", () => { audio.resume(); doHint(); });
   document.getElementById("btn-book").addEventListener("click", () => openPanel(notesHtml(), false));
   document.getElementById("btn-map").addEventListener("click", () => { if (world) showMap(!mapOn); });
+  document.getElementById("btn-captions").addEventListener("click", () => {
+    save.captions = !save.captions;
+    persist();
+    document.getElementById("btn-captions").classList.toggle("on", !!save.captions);
+    if (world) refreshHud();
+  });
   function holdTurn(dir) {
     return (e) => {
       if (e.cancelable) e.preventDefault();
@@ -795,6 +881,11 @@ function bind() {
       save.bob = e.target.checked;
       persist();
     }
+    if (e.target.id === "captions") {
+      save.captions = e.target.checked;
+      persist();
+      if (world) refreshHud();
+    }
   });
   window.addEventListener("keydown", (e) => {
     if (e.target && e.target.matches && e.target.matches("input, textarea")) {
@@ -836,6 +927,7 @@ function bind() {
   }
   look.addEventListener("pointerdown", (e) => {
     audio.resume();
+    unlockSpeech();
     if (!panel.hidden) return;
     if (e.pointerType === "touch") return;
     if (e.pointerType === "mouse" && e.button !== 0) return;
