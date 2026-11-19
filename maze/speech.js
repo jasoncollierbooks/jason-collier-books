@@ -1,7 +1,7 @@
 /* Spoken lines. Every line has a recording. A book-worlds clip is used when
    it already says the same sentence. The rest were made with Kokoro.
    The browser voice is only a fallback if a file will not play. */
-import { LINES } from "./voices/index.js?v=4";
+import { LINES } from "./voices/index.js?v=5";
 
 const TONE = {
   jang: { pitch: 1.42, rate: 1.14, high: true },

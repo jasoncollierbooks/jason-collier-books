@@ -62,7 +62,7 @@ for (const dir of ["north", "south", "east", "west"]) {
   add(idleLine(dir, true), "narrator", "any", "idle");
 }
 add(idleLine("", false), "narrator", "any", "idle");
-add("Hold to walk, slide to steer.", "narrator", "any", "tip");
+add("Hold anywhere. You walk toward your finger.", "narrator", "any", "tip");
 add("You already hold that letter.", "narrator", "any", "system");
 add("The sheet is blank until the lantern is on it.", "narrator", "any", "system");
 

@@ -2897,6 +2897,13 @@ export const LINES = {
     "voice": "bm_fable",
     "kind": "tip"
   },
+  "Hold anywhere. You walk toward your finger.": {
+    "src": "./voices/any/narrator-ff18386325.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
   "You already hold that letter.": {
     "src": "./voices/any/narrator-f3e2602996.mp3",
     "speaker": "narrator",

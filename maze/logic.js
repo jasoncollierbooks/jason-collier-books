@@ -233,9 +233,7 @@ export function objective(world, state) {
   return g.goal || world.goals.start;
 }
 
-function facingOk(state, token) {
-  if (token.kind === "angle") return angDiff(state.yaw, FACE[token.face] || 0) < 0.55;
-  if (token.kind === "pitch") return state.pitch < -0.62;
+function facingOk() {
   return true;
 }
 

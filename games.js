@@ -1,7 +1,7 @@
 /* Every game on the site, used by the app's Play tab (play.html lists the same games in plain HTML).
    url: same-site path, or a full https:// link for games hosted elsewhere. */
 window.CE_GAMES = [
- {id:'cryptic-mazes',t:'Collier Adventure Mazes',k:'First person · eight book worlds',url:'maze/',d:'A maze for each world on the shelf: the California Trail, Pine Knot, the mountain, the Rusty Stack, the First Pulse, Thorne’s Lab, the Seeders, and the Ninth Envoy. The exit is a puzzle. The last gate needs every world.'},
+ {id:'cryptic-mazes',t:'Collier Adventure Mazes',k:'Overhead · eight book worlds',url:'maze/',d:'A maze for each world on the shelf: the California Trail, Pine Knot, the mountain, the Rusty Stack, the First Pulse, Thorne’s Lab, the Seeders, and the Ninth Envoy. The exit is a puzzle. The last gate needs every world.'},
  {id:'adventures',t:'Lead the Adventure',k:'Cartoon adventure',url:'adventures.html',d:'The Rusty Stack is a cartoon: watch the scene, then choose. 2 decisions, 4 endings. The Seeders is coming soon.'},
  {id:'book-worlds',t:'Book Worlds',k:'Jang & Tom ride along',url:'book-worlds/',d:'Walk the California Trail as the Keeper, a drifter with a brass skeleton key. Tune the broadcast cabinet and push back the Nonimaginaires leaking into the story.'},
  {id:'old-man-hunt',t:'Old Man Hunt',k:'A horror hunt · for older players',url:'old-man-game/',d:'Seven days on the mountain, based on the novel. Hang your trail cameras, keep the fire going and hold your nerve.'},
