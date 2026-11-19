@@ -1,6 +1,6 @@
 /* Walk every maze with only the moves a clued player can make. */
 import { WORLDS, META, worldById, brandsSpell, brandsShown } from "./worlds.js";
-import { createState, walkTo, interact, submitCode, hintFor, lettersHeld, cellOf, FACE, findChar, blocked, wayFrom, routeCells } from "./logic.js";
+import { createState, walkTo, sense, submitCode, hintFor, lettersHeld, cellOf, FACE, findChar, blocked, wayFrom, routeCells } from "./logic.js";
 import { peopleFor } from "./cast.js";
 
 const PLAN = {
@@ -23,6 +23,18 @@ function entity(world, id) {
   return (world.tokens || []).concat(world.signs || []).find((t) => t.id === id) || null;
 }
 
+function stepAway(world, state, spot) {
+  for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+    const x = spot.x + dx;
+    const z = spot.z + dz;
+    if (blocked(world, x, z, state.flags)) continue;
+    if (!walkTo(world, state, x, z)) continue;
+    sense(world, state);
+    return true;
+  }
+  return false;
+}
+
 function play(world, steps) {
   const state = createState(world);
   const early = submitCode(world, state, world.code);
@@ -43,12 +55,23 @@ function play(world, steps) {
       if (op === "use") {
         const times = b || 1;
         for (let n = 0; n < times; n++) {
-          const res = interact(world, state);
-          if (res.msg && /smear|dark|blank|Nothing/i.test(res.msg) && !res.found && !res.ui) {
-            fail(world.id + " use " + a + " failed: " + res.msg);
+          if (n && !stepAway(world, state, spot)) {
+            fail(world.id + " cannot step off " + a);
+            return null;
+          }
+          if (n && !walkTo(world, state, spot.x, spot.z)) {
+            fail(world.id + " cannot return to " + a);
+            return null;
+          }
+          const events = sense(world, state);
+          const bad = events.find((res) => res.msg && /smear|dark|blank|Nothing/i.test(res.msg) && !res.found && !res.ui && !res.took);
+          if (bad) {
+            fail(world.id + " use " + a + " failed: " + bad.msg);
             return null;
           }
         }
+      } else {
+        sense(world, state);
       }
     } else if (op === "code") {
       const res = submitCode(world, state, a);

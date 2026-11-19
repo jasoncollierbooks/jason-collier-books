@@ -2917,5 +2917,222 @@ export const LINES = {
     "world": "any",
     "voice": "bm_fable",
     "kind": "system"
+  },
+  "That wall is still shut. Whatever opens it is still in the maze.": {
+    "src": "./voices/any/narrator-c6983d1e00.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "You're close. Walk onto it.": {
+    "src": "./voices/any/narrator-ae4a45858e.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "Walk onto the rope. A wall is waiting to move.": {
+    "src": "./voices/any/narrator-d406606d16.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "Lantern on, then walk onto the ox brand.": {
+    "src": "./voices/any/narrator-ba95f350c0.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "Walk onto the boards. The letter is cut along the grain.": {
+    "src": "./voices/any/narrator-a2249ac36a.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "You're on it. Walk onto it.": {
+    "src": "./voices/any/narrator-c94b9480df.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "Lantern on, then walk onto the napkin.": {
+    "src": "./voices/any/narrator-c5add27773.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "Walk onto the groundhog hole in the square.": {
+    "src": "./voices/any/narrator-aca7a4a95f.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "Walk onto the checkerboard. The letter reads from the squares.": {
+    "src": "./voices/any/narrator-aa7ef5304d.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "You're close. Walk onto what the ridge put in front of you.": {
+    "src": "./voices/any/narrator-1c54b0fabb.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "Walk onto the campfire.": {
+    "src": "./voices/any/narrator-9e88da0d8a.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "Cross the draw with the lantern on, then walk onto the tent.": {
+    "src": "./voices/any/narrator-0b4b450482.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "Walk onto the spruce. The letter is in the bark.": {
+    "src": "./voices/any/narrator-58b750120a.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "You're close. Walk onto it, unless it is the lever marked don't.": {
+    "src": "./voices/any/narrator-849904ffc9.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "Walk onto the pipe. The letter is cut there.": {
+    "src": "./voices/any/narrator-ab2457bb45.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "You're close. Walk onto what is holding still.": {
+    "src": "./voices/any/narrator-534593e63e.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "Walk onto the pedestal.": {
+    "src": "./voices/any/narrator-b2c72f45c7.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "Walk onto the chalk, then try an arch. If you return without the mark, that arch lied.": {
+    "src": "./voices/any/narrator-bb1f386c35.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "Lantern on in the pocket, then walk onto the wall.": {
+    "src": "./voices/any/narrator-c15c57c73c.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "Walk onto the ring. The letter is overhead, and it is yours when you stand there.": {
+    "src": "./voices/any/narrator-67d6739620.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "You're close. Walk onto what the bench is showing you.": {
+    "src": "./voices/any/narrator-155f392d3d.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "Walk onto the scope until it reads sine.": {
+    "src": "./voices/any/narrator-594b8b6619.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "Lantern on, cross the hall, then walk onto the chamber.": {
+    "src": "./voices/any/narrator-2fc47ab1a1.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "Walk onto the trefoil. The letter is cut there.": {
+    "src": "./voices/any/narrator-098642a7f4.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "You're close. Walk onto what is planted here.": {
+    "src": "./voices/any/narrator-9a8dbc79ea.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "Walk onto the crystal in the long corridor.": {
+    "src": "./voices/any/narrator-61c5b429b0.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "In the room past the arch, lantern on, walk onto the circuit.": {
+    "src": "./voices/any/narrator-141682660b.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "Walk onto the facet. The letter is cut there.": {
+    "src": "./voices/any/narrator-e82667f61a.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "You're close. Walk onto what the glass is willing to show.": {
+    "src": "./voices/any/narrator-de36df7774.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "Walk onto the shard. The letter is cut in the glass.": {
+    "src": "./voices/any/narrator-25c9f363ee.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
+  },
+  "Walk onto the lens. The last room is past that bend.": {
+    "src": "./voices/any/narrator-bb5a2d615f.mp3",
+    "speaker": "narrator",
+    "world": "any",
+    "voice": "bm_fable",
+    "kind": "tip"
   }
 };

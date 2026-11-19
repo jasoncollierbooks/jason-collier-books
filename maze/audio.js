@@ -6,6 +6,7 @@ export function createAudio() {
   let timer = null;
   let buffer = null;
   let muted = false;
+  let ducked = false;
 
   function context() {
     const AC = window.AudioContext || window.webkitAudioContext;
@@ -13,7 +14,7 @@ export function createAudio() {
     if (!ctx) {
       ctx = new AC();
       master = ctx.createGain();
-      master.gain.value = muted ? 0 : 0.42;
+      master.gain.value = muted ? 0 : ducked ? 0.1 : 0.36;
       master.connect(ctx.destination);
       const n = ctx.sampleRate * 2;
       buffer = ctx.createBuffer(1, n, ctx.sampleRate);
@@ -92,7 +93,27 @@ export function createAudio() {
     resume() { context(); },
     setMuted(v) {
       muted = v;
-      if (master) master.gain.value = v ? 0 : 0.42;
+      if (master) master.gain.value = muted ? 0 : ducked ? 0.1 : 0.36;
+    },
+    duck(on) {
+      ducked = !!on;
+      if (master && !muted) master.gain.value = ducked ? 0.1 : 0.36;
+    },
+    step(kind) {
+      if (!context() || muted) return;
+      const snow = kind === "mountain";
+      const hive = kind === "envoy" || kind === "pulse";
+      burst(snow ? 2400 : hive ? 420 : 180, snow ? 0.04 : 0.06, snow ? 0.03 : 0.05);
+    },
+    pickup() {
+      if (!context() || muted) return;
+      burst(1400, 0.07, 0.05);
+      setTimeout(() => burst(2100, 0.05, 0.03), 70);
+    },
+    gate() {
+      if (!context() || muted) return;
+      burst(90, 0.22, 0.08);
+      burst(180, 0.12, 0.04);
     },
     stop,
     blip() {

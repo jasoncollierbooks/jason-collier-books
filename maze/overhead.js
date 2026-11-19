@@ -654,6 +654,7 @@ export function createOverhead(canvas) {
     const drawW = painted.canvas.width * (cell / painted.px);
     const drawH = painted.canvas.height * (cell / painted.px);
     g.drawImage(painted.canvas, origin.x, origin.y, drawW, drawH);
+    drawSway(g, world, state.flags || {}, skirt, project, cell, clock, pal, w, h);
 
     const gridOrigin = project(0, 0, w, h);
     function cellRect(x, z) {
@@ -684,6 +685,8 @@ export function createOverhead(canvas) {
     }
 
     paintMist(g, w, h, seen, skirt, project, cell, pal, clock, rows, cols);
+    drawMotes(g, w, h, world.id, clock);
+    drawGateGlow(g, world, seen, project, cell, clock, w, h, !!extras.gateReady, !!extras.cleared);
 
     const way = extras.way;
     const here = extras.here;
@@ -710,6 +713,7 @@ export function createOverhead(canvas) {
       drawGoalArrow(g, player.x, player.y, ang, cell, clock, reduce);
     }
     drawWalker(g, player.x, player.y, state.yaw, !!extras.moving, clock, !!state.light, cell, reduce);
+    drawSparkles(g, extras.sparkles || [], project, clock, w, h);
 
     const glow = g.createRadialGradient(player.x, player.y, cell * 0.2, player.x, player.y, cell * (state.light ? 3.6 : 2.2));
     glow.addColorStop(0, "rgba(" + pal.glow + "," + (state.light ? "0.34" : "0.16") + ")");
@@ -750,6 +754,90 @@ function letterVisible(t, state) {
   if (!t.letter) return false;
   if (t.kind === "lantern" && !state.found[t.id]) return !!state.light;
   return true;
+}
+
+function drawSway(g, world, flags, skirt, project, cell, clock, pal, w, h) {
+  const rows = world.grid.length;
+  const cols = world.grid[0].length;
+  for (let z = 0; z < rows; z++) {
+    for (let x = 0; x < cols; x++) {
+      if (!wallAt(world, flags, skirt, x, z)) continue;
+      const p = project((x + 0.5) * CELL, (z + 0.32) * CELL, w, h);
+      if (p.x < -30 || p.y < -30 || p.x > w + 30 || p.y > h + 30) continue;
+      const sway = Math.sin(clock * 1.4 + x * 0.8 + z * 0.5) * cell * 0.07;
+      g.fillStyle = pal.leaf;
+      g.globalAlpha = 0.8;
+      g.beginPath();
+      g.ellipse(p.x + sway, p.y, cell * 0.18, cell * 0.08, sway * 0.4, 0, Math.PI * 2);
+      g.fill();
+      g.globalAlpha = 0.55;
+      g.beginPath();
+      g.ellipse(p.x - cell * 0.14 + sway * 0.4, p.y - cell * 0.08, cell * 0.1, cell * 0.045, -0.5, 0, Math.PI * 2);
+      g.fill();
+      g.globalAlpha = 1;
+    }
+  }
+}
+
+function drawMotes(g, w, h, id, clock) {
+  const n = 28;
+  const color = id === "mountain" ? "rgba(255,255,255,0.75)"
+    : id === "envoy" || id === "pulse" ? "rgba(220,200,255,0.55)"
+    : id === "pine" || id === "seeders" ? "rgba(190,255,170,0.45)"
+    : "rgba(255,220,160,0.45)";
+  g.fillStyle = color;
+  for (let i = 0; i < n; i++) {
+    const x = ((unit(i, 3, 1) + Math.sin(clock * 0.25 + i) * 0.02) % 1) * w;
+    const y = ((unit(i, 8, 2) - clock * (0.012 + unit(i, 1, 4) * 0.02)) % 1 + 1) % 1 * h;
+    g.beginPath();
+    g.arc(x, y, id === "mountain" ? 1.7 : 1.15, 0, Math.PI * 2);
+    g.fill();
+  }
+}
+
+function drawGateGlow(g, world, seen, project, cell, clock, w, h, ready, cleared) {
+  const gate = findChar(world, "G");
+  if (!gate || (!seen[gate.x + "," + gate.z] && !ready && !cleared)) return;
+  const p = project((gate.x + 0.5) * CELL, (gate.z + 0.5) * CELL, w, h);
+  if (p.x < -80 || p.y < -80 || p.x > w + 80 || p.y > h + 80) return;
+  const pulse = 1 + Math.sin(clock * 2.6) * 0.06;
+  g.save();
+  g.strokeStyle = cleared ? "#fff4c8" : ready ? "#e6c15a" : "rgba(228,194,122,0.35)";
+  g.lineWidth = Math.max(2, cell * 0.06);
+  const gw = cell * 0.34 * pulse;
+  const gh = cell * 0.42 * pulse;
+  g.beginPath();
+  g.moveTo(p.x - gw, p.y + gh * 0.45);
+  g.lineTo(p.x - gw, p.y - gh * 0.1);
+  g.quadraticCurveTo(p.x, p.y - gh, p.x + gw, p.y - gh * 0.1);
+  g.lineTo(p.x + gw, p.y + gh * 0.45);
+  g.stroke();
+  if (cleared || ready) {
+    g.globalAlpha = cleared ? 0.45 : 0.22;
+    g.fillStyle = "#ffe7a0";
+    g.beginPath();
+    g.arc(p.x, p.y, cell * (cleared ? 0.55 : 0.36), 0, Math.PI * 2);
+    g.fill();
+  }
+  g.restore();
+}
+
+function drawSparkles(g, list, project, clock, w, h) {
+  for (const s of list) {
+    const k = (clock - s.t) / 0.75;
+    if (k < 0 || k > 1) continue;
+    const p = project(s.x, s.z, w, h);
+    g.save();
+    g.globalAlpha = 1 - k;
+    g.fillStyle = "#ffe9a0";
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2 + k * 2;
+      g.beginPath();
+      g.arc(p.x + Math.cos(a) * k * 26, p.y + Math.sin(a) * k * 16, 2.5, 0, Math.PI * 2);
+      g.fill();
+    }
+    g.restore();
+  }
 }
 
 function paintMist(g, w, h, seen, skirt, project, cell, pal, clock, rows, cols) {

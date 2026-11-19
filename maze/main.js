@@ -1,11 +1,11 @@
 import { WORLDS, ORDER, worldById } from "./worlds.js";
 import { GAME_TITLE } from "./title.js";
 import { createOverhead } from "./overhead.js";
-import { preloadWorld, speak, speakChain, stopSpeak, unlockSpeech, busy } from "./speech.js?v=5";
+import { preloadWorld, speak, speakChain, stopSpeak, unlockSpeech, busy } from "./speech.js?v=6";
 import {
   CELL, SPEED, createState, movePlayer, interact, nearest, objective,
   lettersHeld, letterProgress, submitCode, hintFor, cellOf, wayFrom,
-  routeCells, center, blocked,
+  routeCells, center, blocked, sense,
 } from "./logic.js";
 import { peopleFor, pointLine, idleLine } from "./cast.js";
 import { createAudio } from "./audio.js";
@@ -43,18 +43,40 @@ const keys = {};
 const ptrs = new Map();
 let steering = null;
 let route = null;
+let vx = 0;
+let vz = 0;
+let stepDist = 0;
+let runClock = 0;
+const sparkles = [];
 const WALK_TIP = "Hold anywhere. You walk toward your finger.";
+const PAR = { trail: 150, pine: 180, mountain: 180, rusty: 210, pulse: 220, thorne: 240, seeders: 210, envoy: 240, meta: 120 };
+
+function fmtTime(sec) {
+  const s = Math.max(0, Math.round(sec));
+  return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+}
+
+function starsFor(id, sec) {
+  const par = PAR[id] || 180;
+  if (sec <= par) return 3;
+  if (sec <= par * 1.75) return 2;
+  return 1;
+}
 let pinch = null;
 const sprites = new Map();
 
 function freshSave(extra) {
-  return Object.assign({ v: 2, cleared: {}, meta: false, sound: true, sens: 1, help: false, run: null }, extra || {});
+  return Object.assign({ v: 2, cleared: {}, best: {}, stars: {}, meta: false, sound: true, sens: 1, help: false, run: null }, extra || {});
 }
 
 function load() {
   try {
     const raw = JSON.parse(localStorage.getItem(SAVE_KEY) || "null");
-    if (raw && raw.v === 2) return raw;
+    if (raw && raw.v === 2) {
+      raw.best = raw.best || {};
+      raw.stars = raw.stars || {};
+      return raw;
+    }
     if (raw && raw.v === 1) {
       return freshSave({
         cleared: raw.cleared || {},
@@ -121,10 +143,14 @@ function drawHub() {
   const resume = save.run && worldById(save.run.id);
   const cards = WORLDS.map((w) => {
     const brand = save.cleared[w.id];
+    const nstars = (save.stars && save.stars[w.id]) || 0;
+    const best = save.best && save.best[w.id];
+    const starLine = nstars ? `<span class="stars">${"★".repeat(nstars)}${"☆".repeat(3 - nstars)}${best ? " · " + fmtTime(best) : ""}</span>` : "";
     return `<button type="button" class="station${brand ? " cleared" : ""}" data-world="${w.id}">
       <span class="sk">${w.kicker}</span>
       <span class="st">${w.title}</span>
       <span class="sb">${w.blurb}</span>
+      ${starLine}
       ${brand ? `<b class="brand" aria-label="Brand ${brand}">${brand}</b>` : ""}
     </button>`;
   }).join("");
@@ -176,11 +202,11 @@ function closePanel() {
 function helpHtml() {
   return `<h2>How to play</h2>
     <p>You are looking down on the maze. North is the gold needle. A soft mist covers what you have not walked.</p>
-    <p>Some letters show only under the lantern. Stand beside a mark and use it. The side you face does not matter.</p>
+    <p>Walk onto a letter, a rope, a switch, or a person and it happens. Some letters show only under the lantern. The side you face does not matter.</p>
     <p>A bright door is often a lie. A room that brings you back is telling you the truth about itself. Walls move when you do the thing the room asked for.</p>
     <p>The gate wants the letters you found, in the order a carving explains. Hints start vague. The third one is plain.</p>
     <p><strong>Phone.</strong> Hold a finger on the maze and you walk toward it. Drag to steer. Let go to stop. A tap walks the path to that spot. Pinch, or All, pulls the camera back.</p>
-    <p><strong>Keyboard.</strong> Arrows or WASD walk. Click a spot and the maze walks you there. Shift hurries. F lantern. E or Space uses what is beside you, or talks to someone standing there. H hint. M zooms out to the whole maze.</p>
+    <p><strong>Keyboard.</strong> Arrows or WASD walk. Click a spot and the maze walks you there. Shift hurries. F lantern. H hint. M zooms out to the whole maze. Again starts the maze over.</p>
     <p>Gold stones mark the next steps, faint when they run into the mist. A small arrow points the way. Someone at a junction will point out loud. Stand still and the storyteller will too. Trail markers can be turned off in settings.</p>
     <p>People in the maze speak. Captions are off until you turn them on.</p>
     <div class="row"><button type="button" data-close>Step in</button></div>`;
@@ -227,13 +253,18 @@ function codeHtml() {
 }
 
 function winHtml(shown) {
+  const sec = Math.round(runClock);
+  const nstars = starsFor(world.id, sec);
+  const best = save.best && save.best[world.id];
   const brand = world.freeCode
     ? ""
     : `<p>The page is branded <strong>${shown}</strong>.</p>`;
   return `<h2>${world.freeCode ? "On the air" : world.title}</h2>
+    <p class="win-stars" aria-label="${nstars} of 3 stars">${"★".repeat(nstars)}${"☆".repeat(3 - nstars)}</p>
+    <p>Time ${fmtTime(sec)}.${best ? " Best " + fmtTime(best) + "." : ""}</p>
     <p>${escapeHtml(world.win)}</p>
     ${brand}
-    <div class="row"><button type="button" id="to-hub">Back to the cabinet</button></div>`;
+    <div class="row"><button type="button" id="again">Walk it again</button><button type="button" id="to-hub">Back to the cabinet</button></div>`;
 }
 
 function escapeHtml(s) {
@@ -279,6 +310,8 @@ function showChrome(on) {
   const zoom = document.getElementById("btn-zoom");
   const cc = document.getElementById("btn-captions");
   if (zoom) zoom.hidden = !on;
+  const again = document.getElementById("btn-again");
+  if (again) again.hidden = !on;
   if (cc) {
     cc.hidden = !on;
     cc.classList.toggle("on", !!save.captions);
@@ -304,6 +337,11 @@ function enter(id, resume) {
     pacing: true,
   }));
   overhead.reset(state.px, state.pz, world);
+  runClock = 0;
+  vx = 0;
+  vz = 0;
+  stepDist = 0;
+  sparkles.length = 0;
   audio.play(world.theme.ambient);
   audio.setMuted(!save.sound);
   hub.hidden = true;
@@ -471,11 +509,6 @@ function guideSpeech() {
     idle.t = clock;
   }
   const person = personNear();
-  if (person && !state.heard[person.id] && clock - voicedAt > 1.2) {
-    state.heard[person.id] = 1;
-    talk(person, true);
-    return;
-  }
   const here = cellOf(state.px, state.pz);
   const way = guideWay || wayFrom(world, state, here.x, here.z);
   if (way && way.target) {
@@ -494,7 +527,7 @@ function guideSpeech() {
     }
   }
   if (save.guide === false || state.cleared) return;
-  if (clock - idle.t > 45 && clock - voicedAt > 12) {
+  if (clock - idle.t > 20 && clock - voicedAt > 8) {
     const line = idleLine(way && way.dir, way && way.target && way.target.kind === "gate");
     speak(line, { id: "narrator", name: "Hint" });
     markSpeaking("narrator", line);
@@ -525,24 +558,68 @@ function refreshHud() {
   document.getElementById("objective").textContent = objective(world, state);
   const prog = letterProgress(world, state);
   const heldEl = document.getElementById("held");
-  heldEl.textContent = prog.need ? "Letters " + prog.have + "/" + prog.need : (world.id === "meta" ? "Eight brands, then the gate" : "");
+  const gateReady = prog.need && prog.have >= prog.need && !state.cleared;
+  heldEl.textContent = prog.need
+    ? "Letters " + prog.have + "/" + prog.need + (gateReady ? " · gate open" : "")
+    : (world.id === "meta" ? "Eight brands, then the gate" : "");
+  const clockEl = document.getElementById("clock");
+  if (clockEl) clockEl.textContent = fmtTime(runClock);
   if (view) view.dataset.progress = prog.need ? prog.have + "/" + prog.need : "meta";
   toast.hidden = !save.captions || !state.msg;
   toast.textContent = state.msg || "";
-  const person = personNear();
-  const near = nearest(world, state);
-  const spot = person ? personSpot(person) : null;
-  const pd = spot ? Math.hypot(state.px - spot.x, state.pz - spot.z) : 99;
-  const zd = near ? Math.hypot(state.px - (near.x + 0.5) * CELL, state.pz - (near.z + 0.5) * CELL) : 99;
-  if (panel.hidden && person && pd + 0.2 < zd) {
-    promptEl.hidden = false;
-    promptEl.textContent = "Use · " + person.name;
-  } else if (!near || !panel.hidden) {
-    promptEl.hidden = true;
-  } else {
-    promptEl.hidden = false;
-    promptEl.textContent = near.etype === "gate" ? "Use · the gate" : near.etype === "sign" ? "Use · read" : "Use";
+  promptEl.hidden = true;
+}
+
+function absorb(events) {
+  if (!events || !events.length) return;
+  for (const res of events) {
+    if (res.took || res.found) {
+      audio.pickup();
+      sparkles.push({ x: state.px, z: state.pz, t: clock });
+      while (sparkles.length > 8) sparkles.shift();
+    }
+    if (res.opened) audio.gate();
+    if (res.msg && !/already hold/i.test(res.msg)) {
+      const said = res.ui === "read" ? res.body : res.msg;
+      unlockSpeech();
+      speak(said, { id: "narrator", name: res.title || "Clue" });
+      markSpeaking("narrator", said);
+      voicedAt = clock;
+      if (!save.captions) state.msg = "";
+      else state.msg = said;
+    }
+    if (res.ui === "code" && panel.hidden) {
+      openPanel(codeHtml(), false);
+      const field = document.getElementById("code");
+      if (field) field.focus();
+    } else if (res.ui === "read" && save.captions) {
+      openPanel(`<h2>${escapeHtml(res.title)}</h2><p>${escapeHtml(res.body)}</p><div class="row"><button type="button" data-close>Close</button></div>`, false);
+    }
   }
+  refreshHud();
+}
+
+function tendPeople() {
+  const reach = 0.7 * CELL;
+  for (const person of people) {
+    const d = Math.hypot(state.px - person.ax, state.pz - person.az);
+    if (d < reach) {
+      if (!person.here) {
+        const away = clock - (person.leftAt == null ? -99 : person.leftAt);
+        if (away > 8) talk(person, true);
+        person.here = true;
+      }
+    } else if (person.here) {
+      person.here = false;
+      person.leftAt = clock;
+    }
+  }
+}
+
+function restart() {
+  if (!world) return;
+  const id = world.id;
+  enter(id, false);
 }
 
 function useNow() {
@@ -652,6 +729,13 @@ function tryCode(raw) {
     }
     return;
   }
+  const sec = Math.round(runClock);
+  const nstars = starsFor(world.id, sec);
+  if (!save.best) save.best = {};
+  if (!save.stars) save.stars = {};
+  if (!save.best[world.id] || sec < save.best[world.id]) save.best[world.id] = sec;
+  save.stars[world.id] = Math.max(save.stars[world.id] || 0, nstars);
+  audio.gate();
   if (world.id === "meta") save.meta = true;
   else save.cleared[world.id] = world.shown;
   save.run = null;
@@ -711,18 +795,31 @@ function frame(now) {
   last = now;
   if (!world || !state) return;
   clock += dt;
+  if (!state.cleared) runClock += dt;
   if (panel.hidden) {
     const wish = intentVector();
-    moving = !!wish;
-    if (wish) {
-      state.yaw = Math.atan2(wish.mx, -wish.mz);
-      const sprint = keys.shift || clock < sprintUntil;
-      const pace = SPEED * (sprint ? 1.7 : 1);
+    const sprint = keys.shift || clock < sprintUntil;
+    const pace = wish ? SPEED * (sprint ? 1.45 : 1) : 0;
+    const tx = wish ? wish.mx * pace : 0;
+    const tz = wish ? wish.mz * pace : 0;
+    const ease = 1 - Math.exp(-(wish ? 6.5 : 9) * dt);
+    vx += (tx - vx) * ease;
+    vz += (tz - vz) * ease;
+    moving = Math.hypot(vx, vz) > 0.2;
+    if (moving) {
+      state.yaw = Math.atan2(vx, -vz);
       const px0 = state.px;
       const pz0 = state.pz;
-      movePlayer(world, state, wish.mx * pace * dt, wish.mz * pace * dt);
+      movePlayer(world, state, vx * dt, vz * dt);
+      stepDist += Math.hypot(state.px - px0, state.pz - pz0);
+      if (stepDist > 1.2) {
+        stepDist = 0;
+        audio.step(world.id);
+      }
       if (route && Math.hypot(state.px - px0, state.pz - pz0) < 0.004) route = null;
     }
+    absorb(sense(world, state));
+    tendPeople();
     revealMap();
     updateGuide();
     guideSpeech();
@@ -751,8 +848,12 @@ function frame(now) {
     clock,
     reduce,
     moving,
+    sparkles,
+    gateReady: !!(letterProgress(world, state).need && letterProgress(world, state).have >= letterProgress(world, state).need),
+    cleared: !!state.cleared,
     speaking: speaking && clock < speaking.until ? speaking : null,
   });
+  audio.duck(busy());
   if (panel.hidden) refreshHud();
 }
 
@@ -773,7 +874,8 @@ function bind() {
   });
   document.getElementById("btn-help").addEventListener("click", () => openPanel(helpHtml(), false));
   document.getElementById("btn-light").addEventListener("click", () => { audio.resume(); toggleLight(); });
-  document.getElementById("btn-use").addEventListener("click", () => { audio.resume(); useNow(); });
+  const again = document.getElementById("btn-again");
+  if (again) again.addEventListener("click", () => { audio.resume(); restart(); });
   document.getElementById("btn-hint").addEventListener("click", () => { audio.resume(); doHint(); });
   document.getElementById("btn-book").addEventListener("click", () => openPanel(notesHtml(), false));
   document.getElementById("btn-zoom").addEventListener("click", () => { if (world) toggleZoom(); });
@@ -794,6 +896,7 @@ function bind() {
     if (e.target.id === "code-back" && field) { field.value = field.value.slice(0, -1); return; }
     if (e.target.id === "code-go" && field) { tryCode(field.value); return; }
     if (e.target.id === "to-hub") leave();
+    if (e.target.id === "again") restart();
     if (e.target.id === "wipe") {
       const sound = save.sound;
       world = null;

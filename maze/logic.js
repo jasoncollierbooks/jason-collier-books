@@ -190,9 +190,11 @@ function entities(world) {
   return list;
 }
 
+export const TOUCH = 0.65 * CELL;
+
 export function nearest(world, state) {
   let best = null;
-  let bestD = 1.7;
+  let bestD = TOUCH;
   for (const e of entities(world)) {
     const d = distTo(state, e.x, e.z);
     if (d < bestD) {
@@ -251,17 +253,28 @@ function takeLetter(state, token) {
   return { found: token.letter, msg: token.text };
 }
 
-export function interact(world, state) {
-  const e = nearest(world, state);
-  if (!e) return { msg: "Nothing here you can use." };
-  if (e.etype === "gate") return { ui: "code" };
+const DOOR_HINT = "That wall is still shut. Whatever opens it is still in the maze.";
+
+function applyOne(world, state, e) {
+  if (e.etype === "gate") {
+    const need = (world.tokens || []).filter((t) => t.letter);
+    const ready = world.freeCode || need.every((t) => state.found[t.id]);
+    if (!ready) {
+      if (state.heard && state.heard.gate) return null;
+      if (!state.heard) state.heard = {};
+      state.heard.gate = 1;
+      return { id: e.id, msg: "The gate can feel a letter you have not found.", hint: true };
+    }
+    return { id: e.id, ui: "code" };
+  }
   if (e.etype === "sign") {
     if (e.need === "lantern" && !state.light) {
-      return { msg: "The sheet is blank until the lantern is on it." };
+      return { id: e.id, msg: "The sheet is blank until the lantern is on it.", hint: true };
     }
+    if (state.read[e.id]) return null;
     state.read[e.id] = true;
     note(state, e.title + ". " + e.body);
-    return { ui: "read", title: e.title, body: e.body };
+    return { id: e.id, ui: "read", title: e.title, body: e.body, msg: e.body };
   }
   const token = e;
   if (token.kind === "trap") {
@@ -271,32 +284,81 @@ export function interact(world, state) {
     state.pz = c.z;
     state.stood = spawn.x + "," + spawn.z;
     note(state, token.text);
-    return { msg: token.text, trap: true };
+    return { id: token.id, msg: token.text, trap: true };
   }
   if (token.kind === "cycle") {
     const i = ((state.cycle[token.id] ?? -1) + 1) % token.values.length;
     state.cycle[token.id] = i;
     const val = token.values[i];
-    state.flags[token.flag] = val === token.open;
+    const opened = val === token.open;
+    state.flags[token.flag] = opened;
     const line = token.lines[val];
     note(state, line);
     syncGoal(world, state);
-    return { msg: line };
+    return { id: token.id, msg: line, opened };
   }
   if (token.kind === "lantern" && !state.light) {
-    return { msg: token.dark || "The carving stays dark." };
+    return { id: token.id, msg: token.dark || "The carving stays dark.", hint: true };
   }
   if ((token.kind === "angle" || token.kind === "pitch") && !facingOk(state, token)) {
-    return { msg: token.smear || "The cuts are a smear from this angle." };
+    return { id: token.id, msg: token.smear || "The cuts are a smear from this angle.", hint: true };
   }
-  if (token.letter && state.found[token.id]) {
-    return { msg: "You already hold that letter." };
-  }
+  if (token.letter && state.found[token.id]) return null;
+  const wasOpen = token.flag && state.flags[token.flag];
   const res = token.letter ? takeLetter(state, token) : { msg: token.text };
   if (!token.letter && token.flag) state.flags[token.flag] = true;
   if (!token.letter) note(state, token.text);
   syncGoal(world, state);
+  res.id = token.id;
+  res.took = true;
+  if (token.flag && !wasOpen && (token.flag === world.door || token.flag === world.door2)) res.opened = true;
   return res;
+}
+
+export function interact(world, state) {
+  const e = nearest(world, state);
+  if (!e) return { msg: "Nothing here." };
+  if (!state.inside) state.inside = {};
+  state.inside[e.id] = 1;
+  return applyOne(world, state, e) || { msg: "Nothing new here." };
+}
+
+/* Fire once each time the player walks onto something. Leaving the
+   spot arms it again. */
+export function sense(world, state) {
+  if (!state.inside) state.inside = {};
+  const events = [];
+  const here = new Set();
+  for (const e of entities(world)) {
+    if (distTo(state, e.x, e.z) > TOUCH) continue;
+    here.add(e.id);
+    const retry = e.kind === "lantern" && e.letter && !state.found[e.id] && state.light;
+    if (state.inside[e.id] && !retry) continue;
+    state.inside[e.id] = 1;
+    const res = applyOne(world, state, e);
+    if (res) events.push(res);
+  }
+  const cell = cellOf(state.px, state.pz);
+  let shut = false;
+  for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+    const x = cell.x + dx;
+    const z = cell.z + dz;
+    const row = world.grid[z];
+    const ch = row && row[x];
+    if (ch === "+" && world.door && !state.flags[world.door]) shut = true;
+    if (ch === "=" && world.door2 && !state.flags[world.door2]) shut = true;
+  }
+  if (shut) {
+    here.add("doorhint");
+    if (!state.inside.doorhint) {
+      state.inside.doorhint = 1;
+      events.push({ id: "doorhint", msg: DOOR_HINT, hint: true });
+    }
+  }
+  for (const id of Object.keys(state.inside)) {
+    if (!here.has(id)) delete state.inside[id];
+  }
+  return events;
 }
 
 export function lettersHeld(world, state) {
