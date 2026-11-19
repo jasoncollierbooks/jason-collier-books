@@ -679,13 +679,13 @@ function intentVector() {
     if (steering.moved || performance.now() - steering.t > 170) steering.armed = true;
   }
   if (steering && steering.armed && panel.hidden) {
-    route = null;
-    const at = overhead.worldToScreen(state.px, state.pz);
-    const dx = steering.x - at.x;
-    const dy = steering.y - at.y;
-    const len = Math.hypot(dx, dy);
-    if (len > 26) return { mx: dx / len, mz: dy / len, keys: false };
-    return null;
+    const spot = overhead.screenToWorld(steering.x, steering.y);
+    const goal = cellOf(spot.x, spot.z);
+    const key = goal.x + "," + goal.z;
+    if (steering.cell !== key) {
+      steering.cell = key;
+      walkToPoint(spot.x, spot.z);
+    }
   }
   if (route && route.length && panel.hidden) {
     let goal = route[0];

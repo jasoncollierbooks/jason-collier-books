@@ -24,7 +24,7 @@ button { cursor: pointer; }
 .portrait { width: 116px; height: 146px; object-fit: cover; border-radius: 8px; display: block; margin: 0 0 8px; }
 #vignette {
   position: fixed; inset: 0; z-index: 4; pointer-events: none;
-  background: radial-gradient(ellipse at center, transparent 62%, rgba(0,0,0,0.22) 100%);
+  background: radial-gradient(ellipse at center, transparent 72%, rgba(0,0,0,0.16) 100%);
 }
 #grain {
   position: fixed; inset: 0; z-index: 4; pointer-events: none; opacity: 0.08;
