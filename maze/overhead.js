@@ -116,6 +116,57 @@ function floorAt(world, flags, skirt, x, z) {
   return !wallAt(world, flags, skirt, x, z);
 }
 
+const boundsCache = new WeakMap();
+
+function contentBounds(world) {
+  let box = boundsCache.get(world);
+  if (box) return box;
+  const skirt = skirtOf(world);
+  const rows = world.grid.length;
+  const cols = world.grid[0].length;
+  let minX = cols;
+  let maxX = 0;
+  let minZ = rows;
+  let maxZ = 0;
+  for (let z = 0; z < rows; z++) {
+    for (let x = 0; x < cols; x++) {
+      if (skirt.has(x + "," + z)) continue;
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+      if (z < minZ) minZ = z;
+      if (z > maxZ) maxZ = z;
+    }
+  }
+  if (minX > maxX) { minX = 0; maxX = cols - 1; minZ = 0; maxZ = rows - 1; }
+  box = { x0: minX * CELL, z0: minZ * CELL, x1: (maxX + 1) * CELL, z1: (maxZ + 1) * CELL };
+  boundsCache.set(world, box);
+  return box;
+}
+
+function paintField(g, w, h, pal) {
+  g.fillStyle = pal.hedgeDeep;
+  g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 220; i++) {
+    g.globalAlpha = 0.28 + unit(i, 2, 8) * 0.55;
+    g.fillStyle = unit(i, 4, 1) > 0.62 ? pal.leaf : unit(i, 5, 2) > 0.4 ? pal.hedge : pal.face;
+    g.beginPath();
+    g.ellipse(
+      unit(i, 6, 3) * w,
+      unit(i, 7, 4) * h,
+      PX * (0.35 + unit(i, 8, 5) * 1.1),
+      PX * (0.18 + unit(i, 9, 6) * 0.45),
+      unit(i, 1, 7) * 3,
+      0,
+      Math.PI * 2
+    );
+    g.fill();
+  }
+  g.globalAlpha = 0.22;
+  g.fillStyle = pal.face;
+  for (let y = 0; y < h; y += PX * 1.6) g.fillRect(0, y + PX * 0.85, w, PX * 0.22);
+  g.globalAlpha = 1;
+}
+
 function paintWorld(world, flags) {
   const key = world.id + ":" + (flags && flags[world.door] ? "1" : "0") + (flags && flags[world.door2] ? "1" : "0");
   const hit = paints.get(world);
@@ -131,24 +182,7 @@ function paintWorld(world, flags) {
   const pal = PAL[world.id] || PAL.trail;
   const ox = pad * PX;
   const oy = pad * PX;
-  g.fillStyle = pal.terrain;
-  g.fillRect(0, 0, canvas.width, canvas.height);
-  for (let i = 0; i < 90; i++) {
-    g.fillStyle = i % 3 ? pal.terrainAlt : pal.grass;
-    g.globalAlpha = 0.28 + unit(i, 2, 3) * 0.25;
-    g.beginPath();
-    g.ellipse(
-      unit(i, 4, 5) * canvas.width,
-      unit(i, 6, 7) * canvas.height,
-      PX * (1.4 + unit(i, 8, 9) * 3.2),
-      PX * (0.7 + unit(i, 1, 2) * 1.6),
-      unit(i, 3, 4) * 4,
-      0,
-      Math.PI * 2
-    );
-    g.fill();
-  }
-  g.globalAlpha = 1;
+  paintField(g, canvas.width, canvas.height, pal);
 
   for (let z = 0; z < rows; z++) {
     for (let x = 0; x < cols; x++) {
@@ -547,11 +581,24 @@ export function createOverhead(canvas) {
     const { w, h } = cssSize();
     const cols = world.grid[0].length;
     const rows = world.grid.length;
+    const box = contentBounds(world);
+    const bw = Math.max(CELL, box.x1 - box.x0);
+    const bh = Math.max(CELL, box.z1 - box.z0);
     const phone = w < 760;
     const across = phone ? 6.4 : 12.5;
-    const close = Math.min(w, h) / across / CELL;
-    const fitScale = Math.min((w - 24) / (cols * CELL), (h - 24) / (rows * CELL));
-    return { w, h, cols, rows, close, fitScale };
+    const cover = Math.max(w / bw, h / bh);
+    const close = Math.max(Math.min(w, h) / across / CELL, cover);
+    return { w, h, cols, rows, close, fitScale: cover, box };
+  }
+
+  function clampCam(world, w, h) {
+    const box = contentBounds(world);
+    const viewW = w / scale;
+    const viewH = h / scale;
+    const bw = box.x1 - box.x0;
+    const bh = box.z1 - box.z0;
+    camX = viewW >= bw ? (box.x0 + box.x1) / 2 : Math.max(box.x0 + viewW / 2, Math.min(box.x1 - viewW / 2, camX));
+    camZ = viewH >= bh ? (box.z0 + box.z1) / 2 : Math.max(box.z0 + viewH / 2, Math.min(box.z1 - viewH / 2, camZ));
   }
 
   function resize() {
@@ -602,6 +649,7 @@ export function createOverhead(canvas) {
       camX += (gx - camX) * c;
       camZ += (gz - camZ) * c;
     }
+    clampCam(world, m.w, m.h);
     canvas.dataset.zoom = fit ? "maze" : "near";
     canvas.dataset.scale = scale.toFixed(2);
     canvas.dataset.cam = camX.toFixed(2) + "," + camZ.toFixed(2);
@@ -648,8 +696,7 @@ export function createOverhead(canvas) {
     const clock = extras.clock || 0;
     const reduce = !!extras.reduce;
 
-    g.fillStyle = pal.terrain;
-    g.fillRect(0, 0, w, h);
+    paintField(g, w, h, pal);
     const origin = project(-painted.pad * CELL, -painted.pad * CELL, w, h);
     const drawW = painted.canvas.width * (cell / painted.px);
     const drawH = painted.canvas.height * (cell / painted.px);
