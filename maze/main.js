@@ -1,10 +1,11 @@
 import { WORLDS, ORDER, worldById } from "./worlds.js";
 import { GAME_TITLE } from "./title.js";
 import { createOverhead } from "./overhead.js";
-import { preloadWorld, speak, speakChain, stopSpeak, unlockSpeech, busy } from "./speech.js?v=4";
+import { preloadWorld, speak, speakChain, stopSpeak, unlockSpeech, busy } from "./speech.js?v=5";
 import {
   CELL, SPEED, createState, movePlayer, interact, nearest, objective,
   lettersHeld, letterProgress, submitCode, hintFor, cellOf, wayFrom,
+  routeCells, center, blocked,
 } from "./logic.js";
 import { peopleFor, pointLine, idleLine } from "./cast.js";
 import { createAudio } from "./audio.js";
@@ -29,7 +30,6 @@ let people = [];
 let guideWay = null;
 let hereCell = null;
 let moving = false;
-let lookingUp = false;
 const idle = { x: 0, z: 0, t: 0 };
 let voicedAt = 0;
 let sprintUntil = 0;
@@ -42,7 +42,8 @@ let saveAt = 0;
 const keys = {};
 const ptrs = new Map();
 let steering = null;
-let clickGoal = null;
+let route = null;
+const WALK_TIP = "Hold anywhere. You walk toward your finger.";
 let pinch = null;
 const sprites = new Map();
 
@@ -110,7 +111,6 @@ function restore(run) {
   const c = cellOf(state.px, state.pz);
   state.stood = c.x + "," + c.z;
   state.msg = state.notes[state.notes.length - 1] || world.intro;
-  lookingUp = false;
 }
 
 function clearedCount() {
@@ -158,7 +158,7 @@ function drawHub() {
 
 function openPanel(html, lock) {
   steering = null;
-  clickGoal = null;
+  route = null;
   panel.hidden = false;
   panel.innerHTML = `<div class="scrim"${lock ? "" : " data-close"}></div><div class="sheet" role="dialog">${html}</div>`;
 }
@@ -175,13 +175,13 @@ function closePanel() {
 
 function helpHtml() {
   return `<h2>How to play</h2>
-    <p>You are looking down on the maze. North is the gold needle. Fog covers what you have not walked.</p>
-    <p>Some letters show only under the lantern. One, on the ceiling, shows only when you look up. A few only read if you are facing west when you use them. Walk west, then use the wall.</p>
+    <p>You are looking down on the maze. North is the gold needle. A soft mist covers what you have not walked.</p>
+    <p>Some letters show only under the lantern. Stand beside a mark and use it. The side you face does not matter.</p>
     <p>A bright door is often a lie. A room that brings you back is telling you the truth about itself. Walls move when you do the thing the room asked for.</p>
     <p>The gate wants the letters you found, in the order a carving explains. Hints start vague. The third one is plain.</p>
-    <p><strong>Phone.</strong> Hold a finger on the maze and you walk toward it. Drag to steer. Let go to stop. Pinch, or Whole maze, pulls the camera back. Light, Use, Hint, and Notes stay at the bottom. Up looks at the ceiling.</p>
-    <p><strong>Keyboard.</strong> Arrows or WASD walk. Click a spot to walk there. Shift hurries. F lantern. L looks up. E or Space uses what is beside you, or talks to someone standing there. H hint. M zooms out to the whole maze.</p>
-    <p>Gold stones mark the next steps you can already see. A small arrow points the way. Someone at a junction will point out loud. Stand still and the storyteller will too. Trail markers can be turned off in settings.</p>
+    <p><strong>Phone.</strong> Hold a finger on the maze and you walk toward it. Drag to steer. Let go to stop. A tap walks the path to that spot. Pinch, or All, pulls the camera back.</p>
+    <p><strong>Keyboard.</strong> Arrows or WASD walk. Click a spot and the maze walks you there. Shift hurries. F lantern. E or Space uses what is beside you, or talks to someone standing there. H hint. M zooms out to the whole maze.</p>
+    <p>Gold stones mark the next steps, faint when they run into the mist. A small arrow points the way. Someone at a junction will point out loud. Stand still and the storyteller will too. Trail markers can be turned off in settings.</p>
     <p>People in the maze speak. Captions are off until you turn them on.</p>
     <div class="row"><button type="button" data-close>Step in</button></div>`;
 }
@@ -275,22 +275,10 @@ function applyLight() {
   if (btn) btn.classList.toggle("on", on);
 }
 
-function syncLook() {
-  if (state) state.pitch = lookingUp ? -0.9 : 0;
-  const btn = document.getElementById("btn-up");
-  if (btn) {
-    btn.classList.toggle("on", lookingUp);
-    btn.textContent = lookingUp ? "Down" : "Up";
-  }
-  document.body.classList.toggle("looking-up", lookingUp);
-}
-
 function showChrome(on) {
   const zoom = document.getElementById("btn-zoom");
-  const up = document.getElementById("btn-up");
   const cc = document.getElementById("btn-captions");
   if (zoom) zoom.hidden = !on;
-  if (up) up.hidden = !on;
   if (cc) {
     cc.hidden = !on;
     cc.classList.toggle("on", !!save.captions);
@@ -307,7 +295,6 @@ function enter(id, resume) {
   world = next;
   state = createState(world);
   if (resume && save.run && save.run.id === id) restore(save.run);
-  else lookingUp = false;
   people = peopleFor(world).map((p, i) => Object.assign({}, p, {
     bob: i * 1.7,
     img: p.sprite ? loadSprite(p.sprite, true) : null,
@@ -324,10 +311,9 @@ function enter(id, resume) {
   document.body.classList.add("playing");
   seedMap();
   showChrome(true);
-  syncLook();
   applyLight();
   const zoom = document.getElementById("btn-zoom");
-  if (zoom) zoom.textContent = "Whole maze";
+  if (zoom) zoom.textContent = "All";
   idle.x = state.px;
   idle.z = state.pz;
   idle.t = clock;
@@ -361,8 +347,10 @@ function showWalkTip(then) {
   persist();
   if (tip) {
     tip.hidden = false;
-    tip.textContent = "Hold anywhere. You walk toward your finger.";
+    tip.textContent = WALK_TIP;
   }
+  speak(WALK_TIP, { id: "narrator", name: "Tip" });
+  markSpeaking("narrator", WALK_TIP);
   setTimeout(() => {
     if (tip) tip.hidden = true;
     if (world) then();
@@ -523,7 +511,7 @@ function leave() {
   stopSpeak();
   speaking = null;
   steering = null;
-  clickGoal = null;
+  route = null;
   closePanel();
   world = null;
   state = null;
@@ -601,17 +589,32 @@ function toggleLight() {
   refreshHud();
 }
 
-function toggleLook() {
-  if (!state) return;
-  lookingUp = !lookingUp;
-  syncLook();
-}
-
 function toggleZoom() {
   if (!world) return;
   const on = overhead.setFit(!overhead.fit, world);
   const btn = document.getElementById("btn-zoom");
-  if (btn) btn.textContent = on ? "Close in" : "Whole maze";
+  if (btn) btn.textContent = on ? "Near" : "All";
+}
+
+function walkToPoint(wx, wz) {
+  const here = cellOf(state.px, state.pz);
+  let goal = cellOf(wx, wz);
+  if (blocked(world, goal.x, goal.z, state.flags)) {
+    let best = null;
+    let bestD = 1e9;
+    for (let z = goal.z - 4; z <= goal.z + 4; z++) {
+      for (let x = goal.x - 4; x <= goal.x + 4; x++) {
+        if (blocked(world, x, z, state.flags)) continue;
+        const d = (x - goal.x) * (x - goal.x) + (z - goal.z) * (z - goal.z);
+        if (d < bestD) { best = { x, z }; bestD = d; }
+      }
+    }
+    if (!best) return;
+    goal = best;
+  }
+  const cells = routeCells(world, state, here.x, here.z, goal.x, goal.z);
+  if (!cells || cells.length < 2) { route = null; return; }
+  route = cells.slice(1).map(([x, z]) => center(x, z));
 }
 
 function doHint() {
@@ -667,12 +670,16 @@ function intentVector() {
   if (keys.a || keys.arrowleft) mx -= 1;
   if (keys.d || keys.arrowright) mx += 1;
   if (mx || mz) {
-    clickGoal = null;
+    route = null;
     steering = null;
     const len = Math.hypot(mx, mz);
     return { mx: mx / len, mz: mz / len, keys: true };
   }
-  if (steering && panel.hidden) {
+  if (steering && !steering.armed) {
+    if (steering.moved || performance.now() - steering.t > 170) steering.armed = true;
+  }
+  if (steering && steering.armed && panel.hidden) {
+    route = null;
     const at = overhead.worldToScreen(state.px, state.pz);
     const dx = steering.x - at.x;
     const dy = steering.y - at.y;
@@ -680,11 +687,19 @@ function intentVector() {
     if (len > 26) return { mx: dx / len, mz: dy / len, keys: false };
     return null;
   }
-  if (clickGoal && panel.hidden) {
-    const dx = clickGoal.x - state.px;
-    const dz = clickGoal.z - state.pz;
-    const len = Math.hypot(dx, dz);
-    if (len < 0.18) { clickGoal = null; return null; }
+  if (route && route.length && panel.hidden) {
+    let goal = route[0];
+    let dx = goal.x - state.px;
+    let dz = goal.z - state.pz;
+    let len = Math.hypot(dx, dz);
+    if (len < 0.2) {
+      route.shift();
+      if (!route.length) return null;
+      goal = route[0];
+      dx = goal.x - state.px;
+      dz = goal.z - state.pz;
+      len = Math.hypot(dx, dz) || 1;
+    }
     return { mx: dx / len, mz: dz / len, keys: false };
   }
   return null;
@@ -706,7 +721,7 @@ function frame(now) {
       const px0 = state.px;
       const pz0 = state.pz;
       movePlayer(world, state, wish.mx * pace * dt, wish.mz * pace * dt);
-      if (clickGoal && Math.hypot(state.px - px0, state.pz - pz0) < 0.004) clickGoal = null;
+      if (route && Math.hypot(state.px - px0, state.pz - pz0) < 0.004) route = null;
     }
     revealMap();
     updateGuide();
@@ -736,7 +751,6 @@ function frame(now) {
     clock,
     reduce,
     moving,
-    lookingUp,
     speaking: speaking && clock < speaking.until ? speaking : null,
   });
   if (panel.hidden) refreshHud();
@@ -762,7 +776,6 @@ function bind() {
   document.getElementById("btn-use").addEventListener("click", () => { audio.resume(); useNow(); });
   document.getElementById("btn-hint").addEventListener("click", () => { audio.resume(); doHint(); });
   document.getElementById("btn-book").addEventListener("click", () => openPanel(notesHtml(), false));
-  document.getElementById("btn-up").addEventListener("click", () => { audio.resume(); toggleLook(); });
   document.getElementById("btn-zoom").addEventListener("click", () => { if (world) toggleZoom(); });
   document.getElementById("btn-captions").addEventListener("click", () => {
     save.captions = !save.captions;
@@ -828,7 +841,6 @@ function bind() {
     if (k === "e" || k === " ") useNow();
     if (k === "h") doHint();
     if (k === "m") toggleZoom();
-    if (k === "l") toggleLook();
     if (k === "j") openPanel(notesHtml(), false);
   });
   window.addEventListener("keyup", (e) => { keys[e.key.toLowerCase()] = false; });
@@ -860,9 +872,10 @@ function bind() {
       sx: e.clientX,
       sy: e.clientY,
       moved: false,
+      armed: false,
+      t: performance.now(),
       type: e.pointerType || "mouse",
     };
-    clickGoal = null;
   });
   window.addEventListener("pointermove", (e) => {
     if (!ptrs.has(e.pointerId)) return;
@@ -872,7 +885,7 @@ function bind() {
       const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) || 1;
       overhead.setScale(pinch.scale * (dist / pinch.dist), world);
       const btn = document.getElementById("btn-zoom");
-      if (btn) btn.textContent = "Whole maze";
+      if (btn) btn.textContent = "All";
       return;
     }
     if (!steering || e.pointerId !== steering.id) return;
@@ -886,7 +899,10 @@ function bind() {
     if (ptrs.size < 2) pinch = null;
     if (!was) return;
     steering = null;
-    if (was.type === "mouse" && !was.moved && world) clickGoal = overhead.screenToWorld(was.x, was.y);
+    if (!was.armed && !was.moved && world) {
+      const spot = overhead.screenToWorld(was.x, was.y);
+      walkToPoint(spot.x, spot.z);
+    }
   }
   window.addEventListener("pointerup", endPtr);
   window.addEventListener("pointercancel", endPtr);
@@ -896,7 +912,7 @@ function bind() {
     e.preventDefault();
     overhead.nudge(e.deltaY > 0 ? 0.9 : 1.11, world);
     const btn = document.getElementById("btn-zoom");
-    if (btn) btn.textContent = overhead.fit ? "Close in" : "Whole maze";
+    if (btn) btn.textContent = overhead.fit ? "Near" : "All";
   }, { passive: false });
   window.addEventListener("resize", () => overhead.resize());
   document.addEventListener("visibilitychange", () => { if (document.hidden) { snapshot(); persist(); } });

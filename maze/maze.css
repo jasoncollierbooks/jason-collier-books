@@ -20,24 +20,11 @@ body {
 button, input { font: inherit; color: inherit; }
 button { cursor: pointer; }
 #view { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
-#btn-zoom, #btn-up, #btn-captions {
-  position: fixed; z-index: 20; pointer-events: auto;
-  min-height: 36px; padding: 0 12px; border-radius: 999px;
-  border: 1px solid var(--line); background: rgba(16, 14, 12, 0.78); color: var(--ink);
-  font-family: "Josefin Sans", sans-serif; letter-spacing: 0.06em; font-size: 0.78rem;
-}
-#btn-zoom { top: calc(54px + var(--safe-t)); right: 12px; }
-#btn-up { top: calc(96px + var(--safe-t)); right: 12px; min-width: 64px; }
-#btn-up.on { border-color: var(--gold); color: var(--gold); }
-#btn-captions {
-  top: calc(138px + var(--safe-t)); right: 12px;
-  min-width: 64px;
-}
 #btn-captions.on { border-color: var(--gold); color: var(--gold); }
 .portrait { width: 116px; height: 146px; object-fit: cover; border-radius: 8px; display: block; margin: 0 0 8px; }
 #vignette {
   position: fixed; inset: 0; z-index: 4; pointer-events: none;
-  background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.42) 100%);
+  background: radial-gradient(ellipse at center, transparent 62%, rgba(0,0,0,0.22) 100%);
 }
 #grain {
   position: fixed; inset: 0; z-index: 4; pointer-events: none; opacity: 0.08;
@@ -145,11 +132,18 @@ button { cursor: pointer; }
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 8;
   height: 0; overflow: visible; pointer-events: none;
 }
-#pads { position: absolute; right: 14px; bottom: calc(16px + var(--safe-b)); display: flex; gap: 8px; pointer-events: auto; }
+#pads {
+  position: absolute; left: 8px; right: 8px; bottom: calc(8px + var(--safe-b));
+  display: flex; gap: 6px; pointer-events: auto;
+}
 #pads button {
-  min-width: 64px; min-height: 64px; border-radius: 16px;
-  border: 1px solid var(--line); background: rgba(16,14,12,0.72);
-  font-family: "Josefin Sans", sans-serif; letter-spacing: 0.06em;
+  flex: 1; min-width: 0; min-height: 46px; padding: 0 4px; border-radius: 12px;
+  border: 1px solid var(--line); background: rgba(16,14,12,0.78);
+  font-family: "Josefin Sans", sans-serif; letter-spacing: 0.04em; font-size: 0.78rem;
+}
+@media (min-width: 760px) {
+  #pads { left: auto; width: auto; right: 14px; bottom: calc(16px + var(--safe-b)); }
+  #pads button { flex: none; min-width: 72px; min-height: 56px; font-size: 0.9rem; }
 }
 #pads button.on { border-color: var(--gold); color: var(--gold); }
 #panel { position: fixed; inset: 0; z-index: 9; }
@@ -188,19 +182,21 @@ button { cursor: pointer; }
   #keys { display: none; }
   #cross { display: none; }
 }
-@media (max-width: 720px) {
-  #pads { right: 8px; gap: 6px; }
-  #pads button { min-width: 52px; min-height: 48px; border-radius: 12px; font-size: 0.82rem; }
-  #objective, #bearing { max-width: calc(100% - 120px); }
-  #btn-zoom, #btn-up, #btn-captions { right: 8px; }
-  #keys { display: none; }
-  #objective, #toast, #panel p { font-size: 1.05rem; }
-}
-@media (max-width: 480px) {
-  #pads {
-    right: 8px; bottom: calc(14px + var(--safe-b));
-    display: grid; grid-template-columns: 60px 60px; gap: 6px; width: auto;
+@media (max-width: 760px) {
+  body.playing #top { padding-top: calc(4px + var(--safe-t)); padding-bottom: 0; }
+  body.playing .wordmark { font-size: 0.68rem; letter-spacing: 0.14em; }
+  body.playing #btn-help { min-height: 32px; min-width: 0; padding: 0 8px; font-size: 0.66rem; }
+  #hud { top: calc(34px + var(--safe-t)); left: 10px; right: 10px; }
+  #kicker { font-size: 0.58rem; }
+  #title { font-size: 1.02rem; max-width: 100%; line-height: 1.05; }
+  #objective {
+    max-width: 100%; font-size: 0.92rem; margin-top: 0;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
   }
-  #pads button { width: 60px; min-width: 0; min-height: 48px; font-size: 0.75rem; letter-spacing: 0.02em; padding: 0; }
+  #bearing { max-width: 100%; font-size: 0.72rem; }
+  #held { font-size: 0.75rem; }
+  #walk-tip, #prompt { bottom: calc(62px + var(--safe-b)); }
+  #toast { bottom: calc(64px + var(--safe-b)); }
+  #keys { display: none; }
 }
 [hidden] { display: none !important; }
