@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Josefin+Sans:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./maze.css?v=18">
+<link rel="stylesheet" href="./maze.css?v=19">
 </head>
 <body>
 <canvas id="view" aria-label="Overhead maze"></canvas>
@@ -35,24 +35,25 @@
   <h1 id="title"></h1>
   <p id="objective"></p>
   <p id="held"></p>
+  <p id="clock"></p>
   <p id="bearing" hidden><i id="needle" aria-hidden="true"></i><span id="bearing-name"></span></p>
 </div>
 <p id="toast" hidden aria-live="polite"></p>
 <p id="walk-tip" hidden>Hold anywhere. You walk toward your finger.</p>
 <p id="prompt" hidden></p>
-<p id="keys">WASD or arrows walk · click a spot and the path is walked · Shift hurry · E use · F light · M whole maze</p>
+<p id="keys">WASD or arrows walk · click a spot and the path is walked · Shift hurry · F light · H hint · M whole maze</p>
 <div id="touch" hidden>
   <div id="pads">
     <button type="button" id="btn-light">Light</button>
-    <button type="button" id="btn-use">Use</button>
     <button type="button" id="btn-hint">Hint</button>
+    <button type="button" id="btn-again" hidden>Again</button>
     <button type="button" id="btn-book">Notes</button>
     <button type="button" id="btn-zoom" hidden>All</button>
     <button type="button" id="btn-captions" hidden>CC</button>
   </div>
 </div>
 <div id="panel" hidden></div>
-<script type="module" src="./main.js?v=19"></script>
+<script type="module" src="./main.js?v=20"></script>
 <noscript><p style="padding:24px">Collier Adventure Mazes needs JavaScript.</p></noscript>
 </body>
 </html>

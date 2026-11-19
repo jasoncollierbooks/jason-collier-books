@@ -32,7 +32,7 @@ const COPY = {
     intro: "Find four letters, then the gate at the end of the trail. The handbills lie. The rope does not.",
     win: "The trail opens. Jang will not be putting that on a handbill.",
     wrong: "The carving is not the word. Roll it back by the axle that is ready to snap.",
-    near: "You're close. Use what is in front of you.",
+    near: "You're close. Walk onto it.",
     closing: "All four letters are in your hands. The carving by the gate tells you the order.",
     goals: {
       start: "Find four letters, then the gate. The rope opens the first wall.",
@@ -46,11 +46,11 @@ const COPY = {
     ],
     tokens: {
       rope: {
-        goal: "Use the rope. It opens a wall and gives you a letter.",
+        goal: "Walk onto the rope. It opens a wall and gives you a letter.",
         text: "The rope takes the letter R, and a wall shifts. Three letters left, then the gate.",
         hints: [
           "Jang already said it. The key is not the punchline.",
-          "Use the rope. A wall is waiting to move.",
+          "Walk onto the rope. A wall is waiting to move.",
           "The rope gives you R and opens the way on.",
         ],
       },
@@ -69,7 +69,7 @@ const COPY = {
         dark: "The ox brand is there. The dark is holding it.",
         hints: [
           "Something round was branded past the rope. Light it.",
-          "Lantern on, then use the ox brand.",
+          "Lantern on, then walk onto the ox brand.",
           "The ox brand gives you O.",
         ],
       },
@@ -79,7 +79,7 @@ const COPY = {
         smear: "The grain is a smear until you look west, along the boards.",
         hints: [
           "A letter hides in the grain. Face the way the boards run.",
-          "Stand at the boards and face west, then use them.",
+          "Walk onto the boards. The letter is cut along the grain.",
           "Face west at the boards. The letter is P.",
         ],
       },
@@ -98,7 +98,7 @@ const COPY = {
     intro: "Find four letters in Pine Knot, then the gate. The napkin is not a map to gold.",
     win: "The ridge lets you off it. Opal would have said yes either way.",
     wrong: "Read the first letter of each line by the gate, from the top. The story under them is not the word.",
-    near: "You're on it. Use what is in front of you.",
+    near: "You're on it. Walk onto it.",
     closing: "Four letters. The verse by the gate is an acrostic. Read down the first letters.",
     goals: {
       start: "Find four letters, then the gate. The leaves on the street have the first one.",
@@ -126,16 +126,16 @@ const COPY = {
         dark: "The napkin is grease and ketchup until the lantern is on it.",
         hints: [
           "The napkin is grease and ketchup. It is not a treasure map.",
-          "Lantern on, then use the napkin.",
+          "Lantern on, then walk onto the napkin.",
           "The napkin gives you O, and the circles stop.",
         ],
       },
       hole: {
-        goal: "The groundhog has the dirt piled in the square. Use the hole. It opens a wall.",
+        goal: "The groundhog has the dirt piled in the square. Walk onto the hole. It opens a wall.",
         text: "The groundhog gives up the dirt. A wall drops open.",
         hints: [
           "Something in the square is professional about dirt.",
-          "Use the groundhog hole in the square.",
+          "Walk onto the groundhog hole in the square.",
           "The hole opens a wall. The reward poster is past it.",
         ],
       },
@@ -154,7 +154,7 @@ const COPY = {
         smear: "The checkerboard is a blur until you look west along the squares.",
         hints: [
           "The checkerboard has a letter along the squares.",
-          "Stand at the checkerboard and face west, then use it.",
+          "Walk onto the checkerboard. The letter reads from the squares.",
           "Face west at the checkerboard. The letter is A.",
         ],
       },
@@ -173,7 +173,7 @@ const COPY = {
     intro: "Find four letters on the ridge, then the gate. Feed the fire. The mountain is not empty.",
     win: "The ridge lets the fire be a fire again. You can leave the camp standing.",
     wrong: "The carving is the nights on the camera away from the word. Seven, not anything else in camp.",
-    near: "You're close. Use what the ridge put in front of you.",
+    near: "You're close. Walk onto what the ridge put in front of you.",
     closing: "Four letters. The carving rolls back by the nights scratched on the camera.",
     goals: {
       start: "Find four letters, then the gate. Feed the fire first. The pass stays shut until you do.",
@@ -191,7 +191,7 @@ const COPY = {
         text: "You feed the fire. It gives you F, and a snow wall drops.",
         hints: [
           "The thing on this ridge that answers is the thing you feed.",
-          "Use the campfire.",
+          "Walk onto the campfire.",
           "The fire gives you F and opens the way down.",
         ],
       },
@@ -201,7 +201,7 @@ const COPY = {
         dark: "The tent canvas is just canvas until the lantern crosses it.",
         hints: [
           "The draw turns you if you walk it dark. The tent past it wants the light.",
-          "Cross the draw with the lantern on, then use the tent.",
+          "Cross the draw with the lantern on, then walk onto the tent.",
           "Lantern on at the tent. The letter is I.",
         ],
       },
@@ -211,7 +211,7 @@ const COPY = {
         smear: "The bark reads only if you look west, along the trunk.",
         hints: [
           "The spruce past the draw is carved. Face along it.",
-          "Stand at the spruce and face west, then use the bark.",
+          "Walk onto the spruce. The letter is in the bark.",
           "Face west at the spruce. The letter is R.",
         ],
       },
@@ -240,7 +240,7 @@ const COPY = {
     intro: "Find four letters in the ship, then the gate. Leave the lever marked don't alone. The goats follow a lamp.",
     win: "The hangar can have its storm back. Mira keeps the color in the gauges.",
     wrong: "The carving stutters. Keep the first, third, fifth, and seventh letters. Let the rest rust.",
-    near: "You're close. Use it, unless it is the lever marked don't.",
+    near: "You're close. Walk onto it, unless it is the lever marked don't.",
     closing: "Four letters. The carving by the gate keeps more than it wants. Take every other one.",
     goals: {
       start: "Find four letters, then the gate. Mira's plate is the first. The lever beside it is not.",
@@ -283,7 +283,7 @@ const COPY = {
         smear: "The stamp shows only if you look west, down the pipe.",
         hints: [
           "The pipe is stamped. Look along it.",
-          "Stand at the pipe and face west, then use it.",
+          "Walk onto the pipe. The letter is cut there.",
           "Face west at the pipe. The letter is N.",
         ],
       },
@@ -310,7 +310,7 @@ const COPY = {
     intro: "Find four letters in the hum, then the gate. The bright door is an invitation. Invitations are not exits.",
     win: "The hum answers, once. The signal keeps its color.",
     wrong: "The carving is a mirror. A speaks as Z, B as Y. It is not a shift, and the invitation's letter does not belong.",
-    near: "You're close. Use what is holding still.",
+    near: "You're close. Walk onto what is holding still.",
     closing: "Four letters. Mirror the carving. A is Z, and the rest of the alphabet folds the same way.",
     goals: {
       start: "Find four letters, then the gate. Answer the hum first. The bright door is a lie.",
@@ -328,7 +328,7 @@ const COPY = {
         text: "You answer the hum. The wall ahead unseats itself.",
         hints: [
           "The room is listening for an answer, not a brighter door.",
-          "Use the pedestal.",
+          "Walk onto the pedestal.",
           "The pedestal opens the way deeper. The bright door is a lie.",
         ],
       },
@@ -337,7 +337,7 @@ const COPY = {
         text: "You leave a chalk mark. It will not follow you through a lying arch.",
         hints: [
           "One arch past the hum repeats the room.",
-          "Use the chalk, then try an arch. If you return without the mark, that arch lied.",
+          "Walk onto the chalk, then try an arch. If you return without the mark, that arch lied.",
           "One arch repeats the room. The letter is on the arch that does not.",
         ],
       },
@@ -356,7 +356,7 @@ const COPY = {
         dark: "The pocket is only static until the lantern fills it.",
         hints: [
           "A pocket past the arches stays dark on purpose.",
-          "Lantern on in the pocket, then use the wall.",
+          "Lantern on in the pocket, then walk onto the wall.",
           "Lantern on in the pocket. The letter is O.",
         ],
       },
@@ -375,7 +375,7 @@ const COPY = {
         smear: "The ring is on the ceiling. Look up.",
         hints: [
           "Not every letter is on a wall.",
-          "Stand under the ring and look up, then use what you see.",
+          "Walk onto the ring. The letter is overhead, and it is yours when you stand there.",
           "Look up at the ring. The letter is E.",
         ],
       },
@@ -393,7 +393,7 @@ const COPY = {
     intro: "Find four letters in the lab, then the gate. The shell was born twice. The year on the clipboard is the wrong count.",
     win: "The membrane takes the second birth. The log can stay open.",
     wrong: "Roll the carving back by the births. Twice. Not by 1982.",
-    near: "You're close. Use what the bench is showing you.",
+    near: "You're close. Walk onto what the bench is showing you.",
     closing: "Four letters. The carving rolls back by the two births, not by the year.",
     goals: {
       start: "Find four letters, then the gate. The clipboard has the first. The scope has to show a sine before the lab opens.",
@@ -416,11 +416,11 @@ const COPY = {
         ],
       },
       scope: {
-        goal: "Use the scope until it shows a sine. Square and noise are lying.",
+        goal: "Walk onto the scope until it shows a sine. Square and noise are lying.",
         text: "A sine. The honest trace. The membrane ahead unlocks.",
         hints: [
           "The scope cycles. Square and noise are the wrong traces.",
-          "Use the scope until it reads sine.",
+          "Walk onto the scope until it reads sine.",
           "Set the scope to sine. The door opens.",
         ],
       },
@@ -430,7 +430,7 @@ const COPY = {
         dark: "The chamber wall is blank without the beam.",
         hints: [
           "The basement repeats if the beam is off. Past it, a letter needs the same light.",
-          "Lantern on, cross the hall, then use the chamber.",
+          "Lantern on, cross the hall, then walk onto the chamber.",
           "Lantern on at the chamber. The letter is N.",
         ],
       },
@@ -440,7 +440,7 @@ const COPY = {
         smear: "The warning mark reads only if you look west along the paint.",
         hints: [
           "A warning mark is painted on a wall. Look along the paint, facing west.",
-          "Stand at the trefoil and face west, then use it.",
+          "Walk onto the trefoil. The letter is cut there.",
           "Face west at the trefoil. The letter is O.",
         ],
       },
@@ -467,7 +467,7 @@ const COPY = {
     intro: "Find four tagged letters, then the gate. Turn at the seed. The garden door is what grew, not the way out.",
     win: "The seed is still a seed. What grew can wait in the garden.",
     wrong: "Four and twelve are counts, not the word. The clock names the order: hull, circuit, vein, edge.",
-    near: "You're close. Use what is planted here.",
+    near: "You're close. Walk onto what is planted here.",
     closing: "Four tagged letters. The clock by the gate, from the top going clockwise, is the order.",
     goals: {
       start: "Find four tagged letters, then the gate. The hull stamp is first. Turn at the seed before the far arch.",
@@ -490,11 +490,11 @@ const COPY = {
         ],
       },
       vein: {
-        goal: "Use the crystal seed. The far arch keeps folding until you turn there.",
+        goal: "Walk onto the crystal seed. The far arch keeps folding until you turn there.",
         text: "You turn at the seed. The vein in it is E, tagged Vein. The far arch stops folding.",
         hints: [
           "The corridor folds if you walk the arch before the seed.",
-          "Use the crystal in the long corridor.",
+          "Walk onto the crystal in the long corridor.",
           "The seed gives you E, tagged Vein, and the arch lets you through.",
         ],
       },
@@ -504,7 +504,7 @@ const COPY = {
         dark: "The circuitry is dark glass until the lantern is on it.",
         hints: [
           "After the seed lets you through, a letter is still dark.",
-          "In the room past the arch, lantern on, use the circuit.",
+          "In the room past the arch, lantern on, walk onto the circuit.",
           "The circuit gives you E, tagged Circuit.",
         ],
       },
@@ -514,7 +514,7 @@ const COPY = {
         smear: "The edge-cut shows only if you look west, along the facet.",
         hints: [
           "The facet is cut. Look along it.",
-          "Stand at the facet and face west, then use it.",
+          "Walk onto the facet. The letter is cut there.",
           "Face west at the facet. The letter is D, tagged Edge.",
         ],
       },
@@ -532,7 +532,7 @@ const COPY = {
     intro: "Find four letters in the hive, then the gate. You are the Ninth. The other counts on the wall are bait.",
     win: "The envoy keeps its number. The hive has the word it already was.",
     wrong: "Fourteen, one, and ten billion are bait. Roll the carving back by nine.",
-    near: "You're close. Use what the glass is willing to show.",
+    near: "You're close. Walk onto what the glass is willing to show.",
     closing: "Four letters. Step the carving back by the envoy's own number. Nine.",
     goals: {
       start: "Find four letters, then the gate. The fate wall is first. Cross the jet with the lamp out.",
@@ -570,16 +570,16 @@ const COPY = {
         smear: "The shard reads only if you look west along the edge.",
         hints: [
           "The shard is edged with a letter. Look along it.",
-          "Stand at the shard and face west, then use it.",
+          "Walk onto the shard. The letter is cut in the glass.",
           "Face west at the shard. The letter is I.",
         ],
       },
       lens: {
-        goal: "Use the lens. The last room is on the far side of that bend.",
+        goal: "Walk onto the lens. The last room is on the far side of that bend.",
         text: "The lens bends. The door to the last room opens.",
         hints: [
           "There is a lens. It bends the hall.",
-          "Use the lens. The last room is past that bend.",
+          "Walk onto the lens. The last room is past that bend.",
           "The lens opens the last room. The letter is past it.",
         ],
       },
