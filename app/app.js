@@ -47,7 +47,7 @@ $('#listenList').innerHTML=
  item(R+'media/rusty-cyoa/posters/s1.jpg','The Rusty Stack','Cartoon · watch, then choose · 4 endings','data-frame="rusty-adventure.html" data-title="The Rusty Stack Adventure"')+
  buyItem(R+'images/the-rusty-stack.jpg','The Rusty Stack: the book','Buy on Amazon · 6×9 paperback with 25 airship mazes','https://www.amazon.com/dp/B0HPDZTVQ1')+
  buyItem(R+'images/the-rusty-stack.jpg','The Rusty Stack: Kindle edition','Buy on Amazon · read it on Kindle','https://www.amazon.com/dp/B0HPRLQ67M')+
- item(R+'images/dogs/cover-thumb.jpg','Dogs That Chose Me','Audiobook · a short story by Jason Collier · 9:33 · chapters','data-play="dogs"')+
+ item(R+'images/dogs/cover-thumb.jpg','Dogs That Chose Me','Audiobook · a short story by Jason Collier · '+CE_DOGS.len+' · chapters','data-play="dogs"')+
  item(R+'images/old-man-on-the-mountain.jpg','Old Man On The Mountain','Audiobook · app player','data-play="oldman"')+
  item(R+'images/lab/born-twice-og.jpg',"Thorne's Lab Journal",'Dr. Thorne reads all 8 entries · 54:48','data-play="thorne"')+
  item(R+'images/jang-and-tom-wagon-masters.jpg','Jang & Tom audiobooks','Wagon Masters, Philadelphia Follies, Transcontinental','data-frame="audiobooks.html#jang-and-tom" data-title="Jang & Tom"')+
@@ -79,12 +79,13 @@ var tt;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('show
 // player
 var au=$('#au'),curT=null,speeds=[1,1.25,1.5,2,0.75],si=0;
 function fmt(s){s=Math.floor(s||0);return Math.floor(s/60)+':'+('0'+s%60).slice(-2)}
-function load(k,open,off){var t=TRACKS[k];if(curT!==k){var pos=+(localStorage.getItem('ce-pos-'+k)||0);au.addEventListener('loadedmetadata',function f(){au.removeEventListener('loadedmetadata',f);if(off!=null)au.currentTime=off;else if(pos>5&&pos<au.duration-10)au.currentTime=pos},{once:true});curT=k;au.src=t.src;au.playbackRate=speeds[si];$('#plTitle').textContent=$('#miniT').textContent=t.t;$('#plSub').textContent=$('#miniS').textContent=t.s;$('#plArt').src=$('#mini img').src=t.art;window.CE&&CE.onTrack&&CE.onTrack(k,t);
+function load(k,open,off){var t=TRACKS[k];var wb=$('#plWatch');if(wb)wb.hidden=k!=='dogs';if(curT!==k){var pos=+(localStorage.getItem('ce-pos-'+k)||0);au.addEventListener('loadedmetadata',function f(){au.removeEventListener('loadedmetadata',f);if(off!=null)au.currentTime=off;else if(pos>5&&pos<au.duration-10)au.currentTime=pos},{once:true});curT=k;au.src=t.src;au.playbackRate=speeds[si];$('#plTitle').textContent=$('#miniT').textContent=t.t;$('#plSub').textContent=$('#miniS').textContent=t.s;$('#plArt').src=$('#mini img').src=t.art;window.CE&&CE.onTrack&&CE.onTrack(k,t);
  if('mediaSession' in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:t.t,artist:'Collier Entertainment',album:t.s,artwork:[{src:new URL(t.art,location).href,sizes:'512x512',type:'image/jpeg'}]})}dlState()}
  else if(off!=null)au.currentTime=off;$('#mini').hidden=false;if(open)$('#player').hidden=false;au.play().catch(function(){})}
 function pp(){au.paused?au.play():au.pause()}
 $('#pp').onclick=pp;$('#miniPP').onclick=pp;$('#mini').addEventListener('click',function(e){if(e.target.id!=='miniPP')$('#player').hidden=false});
 $('#plClose').onclick=function(){$('#player').hidden=true};
+var pw=$('#plWatch');if(pw)pw.onclick=function(){openFrame('audiobooks.html?watch=1#dogs-that-chose-me','Dogs That Chose Me')};
 function skip(d){au.currentTime=Math.max(0,Math.min((au.duration||0),au.currentTime+d))}
 $('#b15').onclick=function(){skip(-15)};$('#f30').onclick=function(){skip(30)};
 $('#speed').onclick=function(){si=(si+1)%speeds.length;au.playbackRate=speeds[si];this.textContent=speeds[si]+'×'};
