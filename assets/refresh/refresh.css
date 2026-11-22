@@ -25,8 +25,10 @@
 /* Remove vintage overlays: grain, vignette, scanlines, wood cabinet */
 :is(body.broadcast,body.broadcast-lite) :is(.grain,.vignette,.parlor,.antenna,.plaque,.tube,.scan,.flicker,.sheen,.lamp,.knob-deco,.speaker,.graybar,.testcard .pattern,.standby-script,.marquee,.end-rule){display:none !important}
 body.broadcast-lite::after{display:none !important}
-/* Seasonal trim kept subtle: hide the larger decorations */
+/* Seasonal trim kept subtle: hide the larger decorations.
+   season.js also marks real sections .season-edge; those stay on the page. */
 :is(body.broadcast,body.broadcast-lite) :is(.season-ledge,.season-edge,.season-foot,.season-fog,.season-spider,.season-web,.season-corners,.season-corner,.season-drift,.season-nav-trim,.season-cutout,.season-ribbon){display:none !important}
+:is(body.broadcast,body.broadcast-lite) .ab-book.season-edge{display:block !important;box-shadow:none !important}
 
 /* Full-color artwork everywhere */
 :is(body.broadcast,body.broadcast-lite) img{filter:none !important}

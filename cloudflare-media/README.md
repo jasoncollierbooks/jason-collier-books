@@ -1,7 +1,7 @@
 # Moving the site's audio and video to Cloudflare R2
 
 GitHub Pages is meant for sites under 1 GB and won't take single files over 100 MB.
-This folder copies the site's long audio and video (243 files, about 1.11 GB) into a
+This folder copies the site's long audio and video (244 files, about 1.15 GB) into a
 free Cloudflare R2 bucket named `collier-media`, served at
 `https://media.collierentertainment.com/<same path as in this repo>`.
 

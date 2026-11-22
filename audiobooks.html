@@ -27,7 +27,7 @@
 <script src="app-mode.js?v=2"></script>
 <link rel="stylesheet" href="ce-site.css?v=5">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap">
-<link rel="stylesheet" href="assets/refresh/refresh.css?v=3">
+<link rel="stylesheet" href="assets/refresh/refresh.css?v=4">
 </head>
 <body class="broadcast-lite page-audio">
 <div class="grain" aria-hidden="true"></div>
@@ -66,7 +66,7 @@
       <h1 class="reveal">Audiobooks</h1>
       <p class="reveal">Animated audiobooks of <a href="jang-and-tom.html"><em>Jang and Tom: Wagon Masters</em></a> and <a href="first-pulse.html"><em>The First Pulse</em></a>, brought to life with Grok, a choose-your-own cartoon of <a href="rusty-adventure.html"><em>The Rusty Stack</em></a>, and the full-cast illustrated audiobook of <a href="old-man-on-the-mountain.html"><em>Old Man On The Mountain</em></a>. Pick an audiobook part; the next one plays automatically.</p>
       <p class="ce-hub reveal"><a href="jang-tom.html">📻 Jang &amp; Tom Radio Hour</a><a href="live.html">📡 Live Radio</a><a href="thorne-lab.html#lab-top">🎙️ Thorne&rsquo;s Lab Journal</a></p>
-      <nav class="ab-jump reveal" aria-label="Audiobooks on this page"><a href="#jang-and-tom">Jang &amp; Tom</a><a href="#first-pulse">The First Pulse</a><a href="#rusty-adventure">Rusty Stack</a><a href="#wagon-masters-animated">Wagon Masters (Animated)</a><a href="#old-man-audiobook">Old Man</a></nav>
+      <nav class="ab-jump reveal" aria-label="Audiobooks on this page"><a href="#jang-and-tom">Jang &amp; Tom</a><a href="#first-pulse">The First Pulse</a><a href="#rusty-adventure">Rusty Stack</a><a href="#wagon-masters-animated">Wagon Masters (Animated)</a><a href="#dogs-that-chose-me">Dogs That Chose Me</a><a href="#old-man-audiobook">Old Man</a></nav>
     </header>
 
     <section class="ab-book western-ab" id="jang-and-tom" aria-labelledby="jt-h">
@@ -334,22 +334,36 @@
         <div>
           <p class="excerpt-label">Audiobook &middot; a short story by Jason Collier</p>
           <h2 id="dogs-h" class="ab-h">Dogs That Chose Me</h2>
-          <p class="ab-note">Elias never chose a dog. From a lonely farm boy on a rainy porch to an old man on an autumn evening, the dogs always found him, and the first one never really left. 9 minutes 33 seconds.</p>
+          <p class="ab-note">Elias never chose a dog. From a lonely farm boy on a rainy porch to an old man on an autumn evening, the dogs always found him, and the first one never really left. 7 minutes 44 seconds.</p>
+          <div class="cta-row">
+            <button type="button" class="btn btn-fire" id="dogsListen" aria-pressed="true">Listen</button>
+            <button type="button" class="btn btn-line" id="dogsWatch" aria-pressed="false">Watch</button>
+          </div>
         </div>
       </div>
       <figure class="dogs-slide" style="margin:12px 0 0;position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#120d08">
         <img id="dogsSlide" src="images/dogs/cover.jpg" alt="Dogs That Chose Me" style="width:100%;height:100%;object-fit:cover;transition:opacity .6s">
+        <video id="dogsVideo" controls playsinline preload="none" poster="images/dogs/cover.jpg" width="1280" height="720" hidden style="width:100%;height:100%;object-fit:cover;background:#120d08" aria-label="Dogs That Chose Me">
+          <source src="media/dogs-that-chose-me-v2.mp4?v=3" type="video/mp4">
+          <a href="media/dogs-that-chose-me-v2.mp4?v=3">Watch Dogs That Chose Me</a>
+        </video>
       </figure>
-      <audio id="dogsAudio" controls preload="none" src="media/dogs-that-chose-me.mp3?v=2" style="width:100%;margin:12px 0" aria-label="Dogs That Chose Me, audiobook"></audio>
+      <audio id="dogsAudio" controls preload="none" src="media/dogs-that-chose-me.mp3?v=3" style="width:100%;margin:12px 0" aria-label="Dogs That Chose Me, audiobook"></audio>
       <ol class="dogs-ch" id="dogsCh" style="list-style:none;padding:0;margin:0;columns:1"></ol>
-      <script src="js/dogs-data.js?v=2"></script>
-      <script>(function(){var D=window.CE_DOGS,au=document.getElementById('dogsAudio'),img=document.getElementById('dogsSlide'),ol=document.getElementById('dogsCh'),cur='';
-       function mm(s){return Math.floor(s/60)+':'+('0'+s%60).slice(-2)}
-       ol.innerHTML=D.ch.map(function(c){return '<li><button type="button" data-t="'+c[0]+'" style="display:flex;gap:12px;width:100%;min-height:44px;align-items:center;text-align:left;background:none;border:0;border-bottom:1px dotted rgba(228,208,164,.3);color:inherit;font:inherit;cursor:pointer"><i style="font-style:normal;opacity:.7;min-width:3em">'+mm(c[0])+'</i><span>'+c[1]+'</span></button></li>'}).join('');
+      <script src="js/dogs-data.js?v=3"></script>
+      <script>(function(){var D=window.CE_DOGS,au=document.getElementById('dogsAudio'),vid=document.getElementById('dogsVideo'),img=document.getElementById('dogsSlide'),ol=document.getElementById('dogsCh'),listenBtn=document.getElementById('dogsListen'),watchBtn=document.getElementById('dogsWatch'),cur='cover',watching=false;
        function show(t){var s=D.slideAt(t);if(s[1]===cur)return;cur=s[1];img.style.opacity=0;setTimeout(function(){img.src='images/dogs/'+s[1]+'.jpg';img.alt=s[2];img.style.opacity=1},300)}
-       au.addEventListener('timeupdate',function(){show(au.currentTime);var on=0;D.ch.forEach(function(c,i){if(c[0]<=au.currentTime)on=i});[].forEach.call(ol.querySelectorAll('button'),function(b,i){b.style.color=i===on&&!au.paused?'#f0cf63':''})});
-       ol.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var t=+b.dataset.t,go=function(){au.currentTime=t;au.play().catch(function(){})};if(au.readyState>0)go();else{au.preload='metadata';au.addEventListener('loadedmetadata',go,{once:true});au.load()}});
-       au.addEventListener('ended',function(){show(9999)});
+       function active(){return watching?vid:au}
+       function paint(){var m=active(),t=m.currentTime||0,on=0;if(!watching)show(m.ended?9999:t);D.ch.forEach(function(c,i){if(c[0]<=t)on=i});[].forEach.call(ol.querySelectorAll('button'),function(b,i){b.style.color=i===on&&!m.paused?'#f0cf63':''})}
+       ol.innerHTML=D.ch.map(function(c){return '<li><button type="button" data-t="'+c[0]+'" style="display:flex;gap:12px;width:100%;min-height:44px;align-items:center;text-align:left;background:none;border:0;border-bottom:1px dotted rgba(228,208,164,.3);color:inherit;font:inherit;cursor:pointer"><i style="font-style:normal;opacity:.7;min-width:4.6em">'+D.mm(c[0])+'</i><span>'+c[1]+'</span></button></li>'}).join('');
+       function seek(t){var m=active(),go=function(){m.currentTime=t;var p=m.play();if(p&&p.catch)p.catch(function(){})};if(m.readyState>0)go();else{m.addEventListener('loadedmetadata',go,{once:true});m.load()}}
+       ol.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;seek(+b.dataset.t)});
+       au.addEventListener('timeupdate',paint);vid.addEventListener('timeupdate',paint);
+       au.addEventListener('ended',function(){if(!watching)show(9999)});
+       function setMode(watch,playNow){watching=watch;listenBtn.className='btn '+(watch?'btn-line':'btn-fire');watchBtn.className='btn '+(watch?'btn-fire':'btn-line');listenBtn.setAttribute('aria-pressed',watch?'false':'true');watchBtn.setAttribute('aria-pressed',watch?'true':'false');img.hidden=watch;vid.hidden=!watch;au.hidden=watch;img.style.display=watch?'none':'';vid.style.display=watch?'block':'none';au.style.display=watch?'none':'';if(watch){au.pause();if(playNow){var p=vid.play();if(p&&p.catch)p.catch(function(){})}}else{vid.pause();show(au.ended?9999:(au.currentTime||0))}}
+       listenBtn.addEventListener('click',function(){setMode(false,false)});
+       watchBtn.addEventListener('click',function(){setMode(true,true)});
+       if(/[?&]watch=1(?:&|$)/.test(location.search))setMode(true,false);
       })();</script>
     </section>
 
