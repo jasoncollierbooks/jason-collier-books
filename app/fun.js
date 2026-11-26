@@ -27,7 +27,7 @@ if(!RM)document.addEventListener('pointermove',function(e){if(e.pointerType!=='m
 document.addEventListener('pointerup',function(){document.querySelectorAll('.poster img,.paint,.tv,.card,.item').forEach(function(p){p.style.transform=''})});
 document.addEventListener('pointercancel',function(){document.querySelectorAll('.poster img,.paint,.tv,.card,.item').forEach(function(p){p.style.transform=''})});
 // ---------- badges ----------
-var BADGES={tuned:['📻','Tuned In','Played your first show'],nails:['🔩','Three Rusty Nails','Stayed up the ridge to count the treasure'],ridge:['⛰️',"Miller's Ridge",'Finished the whole episode'],hog:['🐾','Groundhog Wrangler','Caught the groundhog 3 times'],painter:['🎨','Painter','Opened the Oil Studio'],hunter:['🦌','Hunter','Went up the mountain in the Old Man hunt'],explorer:['🗺️','World Walker','Stepped into Book Worlds'],guide:['📺','Channel Surfer','Checked the channel guide']};
+var BADGES={tuned:['📻','Tuned In','Played your first show'],nails:['🔩','Three Rusty Nails','Stayed up the ridge to count the treasure'],ridge:['⛰️',"Miller's Ridge",'Finished the whole episode'],hog:['🐾','Groundhog Wrangler','Caught the groundhog 3 times'],painter:['🎨','Painter','Opened the Oil Studio'],hunter:['🦌','Hunter','Went up the mountain in the Old Man hunt'],guide:['📺','Channel Surfer','Checked the channel guide']};
 function got(){try{return JSON.parse(ls('ce-badges')||'{}')}catch(e){return {}}}
 function award(k){var g=got();if(g[k])return;g[k]=Date.now();ls('ce-badges',JSON.stringify(g));var b=BADGES[k];var t=el('<div class="badge-pop"><i>'+b[0]+'</i><div><small>BADGE EARNED</small><b>'+b[1]+'</b></div></div>');document.body.appendChild(t);[784,988,1175].forEach(function(f,i){tone(f,.3,'triangle',.06,i*.08)});buzz([15,30,15]);setTimeout(function(){t.classList.add('out')},2600);setTimeout(function(){t.remove()},3200);renderBadges()}
 CE.award=award;
@@ -38,7 +38,7 @@ books.parentNode.insertBefore(el('<div class="gazette" id="gazette"></div>'),boo
 books.parentNode.insertBefore(el('<div class="shelf"><h3>Your badges</h3><div class="rail" id="badgeRail"></div></div>'),books);
 function renderBadges(){var g=got();$('#badgeRail').innerHTML=Object.keys(BADGES).map(function(k){var b=BADGES[k];return '<div class="bdg'+(g[k]?' on':'')+'"><i>'+(g[k]?b[0]:'🔒')+'</i><b>'+b[1]+'</b><span>'+b[2]+'</span></div>'}).join('')}
 renderBadges();
-document.addEventListener('click',function(e){var f=e.target.closest('[data-frame]');if(!f)return;var u=f.dataset.frame;if(/studio/.test(u))award('painter');if(/old-man-game/.test(u))award('hunter');if(/book-worlds/.test(u))award('explorer')});
+document.addEventListener('click',function(e){var f=e.target.closest('[data-frame]');if(!f)return;var u=f.dataset.frame;if(/studio/.test(u))award('painter');if(/old-man-game/.test(u))award('hunter')});
 $('#openStudio').addEventListener('click',function(){award('painter')});
 // ---------- continue ----------
 function renderCont(){var h='';Object.keys(CE.TRACKS).forEach(function(k){var p=+(ls('ce-pos-'+k)||0),d=+(ls('ce-dur-'+k)||0),t=CE.TRACKS[k];if(p>5&&d&&p<d-10)h+='<button class="poster wide cont" data-play="'+k+'"><img src="'+t.art+'" alt=""><i class="bar"><u style="width:'+(p/d*100)+'%"></u></i><b>'+t.t+'</b><span>'+Math.round((d-p)/60)+' min left</span></button>'});$('#contRail').innerHTML=h;$('#contShelf').hidden=!h}

@@ -20,13 +20,9 @@ var ITEMS={ // key = data-play / data-frame value
  'audiobooks.html#first-pulse':{id:'ab-first-pulse',t:'The First Pulse (audiobook)',u:SITE+'audiobooks.html#first-pulse',rate:1},
  'rusty-adventure.html':{id:'ab-rusty-adventure',t:'The Rusty Stack cartoon',u:SITE+'rusty-adventure.html',rate:1},
  'old-man-game/':{id:'game-old-man-hunt',t:'Old Man Hunt',u:SITE+'old-man-game/',rate:1},
- 'book-worlds/':{id:'game-book-worlds',t:'Book Worlds',u:SITE+'book-worlds/',rate:1},
- 'i-spy.html':{id:'game-i-spy',t:'Sharp Eye Search',u:SITE+'sharp-eye-search.html',rate:1},
- 'sharp-eye-search.html':{id:'game-i-spy',t:'Sharp Eye Search',u:SITE+'sharp-eye-search.html',rate:1},
  'https://kite-bolt-fleet-honey.grok.me/':{id:'game-jang-tom-hub',t:'Jang & Tom and The Rusty Stack games',u:SITE+'play.html',rate:1},
  'https://delta-branch-breeze-daisy.grok.me/':{id:'game-born-twice',t:'Born Twice',u:SITE+'thorne-lab.html',rate:1},
- 'https://fern-valley-glow-reef.grok.me/':{id:'game-first-pulse',t:'The First Pulse game',u:SITE+'first-pulse.html',rate:1},
- 'coloring.html':{id:'game-coloring',t:'Coloring',u:SITE+'coloring.html',rate:1}};
+ 'https://fern-valley-glow-reef.grok.me/':{id:'game-first-pulse',t:'The First Pulse game',u:SITE+'first-pulse.html',rate:1}};
 (window.CE_GAMES||[]).concat(window.CE_GAMES_MORE||[]).forEach(function(g){var ext=/^https?:/.test(g.url);ITEMS['game:'+g.id]=(!ext&&ITEMS[g.url])||{id:'game-'+g.id,t:g.t,u:ext?SITE+'play.html':SITE+g.url,rate:1}});
 // Every shared link opens the APP (deep link /app/?open=...); without the app installed it still opens /app in the browser with the item open.
 function appLink(o){return SITE+'app/'+(o?'?open='+encodeURIComponent(o):'')}

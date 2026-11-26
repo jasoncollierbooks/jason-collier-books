@@ -3,14 +3,11 @@
 window.CE_GAMES = [
  {id:'cryptic-mazes',t:'Collier Adventure Mazes',k:'Overhead · eight book worlds',url:'maze/',d:'A maze for each world on the shelf: the California Trail, Pine Knot, the mountain, the Rusty Stack, the First Pulse, Thorne’s Lab, the Seeders, and the Ninth Envoy. The exit is a puzzle. The last gate needs every world.'},
  {id:'adventures',t:'Lead the Adventure',k:'Cartoon adventure',url:'adventures.html',d:'The Rusty Stack is a cartoon: watch the scene, then choose. 2 decisions, 4 endings. The Seeders is coming soon.'},
- {id:'book-worlds',t:'Book Worlds',k:'Jang & Tom ride along',url:'book-worlds/',d:'Walk the California Trail as the Keeper, a drifter with a brass skeleton key. Tune the broadcast cabinet and push back the Nonimaginaires leaking into the story.'},
  {id:'old-man-hunt',t:'Old Man Hunt',k:'A horror hunt · for older players',url:'old-man-game/',d:'Seven days on the mountain, based on the novel. Hang your trail cameras, keep the fire going and hold your nerve.'},
  {id:'jang-and-tom',t:'Jang & Tom: The Wagon Train',k:'Companion game · Wagon Masters',url:'https://kite-bolt-fleet-honey.grok.me/',d:'Lead the wagon train yourself: oxen, debt collectors, Billy the goat and a wagon that lost a fight with a tornado. The book is the prize in Sacramento.'},
  {id:'rusty-stack',t:'The Rusty Stack',k:'Companion game · airship adventure',url:'https://kite-bolt-fleet-honey.grok.me/',d:'Docks, a chained fortress, Crimson Fang interceptors and a rust-bucket airship that looks half-dead on purpose. Found in the same game hub as Jang & Tom.'},
  {id:'born-twice',t:'Born Twice',k:'Thorne\u2019s Lab · companion game',url:'https://delta-branch-breeze-daisy.grok.me/',d:'Grow a living starship in a 1982 laboratory, then fly it across a real solar chart. Some vessels work. Some wake up hungry.'},
- {id:'first-pulse',t:'The First Pulse',k:'Companion game',url:'https://fern-valley-glow-reef.grok.me/',d:'You are leftover light. Drift, tap a world, and step inside the universe of The First Pulse.'},
- {id:'i-spy',t:'Sharp Eye Search',k:'Picture game',url:'sharp-eye-search.html',d:'Find five hidden things in scenes from the books. Good for all ages.'},
- {id:'coloring',t:'Coloring',k:'Color the pages',url:'coloring.html',d:'Pick a picture from the books, pick a color and tap to fill. Print them too.'}
+ {id:'first-pulse',t:'The First Pulse',k:'Companion game',url:'https://fern-valley-glow-reef.grok.me/',d:'You are leftover light. Drift, tap a world, and step inside the universe of The First Pulse.'}
 ];
 /* The "More" row on play.html (shown as cards in the app too). img is relative to the site root. */
 window.CE_GAMES_MORE = [
