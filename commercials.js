@@ -114,47 +114,17 @@
       image: "images/the-rusty-stack.jpg",
       alt: "Cover of The Rusty Stack by Jason Collier",
       audio: "audio/commercials/rusty.mp3",
-      skipOn: ["rusty-stack.html", "rusty-adventure.html"],
-      buttons: [{ label: "Get it on Amazon", href: "https://www.amazon.com/dp/B0HPDZTVQ1", external: true }, { label: "Kindle edition", href: "https://www.amazon.com/dp/B0HPRLQ67M", external: true }, { label: "Play the cartoon", href: "rusty-adventure.html" }]
-    },
-    worlds: {
-      title: "Book Worlds",
-      look: "is-pan",
-      image: "book-worlds/assets/play-cover.webp",
-      alt: "Painted title card of a keeper with a brass key beside a wagon at dusk",
-      audio: "audio/commercials/worlds.mp3",
-      skipOn: ["book-worlds"],
-      buttons: [{ label: "Play now", href: "book-worlds/" }]
-    },
-    oldmangame: {
-      title: "Old Man On The Mountain",
-      look: "is-bw",
-      image: "old-man-game/assets/title.jpg",
-      alt: "A campfire at dusk below a dark forested mountain",
-      audio: "audio/commercials/oldmangame.mp3",
-      skipOn: ["old-man-game"],
-      buttons: [{ label: "Play now", href: "old-man-game/" }]
+      skipOn: ["rusty-stack.html"],
+      buttons: [{ label: "Get it on Amazon", href: "https://www.amazon.com/dp/B0HPDZTVQ1", external: true }, { label: "Kindle edition", href: "https://www.amazon.com/dp/B0HPRLQ67M", external: true }]
     },
     audiobooks: {
       title: "Audiobooks",
       look: "is-color",
-      image: "media/firstpulse_part4of7_poster.jpg",
+      image: "images/jang-tom-millers-ridge.jpg",
       alt: "A still from the animated audiobooks",
       audio: "audio/commercials/audiobooks.mp3",
-      skipOn: ["audiobooks.html", "old-man-audiobook"],
+      skipOn: ["audiobooks.html"],
       buttons: [{ label: "Listen free", href: "audiobooks.html" }]
-    },
-    kids: {
-      title: "Sharp Eye Search & Coloring",
-      look: "is-color",
-      pair: ["images/scenes/transcon-s46.jpg", "coloring/thumbs/runaway-horse.png"],
-      alt: "A picture from the books, and a coloring page of a runaway horse",
-      audio: "audio/commercials/kids.mp3",
-      skipOn: ["i-spy.html", "sharp-eye-search.html", "coloring.html"],
-      buttons: [
-        { label: "Play", href: "sharp-eye-search.html" },
-        { label: "Color", href: "coloring.html" }
-      ]
     },
     x: {
       title: "@jascol235175",
@@ -168,13 +138,7 @@
   };
 
   var BLOCKED = [
-    "i-spy.html",
-    "sharp-eye-search.html",
-    "coloring.html",
     "audiobooks.html",
-    "old-man-audiobook",
-    "book-worlds",
-    "old-man-game",
     "studio.html"
   ];
 

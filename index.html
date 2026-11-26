@@ -29,7 +29,7 @@
 /* Old one-page anchors (e.g. /#own-work, /#audiobook) now live on their own pages */
 (function () {
   var map = {"wagon-masters":"jang-and-tom.html","worlds":"jang-and-tom.html#worlds","first-pulse":"first-pulse.html",
-    "teaser":"first-pulse.html#teaser","audiobook":"audiobooks.html#first-pulse","old-man":"old-man-on-the-mountain.html",
+    "teaser":"first-pulse.html","audiobook":"audiobooks.html#jang-and-tom-radio","old-man":"old-man-on-the-mountain.html",
     "rusty-stack":"rusty-stack.html","own-work":"art.html","about":"about.html","contact":"about.html#contact"};
   var h = location.hash.slice(1);
   if (Object.prototype.hasOwnProperty.call(map, h)) location.replace(map[h]);
@@ -53,7 +53,7 @@
 <script src="app-mode.js?v=2"></script>
 <link rel="stylesheet" href="ce-site.css?v=5">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap">
-<link rel="stylesheet" href="assets/refresh/refresh.css?v=3">
+<link rel="stylesheet" href="assets/refresh/refresh.css?v=6">
 </head>
 <body class="broadcast home" data-season-ribbon="off" data-season-lite>
 <a class="skip" href="#top">Skip to content</a>
@@ -76,26 +76,12 @@
             <a class="brand ce-wm" href="index.html" aria-current="page" aria-label="Collier Entertainment, home">COLLIER<span>ENTERTAINMENT</span></a>
             <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><span></span><span></span><span></span></button>
             <nav id="site-nav" aria-label="Main">
-    <a class="nav-link on" aria-current="page" href="index.html">Home</a>
+    <a class="nav-link" href="books.html">Books</a>
+    <a class="nav-link" href="documentaries.html">Documentaries</a>
     <a class="nav-link" href="audiobooks.html">Listen</a>
     <a class="nav-link" href="play.html">Play</a>
-    <a class="nav-link" href="studio.html">Studio</a>
-    <div class="nav-group">
-      <button type="button" class="nav-label" aria-expanded="false" aria-haspopup="true" aria-controls="menu-read">Read</button>
-      <div class="nav-menu" id="menu-read" role="group" aria-label="Read">
-        <a href="gazette.html">Pine Knot Gazette</a>
-        <a href="books.html">All Books</a>
-        <a href="jang-and-tom.html">Jang &amp; Tom: Wagon Masters (book)</a>
-        <a href="first-pulse.html">The First Pulse</a>
-        <a href="old-man-on-the-mountain.html">Old Man On The Mountain</a>
-        <a href="rusty-stack.html">The Rusty Stack</a>
-        <a href="books.html#trail-adventure">Jang &amp; Tom: Trail Adventure</a>
-        <a href="books.html#ninth-envoy">The Ninth Envoy</a>
-        <a href="novel.html">The Novel</a>
-      </div>
-    </div>
-    <span class="nav-small"><a href="about.html">About</a></span>
-
+    <a class="nav-link" href="studio.html">Paint</a>
+    <span class="nav-small"><a href="gazette.html">Gazette</a><a href="novel.html">The Novel</a><a href="art.html">Art</a><a href="about.html">About</a></span>
 </nav>
           </header>
 
@@ -119,7 +105,7 @@
                   </g>
                 </svg>
                 <div class="testcard-copy">
-                  <p class="kicker">Books <i>/</i> Audiobooks <i>/</i> Games <i>/</i> Art</p>
+                  <p class="kicker">Books <i>/</i> Documentaries <i>/</i> Listen <i>/</i> Play <i>/</i> Paint</p>
                   <h1 class="hero-name"><span>Collier</span><span>Entertainment</span></h1>
                 </div>
                 <div class="graybar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
@@ -162,21 +148,9 @@
               <div class="cta-row hero-actions">
                 <a class="btn btn-fire" href="https://www.amazon.com/dp/B0HFCF11YP" target="_blank" rel="noopener">Buy on Amazon</a>
                 <a class="btn btn-line" href="https://www.amazon.com/dp/B0HQ5N3SR1" target="_blank" rel="noopener">The Ninth Envoy</a>
-                <a class="btn btn-line" href="i-spy.html">Play</a>
+                <a class="btn btn-line" href="thorne-lab.html">Play</a>
                 <a class="btn btn-line" href="audiobooks.html">Listen</a>
-                <a class="btn btn-line" href="coloring.html">Color</a>
                 <button type="button" class="btn btn-line" data-share>Share</button>
-              </div>
-
-              <div class="hero-previews">
-                <a class="hero-preview" href="i-spy.html">
-                  <img src="images/scenes/transcon-s46.jpg" alt="Sharp Eye Search scene from the books" width="640" height="360">
-                  <span><strong>Play</strong><em class="teletype"><span class="tele-full">Pick a picture from the books and find ten hidden things.</span><span class="tele-live" aria-hidden="true"></span></em></span>
-                </a>
-                <a class="hero-preview hero-preview-color" href="coloring.html">
-                  <img src="coloring/thumbs/runaway-horse.png" alt="Coloring page of a runaway horse" width="640" height="360">
-                  <span><strong>Color</strong><em class="teletype"><span class="tele-full">Color pictures from the books right on the screen, or print them out.</span><span class="tele-live" aria-hidden="true"></span></em></span>
-                </a>
               </div>
 
               <div class="marquee" aria-hidden="true"><div class="track">
@@ -196,14 +170,14 @@
             </section>
 
             <section class="rf-worlds" aria-labelledby="rf-worlds-h">
-              <div class="rf-sec-head"><p class="kicker">Explore the worlds</p><h2 id="rf-worlds-h">Stories you can read, hear, play and color</h2></div>
+              <div class="rf-sec-head"><p class="kicker">Explore the worlds</p><h2 id="rf-worlds-h">Stories you can read, hear, and play</h2></div>
               <div class="rf-strip">
                 <a class="rf-tile" href="first-pulse.html"><img src="images/first-pulse/scene_03.jpg" alt="" loading="lazy"><span><em>Science fiction</em><strong>The First Pulse</strong></span></a>
-                <a class="rf-tile" href="rusty-adventure.html"><img src="media/rusty-cyoa/posters/e1.jpg" alt="" loading="lazy"><span><em>Choose-your-path cartoon</em><strong>The Rusty Stack</strong></span></a>
+                <a class="rf-tile" href="rusty-stack.html"><img src="images/the-rusty-stack.jpg" alt="" loading="lazy"><span><em>Airship adventure</em><strong>The Rusty Stack</strong></span></a>
                 <a class="rf-tile" href="jang-and-tom.html"><img src="images/scenes/transcon-s46.jpg" alt="" loading="lazy"><span><em>Comic Western</em><strong>Jang &amp; Tom</strong></span></a>
                 <a class="rf-tile" href="old-man-on-the-mountain.html"><img src="images/hero/hero-3.jpg" alt="" loading="lazy"><span><em>Outdoor suspense</em><strong>Old Man On The Mountain</strong></span></a>
-                <a class="rf-tile" href="audiobooks.html"><img src="media/firstpulse_part4of7_poster.jpg" alt="" loading="lazy"><span><em>Animated audiobooks</em><strong>Listen</strong></span></a>
-                <a class="rf-tile" href="book-worlds/"><img src="book-worlds/assets/play-cover.webp" alt="" loading="lazy"><span><em>Games</em><strong>Book Worlds</strong></span></a>
+                <a class="rf-tile" href="audiobooks.html"><img src="images/jang-tom-millers-ridge.jpg" alt="" loading="lazy"><span><em>Radio &amp; stories</em><strong>Listen</strong></span></a>
+                <a class="rf-tile" href="documentaries.html"><img src="media/documentaries/shiloh.jpg" alt="" loading="lazy"><span><em>Short films</em><strong>Documentaries</strong></span></a>
                 <a class="rf-tile" href="gazette.html"><img src="images/pine-knot.jpg" alt="" loading="lazy"><span><em>Today&rsquo;s paper</em><strong>Pine Knot Gazette</strong></span></a>
                 <a class="rf-tile" href="art.html"><img src="images/jason-art/painting-lighthouse-at-dusk.jpg" alt="" loading="lazy"><span><em>Paintings &amp; photos</em><strong>Art</strong></span></a>
               </div>
@@ -227,32 +201,32 @@
                     <span class="choice-line">Science fiction, outdoor suspense, comic Westerns, and choose-your-path adventures.</span>
                   </span>
                 </a>
+                <a class="choice" href="documentaries.html">
+                  <span class="choice-media"><img src="media/documentaries/shiloh.jpg" alt="" width="720" height="1280" loading="eager"></span>
+                  <span class="choice-copy">
+                    <span class="choice-title">Documentaries</span>
+                    <span class="choice-line">Civil War days, the first Thanksgiving, and the butterflies in the garden.</span>
+                  </span>
+                </a>
                 <a class="choice" href="audiobooks.html">
-                  <span class="choice-media"><img src="media/firstpulse_part4of7_poster.jpg" alt="" width="1280" height="720" loading="eager"></span>
+                  <span class="choice-media"><img src="images/jang-tom-millers-ridge.jpg" alt="" width="1280" height="720" loading="eager"></span>
                   <span class="choice-copy">
-                    <span class="choice-title">Audiobooks</span>
-                    <span class="choice-line">The First Pulse and Jang &amp; Tom, as animated audiobooks.</span>
+                    <span class="choice-title">Listen</span>
+                    <span class="choice-line">Pine Knot radio, Dogs That Chose Me, and Thorne’s journal.</span>
                   </span>
                 </a>
-                <a class="choice" href="adventures.html">
-                  <span class="choice-media"><img src="media/rusty-cyoa/posters/s1.jpg" alt="" width="1280" height="720" loading="eager"></span>
+                <a class="choice" href="play.html">
+                  <span class="choice-media"><img src="images/lab/born-twice-banner.jpg" alt="" width="800" height="350" loading="eager"></span>
                   <span class="choice-copy">
-                    <span class="choice-title">Adventures</span>
-                    <span class="choice-line">The Rusty Stack cartoon. You pick the path. The Seeders is coming soon.</span>
+                    <span class="choice-title">Play</span>
+                    <span class="choice-line">Thorne’s Lab, Princeton, 1982.</span>
                   </span>
                 </a>
-                <a class="choice" href="art.html">
+                <a class="choice" id="more" href="studio.html">
                   <span class="choice-media"><img src="images/jason-art/painting-lighthouse-at-dusk.jpg" alt="" width="720" height="550" loading="eager"></span>
                   <span class="choice-copy">
-                    <span class="choice-title">Art &amp; Photography</span>
-                    <span class="choice-line">Oil paintings, drawings, and photographs.</span>
-                  </span>
-                </a>
-                <a class="choice" id="more" href="play.html">
-                  <span class="choice-media"><img src="book-worlds/assets/play-cover.webp" alt="" width="1024" height="576" loading="eager"></span>
-                  <span class="choice-copy">
-                    <span class="choice-title">Extras</span>
-                    <span class="choice-line">Play the games, the picture hunt, the coloring pages, and the oil studio.</span>
+                    <span class="choice-title">Paint</span>
+                    <span class="choice-line">The Oil Studio. Mix a color and paint.</span>
                   </span>
                 </a>
                 <a class="choice" href="about.html">
@@ -275,12 +249,11 @@
                 <img src="images/the-ninth-envoy.jpg" alt="Cover of The Ninth Envoy by Jason Collier: a fleet of living black-glass ships drifting past a black hole above a dark planet">
               </div>
               <nav class="end-nav" aria-label="Footer">
-                <a href="index.html" aria-current="page">Home</a>
                 <a href="books.html">Books</a>
+                <a href="documentaries.html">Documentaries</a>
                 <a href="audiobooks.html">Listen</a>
-                <a href="#more">Extra</a>
-                <a href="novel.html">The Novel</a>
-        <a href="gazette.html">Pine Knot Gazette</a>
+                <a href="play.html">Play</a>
+                <a href="studio.html">Paint</a>
                 <a href="about.html">About</a>
               </nav>
               <p class="end-name"><span>Collier</span> <span>Entertainment</span></p>

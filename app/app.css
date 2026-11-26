@@ -418,3 +418,6 @@ html:not(.calm) .gazette .pkg{transform:rotate(-.4deg)}
 .poster.tall .rx-share em{display:none}
 /* Mini player showing: every screen gets extra bottom room so its last row clears the player. */
 body:has(#mini:not([hidden])) .screen{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
+
+.tabs button.tab-long{font-size:11px;line-height:1.05;padding:0 2px}
+.logo{background:none;border:0;color:#e4c27a}

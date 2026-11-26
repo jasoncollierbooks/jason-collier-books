@@ -5,7 +5,6 @@ function build(R){var JT=(window.CE_SHOWS&&CE_SHOWS.jangtom.episodes)||[];
  var SP=(window.CE_LIVE_SPOTS||[]).map(function(s){return {t:'Station break',d:s.d,src:R+s.src,art:R+s.art,spot:1}});
  var S=[];CE_LIVE.programs.forEach(function(p,i){var x;
   if(p.k==='dogs'&&window.CE_DOGS)x={t:'Dogs That Chose Me · audiobook',d:CE_DOGS.secs,src:R+CE_DOGS.src,art:R+CE_DOGS.art};
-  else if(p.k==='oldman')x={t:'Old Man On The Mountain · Part 1',d:741,src:R+'old-man-audiobook/audio/om01.m4a',art:R+'images/old-man-on-the-mountain.jpg'};
   else if(p.src)x={t:p.t,d:p.d,src:R+p.src,art:R+p.art};
   else{var ep=JT.filter(function(j){return j.key===p.k})[0];x={t:'Jang & Tom: '+ep.t,d:ep.secs,src:R+ep.src,art:R+ep.art}}
   S.push(x,SP[i%SP.length])});return S}
