@@ -27,7 +27,7 @@ if(!RM)document.addEventListener('pointermove',function(e){if(e.pointerType!=='m
 document.addEventListener('pointerup',function(){document.querySelectorAll('.poster img,.paint,.tv,.card,.item').forEach(function(p){p.style.transform=''})});
 document.addEventListener('pointercancel',function(){document.querySelectorAll('.poster img,.paint,.tv,.card,.item').forEach(function(p){p.style.transform=''})});
 // ---------- badges ----------
-var BADGES={tuned:['📻','Tuned In','Played your first show'],nails:['🔩','Three Rusty Nails','Stayed up the ridge to count the treasure'],ridge:['⛰️',"Miller's Ridge",'Finished the whole episode'],hog:['🐾','Groundhog Wrangler','Caught the groundhog 3 times'],painter:['🎨','Painter','Opened the Oil Studio'],hunter:['🦌','Hunter','Went up the mountain in the Old Man hunt'],guide:['📺','Channel Surfer','Checked the channel guide']};
+var BADGES={tuned:['📻','Tuned In','Played your first show'],nails:['🔩','Three Rusty Nails','Stayed up the ridge to count the treasure'],ridge:['⛰️',"Miller's Ridge",'Finished the whole episode'],hog:['🐾','Groundhog Wrangler','Caught the groundhog 3 times'],painter:['🎨','Painter','Opened the Oil Studio'],guide:['📺','Channel Surfer','Checked the channel guide']};
 function got(){try{return JSON.parse(ls('ce-badges')||'{}')}catch(e){return {}}}
 function award(k){var g=got();if(g[k])return;g[k]=Date.now();ls('ce-badges',JSON.stringify(g));var b=BADGES[k];var t=el('<div class="badge-pop"><i>'+b[0]+'</i><div><small>BADGE EARNED</small><b>'+b[1]+'</b></div></div>');document.body.appendChild(t);[784,988,1175].forEach(function(f,i){tone(f,.3,'triangle',.06,i*.08)});buzz([15,30,15]);setTimeout(function(){t.classList.add('out')},2600);setTimeout(function(){t.remove()},3200);renderBadges()}
 CE.award=award;
@@ -38,7 +38,7 @@ books.parentNode.insertBefore(el('<div class="gazette" id="gazette"></div>'),boo
 books.parentNode.insertBefore(el('<div class="shelf"><h3>Your badges</h3><div class="rail" id="badgeRail"></div></div>'),books);
 function renderBadges(){var g=got();$('#badgeRail').innerHTML=Object.keys(BADGES).map(function(k){var b=BADGES[k];return '<div class="bdg'+(g[k]?' on':'')+'"><i>'+(g[k]?b[0]:'🔒')+'</i><b>'+b[1]+'</b><span>'+b[2]+'</span></div>'}).join('')}
 renderBadges();
-document.addEventListener('click',function(e){var f=e.target.closest('[data-frame]');if(!f)return;var u=f.dataset.frame;if(/studio/.test(u))award('painter');if(/old-man-game/.test(u))award('hunter')});
+document.addEventListener('click',function(e){var f=e.target.closest('[data-frame]');if(!f)return;var u=f.dataset.frame;if(/studio/.test(u))award('painter')});
 $('#openStudio').addEventListener('click',function(){award('painter')});
 // ---------- continue ----------
 function renderCont(){var h='';Object.keys(CE.TRACKS).forEach(function(k){var p=+(ls('ce-pos-'+k)||0),d=+(ls('ce-dur-'+k)||0),t=CE.TRACKS[k];if(p>5&&d&&p<d-10)h+='<button class="poster wide cont" data-play="'+k+'"><img src="'+t.art+'" alt=""><i class="bar"><u style="width:'+(p/d*100)+'%"></u></i><b>'+t.t+'</b><span>'+Math.round((d-p)/60)+' min left</span></button>'});$('#contRail').innerHTML=h;$('#contShelf').hidden=!h}
@@ -83,8 +83,8 @@ function eqState(){$('#eq').classList.toggle('on',!au.paused)}au.addEventListene
 var SPOTS=(window.CE_LIVE_SPOTS||[]).map(function(s,i){return {k:'spot'+(i+1),t:'Station break',d:s.d,src:R+s.src,art:R+s.art}});
 // 12-hour loop from ../js/live-data.js (shared with the site's live.html); a station break follows every program, same as before.
 var JT=(window.CE_SHOWS&&CE_SHOWS.jangtom.episodes)||[],jt=function(k){for(var i=0;i<JT.length;i++)if(JT[i].key===k)return JT[i]};
-var SCHED=[];(window.CE_LIVE?CE_LIVE.programs:[{k:'ridge'},{k:'oldman'}]).forEach(function(p,i){var x;
- if(p.k==='oldman')x={k:'oldman',t:'Old Man On The Mountain · Part 1',d:741};else if(p.k==='dogs'&&window.CE_DOGS)x={k:'dogs',t:'Dogs That Chose Me · audiobook',d:CE_DOGS.secs};else if(jt(p.k)){var e=jt(p.k);x={k:p.k,t:'Jang & Tom: '+e.t,d:e.secs}}
+var SCHED=[];(window.CE_LIVE?CE_LIVE.programs:[{k:'ridge'},{k:'dogs'}]).forEach(function(p,i){var x;
+ if(p.k==='dogs'&&window.CE_DOGS)x={k:'dogs',t:'Dogs That Chose Me · audiobook',d:CE_DOGS.secs};else if(jt(p.k)){var e=jt(p.k);x={k:p.k,t:'Jang & Tom: '+e.t,d:e.secs}}
  else{x={k:p.k,t:p.t,d:p.d,src:R+p.src,art:R+p.art};CE.TRACKS[p.k]={t:p.t,s:'Collier Entertainment · audiobook',src:R+p.src,art:R+p.art}}
  SCHED.push(x,SPOTS[i%SPOTS.length])});
 SPOTS.forEach(function(s){CE.TRACKS[s.k]={t:s.t,s:'Collier Entertainment · station break',src:s.src,art:s.art}});

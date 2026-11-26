@@ -24,11 +24,11 @@ ads:[{h:"OUT NOW!",b:"The Cookie Conspiracy, the new Jang & Tom. A secret bake, 
 
 {lead:{h:"JANG FOUND IN KOI POND HOLDING GOLDFISH",d:"Possum chase ends with a splash in Mrs. Whittaker's yard",b:["The pursuit of Precious the possum came to a wet end Tuesday when Mr. Jang, hanging from a drainpipe, lost his grip.","He was found standing in the koi pond holding a goldfish, which he described as \u201ca decoy.\u201d Precious was later returned safely in Mr. Tom's burlap sack."]},
 shorts:[{h:"Goldfish Unharmed",b:"The goldfish has been returned to the pond and is said to be \u201cembarrassed.\u201d"},{h:"Drainpipe Report",b:"Mrs. Whittaker's drainpipe is bent but in good spirits."},{h:"Reward Paid",b:"Twenty dollars, minus pond damages: four dollars."}],
-ads:[{h:"WIDE AWAKE?",b:"Old Man Hunt. Seven nights on the mountain. Keep the fire going. Not for the faint of heart.",c:"Play if you dare",go:"oldman"},{h:"STORIES THAT READ THEMSELVES",b:"Animated audiobooks at Collier Entertainment.",c:"Listen",go:"audiobooks"}]},
+ads:[{h:"THE MOUNTAIN",b:"Old Man On The Mountain. A hunter walks into country that is not empty.",c:"See the book",go:"oldman_book"},{h:"STORIES YOU CAN HEAR",b:"Pine Knot radio, Dogs That Chose Me, and Thorne’s journal.",c:"Listen",go:"listen"}]},
 
 {lead:{h:"OLD MAN JENKINS LOST SINCE BREAKFAST",d:"Found on Miller's Ridge looking for his napkin",b:["Longtime resident Old Man Jenkins was located on Miller's Ridge on Saturday after walking in circles since breakfast.","\u201cI dropped my napkin outside the feed store and ain't been able to find nothing since,\u201d he said. The napkin was returned by two local boys who had been using it as a treasure map."]},
 shorts:[{h:"Jenkins Reaches Ribs",b:"Mr. Jenkins arrived at Over Yonder by suppertime and told Hugh howdy."},{h:"Do Not Say \u2018Miller's Ridge\u2019",b:"Citizens are kindly asked not to say it near Mr. Jenkins."}],
-ads:[{h:"HEAR JENKINS HIMSELF",b:"\u2018Slowly I turned\u2026\u2019 The full story is in the Miller's Ridge radio show.",c:"Listen now",go:"ep"},{h:"HEAR THE BOOKS",b:"Animated audiobooks: Wagon Masters, Philadelphia Follies, Transcontinental, The First Pulse.",c:"Listen",go:"audiobooks"}]},
+ads:[{h:"HEAR JENKINS HIMSELF",b:"\u2018Slowly I turned\u2026\u2019 The full story is in the Miller's Ridge radio show.",c:"Listen now",go:"ep"},{h:"PINE KNOT RADIO",b:"Jang and Tom, from the holler. Seven episodes.",c:"Listen",go:"listen"}]},
 
 {lead:{h:"\u2018SLOWLY I TURNED\u2019: JENKINS TELLS ALL",d:"Forty-year-old groundhog grudge revealed",b:["Old Man Jenkins this week revealed why he does not care for Miller's Ridge. Forty years ago he knelt there to propose to a gal named Opal, when a groundhog popped out.","Here the interview ended, as Mr. Jenkins got carried away and Mr. Jang got bopped. Mr. Jenkins later apologized."]},
 shorts:[{h:"Opal Said Yes",b:"Sources confirm Opal did say yes, eventually."},{h:"Same Groundhog?",b:"Mr. Tom wonders if it is the same groundhog. Experts say no. Mr. Tom is not convinced."}],
@@ -44,7 +44,7 @@ ads:[{h:"TUNE IN",b:"The Jang & Tom radio show, free on the Collier Entertainmen
 
 {lead:{h:"TOM TELLS TURTLE STORY; TOWN RESPONDS",d:"\u2018It's better when it's longer,\u2019 says storyteller",b:["Mr. Tom treated listeners to his story about going down to the creek, where he saw a turtle sitting on a log. The log was a regular log. Then he went home.","\u201cThat's the whole story,\u201d Mr. Tom confirmed. A longer version is reportedly in the works."]},
 shorts:[{h:"Turtle Comments",b:"The turtle declined to comment and returned to the log."},{h:"Log Remains Regular",b:"No changes to the log reported."},{h:"Fishing Report",b:"Tom caught nothing, and enjoyed it."}],
-ads:[{h:"TUNE IN",b:"The Jang & Tom radio show, free on the Collier Entertainment app.",c:"Listen",go:"listen"},{h:"ALL THE GAMES",b:"Mazes, Old Man Hunt, Born Twice, and the wagon train.",c:"Pick a game",go:"play"}]},
+ads:[{h:"TUNE IN",b:"The Jang & Tom radio show, free on the Collier Entertainment app.",c:"Listen",go:"listen"},{h:"THORNE’S LAB",b:"Princeton, 1982. The journal, the terminal, and the bench.",c:"Enter the lab",go:"play"}]},
 
 {lead:{h:"METAL DETECTOR'S OWNER LEARNS OF LOAN",d:"Cousin to be \u2018cut in\u2019 for a share, \u2018probably small\u2019",b:["The metal detector carried by Mr. Jang on Miller's Ridge belongs to his cousin, who did not know it was borrowed.","\u201cHe will when we cut him in for a share of the gold,\u201d Mr. Jang explained. Since the gold was three nails, the cousin's share is believed to be one nail."]},
 shorts:[{h:"Detector Beeps at Everything",b:"Including nails, a hubcap and Mr. Tom's belt buckle."},{h:"Garage Reopened",b:"The cousin has added a lock."}],
@@ -56,11 +56,11 @@ ads:[{h:"ON THE MOUNTAIN",b:"Old Man Hunt. Seven nights, a fire, and your nerve.
 
 {lead:{h:"ICE FISHING SEASON: JANG \u2018HAS A HOLE IN MIND\u2019",d:"Tom brings two chairs, one thermos",b:["With cold weather coming, Mr. Jang has announced an ice-fishing expedition. He says he \u201chas a hole in mind.\u201d","Mr. Tom will supply chairs and coffee. Experts remind citizens to check the ice. Mr. Jang reminds experts that he is an expert."]},
 shorts:[{h:"Thermos Coffee",b:"Mr. Tom's coffee is expected to freeze last."},{h:"Fish Warned",b:"Local fish have been notified."}],
-ads:[{h:"WARM UP WITH A STORY",b:"Animated audiobooks: Wagon Masters, Philadelphia Follies, Transcontinental.",c:"Listen",go:"audiobooks"},{h:"THE BOOKS",b:"Jang & Tom, The First Pulse, Old Man On The Mountain, and more.",c:"See the books",go:"books"}]},
+ads:[{h:"WARM UP WITH A STORY",b:"Pine Knot radio and Dogs That Chose Me.",c:"Listen",go:"listen"},{h:"THE BOOKS",b:"Jang & Tom, The First Pulse, Old Man On The Mountain, and more.",c:"See the books",go:"books"}]},
 
 {lead:{h:"BURLAP SACK HONORED",d:"Tom's sack credited with safe return of Precious",b:["The town council has thanked Mr. Tom's burlap sack for its part in returning Precious the possum to Mrs. Whittaker.","\u201cIt's a good sack,\u201d said Mr. Tom. Mr. Jang argued that he should share the credit, since he was in the pond at the time, \u201cguarding the perimeter.\u201d"]},
 shorts:[{h:"Possum Napping",b:"Precious is home and reported \u201cextremely asleep.\u201d"},{h:"Koi Pond Restocked",b:"Mrs. Whittaker has added a fence. And a sign. And a second fence."}],
-ads:[{h:"NEW ON JANG & TOM",b:"The Cookie Conspiracy is out now.",c:"Hear episode seven",go:"ep7"},{h:"ALL THE GAMES",b:"Born Twice, The First Pulse, The Rusty Stack and more.",c:"Pick a game",go:"play"}]},
+ads:[{h:"NEW ON JANG & TOM",b:"The Cookie Conspiracy is out now.",c:"Hear episode seven",go:"ep7"},{h:"THE LAB",b:"Thorne’s Lab is open. Hear the journal, then look around.",c:"Enter",go:"play"}]},
 
 {lead:{h:"HUBCAP HALF DECLARED ANTIQUE",d:"Tom's truck missing piece found on ridge",b:["The half hubcap found on Miller's Ridge belongs to Mr. Tom's truck, which lost it some years ago. Mr. Jang has declared it an antique.","\u201cIt's been in the ground. That's what antiques do,\u201d he said. Mr. Tom has put it back on the truck, where it rattles."]},
 shorts:[{h:"Rattle Report",b:"The truck now rattles in two places, a new record."},{h:"Ugliest Freight Hauler?",b:"Mr. Tom wants it known that the Rusty Stack is uglier. Probably."}],
@@ -76,7 +76,7 @@ ads:[{h:"HEAR THE ENDING",b:"The sweetest ending on the radio dial. Miller's Rid
 
 {lead:{h:"JANG RUNS FOR DOG CATCHER; TOWN HAS NO DOGS",d:"\u2018I'll find some,\u2019 candidate promises",b:["Mr. Jang has filed to run for town dog catcher. Pine Knot has no stray dogs.","\u201cThat's how good I am,\u201d said Mr. Jang. His campaign manager, Mr. Tom, says he was \u201cjust standing there\u201d when he was appointed."]},
 shorts:[{h:"Opponent: Groundhog",b:"Write-in votes for the groundhog are expected."},{h:"Campaign Promise",b:"A chicken in every pot. Tom's chicken."}],
-ads:[{h:"OLD MAN HUNT",b:"Seven days on the mountain. Bring a lantern.",c:"Play",go:"oldman"},{h:"LISTEN FREE",b:"Radio shows and audiobooks in the Collier app.",c:"Listen",go:"listen"}]},
+ads:[{h:"THE BOOK",b:"Old Man On The Mountain. Best read by the fire.",c:"See the book",go:"oldman_book"},{h:"LISTEN FREE",b:"Radio shows and audiobooks in the Collier app.",c:"Listen",go:"listen"}]},
 
 {lead:{h:"TOM'S MUSTACHE: GLUED ON BY COMMITTEE?",d:"Radio announcer's claim investigated",b:["A radio announcer recently described Mr. Tom's mustache as looking \u201cglued on by a committee.\u201d","The Gazette investigated. The mustache is real. The committee, if there was one, did good work. \u201cHowdy,\u201d said Mr. Tom."]},
 shorts:[{h:"Jang Described Too",b:"\u201cSkinny as a fence post, talks faster than an auctioneer.\u201d Mr. Jang calls this \u201cfair.\u201d"},{h:"Applause Held",b:"Audiences were told to hold their applause. They were told they'd need it later."}],
@@ -92,11 +92,11 @@ ads:[{h:"PAINT THE CREEK",b:"Water: pull, then blend down. Try it in the Oil Stu
 
 {lead:{h:"GROUNDHOG SEEN WITH SECOND SHOVEL",d:"Hardware store reports unexplained loss",b:["The Miller's Ridge groundhog has been sighted carrying a second shovel, believed taken from the hardware store's back porch.","Mr. Tom has asked for his good shovel back and has offered a trade: one candy bar. Unfortunately, the candy bar is missing."]},
 shorts:[{h:"Shovel Watch",b:"Residents are urged to keep shovels indoors."},{h:"Mr. Jang Offers Help",b:"\u201cThis is between me and the groundhog,\u201d he says. Again."}],
-ads:[{h:"HEAR WHERE IT STARTED",b:"The Treasure of Miller's Ridge, the full radio show.",c:"Listen",go:"ep"},{h:"GAMES FOR EVERYONE",b:"Mazes, the mountain hunt, and the wagon-train games.",c:"Pick a game",go:"play"}]},
+ads:[{h:"HEAR WHERE IT STARTED",b:"The Treasure of Miller's Ridge, the full radio show.",c:"Listen",go:"ep"},{h:"THORNE’S LAB",b:"A 1982 laboratory, and the journal she left in it.",c:"Enter",go:"play"}]},
 
 {lead:{h:"JANG & TOM TO HEAD WEST \u2018SOMEDAY\u2019",d:"California \u2018not yet\u2019, says Jang",b:["Asked whether they have ever been to California, Mr. Tom said no. Mr. Jang added, \u201cNot yet, Tom. Not yet.\u201d","Readers who cannot wait may find the boys leading a wagon train in the book Wagon Masters, a comic western about two handsome devils."]},
 shorts:[{h:"Oxen Unavailable",b:"Mr. Tom offered his truck. It rattles."},{h:"Sacramento Notified",b:"Sacramento has not replied."}],
-ads:[{h:"WAGON MASTERS",b:"The book, the animated audiobook and the wagon-train game.",c:"Listen",go:"audiobooks"},{h:"THE BOOKS",b:"Paperback, hardcover and Kindle.",c:"See the books",go:"books"}]},
+ads:[{h:"WAGON MASTERS",b:"The book, and the storyboard episodes still on the Listen page.",c:"Listen",go:"audiobooks"},{h:"THE BOOKS",b:"Paperback, hardcover and Kindle.",c:"See the books",go:"books"}]},
 
 {lead:{h:"STARS STILL UP THERE, TOM CONFIRMS",d:"Porch light mystery remains",b:["Asked whether he ever looks up at the stars and wonders, Mr. Jang said, \u201cEvery night.\u201d Mostly, he wonders who left the porch light on.","Mr. Tom confirmed the stars are still there. The porch light belongs to Mrs. Whittaker, who is watching for possums."]},
 shorts:[{h:"Something Older Than the Stars",b:"Rumored. See advertisement below."},{h:"Telescope Wanted",b:"Mr. Jang will trade a rusty nail."}],
@@ -108,7 +108,7 @@ ads:[{h:"OPEN THE STUDIO",b:"Mix real oil colors and paint a mountain before sup
 
 {lead:{h:"HAUNTED MOUNTAIN STORIES TOLD AT FEED STORE",d:"Tom will not go up after dark",b:["Old-timers at the feed store traded stories this week about the old man on the mountain. Mr. Tom left early.","\u201cI ain't scared,\u201d he said from his truck. \u201cI just like being home.\u201d Mr. Jang stayed until the stories got good, then left faster."]},
 shorts:[{h:"Lanterns Sold Out",b:"Hoskins reports a run on lanterns."},{h:"Trail Cameras",b:"One caught a deer. One caught Mr. Jang, running."}],
-ads:[{h:"DARE YOU",b:"Old Man Hunt: seven days, a fire and your nerve.",c:"Play",go:"oldman"},{h:"OLD MAN ON THE MOUNTAIN",b:"The audiobook. Best with the lights on.",c:"Listen",go:"audiobooks"}]},
+ads:[{h:"THE RIDGE",b:"Old Man On The Mountain. The trip turns desperate.",c:"See the book",go:"oldman_book"},{h:"OLD MAN ON THE MOUNTAIN",b:"The book. A mountain that is not empty.",c:"See the book",go:"oldman_book"}]},
 
 {lead:{h:"JANG OPENS \u2018ADVENTURE OFFICE\u2019 IN TOM'S KITCHEN",d:"Office hours: whenever Tom has coffee",b:["Mr. Jang has opened an adventure office at Mr. Tom's kitchen table. Clients may bring maps, schemes and snacks.","Mr. Tom, who owns the table, says he was not consulted. \u201cI was sitting here with my own coffee,\u201d he said. \u201cWith my own eyes open.\u201d"]},
 shorts:[{h:"First Client",b:"A man with a map. It was a menu."},{h:"Rent Paid",b:"In candy bars. Disputed."}],
@@ -116,7 +116,7 @@ ads:[{h:"PAINT SOMETHING",b:"The Collier Oil Studio. Your kitchen table never lo
 
 {lead:{h:"HUGH WINS RIB COOK-OFF; NOBODY CREDITED",d:"Judges confused, then full",b:["Over Yonder took first prize at the county rib cook-off. When asked who cooked the ribs, Hugh said Nobody.","Judges awarded the ribbon to Nobody, which Hugh accepted. Mr. Jang, judging the pie table, was removed after the pie safe incident was brought up."]},
 shorts:[{h:"Second Place",b:"Mr. Tom's chili. He used his coffee."},{h:"Third Place",b:"The groundhog. Unclear how."}],
-ads:[{h:"WHO'S ON FIRST? HUGH!",b:"The routine that started it all, on the Jang & Tom radio show.",c:"Listen",go:"ep"},{h:"ALL THE GAMES",b:"Eight games. All free.",c:"Pick a game",go:"play"}]},
+ads:[{h:"WHO'S ON FIRST? HUGH!",b:"The routine that started it all, on the Jang & Tom radio show.",c:"Listen",go:"ep"},{h:"THE LAB",b:"Thorne’s Lab. Free.",c:"Enter",go:"play"}]},
 
 {lead:{h:"GOODNIGHT, PINE KNOT",d:"Another day ends a little tired, a little dirty",b:["And so ends another day in Pine Knot. The boys came home a little tired, a little dirty, and perfectly happy with the treasure they already had.","Tomorrow, Mrs. Whittaker's possum may escape again. Mr. Jang will have a plan. Mr. Tom will get his net."]},
 shorts:[{h:"Night, Y'all",b:"From all of us at the Gazette."},{h:"Candy Bar Update",b:"\u201cWhat candy bar?\u201d"}],

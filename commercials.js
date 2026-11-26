@@ -114,25 +114,16 @@
       image: "images/the-rusty-stack.jpg",
       alt: "Cover of The Rusty Stack by Jason Collier",
       audio: "audio/commercials/rusty.mp3",
-      skipOn: ["rusty-stack.html", "rusty-adventure.html"],
-      buttons: [{ label: "Get it on Amazon", href: "https://www.amazon.com/dp/B0HPDZTVQ1", external: true }, { label: "Kindle edition", href: "https://www.amazon.com/dp/B0HPRLQ67M", external: true }, { label: "Play the cartoon", href: "rusty-adventure.html" }]
-    },
-    oldmangame: {
-      title: "Old Man On The Mountain",
-      look: "is-bw",
-      image: "old-man-game/assets/title.jpg",
-      alt: "A campfire at dusk below a dark forested mountain",
-      audio: "audio/commercials/oldmangame.mp3",
-      skipOn: ["old-man-game"],
-      buttons: [{ label: "Play now", href: "old-man-game/" }]
+      skipOn: ["rusty-stack.html"],
+      buttons: [{ label: "Get it on Amazon", href: "https://www.amazon.com/dp/B0HPDZTVQ1", external: true }, { label: "Kindle edition", href: "https://www.amazon.com/dp/B0HPRLQ67M", external: true }]
     },
     audiobooks: {
       title: "Audiobooks",
       look: "is-color",
-      image: "media/firstpulse_part4of7_poster.jpg",
+      image: "images/jang-tom-millers-ridge.jpg",
       alt: "A still from the animated audiobooks",
       audio: "audio/commercials/audiobooks.mp3",
-      skipOn: ["audiobooks.html", "old-man-audiobook"],
+      skipOn: ["audiobooks.html"],
       buttons: [{ label: "Listen free", href: "audiobooks.html" }]
     },
     x: {
@@ -148,8 +139,6 @@
 
   var BLOCKED = [
     "audiobooks.html",
-    "old-man-audiobook",
-    "old-man-game",
     "studio.html"
   ];
 

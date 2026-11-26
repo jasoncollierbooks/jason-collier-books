@@ -26,8 +26,7 @@ var TRACKS={
  cookie:(function(){var e=CE_SHOWS.jangtom.episodes[6];return {t:e.t,s:'Jang & Tom · radio show · Episode 7 · '+e.len,src:R+e.src,art:R+e.art,ep:7,credit:CE_SHOWS.jangtom.credit,ch:e.ch}})(),
  rocket:(function(){var e=CE_SHOWS.jangtom.episodes[3];return {t:e.t,s:'Jang & Tom · radio show · Episode 4 · '+e.len,src:R+e.src,art:R+e.art,ep:4,credit:CE_SHOWS.jangtom.credit,ch:e.ch}})(),
  dogs:{t:CE_DOGS.t,s:'Audiobook · Jason Collier · '+CE_DOGS.len,src:R+CE_DOGS.src,art:R+CE_DOGS.art,ch:CE_DOGS.ch},
- thorne:{t:"Thorne's Lab Journal",s:'Dr. Thorne reads the research log · 54:48',src:R+'media/thorne-lab-journal.mp3',art:R+'images/lab/born-twice-og.jpg'},
- oldman:{t:'Old Man On The Mountain',s:'Audiobook · Part 1',src:R+'old-man-audiobook/audio/om01.m4a',art:R+'images/old-man-on-the-mountain.jpg'}};
+ thorne:{t:"Thorne's Lab Journal",s:'Dr. Thorne reads the research log · 54:48',src:R+'media/thorne-lab-journal.mp3',art:R+'images/lab/born-twice-og.jpg'}};
 var esc=function(s){return s.replace(/&/g,'&amp;')};
 // Books + art
 document.querySelectorAll('.ep1-len').forEach(function(e){e.textContent=EP1.len});
@@ -44,22 +43,17 @@ $('#listenList').innerHTML=
  item(R+'images/jang-tom-christmas-spectacle.jpg','The Christmas Light Caper','Jang & Tom radio show · Episode 6 · 13:28 · chapters','data-play="xmas"')+
  item(R+'images/pine-knot.jpg','The Cookie Conspiracy','Jang & Tom radio show · Episode 7 · 11:46 · new · chapters','data-play="cookie"')+
  item('media/jang-tom-tv.jpg','Jang & Tom Radio Hour','All episodes · the Collier Radio Hour','data-go="jangtom"')+
- item(R+'media/rusty-cyoa/posters/s1.jpg','The Rusty Stack','Cartoon · watch, then choose · 4 endings','data-frame="rusty-adventure.html" data-title="The Rusty Stack Adventure"')+
- buyItem(R+'images/the-rusty-stack.jpg','The Rusty Stack: the book','Buy on Amazon · 6×9 paperback with 25 airship mazes','https://www.amazon.com/dp/B0HPDZTVQ1')+
- buyItem(R+'images/the-rusty-stack.jpg','The Rusty Stack: Kindle edition','Buy on Amazon · read it on Kindle','https://www.amazon.com/dp/B0HPRLQ67M')+
  item(R+'images/dogs/cover-thumb.jpg','Dogs That Chose Me','Audiobook · a short story by Jason Collier · '+CE_DOGS.len+' · chapters','data-play="dogs"')+
- item(R+'images/old-man-on-the-mountain.jpg','Old Man On The Mountain','Audiobook · app player','data-play="oldman"')+
  item(R+'images/lab/born-twice-og.jpg',"Thorne's Lab Journal",'Dr. Thorne reads all 8 entries · 54:48','data-play="thorne"')+
- item(R+'images/jang-and-tom-wagon-masters.jpg','Jang & Tom audiobooks','Wagon Masters, Philadelphia Follies, Transcontinental','data-frame="audiobooks.html#jang-and-tom" data-title="Jang & Tom"')+
- item(R+'images/the-first-pulse.jpg','The First Pulse','Audiobook · Chapters One & Two in seven parts','data-frame="audiobooks.html#first-pulse" data-title="The First Pulse"');
+ item(R+'images/lab/born-twice-banner.jpg',"Thorne's Lab",'Journal, terminal, and bench','data-frame="thorne-lab.html" data-title="Thorne\'s Lab"');
 function card(img,t,s,f){return '<button class="card" data-frame="'+f+'" data-title="'+esc(t)+'"><img loading="lazy" src="'+img+'" alt=""><b>'+esc(t)+'</b><span>'+s+'</span></button>'}
 // Play tab: the same games as the website's Play page, read from ../games.js (CE_GAMES + the More row)
-var PLAY=(window.CE_GAMES||[]).map(function(g){return [g.t,g.k,g.url,R+'images/games/'+g.id+'.jpg',g.d,g.id]}).concat((window.CE_GAMES_MORE||[]).map(function(g){return [g.t,g.k,g.url,R+g.img,g.d,g.id]}));
+var PLAY=(window.CE_GAMES||[]).concat(window.CE_GAMES_MORE||[]).map(function(g){return [g.t,g.k,g.url,R+(g.img||('images/games/'+g.id+'.jpg')),g.d,g.id]});
 $('#playList').innerHTML=PLAY.map(function(g){return '<button class="gcard" data-rx-key="game:'+g[5]+'" data-frame="'+g[2]+'" data-title="'+esc(g[0])+'"><img loading="lazy" src="'+g[3]+'" alt=""><div><small>'+esc(g[1])+'</small><b>'+esc(g[0])+'</b><span>'+esc(g[4])+'</span><i class="gplay">\u25B6 '+(/short/.test(g[5])?'Watch':/studio|lab/.test(g[5])?'Open':'Play')+'</i></div></button>'}).join('');
 $('#playList').className='glist';
 // Home Play row: the same full list and order as the Play tab, then See all
 (function(){var hp=document.getElementById('homePlay');if(!hp)return;hp.innerHTML=PLAY.map(function(g){return '<button class="poster wide" data-rx-key="game:'+g[5]+'" data-frame="'+g[2]+'" data-title="'+esc(g[0])+'"><img loading="lazy" src="'+g[3]+'" alt=""><b>'+esc(g[0])+'</b><span>'+esc(g[1])+'</span></button>'}).join('')+'<button class="poster wide seeall" data-go="play"><b>See all \u203A</b><span>'+PLAY.length+' games &amp; more</span></button>'})();
-$('#readList').innerHTML=BOOKS.map(function(b){return item(R+b.img,b.t,b.sub||'Book page, chapters & audiobook','data-frame="'+b.page+'" data-title="'+esc(b.t)+'"')+(b.page==='rusty-stack.html'?item(R+'media/rusty-cyoa/posters/s1.jpg','The Rusty Stack cartoon','Watch, then choose · 4 endings','data-frame="rusty-adventure.html" data-title="The Rusty Stack Adventure"')+buyItem(R+'images/the-rusty-stack.jpg','The Rusty Stack: Kindle edition','Buy on Amazon · read it on Kindle',b.kindle):'')}).join('')+item(R+'images/icons/typewriter.svg','The Novel','The multi-mind novel, read in the app','data-frame="novel.html" data-title="The Novel"');
+$('#readList').innerHTML=BOOKS.map(function(b){return item(R+b.img,b.t,b.sub||'Book page','data-frame="'+b.page+'" data-title="'+esc(b.t)+'"')+(b.kindle?buyItem(R+b.img,b.t+' Kindle','Buy on Amazon',b.kindle):'')}).join('')+item(R+'images/icons/typewriter.svg','The Novel','The multi-mind novel, read in the app','data-frame="novel.html" data-title="The Novel"');
 // tabs
 var cur='home';
 function go(id){if(!document.getElementById(id))return;$$('.screen').forEach(function(s){s.classList.toggle('active',s.id===id)});$$('.tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.go===id)});cur=id;history.replaceState(null,'','#'+id)}
@@ -71,7 +65,7 @@ function openFrame(u,t){if(/account\.html(?:$|[?#])/.test(String(u).split('/').p
 $('#fClose').onclick=function(){$('#frame').hidden=true;fr.src='about:blank'};
 $('#openStudio').onclick=function(){openFrame('studio.html','Oil Studio')};
 $('#fSave').onclick=function(){try{var c=fr.contentDocument.getElementById('studio-canvas');c.toBlob(function(bl){var f=new File([bl],'my-oil-painting.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],title:'My oil painting'}).catch(function(){})}else{var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=f.name;a.click();toast('Painting saved')}})}catch(e){toast('Open a painting first')}};
-document.addEventListener('click',function(e){var el=e.target.closest('[data-club],[data-go],[data-play],[data-frame]');if(!el)return;if(el.dataset.club||el.dataset.go==='club'||el.dataset.frame==='#club'||/account\.html/.test(el.dataset.frame||''))return;
+document.addEventListener('click',function(e){var el=e.target.closest('[data-go],[data-play],[data-frame]');if(!el)return;
  if(el.dataset.go)go(el.dataset.go);else if(el.dataset.play)load(el.dataset.play,true);else openFrame(el.dataset.frame,el.dataset.title)});
 // toast
 var tt;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){t.classList.remove('show')},2400)}

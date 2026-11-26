@@ -1,0 +1,18 @@
+/* Phone-first documentary shorts. Big type, big posters, one video per card. */
+.doc-page{padding:5.5rem 1rem 3rem}
+.doc-inner{max-width:1100px;margin:0 auto}
+.doc-kicker{font-family:"Cinzel",Georgia,serif;letter-spacing:.28em;text-transform:uppercase;color:#e4c27a;font-size:1rem;font-weight:700}
+.doc-page h1{font-family:"Cinzel",Georgia,serif;font-weight:900;font-size:clamp(2.4rem,8vw,4.4rem);line-height:.95;letter-spacing:.02em;margin:.35rem 0 .6rem;text-transform:uppercase}
+.doc-lede{font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(1.35rem,4vw,1.7rem);line-height:1.35;max-width:38rem;margin:0 0 1.6rem}
+.doc-group{margin:0 0 2.2rem}
+.doc-group h2{font-family:"Cinzel",Georgia,serif;font-weight:700;font-size:clamp(1.6rem,5vw,2.2rem);letter-spacing:.06em;text-transform:uppercase;color:#f3ead7;border-bottom:1px solid rgba(228,194,122,.45);padding-bottom:.35rem;margin:0 0 1rem}
+.doc-grid{display:grid;gap:1.4rem}
+@media(min-width:720px){.doc-grid{grid-template-columns:1fr 1fr}}
+@media(min-width:1100px){.doc-grid{grid-template-columns:1fr 1fr 1fr}}
+.doc-card{background:rgba(16,12,8,.72);border:1px solid rgba(228,194,122,.35);border-radius:12px;overflow:hidden;box-shadow:0 16px 40px rgba(0,0,0,.45)}
+.doc-card video{display:block;width:100%;height:auto;aspect-ratio:9/16;background:#000;object-fit:contain}
+.doc-card .doc-copy{padding:1rem 1rem 1.15rem}
+.doc-card h3{font-family:"Cinzel",Georgia,serif;font-weight:700;font-size:clamp(1.35rem,4vw,1.7rem);line-height:1.15;margin:0 0 .4rem}
+.doc-card p{font-size:1.2rem;line-height:1.35;margin:0 0 .55rem}
+.doc-year{display:inline-block;min-height:44px;line-height:44px;padding:0 .9rem;border-radius:999px;border:1px solid rgba(228,194,122,.55);color:#e4c27a;font-weight:700;letter-spacing:.08em}
+.doc-credit{font-size:1.05rem;line-height:1.45;color:#d9cbb6;max-width:40rem;margin:0}
